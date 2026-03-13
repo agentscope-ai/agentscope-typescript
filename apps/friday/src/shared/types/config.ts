@@ -5,7 +5,7 @@
 /**
  * Supported AI model providers
  */
-export type ModelProvider = 'dashscope' | 'openai' | 'ollama' | 'deepseek' | 'anthropic';
+export type ModelProvider = 'dashscope' | 'openai' | 'ollama' | 'deepseek';
 
 /**
  * Model configuration for AI providers

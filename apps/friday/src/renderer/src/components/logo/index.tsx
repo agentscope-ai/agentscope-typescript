@@ -1,6 +1,5 @@
 import { ModelProvider } from '@shared/types/config';
 
-import anthropicLogo from '@/assets/images/logo-anthropic.svg';
 import googleLogo from '@/assets/images/logo-google.svg';
 import ollamaLogo from '@/assets/images/logo-ollama.svg';
 import openAILogo from '@/assets/images/logo-openai.svg';
@@ -35,9 +34,6 @@ export function ProviderLogo({
             break;
         case 'deepseek':
             logoSrc = googleLogo;
-            break;
-        case 'anthropic':
-            logoSrc = anthropicLogo;
             break;
     }
 

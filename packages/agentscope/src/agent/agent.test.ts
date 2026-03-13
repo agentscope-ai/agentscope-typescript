@@ -1,61 +1,10 @@
 import { Agent } from './agent';
 import { AgentEvent, EventType, UserConfirmResultEvent } from '../event';
-import { DashScopeChatFormatter } from '../formatter';
-import { ContentBlock, createMsg, getTextContent, Msg } from '../message';
-import { ChatModelBase, ChatResponse, DashScopeChatModel } from '../model';
+import { ContentBlock, Msg } from '../message';
+import { ChatModelBase, ChatResponse } from '../model';
 import { ChatModelRequestOptions } from '../model/base';
 import { Bash, Edit, Glob, Grep, Read, Toolkit, Write } from '../tool';
 import { ToolChoice, ToolSchema } from '../type';
-
-describe('Agent', () => {
-    test('agent response', async () => {
-        const toolkit = new Toolkit({
-            tools: [Bash(), Glob(), Grep(), Read(), Write(), Edit()],
-        });
-
-        const agent = new Agent({
-            name: 'Friday',
-            sysPrompt: 'You are a helpful assistant named Friday.',
-            model: new DashScopeChatModel({
-                modelName: 'qwen3.5-plus',
-                apiKey: process.env.DASHSCOPE_API_KEY || '',
-                stream: true,
-                formatter: new DashScopeChatFormatter(),
-            }),
-            toolkit,
-        });
-
-        let name = '';
-        for await (const event of agent.replyStream({})) {
-            switch (event.type) {
-                case EventType.RUN_STARTED:
-                    name = event.name;
-                    break;
-                case EventType.TEXT_BLOCK_START:
-                    // Use stdout.write instead of console.log
-                    process.stdout.write(`${name}: `);
-                    break;
-                case EventType.TEXT_BLOCK_DELTA:
-                    // Output streaming text continuously without line breaks
-                    process.stdout.write(event.delta);
-                    break;
-                case EventType.TEXT_BLOCK_END:
-                    // Add line break at the end
-                    process.stdout.write('\n\n');
-                    break;
-            }
-        }
-
-        const res = await agent.reply({
-            msgs: createMsg({
-                name: 'user',
-                content: [{ id: 'abc', type: 'text', text: '看看当前目录下有什么文件夹' }],
-                role: 'user',
-            }),
-        });
-        process.stdout.write(`${res.name}: ${getTextContent(res)}`);
-    }, 100000);
-});
 
 /**
  * A mock chat model for testing purposes.

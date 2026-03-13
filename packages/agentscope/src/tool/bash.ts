@@ -91,22 +91,35 @@ While the Bash tool can do similar things, it's better to use the built-in tools
                 const maxTimeout = 600000;
                 const effectiveTimeout = Math.min(timeout, maxTimeout);
 
+                // Determine the appropriate shell based on platform
+                let shell: string;
+                if (process.platform === 'win32') {
+                    // On Windows, use cmd.exe or PowerShell
+                    shell = process.env.COMSPEC || 'cmd.exe';
+                } else {
+                    // On Unix-like systems, use the user's shell or default to bash
+                    shell = process.env.SHELL || '/bin/bash';
+                }
+
                 const { stdout } = await execAsync(command, {
                     encoding: 'utf-8',
                     timeout: effectiveTimeout,
                     maxBuffer: 30000 * 1024,
-                    shell: process.env.SHELL || '/bin/bash',
+                    shell,
                 });
 
+                // Normalize line endings to LF for cross-platform consistency
+                const normalizedOutput = stdout.replace(/\r\n/g, '\n');
+
                 const maxOutputLength = 30000;
-                if (stdout.length > maxOutputLength) {
+                if (normalizedOutput.length > maxOutputLength) {
                     return createToolResponse({
                         content: [
                             {
                                 id: crypto.randomUUID(),
                                 type: 'text',
                                 text:
-                                    stdout.substring(0, maxOutputLength) +
+                                    normalizedOutput.substring(0, maxOutputLength) +
                                     '\n\n[Output truncated - exceeded 30000 characters]',
                             },
                         ],
@@ -115,14 +128,14 @@ While the Bash tool can do similar things, it's better to use the built-in tools
                 }
 
                 return createToolResponse({
-                    content: [{ id: crypto.randomUUID(), type: 'text', text: stdout }],
+                    content: [{ id: crypto.randomUUID(), type: 'text', text: normalizedOutput }],
                     state: 'success',
                 });
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (error: any) {
                 const errorMessage = error.message || 'Unknown error';
-                const stderr = error.stderr?.toString() || '';
-                const stdout = error.stdout?.toString() || '';
+                const stderr = error.stderr?.toString().replace(/\r\n/g, '\n') || '';
+                const stdout = error.stdout?.toString().replace(/\r\n/g, '\n') || '';
 
                 let result = `Command failed: ${command}\n`;
                 if (stdout) result += `\nStdout:\n${stdout}`;

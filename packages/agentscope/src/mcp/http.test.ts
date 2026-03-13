@@ -1,21 +1,187 @@
+import * as http from 'http';
+
 import { HTTPMCPClient } from './http';
-import { Toolkit } from '../tool';
+import { Toolkit, ToolResponse } from '../tool';
+
+/**
+ * Creates a minimal MCP HTTP server for testing purposes.
+ *
+ * @param port - The port number to listen on
+ * @returns An HTTP server instance
+ */
+function createTestMCPServer(port: number): http.Server {
+    const sessions = new Map<string, Record<string, unknown>>();
+    let sessionCounter = 0;
+
+    const server = http.createServer(async (req, res) => {
+        // Handle CORS
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Mcp-Session-Id');
+
+        if (req.method === 'OPTIONS') {
+            res.writeHead(200);
+            res.end();
+            return;
+        }
+
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', async () => {
+            try {
+                const message = JSON.parse(body);
+                let response: Record<string, unknown>;
+
+                switch (message.method) {
+                    case 'initialize': {
+                        sessionCounter++;
+                        const sessionId = `session-${sessionCounter}`;
+                        sessions.set(sessionId, {});
+                        response = {
+                            jsonrpc: '2.0',
+                            id: message.id,
+                            result: {
+                                protocolVersion: '2024-11-05',
+                                capabilities: { tools: {} },
+                                serverInfo: {
+                                    name: 'test-mcp-server',
+                                    version: '1.0.0',
+                                },
+                                sessionId,
+                            },
+                        };
+                        break;
+                    }
+
+                    case 'tools/list': {
+                        response = {
+                            jsonrpc: '2.0',
+                            id: message.id,
+                            result: {
+                                tools: [
+                                    {
+                                        name: 'add',
+                                        description: 'Adds two numbers together',
+                                        inputSchema: {
+                                            type: 'object',
+                                            properties: {
+                                                a: {
+                                                    type: 'number',
+                                                    description: 'First number',
+                                                },
+                                                b: {
+                                                    type: 'number',
+                                                    description: 'Second number',
+                                                },
+                                            },
+                                            required: ['a', 'b'],
+                                        },
+                                    },
+                                ],
+                            },
+                        };
+                        break;
+                    }
+
+                    case 'tools/call': {
+                        if (message.params.name === 'add') {
+                            const { a, b } = message.params.arguments;
+                            const result = a + b;
+                            response = {
+                                jsonrpc: '2.0',
+                                id: message.id,
+                                result: {
+                                    content: [
+                                        {
+                                            type: 'text',
+                                            text: `Result: ${a} + ${b} = ${result}`,
+                                        },
+                                    ],
+                                },
+                            };
+                        } else {
+                            response = {
+                                jsonrpc: '2.0',
+                                id: message.id,
+                                error: {
+                                    code: -32601,
+                                    message: 'Tool not found',
+                                },
+                            };
+                        }
+                        break;
+                    }
+
+                    default: {
+                        response = {
+                            jsonrpc: '2.0',
+                            id: message.id,
+                            error: {
+                                code: -32601,
+                                message: 'Method not found',
+                            },
+                        };
+                    }
+                }
+
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify(response));
+            } catch {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(
+                    JSON.stringify({
+                        jsonrpc: '2.0',
+                        id: null,
+                        error: {
+                            code: -32700,
+                            message: 'Parse error',
+                        },
+                    })
+                );
+            }
+        });
+    });
+
+    server.listen(port);
+    return server;
+}
 
 describe('HTTPStatefulMCPClient', () => {
-    test('Create AMAP MCP client, list and execute tools', async () => {
+    const TEST_PORT = 13579;
+    const TEST_URL = `http://localhost:${TEST_PORT}/mcp`;
+    let testServer: http.Server;
+
+    beforeAll(() => {
+        testServer = createTestMCPServer(TEST_PORT);
+    });
+
+    afterAll(done => {
+        testServer.close(done);
+    });
+
+    test('Create HTTP MCP client, list and execute tools', async () => {
         const client = new HTTPMCPClient({
-            name: 'amap-map-service',
+            name: 'test-mcp-server',
             transportType: 'streamable-http',
-            url: 'https://mcp.amap.com/mcp?key=' + process.env.GAODE_API_KEY || '',
+            url: TEST_URL,
             stateful: true,
         });
         await client.connect();
 
         const tools = await client.listTools();
         expect(tools.length).toBeGreaterThan(0);
-        const func = await client.getCallableFunction({ name: 'maps_geo' });
-        const res = await func.call({ address: 'Tiananmen', city: 'Beijing' });
+
+        const func = await client.getCallableFunction({ name: 'add' });
+        const res = await func.call({ a: 5, b: 3 });
         expect(res.content.length).toBeGreaterThan(0);
+        expect(res.content[0].type).toBe('text');
+        if (res.content[0].type === 'text') {
+            expect(res.content[0].text).toContain('8');
+        }
+
         await client.close();
 
         // Try to reconnect and list tools again
@@ -24,85 +190,62 @@ describe('HTTPStatefulMCPClient', () => {
         expect(tools2.length).toBeGreaterThan(0);
 
         await client.close();
-    });
+    }, 10000);
 
     test('Test toolkit works with HTTPStatefulMCPClient', async () => {
         const client = new HTTPMCPClient({
-            name: 'amap-map-service',
+            name: 'test-mcp-server',
             transportType: 'streamable-http',
-            url: 'https://mcp.amap.com/mcp?key=' + process.env.GAODE_API_KEY || '',
+            url: TEST_URL,
             stateful: true,
         });
         await client.connect();
 
         const toolkit = new Toolkit();
-        await toolkit.registerMCPClient({ client, enabledTools: ['maps_geo'] });
+        await toolkit.registerMCPClient({ client, enabledTools: ['add'] });
 
         const schema = toolkit.getJSONSchemas();
-        expect(schema).toEqual([
-            {
-                function: {
-                    description:
-                        'Retrieves the full content of a skill by reading its SKILL.md file. Skills are packages of domain expertise that extend agent capabilities. Use this tool to access detailed instructions, examples, and guidelines for a specific skill.\n\nUsage:\n- Provide the skill name as the input parameter\n- The tool will return the complete SKILL.md file content for that skill\n- If the skill is not found, an error message with available skills will be returned\n- Available skills are listed in the skills-system section of the agent prompt',
-                    name: 'Skill',
-                    parameters: {
-                        additionalProperties: false,
-                        properties: {
-                            name: {
-                                description: 'The name of the skill',
-                                type: 'string',
-                            },
-                        },
-                        required: ['name'],
-                        type: 'object',
-                    },
-                },
-                type: 'function',
-            },
-            {
-                function: {
-                    description:
-                        '将详细的结构化地址转换为经纬度坐标。支持对地标性名胜景区、建筑物名称解析为经纬度坐标',
-                    name: 'maps_geo',
-                    parameters: {
-                        properties: {
-                            address: {
-                                description: '待解析的结构化地址信息',
-                                type: 'string',
-                            },
-                            city: {
-                                description: '指定查询的城市',
-                                type: 'string',
-                            },
-                        },
-                        required: ['address'],
-                        type: 'object',
-                    },
-                },
-                type: 'function',
-            },
-        ]);
+        expect(schema.length).toBe(2);
+        expect(schema[1].type).toBe('function');
+        expect(schema[1].function.name).toBe('add');
+        expect(schema[1].function.parameters).toBeDefined();
 
         const res = toolkit.callToolFunction({
             id: '123',
-            name: 'maps_geo',
+            name: 'add',
             type: 'tool_call',
-            input: `{"address": "Tiananmen", "city": "Beijing"}`,
+            input: `{"a": 10, "b": 20}`,
         });
         for await (const item of res) {
-            console.log(item);
+            expect(item.content.length).toBeGreaterThan(0);
+            expect(item.content[0].type).toBe('text');
+            if (item.content[0].type === 'text') {
+                expect(item.content[0].text).toContain('30');
+            }
         }
 
         await client.close();
-    });
+    }, 10000);
 });
 
 describe('HTTPStatelessMCPClient', () => {
-    test('Create stateless AMAP MCP client, list and execute tools without explicit connect/close', async () => {
+    const TEST_PORT = 13580;
+    const TEST_URL = `http://localhost:${TEST_PORT}/mcp`;
+    let testServer: http.Server;
+
+    beforeAll(() => {
+        testServer = createTestMCPServer(TEST_PORT);
+    });
+
+    afterAll(done => {
+        testServer.close(done);
+    });
+
+    test('Create stateless HTTP MCP client, list and execute tools without explicit connect/close', async () => {
         const client = new HTTPMCPClient({
-            name: 'amap-map-service',
+            name: 'test-mcp-server',
             transportType: 'streamable-http',
-            url: 'https://mcp.amap.com/mcp?key=' + process.env.GAODE_API_KEY || '',
+            url: TEST_URL,
             stateful: false,
         });
 
@@ -112,77 +255,49 @@ describe('HTTPStatelessMCPClient', () => {
         const tools = await client.listTools();
         expect(tools.length).toBeGreaterThan(0);
 
-        const func = await client.getCallableFunction({ name: 'maps_geo' });
-        const res = await func.call({ address: 'Tiananmen', city: 'Beijing' });
+        const func = await client.getCallableFunction({ name: 'add' });
+        const res = await func.call({ a: 7, b: 13 });
         expect(res.content.length).toBeGreaterThan(0);
+        expect(res.content[0].type).toBe('text');
+        if (res.content[0].type === 'text') {
+            expect(res.content[0].text).toContain('20');
+        }
 
         await client.close();
-    });
+    }, 10000);
 
     test('Test toolkit works with HTTPStatelessMCPClient', async () => {
         const client = new HTTPMCPClient({
-            name: 'amap-map-service',
+            name: 'test-mcp-server',
             transportType: 'streamable-http',
-            url: 'https://mcp.amap.com/mcp?key=' + process.env.GAODE_API_KEY || '',
+            url: TEST_URL,
             stateful: false,
         });
 
         const toolkit = new Toolkit();
-        await toolkit.registerMCPClient({ client, enabledTools: ['maps_geo'] });
+        await toolkit.registerMCPClient({ client, enabledTools: ['add'] });
 
         const schema = toolkit.getJSONSchemas();
-        expect(schema).toEqual([
-            {
-                function: {
-                    description:
-                        'Retrieves the full content of a skill by reading its SKILL.md file. Skills are packages of domain expertise that extend agent capabilities. Use this tool to access detailed instructions, examples, and guidelines for a specific skill.\n\nUsage:\n- Provide the skill name as the input parameter\n- The tool will return the complete SKILL.md file content for that skill\n- If the skill is not found, an error message with available skills will be returned\n- Available skills are listed in the skills-system section of the agent prompt',
-                    name: 'Skill',
-                    parameters: {
-                        additionalProperties: false,
-                        properties: {
-                            name: {
-                                description: 'The name of the skill',
-                                type: 'string',
-                            },
-                        },
-                        required: ['name'],
-                        type: 'object',
-                    },
-                },
-                type: 'function',
-            },
-            {
-                function: {
-                    description:
-                        '将详细的结构化地址转换为经纬度坐标。支持对地标性名胜景区、建筑物名称解析为经纬度坐标',
-                    name: 'maps_geo',
-                    parameters: {
-                        properties: {
-                            address: {
-                                description: '待解析的结构化地址信息',
-                                type: 'string',
-                            },
-                            city: {
-                                description: '指定查询的城市',
-                                type: 'string',
-                            },
-                        },
-                        required: ['address'],
-                        type: 'object',
-                    },
-                },
-                type: 'function',
-            },
-        ]);
+        expect(schema.length).toBe(2);
+        expect(schema[1].type).toBe('function');
+        expect(schema[1].function.name).toBe('add');
+        expect(schema[1].function.parameters).toBeDefined();
 
         const res = toolkit.callToolFunction({
             id: '123',
-            name: 'maps_geo',
+            name: 'add',
             type: 'tool_call',
-            input: `{"address": "Tiananmen", "city": "Beijing"}`,
+            input: `{"a": 15, "b": 25}`,
         });
+        const collectedRes: ToolResponse[] = [];
         for await (const item of res) {
-            console.log(item);
+            collectedRes.push(item);
+            expect(item.content.length).toBeGreaterThan(0);
+            expect(item.content[0].type).toBe('text');
+            if (item.content[0].type === 'text') {
+                expect(item.content[0].text).toContain('40');
+            }
         }
-    });
+        expect(collectedRes.length).toBe(1);
+    }, 10000);
 });

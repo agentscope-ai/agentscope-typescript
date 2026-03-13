@@ -17,7 +17,9 @@ export function AppLayout() {
     useEffect(() => {
         const handler = (_: unknown, path: string) => navigate(path);
         window.electron.ipcRenderer.on('navigate', handler);
-        return () => window.electron.ipcRenderer.removeListener('navigate', handler);
+        return () => {
+            window.electron.ipcRenderer.removeListener('navigate', handler);
+        };
     }, [navigate]);
 
     return (
