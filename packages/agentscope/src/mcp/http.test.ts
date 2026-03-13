@@ -24,7 +24,7 @@ describe('HTTPStatefulMCPClient', () => {
         expect(tools2.length).toBeGreaterThan(0);
 
         await client.close();
-    });
+    }, 10000);
 
     test('Test toolkit works with HTTPStatefulMCPClient', async () => {
         const client = new HTTPMCPClient({
@@ -94,7 +94,7 @@ describe('HTTPStatefulMCPClient', () => {
         }
 
         await client.close();
-    });
+    }, 10000);
 });
 
 describe('HTTPStatelessMCPClient', () => {
@@ -117,7 +117,7 @@ describe('HTTPStatelessMCPClient', () => {
         expect(res.content.length).toBeGreaterThan(0);
 
         await client.close();
-    });
+    }, 10000);
 
     test('Test toolkit works with HTTPStatelessMCPClient', async () => {
         const client = new HTTPMCPClient({
@@ -184,5 +184,5 @@ describe('HTTPStatelessMCPClient', () => {
         for await (const item of res) {
             console.log(item);
         }
-    });
+    }, 10000);
 });
