@@ -950,8 +950,45 @@ export class Agent {
         const { toCompressedContext, reservedContext } = this._splitContextForCompression();
 
         // Compress the toCompressedContext
-        if (toCompressedContext.length === 0) return;
+        if (
+            toCompressedContext.length <= 0 ||
+            (toCompressedContext.length === 1 && toCompressedContext.at(0)?.content.length === 1)
+        )
+            return;
 
+        // Compute if the context exceed the threshold
+        const messages = [
+            createMsg({
+                name: 'system',
+                content: [{ type: 'text', text: this.sysPrompt, id: crypto.randomUUID() }],
+                role: 'system',
+            }),
+            ...toCompressedContext,
+            // instructions to compress the context into a summary
+            createMsg({
+                name: 'user',
+                content: [
+                    {
+                        id: crypto.randomUUID(),
+                        type: 'text',
+                        text:
+                            this.compressionConfig.compressionPrompt || DEFAULT_COMPRESSION_PROMPT,
+                    },
+                ],
+                role: 'user',
+            }),
+        ];
+
+        const nTokens = await this.model.countTokens({
+            messages,
+            tools: this.toolkit.getJSONSchemas(),
+        });
+        console.debug(`[AGENT ${this.name}] Current context token count: ${nTokens}.`);
+        if (nTokens <= this.compressionConfig.triggerThreshold) return;
+
+        console.log(
+            `[AGENT ${this.name}] Compressing memory with ${toCompressedContext.length} messages.`
+        );
         // Generate the summary structured content
         const res = await this.model.callStructured({
             messages: [
@@ -985,6 +1022,8 @@ export class Agent {
             summaryText += `# ${key}\n${value}\n`;
         }
         summaryText += '</system-reminder>';
+
+        console.debug(`[AGENT ${this.name}] Compression summary: ${summaryText}`);
 
         // Update the context with the compression summary and the reserved recent blocks
         this.context = reservedContext;

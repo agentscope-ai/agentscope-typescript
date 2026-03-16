@@ -145,13 +145,13 @@ export abstract class ChatModelBase {
      * A heuristic method to count the number of the tokens
      * Note the multimodal content is ignored in the token counting
      * @param options
-     * @param options.msg
+     * @param options.messages
      * @param options.tools
      * @returns The estimated number of tokens in the input messages and tools.
      */
-    async countTokens(options: { msg: Msg[]; tools?: ToolSchema[] }): Promise<number> {
+    async countTokens(options: { messages: Msg[]; tools?: ToolSchema[] }): Promise<number> {
         let accText: string = '';
-        for (const msg of options.msg) {
+        for (const msg of options.messages) {
             accText += getTextContent(msg) || '';
         }
         if (options.tools) {
