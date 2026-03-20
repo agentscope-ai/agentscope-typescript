@@ -6,7 +6,6 @@ import type {
 import type { Msg } from '@agentscope-ai/agentscope/message';
 import { ElectronAPI } from '@electron-toolkit/preload';
 import type { GetSessionsQuery, GetSessionsResult, Session } from '@shared/types/chat';
-import type { GetItemsQuery, GetItemsResult } from '@shared/types/common';
 import type { Config } from '@shared/types/config';
 import type { Document } from '@shared/types/document';
 import type { MCPServerConfig, MCPServerState } from '@shared/types/mcp';
@@ -49,13 +48,25 @@ declare global {
                 isRunning: (sessionId: string) => Promise<boolean>;
             };
             editor: {
-                getDocuments: (query: GetItemsQuery) => Promise<GetItemsResult<Document>>;
+                getDocuments: () => Promise<Document[]>;
                 createDocument: (name?: string) => Promise<Document>;
                 renameDocument: (id: string, name: string) => Promise<Document>;
-                pinDocument: (id: string, pinned: boolean) => Promise<Document>;
+                pinDocument: (id: string) => Promise<Document>;
                 deleteDocument: (id: string) => Promise<void>;
                 getContent: (id: string) => Promise<string>;
                 saveContent: (id: string, content: string) => Promise<void>;
+                getMessages: (docId: string) => Promise<Msg[]>;
+                isRunning: (docId: string) => Promise<boolean>;
+                sendMessage: (
+                    docId: string,
+                    agentKey: string,
+                    msg?: Msg,
+                    event?: ExternalExecutionResultEvent | UserConfirmResultEvent
+                ) => Promise<void>;
+                subscribeAgentEvents: (
+                    docId: string,
+                    callback: (event: AgentEvent) => void
+                ) => () => void;
             };
             agent: {
                 subscribe: (sessionId: string, callback: (event: AgentEvent) => void) => () => void;

@@ -48,7 +48,7 @@ export class LocalFileStorage extends StorageBase {
     async loadAgentState(options?: { agentId?: string }): Promise<AgentState> {
         const agentDir = path.join(this.saveDir, options?.agentId || '');
 
-        // 判断这个dir是否存在
+        // If the agent directory doesn't exist, return empty state
         if (!fs.existsSync(agentDir)) {
             console.log(`Agent directory ${agentDir} does not exist. Returning empty state.`);
             return {

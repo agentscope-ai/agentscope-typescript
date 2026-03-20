@@ -2,23 +2,124 @@ import { randomUUID } from 'crypto';
 import fs from 'fs';
 import path from 'path';
 
-import type { GetItemsQuery, GetItemsResult } from '@shared/types/common';
+import { AgentOptions } from '@agentscope-ai/agentscope/agent';
+import {
+    UserConfirmResultEvent,
+    ExternalExecutionResultEvent,
+} from '@agentscope-ai/agentscope/event';
+import type { Msg } from '@agentscope-ai/agentscope/message';
+import { LocalFileStorage } from '@agentscope-ai/agentscope/storage';
+import { Bash, Edit, Glob, Grep, Read, Toolkit, Write } from '@agentscope-ai/agentscope/tool';
+import { DocumentEdit, DocumentRead, DocumentWrite } from '@shared/tools/document';
 import type { Document } from '@shared/types/document';
-import type { IpcMain } from 'electron';
+import type { IpcMain, WebContents } from 'electron';
 
-import { readJSON, writeJSON, remove } from '../storage';
+import { runAgent } from '../agent';
+import { getConfig } from '../config';
+import { readJSON, writeJSON, remove, readJSONL } from '../storage';
+import { skillGetAll } from './skillService';
+import { getModel } from './utils';
 import { PATHS } from '../storage/paths';
 
 /**
  * Register IPC handlers for document-related operations
  *
  * @param ipcMain - The Electron IPC main instance
+ * @param webContents - The web contents for sending events
  */
-export function registerDocumentHandlers(ipcMain: IpcMain): void {
+export function registerDocumentHandlers(ipcMain: IpcMain, webContents: WebContents): void {
     const service = new DocumentService();
+    const runningDocs = new Set<string>();
 
-    ipcMain.handle('document:getDocuments', (_event, query: GetItemsQuery) => {
-        return service.getDocuments(query);
+    ipcMain.handle('document:isRunning', (_event, docId: string) => {
+        return runningDocs.has(docId);
+    });
+
+    ipcMain.handle('document:getMessages', (_event, docId: string) => {
+        return service.getMessages(docId);
+    });
+
+    ipcMain.handle(
+        'document:sendMessage',
+        async (
+            _event,
+            docId: string,
+            agentKey: string = 'friday',
+            msg?: Msg,
+            event?: UserConfirmResultEvent | ExternalExecutionResultEvent
+        ) => {
+            const config = getConfig();
+            const agentConfig = config.agents?.[agentKey];
+            if (!agentConfig) throw new Error(`Agent configuration not found: ${agentKey}`);
+
+            let modelConfig = config.models?.[agentConfig.modelKey];
+            if (!modelConfig && Object.keys(config.models || {}).length > 0) {
+                modelConfig = config.models[Object.keys(config.models)[0]];
+            }
+            if (!modelConfig) throw new Error('No model configured.');
+
+            const model = getModel(modelConfig);
+            const storage = new LocalFileStorage({
+                pathSegments: [PATHS.editorSessionDir(docId)],
+                offloadPathSegments: [PATHS.offloadDir(docId)],
+            });
+
+            const sysPrompt = `You are a helpful writing assistant named Friday. You're co-editing a Markdown document with the user named ${config.username}. Your target is to help the user write and edit the document collaboratively.
+
+# Important Notes:
+- The 'DocumentRead', 'DocumentWrite' and 'DocumentEdit' tools are used to read and edit the co-edited document, not the filesystem.
+- The user's modifications to the document will be wrapped in <user_modification></user_modification> tags.
+- The co-edited document is in Markdown format.
+`;
+
+            const skills = skillGetAll().map(skill => skill.dirPath);
+
+            const toolkit = new Toolkit({
+                tools: [
+                    DocumentRead(),
+                    DocumentWrite(),
+                    DocumentEdit(),
+                    Bash(),
+                    Glob(),
+                    Write(),
+                    Edit(),
+                    Read(),
+                    Glob(),
+                    Grep(),
+                ],
+                skills,
+            });
+
+            const agentOptions: AgentOptions = {
+                name: agentConfig.name,
+                sysPrompt,
+                model,
+                maxIters: agentConfig.maxIters,
+                compressionConfig: {
+                    enabled: true,
+                    triggerThreshold: agentConfig.compressionTrigger,
+                    keepRecent: agentConfig.compressionKeepRecent,
+                },
+                storage,
+                toolkit,
+            };
+
+            runningDocs.add(docId);
+            try {
+                await runAgent(
+                    agentOptions,
+                    event => webContents.send(`agent:event:document:${docId}`, event),
+                    msg,
+                    event
+                );
+            } finally {
+                runningDocs.delete(docId);
+            }
+        }
+    );
+
+    ipcMain.handle('document:getDocuments', () => {
+        return service.getDocuments();
     });
 
     ipcMain.handle('document:createDocument', (_event, name?: string) => {
@@ -29,8 +130,8 @@ export function registerDocumentHandlers(ipcMain: IpcMain): void {
         return service.renameDocument(id, name);
     });
 
-    ipcMain.handle('document:pinDocument', (_event, id: string, pinned: boolean) => {
-        return service.pinDocument(id, pinned);
+    ipcMain.handle('document:pinDocument', (_event, id: string) => {
+        return service.pinDocument(id);
     });
 
     ipcMain.handle('document:deleteDocument', (_event, id: string) => {
@@ -75,28 +176,10 @@ export class DocumentService {
     /**
      * Get documents with pagination and pinned documents
      *
-     * @param query - Query parameters for pagination
      * @returns Result containing pinned documents and paginated items
      */
-    getDocuments(query: GetItemsQuery): GetItemsResult<Document> {
-        const { offset, limit } = query;
-        const documents = this.loadDocuments();
-
-        // pinned: return all, sorted by updatedAt descending
-        const pinned = documents.filter(d => d.pinned).sort((a, b) => b.updatedAt - a.updatedAt);
-
-        // non-pinned: sorted by updatedAt descending, then paginated
-        const unpinned = documents.filter(d => !d.pinned).sort((a, b) => b.updatedAt - a.updatedAt);
-
-        const total = unpinned.length;
-        const items = unpinned.slice(offset, offset + limit);
-
-        return {
-            pinned,
-            items,
-            total,
-            hasMore: offset + limit < total,
-        };
+    getDocuments(): Document[] {
+        return this.loadDocuments();
     }
 
     /**
@@ -152,16 +235,15 @@ export class DocumentService {
      * Pin or unpin a document
      *
      * @param id - The document ID
-     * @param pinned - Whether to pin the document
      * @returns The updated document
      */
-    pinDocument(id: string, pinned: boolean): Document {
+    pinDocument(id: string): Document {
         const documents = this.loadDocuments();
         const document = documents.find(d => d.id === id);
         if (!document) {
             throw new Error(`Document not found: ${id}`);
         }
-        document.pinned = pinned;
+        document.pinned = !document.pinned;
         document.updatedAt = Date.now();
         this.saveDocuments(documents);
         return document;
@@ -179,6 +261,19 @@ export class DocumentService {
 
         // Delete document directory (cascade delete)
         remove(PATHS.editorDir(id));
+    }
+
+    // ─── Agent ───────────────────────────────────────────────────────────────
+
+    /**
+     * Get messages for a document's agent session
+     * @param docId
+     * @returns Array of messages in the agent session for the document
+     */
+    getMessages(docId: string): Msg[] {
+        // TODO: should pass the agentKey here
+        const contextPath = path.join(PATHS.editorSession(docId, 'friday'));
+        return readJSONL<Msg>(contextPath);
     }
 
     // ─── Content ─────────────────────────────────────────────────────────────

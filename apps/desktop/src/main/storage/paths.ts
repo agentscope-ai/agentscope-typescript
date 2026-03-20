@@ -26,8 +26,9 @@ export const PATHS = {
     // Editor
     editorDir: (docId: string) => path.join(ROOT_DIR, 'editor', docId),
     editorContent: (docId: string) => path.join(ROOT_DIR, 'editor', docId, 'content.md'),
-    editorSession: (docId: string, timestamp: string) =>
-        path.join(ROOT_DIR, 'editor', docId, 'sessions', `${timestamp}.jsonl`),
+    editorSessionDir: (docId: string) => path.join(ROOT_DIR, 'editor', docId),
+    editorSession: (docId: string, agentId: string) =>
+        path.join(ROOT_DIR, 'editor', docId, agentId, `context.jsonl`),
     editorTelemetry: (docId: string, timestamp: string) =>
         path.join(ROOT_DIR, 'editor', docId, 'telemetry', `${timestamp}.traces.json`),
 

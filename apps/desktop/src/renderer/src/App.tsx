@@ -1,7 +1,13 @@
 import { TooltipProvider } from '@renderer/components/ui/tooltip';
 import { useEffect, useState } from 'react';
 import Joyride from 'react-joyride';
-import { HashRouter, Route, Routes } from 'react-router-dom';
+import {
+    createHashRouter,
+    RouterProvider,
+    Outlet,
+    Route,
+    createRoutesFromElements,
+} from 'react-router-dom';
 
 import { AppLayout } from '@/components/layout/AppLayout';
 import { OllamaDetection } from '@/components/onboarding/OllamaDetection';
@@ -39,18 +45,7 @@ function AppRoutes() {
 
     return (
         <>
-            <Routes>
-                <Route element={<AppLayout />}>
-                    <Route path="/" element={<ChatPage />} />
-                    <Route path="/news" element={<NewsPage />} />
-                    <Route path="/setting" element={<SettingPage />} />
-                    <Route path="/schedule" element={<SchedulePage />} />
-                    <Route path="/skill" element={<SkillPage />} />
-                    <Route path="/mcp" element={<MCPPage />} />
-                    <Route path="/editor" element={<EditorPage />} />
-                    <Route path="/agents" element={<AgentPage />} />
-                </Route>
-            </Routes>
+            <Outlet />
             {/*The tour component that guides users through the main features of the application.*/}
             <Joyride
                 steps={steps}
@@ -83,6 +78,23 @@ function AppRoutes() {
         </>
     );
 }
+
+const router = createHashRouter(
+    createRoutesFromElements(
+        <Route element={<AppRoutes />}>
+            <Route element={<AppLayout />}>
+                <Route path="/" element={<ChatPage />} />
+                <Route path="/news" element={<NewsPage />} />
+                <Route path="/setting" element={<SettingPage />} />
+                <Route path="/schedule" element={<SchedulePage />} />
+                <Route path="/skill" element={<SkillPage />} />
+                <Route path="/mcp" element={<MCPPage />} />
+                <Route path="/editor" element={<EditorPage />} />
+                <Route path="/agents" element={<AgentPage />} />
+            </Route>
+        </Route>
+    )
+);
 
 /**
  * Root application component that handles onboarding flow and main app rendering.
@@ -143,9 +155,7 @@ function App(): React.JSX.Element {
         <TooltipProvider>
             <LayoutProvider>
                 <ScheduleProvider>
-                    <HashRouter>
-                        <AppRoutes />
-                    </HashRouter>
+                    <RouterProvider router={router} />
                     <Toaster />
                 </ScheduleProvider>
             </LayoutProvider>

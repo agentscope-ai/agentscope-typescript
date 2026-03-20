@@ -1,137 +1,211 @@
+import {
+    EventType,
+    type AgentEvent,
+    UserConfirmResultEvent,
+    ExternalExecutionResultEvent,
+} from '@agentscope-ai/agentscope/event';
+import { ContentBlock, createMsg, ToolCallBlock } from '@agentscope-ai/agentscope/message';
 import type { Document } from '@shared/types/document';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 
-const PAGE_SIZE = 20;
+import { applyAgentEvent, type StreamingMsg } from './agent-event-handler';
+import {
+    executeDocumentRead,
+    executeDocumentWrite,
+    executeDocumentEdit,
+} from '@/pages/editor/frontend-tool';
 
 /**
- * A custom hook for managing documents and their operations.
- *
- * @returns An object containing document data and management functions.
+ * The documents hook manages the state and operations related to co-edited Markdown documents.
+ * @returns An object containing the list of documents, current document content, agent messages, and functions to manipulate them.
  */
 export function useDocuments() {
-    const [pinnedDocuments, setPinnedDocuments] = useState<Document[]>([]);
-    const [unpinnedDocuments, setUnpinnedDocuments] = useState<Document[]>([]);
-    const [hasMore, setHasMore] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [offset, setOffset] = useState(0);
+    // ── Document list ─────────────────────────────────────────────────────────
+    const [documents, setDocuments] = useState<Document[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
-    const loadDocuments = useCallback(async (currentOffset: number) => {
+    // ── Current document ──────────────────────────────────────────────────────
+    const [currentDocumentId, setCurrentDocumentId] = useState<string | null>(null);
+    const [content, setContent] = useState('');
+
+    // ── Agent state ───────────────────────────────────────────────────────────
+    const [messages, setMessages] = useState<StreamingMsg[]>([]);
+    const [sending, setSending] = useState(false);
+
+    // Keep a ref to content so the useEffect closure always reads the latest value
+    const contentRef = useRef(content);
+    useEffect(() => {
+        contentRef.current = content;
+    }, [content]);
+
+    // ── Select document: load content + messages ──────────────────────────────
+    useEffect(() => {
+        setMessages([]);
+        setSending(false);
+        if (currentDocumentId) {
+            // Load document content and messages when a new document is selected
+            window.api.editor
+                .getContent(currentDocumentId)
+                .then(docContent => setContent(docContent));
+            window.api.editor.getMessages(currentDocumentId).then(msgs => setMessages(msgs));
+            window.api.editor.isRunning(currentDocumentId).then(running => setSending(running));
+
+            // Subscribe to agent events for the current document
+            window.api.editor.subscribeAgentEvents(currentDocumentId, async (event: AgentEvent) => {
+                if (event.type !== EventType.REQUIRE_EXTERNAL_EXECUTION) {
+                    applyAgentEvent(event, setMessages, setSending);
+                    return;
+                }
+                // Handle the REQUIRE_EXTERNAL_EXECUTION event by executing the requested tools and sending back the results
+                const results = event.toolCalls.map(toolCall => {
+                    const input = JSON.parse(toolCall.input || '{}');
+                    switch (toolCall.name) {
+                        case 'DocumentRead':
+                            return executeDocumentRead(toolCall.id, contentRef.current, input);
+                        case 'DocumentWrite':
+                            return executeDocumentWrite(toolCall.id, setContent, input);
+                        case 'DocumentEdit':
+                            return executeDocumentEdit(toolCall.id, setContent, input);
+                        default:
+                            return {
+                                type: 'tool_result' as const,
+                                id: toolCall.id,
+                                name: toolCall.name,
+                                output: [
+                                    {
+                                        id: crypto.randomUUID(),
+                                        type: 'text' as const,
+                                        text: `Unknown tool: ${toolCall.name}`,
+                                    },
+                                ],
+                                state: 'error' as const,
+                            };
+                    }
+                });
+                await window.api.editor.sendMessage(currentDocumentId, 'friday', undefined, {
+                    type: EventType.EXTERNAL_EXECUTION_RESULT,
+                    id: crypto.randomUUID(),
+                    createdAt: new Date().toISOString(),
+                    replyId: event.replyId,
+                    executionResults: results,
+                } as ExternalExecutionResultEvent);
+            });
+        }
+    }, [currentDocumentId]);
+
+    // ── Initialize: load list then select latest (or create one) ─────────────
+    useEffect(() => {
         setLoading(true);
         try {
-            const result = await window.api.editor.getDocuments({
-                offset: currentOffset,
-                limit: PAGE_SIZE,
-            });
-
-            if (currentOffset === 0) {
-                setPinnedDocuments(result.pinned);
-                setUnpinnedDocuments(result.items);
-                setOffset(result.items.length);
-            } else {
-                setUnpinnedDocuments(prev => [...prev, ...result.items]);
-                setOffset(prev => prev + result.items.length);
-            }
-
-            setHasMore(result.hasMore);
-        } catch (error) {
-            console.error('Failed to load documents:', error);
-        } finally {
-            setLoading(false);
+            window.api.editor
+                .getDocuments()
+                .then(result => {
+                    if (result.length > 0) {
+                        setDocuments(result);
+                        setCurrentDocumentId(result[0].id);
+                    } else {
+                        // No documents, create a default document
+                        window.api.editor.createDocument().then(newDoc => {
+                            setDocuments([newDoc]);
+                            setCurrentDocumentId(newDoc.id);
+                        });
+                    }
+                })
+                .finally(() => setLoading(false));
+        } catch (e) {
+            toast.error(String(e));
         }
     }, []);
 
-    const refresh = useCallback(() => {
-        loadDocuments(0);
-    }, [loadDocuments]);
+    // ── Document CRUD ─────────────────────────────────────────────────────────
+    const createDocument = async () => {
+        const newDoc = await window.api.editor.createDocument();
+        setDocuments(prev => [newDoc, ...prev]);
+        setCurrentDocumentId(newDoc.id);
+    };
 
-    const loadMore = useCallback(() => {
-        if (!loading && hasMore) {
-            loadDocuments(offset);
-        }
-    }, [loading, hasMore, offset, loadDocuments]);
+    const renameDocument = async (id: string, name: string) => {
+        await window.api.editor.renameDocument(id, name);
+        setDocuments(prev => prev.map(d => (d.id === id ? { ...d, name } : d)));
+    };
 
-    const createDocument = useCallback(async (name?: string) => {
-        try {
-            const newDocument = await window.api.editor.createDocument(name);
-            // Optimistic update: add new document to the top of the list
-            setUnpinnedDocuments(prev => [newDocument, ...prev]);
-            return newDocument;
-        } catch (error) {
-            console.error('Failed to create document:', error);
-            throw error;
-        }
-    }, []);
-
-    const renameDocument = useCallback(async (id: string, name: string) => {
-        try {
-            await window.api.editor.renameDocument(id, name);
-            // Optimistic update: directly modify frontend data
-            const updateName = (documents: Document[]) =>
-                documents.map(d => (d.id === id ? { ...d, name } : d));
-            setPinnedDocuments(updateName);
-            setUnpinnedDocuments(updateName);
-        } catch (error) {
-            console.error('Failed to rename document:', error);
-            throw error;
-        }
-    }, []);
-
-    const pinDocument = useCallback(
-        async (id: string) => {
-            try {
-                // Find the document
-                const allDocuments = [...pinnedDocuments, ...unpinnedDocuments];
-                const document = allDocuments.find(d => d.id === id);
-                if (!document) return;
-
-                const newPinnedState = !document.pinned;
-                await window.api.editor.pinDocument(id, newPinnedState);
-
-                // Optimistic update: move between two lists
-                if (newPinnedState) {
-                    // Pin: move from unpinned to pinned
-                    setUnpinnedDocuments(prev => prev.filter(d => d.id !== id));
-                    setPinnedDocuments(prev => [...prev, { ...document, pinned: true }]);
-                } else {
-                    // Unpin: move from pinned to unpinned
-                    setPinnedDocuments(prev => prev.filter(d => d.id !== id));
-                    setUnpinnedDocuments(prev => [{ ...document, pinned: false }, ...prev]);
+    const pinDocument = async (id: string) => {
+        await window.api.editor.pinDocument(id);
+        setDocuments(prev => {
+            const updated = prev.map(d => {
+                if (d.id === id) {
+                    return { ...d, pinned: !d.pinned };
                 }
-            } catch (error) {
-                console.error('Failed to pin document:', error);
-                throw error;
-            }
-        },
-        [pinnedDocuments, unpinnedDocuments]
-    );
+                return d;
+            });
+            return [...updated];
+        });
+    };
 
-    const deleteDocument = useCallback(async (id: string) => {
-        try {
-            await window.api.editor.deleteDocument(id);
-            // Optimistic update: directly remove from frontend list
-            setPinnedDocuments(prev => prev.filter(d => d.id !== id));
-            setUnpinnedDocuments(prev => prev.filter(d => d.id !== id));
-        } catch (error) {
-            console.error('Failed to delete document:', error);
-            throw error;
-        }
-    }, []);
+    const deleteDocument = async (id: string) => {
+        await window.api.editor.deleteDocument(id);
+        setDocuments(prev => {
+            const remaining = prev.filter(d => d.id !== id);
+            setCurrentDocumentId(currId => {
+                if (currId === id) {
+                    return remaining.length > 0 ? remaining[0].id : null;
+                }
+                return currId;
+            });
+            return remaining;
+        });
+    };
 
-    useEffect(() => {
-        refresh();
-    }, [refresh]);
+    // ── Content save ──────────────────────────────────────────────────────────
+    const saveContent = async (docId: string, markdown: string) => {
+        await window.api.editor.saveContent(docId, markdown);
+        setContent(markdown);
+    };
+
+    // ── Agent messaging ───────────────────────────────────────────────────────
+    const sendMessage = async (docId: string, msgContent: ContentBlock[]) => {
+        if (!docId || msgContent.length === 0) return;
+        setSending(true);
+        const message = createMsg({
+            id: crypto.randomUUID(),
+            role: 'user',
+            name: 'user',
+            content: msgContent,
+        });
+        setMessages(prev => [...prev, message]);
+        await window.api.editor.sendMessage(docId, 'friday', message);
+    };
+
+    const sendUserConfirm = async (
+        docId: string,
+        toolCall: ToolCallBlock,
+        confirm: boolean,
+        replyId: string
+    ) => {
+        await window.api.editor.sendMessage(docId, 'friday', undefined, {
+            type: EventType.USER_CONFIRM_RESULT,
+            id: crypto.randomUUID(),
+            createdAt: new Date().toISOString(),
+            replyId,
+            confirmResults: [{ confirmed: confirm, toolCall }],
+        } as UserConfirmResultEvent);
+    };
 
     return {
-        pinnedDocuments,
-        unpinnedDocuments,
-        allDocuments: [...pinnedDocuments, ...unpinnedDocuments],
-        hasMore,
+        documents,
         loading,
-        loadMore,
-        refresh,
         createDocument,
         renameDocument,
         pinDocument,
         deleteDocument,
+        currentDocumentId,
+        content,
+        saveContent,
+        setCurrentDocumentId,
+        messages,
+        sending,
+        sendMessage,
+        sendUserConfirm,
     };
 }

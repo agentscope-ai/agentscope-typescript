@@ -146,11 +146,11 @@ app.whenReady().then(async () => {
     registerConfigHandlers(ipcMain);
     registerMcpHandlers(ipcMain);
     registerSkillHandlers(ipcMain);
-    registerDocumentHandlers(ipcMain);
 
     const mainWindow = createWindow();
 
     // Register handlers that need webContents
+    registerDocumentHandlers(ipcMain, mainWindow.webContents);
     registerChatHandlers(ipcMain, mainWindow.webContents);
     await registerScheduleHandlers(ipcMain, mainWindow.webContents);
 

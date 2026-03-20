@@ -106,7 +106,9 @@ export function AgentPage() {
                 },
             },
         });
-        toast.success(t('agent.saveSuccess'));
+        toast.success(t('agent.saveSuccess'), {
+            position: 'top-center',
+        });
     };
 
     return (

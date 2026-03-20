@@ -6,7 +6,6 @@ import type {
 import { Msg } from '@agentscope-ai/agentscope/message';
 import { electronAPI } from '@electron-toolkit/preload';
 import type { GetSessionsQuery, GetSessionsResult, Session } from '@shared/types/chat';
-import type { GetItemsQuery, GetItemsResult } from '@shared/types/common';
 import type { Config } from '@shared/types/config';
 import type { Document } from '@shared/types/document';
 import type { MCPServerConfig, MCPServerState } from '@shared/types/mcp';
@@ -60,19 +59,37 @@ const api = {
         },
     },
     editor: {
-        getDocuments: (query: GetItemsQuery): Promise<GetItemsResult<Document>> =>
-            ipcRenderer.invoke('document:getDocuments', query),
+        getDocuments: (): Promise<Document[]> => ipcRenderer.invoke('document:getDocuments'),
         createDocument: (name?: string): Promise<Document> =>
             ipcRenderer.invoke('document:createDocument', name),
         renameDocument: (id: string, name: string): Promise<Document> =>
             ipcRenderer.invoke('document:renameDocument', id, name),
-        pinDocument: (id: string, pinned: boolean): Promise<Document> =>
-            ipcRenderer.invoke('document:pinDocument', id, pinned),
+        pinDocument: (id: string): Promise<Document> =>
+            ipcRenderer.invoke('document:pinDocument', id),
         deleteDocument: (id: string): Promise<void> =>
             ipcRenderer.invoke('document:deleteDocument', id),
         getContent: (id: string): Promise<string> => ipcRenderer.invoke('document:getContent', id),
         saveContent: (id: string, content: string): Promise<void> =>
             ipcRenderer.invoke('document:saveContent', id, content),
+        getMessages: (docId: string): Promise<Msg[]> =>
+            ipcRenderer.invoke('document:getMessages', docId),
+        isRunning: (docId: string): Promise<boolean> =>
+            ipcRenderer.invoke('document:isRunning', docId),
+        sendMessage: (
+            docId: string,
+            agentKey: string,
+            msg?: Msg,
+            event?: UserConfirmResultEvent | ExternalExecutionResultEvent
+        ): Promise<void> => ipcRenderer.invoke('document:sendMessage', docId, agentKey, msg, event),
+        subscribeAgentEvents: (
+            docId: string,
+            callback: (event: AgentEvent) => void
+        ): (() => void) => {
+            const channel = `agent:event:document:${docId}`;
+            const handler = (_: Electron.IpcRendererEvent, event: AgentEvent) => callback(event);
+            ipcRenderer.on(channel, handler);
+            return () => ipcRenderer.removeListener(channel, handler);
+        },
     },
     schedule: {
         list: (): Promise<ScheduleWithStatus[]> => ipcRenderer.invoke('schedule:list'),

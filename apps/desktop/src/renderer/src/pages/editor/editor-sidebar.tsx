@@ -2,7 +2,6 @@ import type { BaseListItem } from '@shared/types/common';
 import {
     ArrowDownToLine,
     ArrowUpToLine,
-    ChevronDown,
     CornerDownLeft,
     Ellipsis,
     Loader2,
@@ -38,17 +37,17 @@ import {
     SidebarGroupLabel,
     SidebarHeader,
 } from '@/components/ui/sidebar';
+import { Spinner } from '@/components/ui/spinner';
 
-interface PageSidebarProps<T extends BaseListItem> {
+interface EditorSidebarProps<T extends BaseListItem> {
+    selectedItemId: string | null;
     items: T[];
-    hasMore: boolean;
     loading: boolean;
     onItemClick: (item: T) => void;
     onCreateClick: () => void;
     onPinClick: (id: string) => void;
     onRenameClick: (id: string, newName: string) => Promise<void>;
     onDeleteClick: (id: string) => Promise<void>;
-    onLoadMore: () => void;
     locale: {
         createButton: string;
         itemsTitle: string;
@@ -65,49 +64,48 @@ interface PageSidebarProps<T extends BaseListItem> {
  *
  * @param root0 - The component props.
  * @param root0.items - Array of items to display in the sidebar.
- * @param root0.hasMore - Whether there are more items to load.
+ * @param root0.selectedItemId
  * @param root0.loading - Whether items are currently being loaded.
  * @param root0.onItemClick - Callback when an item is clicked.
  * @param root0.onCreateClick - Callback when the create button is clicked.
  * @param root0.onPinClick - Callback when an item is pinned/unpinned.
  * @param root0.onRenameClick - Callback when an item is renamed.
  * @param root0.onDeleteClick - Callback when an item is deleted.
- * @param root0.onLoadMore - Callback when load more is triggered.
  * @param root0.locale - Localization strings for the sidebar.
- * @returns A PageSidebar component.
+ * @returns A EditorSidebar component.
  */
-export function PageSidebar<T extends BaseListItem>({
+export function EditorSidebar<T extends BaseListItem>({
     items,
-    hasMore,
+    selectedItemId,
     loading,
     onItemClick,
     onCreateClick,
     onPinClick,
     onRenameClick,
     onDeleteClick,
-    onLoadMore,
     locale,
-}: PageSidebarProps<T>) {
+}: EditorSidebarProps<T>) {
     const { t } = useTranslation();
     const [renameDialogOpen, setRenameDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const [selectedItem, setSelectedItem] = useState<T | null>(null);
     const [renameValue, setRenameValue] = useState('');
     const [renameLoading, setRenameLoading] = useState(false);
+    const [toDeleteItemId, setToDeleteItemId] = useState<string | null>(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [renameError, setRenameError] = useState<string | null>(null);
     const [deleteError, setDeleteError] = useState<string | null>(null);
 
     const handleRenameClick = (item: T) => {
-        setSelectedItem(item);
         setRenameValue(item.name);
         setRenameError(null);
         setRenameDialogOpen(true);
     };
 
     const handleRenameConfirm = async () => {
-        if (!selectedItem || !renameValue.trim()) return;
+        if (!selectedItemId || !renameValue.trim()) return;
         // No change, close directly
+        const selectedItem = items.find(it => it.id === selectedItemId);
+        if (!selectedItem) return;
         if (renameValue.trim() === selectedItem.name) {
             setRenameDialogOpen(false);
             return;
@@ -117,7 +115,7 @@ export function PageSidebar<T extends BaseListItem>({
         setRenameError(null);
 
         try {
-            await onRenameClick(selectedItem.id, renameValue.trim());
+            await onRenameClick(selectedItemId, renameValue.trim());
             setRenameDialogOpen(false);
             setRenameValue('');
         } catch (error) {
@@ -128,19 +126,19 @@ export function PageSidebar<T extends BaseListItem>({
     };
 
     const handleDeleteClick = (item: T) => {
-        setSelectedItem(item);
+        setToDeleteItemId(item.id);
         setDeleteError(null);
         setDeleteDialogOpen(true);
     };
 
     const handleDeleteConfirm = async () => {
-        if (!selectedItem) return;
+        if (!toDeleteItemId) return;
 
         setDeleteLoading(true);
         setDeleteError(null);
 
         try {
-            await onDeleteClick(selectedItem.id);
+            await onDeleteClick(toDeleteItemId);
             setDeleteDialogOpen(false);
         } catch (error) {
             setDeleteError(error instanceof Error ? error.message : 'Failed to delete');
@@ -162,92 +160,78 @@ export function PageSidebar<T extends BaseListItem>({
                         <SidebarGroupLabel>{locale.itemsTitle}</SidebarGroupLabel>
                         <SidebarGroupContent className="flex-1 overflow-hidden">
                             <div className="h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                                {items.map(item => (
-                                    <Button
-                                        variant="ghost"
-                                        key={item.id}
-                                        className="group flex w-full h-9 text-sm items-center px-3 rounded-sm justify-between"
-                                        onClick={() => onItemClick(item)}
-                                    >
-                                        <div className="flex items-center gap-2 truncate">
-                                            {item.pinned && (
-                                                <ArrowUpToLine className="h-3 w-3 flex-shrink-0" />
-                                            )}
-                                            <span className="truncate">{item.name}</span>
-                                        </div>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger>
-                                                <Button
-                                                    className="hidden group-hover:flex"
-                                                    size="icon-sm"
-                                                    variant="ghost"
-                                                    onClick={e => e.stopPropagation()}
-                                                >
-                                                    <Ellipsis />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent>
-                                                <DropdownMenuItem
-                                                    onClick={e => {
-                                                        e.stopPropagation();
-                                                        onPinClick(item.id);
-                                                    }}
-                                                >
-                                                    {item.pinned ? (
-                                                        <>
-                                                            <ArrowDownToLine />
-                                                            <span>{t('common.unpin')}</span>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <ArrowUpToLine />
-                                                            <span>{t('common.pin')}</span>
-                                                        </>
-                                                    )}
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem
-                                                    onClick={e => {
-                                                        e.stopPropagation();
-                                                        handleRenameClick(item);
-                                                    }}
-                                                >
-                                                    <PencilLine />
-                                                    <span>{t('common.rename')}</span>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem
-                                                    onClick={e => {
-                                                        e.stopPropagation();
-                                                        handleDeleteClick(item);
-                                                    }}
-                                                >
-                                                    <Trash2 />
-                                                    <span>{t('common.delete')}</span>
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </Button>
-                                ))}
-
-                                {/* Load More Button */}
-                                {hasMore && (
-                                    <Button
-                                        variant="ghost"
-                                        className="w-full h-9 text-sm"
-                                        onClick={onLoadMore}
-                                        disabled={loading}
-                                    >
-                                        {loading ? (
-                                            <>
-                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                {t('common.loading')}
-                                            </>
-                                        ) : (
-                                            <>
-                                                {locale.loadMore}
-                                                <ChevronDown className="ml-2 h-4 w-4" />
-                                            </>
-                                        )}
-                                    </Button>
+                                {loading ? (
+                                    <div className="size-full">
+                                        <Spinner />
+                                    </div>
+                                ) : (
+                                    items.map(item => (
+                                        <Button
+                                            key={item.id}
+                                            variant={
+                                                item.id === selectedItemId ? 'secondary' : 'ghost'
+                                            }
+                                            className="group flex w-full h-9 text-sm items-center px-3 rounded-sm justify-between"
+                                            onClick={() => onItemClick(item)}
+                                        >
+                                            <div className="flex items-center gap-2 truncate">
+                                                {item.pinned && (
+                                                    <ArrowUpToLine className="h-3 w-3 flex-shrink-0" />
+                                                )}
+                                                <span className="truncate">{item.name}</span>
+                                            </div>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger>
+                                                    <Button
+                                                        className="hidden group-hover:flex"
+                                                        size="icon-sm"
+                                                        variant="ghost"
+                                                        onClick={e => e.stopPropagation()}
+                                                    >
+                                                        <Ellipsis />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent>
+                                                    <DropdownMenuItem
+                                                        onClick={e => {
+                                                            e.stopPropagation();
+                                                            onPinClick(item.id);
+                                                        }}
+                                                    >
+                                                        {item.pinned ? (
+                                                            <>
+                                                                <ArrowDownToLine />
+                                                                <span>{t('common.unpin')}</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <ArrowUpToLine />
+                                                                <span>{t('common.pin')}</span>
+                                                            </>
+                                                        )}
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        onClick={e => {
+                                                            e.stopPropagation();
+                                                            handleRenameClick(item);
+                                                        }}
+                                                    >
+                                                        <PencilLine />
+                                                        <span>{t('common.rename')}</span>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        onClick={e => {
+                                                            e.stopPropagation();
+                                                            handleDeleteClick(item);
+                                                        }}
+                                                    >
+                                                        <Trash2 />
+                                                        <span>{t('common.delete')}</span>
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </Button>
+                                    ))
                                 )}
                             </div>
                         </SidebarGroupContent>
