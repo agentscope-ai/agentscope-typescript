@@ -26,6 +26,8 @@
         "inputPlaceholder": "在此输入消息...",
         "loadMore": "加载更多",
         "moreLines": "... +{{count}} 行",
+        "noMessages": "暂无消息",
+        "noMessagesDesc": "发送消息开始对话",
         "renameSession": {
             "description": "为会话 {{sessionName}} 输入一个新名称。",
             "title": "重命名会话"
@@ -53,12 +55,12 @@
         "english": "English",
         "enterprise": "企业版",
         "failed": "失败",
-        "friday": "Friday",
         "inactive": "未激活",
         "information": "信息",
         "interrupted": "已中断",
         "language": "语言",
         "llm": "LLM",
+        "loadMore": "加载更多",
         "loading": "加载中",
         "mcp": "MCP",
         "model": "模型",

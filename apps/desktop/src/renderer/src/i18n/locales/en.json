@@ -26,12 +26,12 @@
         "inputPlaceholder": "Type your message here...",
         "loadMore": "Load More",
         "moreLines": "... +{{count}} lines",
+        "noMessages": "No Messages Yet",
+        "noMessagesDesc": "Start your conversation by sending a message",
         "renameSession": {
             "description": "Enter a new name for the session \"{{sessionName}}\".",
             "title": "Rename Session"
-        },
-        "noMessages": "No Messages Yet",
-        "noMessagesDesc": "Start your conversation by sending a message"
+        }
     },
     "common": {
         "active": "Active",
@@ -55,15 +55,14 @@
         "english": "English",
         "enterprise": "Enterprise",
         "failed": "Failed",
-        "friday": "Friday",
         "inactive": "Inactive",
         "information": "Information",
         "interrupted": "Interrupted",
         "language": "Language",
         "llm": "LLM",
+        "loadMore": "Load More",
         "loading": "Loading",
         "mcp": "MCP",
-        "loadMore": "Load More",
         "model": "Model",
         "name": "Name",
         "no": "No",
