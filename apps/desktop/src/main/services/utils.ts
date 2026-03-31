@@ -85,7 +85,7 @@ export async function getToolkit(sessionId: string, agentKey: string) {
         builtInSkillTool: true,
     });
     // Register all available MCP clients
-    const mcpClients = mcpGetAvailableClients();
+    const mcpClients = await mcpGetAvailableClients();
     for (const client of mcpClients) {
         await toolkit.registerMCPClient({ client });
     }

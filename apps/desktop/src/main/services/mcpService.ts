@@ -209,7 +209,7 @@ export async function mcpShutdownAll(): Promise<void> {
  *
  * @returns Array of MCP client instances
  */
-export function mcpGetAvailableClients(): (HTTPMCPClient | StdioMCPClient)[] {
+export async function mcpGetAvailableClients(): Promise<(HTTPMCPClient | StdioMCPClient)[]> {
     const configs = loadConfigs();
     const clients: (HTTPMCPClient | StdioMCPClient)[] = [];
 
@@ -221,8 +221,10 @@ export function mcpGetAvailableClients(): (HTTPMCPClient | StdioMCPClient)[] {
                 clients.push(entry.client);
             }
         } else {
-            // For http/sse, create new clients on demand
-            clients.push(createClient(config));
+            // For http/sse, create new clients on demand and connect them
+            const client = createClient(config);
+            await client.connect();
+            clients.push(client);
         }
     }
 
