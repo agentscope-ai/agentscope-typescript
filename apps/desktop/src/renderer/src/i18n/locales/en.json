@@ -90,6 +90,12 @@
         "createDocument": "Create Document",
         "deleteConfirm": "Are you sure you want to delete this document? This action cannot be undone.",
         "documents": "Documents",
+        "leaveWhileRunning": {
+            "confirm": "Leave anyway",
+            "description": "Leaving will interrupt the agent's modifications.",
+            "title": "Document being modified"
+        },
+        "placeholder": "Please enter...",
         "renameDescription": "Enter a new name for this document."
     },
     "mcp": {

@@ -39,15 +39,12 @@ import { EditorSidebar } from '@/pages/editor/editor-sidebar';
 
 interface Props {
     value?: string;
+    readonly?: boolean;
+    placeholder?: string;
     onChange?: (markdown: string) => void;
 }
 
-interface Props {
-    value?: string;
-    onChange?: (markdown: string) => void;
-}
-
-export const MilkdownEditor: FC<Props> = ({ value, onChange }) => {
+export const MilkdownEditor: FC<Props> = ({ value, readonly, placeholder, onChange }) => {
     const onChangeRef = useRef(onChange);
     const crepeRef = useRef<Crepe | null>(null);
     const prevExternalValue = useRef(value);
@@ -55,6 +52,12 @@ export const MilkdownEditor: FC<Props> = ({ value, onChange }) => {
     useEffect(() => {
         onChangeRef.current = onChange;
     }, [onChange]);
+
+    useEffect(() => {
+        if (crepeRef.current) {
+            crepeRef.current.setReadonly(readonly ?? false);
+        }
+    }, [readonly]);
 
     useEditor(root => {
         const crepe = new Crepe({
@@ -64,8 +67,12 @@ export const MilkdownEditor: FC<Props> = ({ value, onChange }) => {
                 [CrepeFeature.ImageBlock]: {
                     proxyDomURL: (url: string) => url,
                 },
+                [CrepeFeature.Placeholder]: {
+                    text: placeholder ?? 'Please enter...',
+                },
             },
         });
+        crepe.setReadonly(readonly ?? false);
         crepe.editor.config(ctx => {
             ctx.get(listenerCtx).markdownUpdated((_ctx, markdown, prevMarkdown) => {
                 if (markdown !== prevMarkdown) {
@@ -104,7 +111,9 @@ export function EditorPage() {
         pinDocument,
         deleteDocument,
         content,
+        updateContent,
         saveContent,
+        isDirty,
         currentDocumentId,
         setCurrentDocumentId,
         messages,
@@ -113,7 +122,56 @@ export function EditorPage() {
         sendUserConfirm,
     } = useDocuments();
 
-    const blocker = useBlocker(sending);
+    // Pending navigation action when agent is running and user tries to switch/create
+    const [pendingNavAction, setPendingNavAction] = useState<(() => void) | null>(null);
+
+    const blocker = useBlocker(sending || isDirty);
+
+    // Auto-save and proceed when blocked only due to unsaved changes (agent not running)
+    useEffect(() => {
+        if (blocker.state === 'blocked' && !sending) {
+            const proceed = async () => {
+                if (currentDocumentId && isDirty) {
+                    await saveContent(currentDocumentId, content);
+                }
+                blocker.proceed?.();
+            };
+            proceed();
+        }
+    }, [blocker, sending, currentDocumentId, isDirty, saveContent, content]);
+
+    // Save on Ctrl+S / Cmd+S
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                if (currentDocumentId && isDirty) {
+                    saveContent(currentDocumentId, content)
+                        .then(() => {
+                            // TODO: Move this to the app statusbar once it supports transient messages
+                            toast.success('Document saved', { position: 'top-center' });
+                        })
+                        .catch(err => {
+                            toast.error(`Failed to save: ${err}`, { position: 'top-center' });
+                        });
+                }
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [currentDocumentId, content, isDirty, saveContent]);
+
+    // Save before switching documents
+    const prevDocumentId = useRef(currentDocumentId);
+    useEffect(() => {
+        const prev = prevDocumentId.current;
+        if (prev && prev !== currentDocumentId && isDirty) {
+            saveContent(prev, content).catch(err => {
+                console.error('Failed to save on document switch:', err);
+            });
+        }
+        prevDocumentId.current = currentDocumentId;
+    }, [currentDocumentId, content, isDirty, saveContent]);
 
     // Set title bar button to close the sidebar
     useEffect(() => {
@@ -136,7 +194,7 @@ export function EditorPage() {
 
     return (
         <div className="flex h-full w-full">
-            <Dialog open={blocker.state === 'blocked'}>
+            <Dialog open={blocker.state === 'blocked' && sending}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>
@@ -153,7 +211,53 @@ export function EditorPage() {
                         <Button variant="outline" onClick={() => blocker.reset?.()}>
                             {t('common.cancel', 'Cancel')}
                         </Button>
-                        <Button variant="destructive" onClick={() => blocker.proceed?.()}>
+                        <Button
+                            variant="destructive"
+                            onClick={async () => {
+                                if (currentDocumentId && isDirty) {
+                                    await saveContent(currentDocumentId, content);
+                                }
+                                blocker.proceed?.();
+                            }}
+                        >
+                            {t('editor.leaveWhileRunning.confirm', 'Leave anyway')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog
+                open={pendingNavAction !== null}
+                onOpenChange={open => {
+                    if (!open) setPendingNavAction(null);
+                }}
+            >
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>
+                            {t('editor.leaveWhileRunning.title', 'Agent is still running')}
+                        </DialogTitle>
+                        <DialogDescription>
+                            {t(
+                                'editor.leaveWhileRunning.description',
+                                'The agent is currently processing your document. If you leave now, any pending tool calls will be deferred until you return to this document.'
+                            )}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setPendingNavAction(null)}>
+                            {t('common.cancel', 'Cancel')}
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={async () => {
+                                if (currentDocumentId && isDirty) {
+                                    await saveContent(currentDocumentId, content);
+                                }
+                                pendingNavAction?.();
+                                setPendingNavAction(null);
+                            }}
+                        >
                             {t('editor.leaveWhileRunning.confirm', 'Leave anyway')}
                         </Button>
                     </DialogFooter>
@@ -165,8 +269,20 @@ export function EditorPage() {
                     items={documents}
                     loading={loading}
                     selectedItemId={currentDocumentId}
-                    onItemClick={doc => setCurrentDocumentId(doc.id)}
-                    onCreateClick={() => createDocument()}
+                    onItemClick={doc => {
+                        if (sending) {
+                            setPendingNavAction(() => () => setCurrentDocumentId(doc.id));
+                        } else {
+                            setCurrentDocumentId(doc.id);
+                        }
+                    }}
+                    onCreateClick={() => {
+                        if (sending) {
+                            setPendingNavAction(() => () => createDocument());
+                        } else {
+                            createDocument();
+                        }
+                    }}
                     onPinClick={pinDocument}
                     onRenameClick={renameDocument}
                     onDeleteClick={deleteDocument}
@@ -185,22 +301,16 @@ export function EditorPage() {
                 <MilkdownProvider>
                     <MilkdownEditor
                         value={content}
-                        onChange={async content => {
-                            try {
-                                if (currentDocumentId) {
-                                    await saveContent(currentDocumentId, content);
-                                } else {
-                                    toast.error(
-                                        `No documents exists, please create or select a document first`,
-                                        {
-                                            position: 'top-center',
-                                        }
-                                    );
-                                }
-                            } catch (e) {
-                                toast.error(String(e), {
-                                    position: 'top-center',
-                                });
+                        readonly={sending}
+                        placeholder={t('editor.placeholder', 'Please enter...')}
+                        onChange={newContent => {
+                            if (currentDocumentId) {
+                                updateContent(newContent);
+                            } else {
+                                toast.error(
+                                    `No documents exists, please create or select a document first`,
+                                    { position: 'top-center' }
+                                );
                             }
                         }}
                     />

@@ -90,6 +90,12 @@
         "createDocument": "创建文档",
         "deleteConfirm": "确定要删除此文档吗？此操作无法撤销。",
         "documents": "文档",
+        "leaveWhileRunning": {
+            "confirm": "仍然离开",
+            "description": "离开将中断智能体的修改操作。",
+            "title": "文档修改中"
+        },
+        "placeholder": "请输入内容...",
         "renameDescription": "为此文档输入一个新名称。"
     },
     "mcp": {
