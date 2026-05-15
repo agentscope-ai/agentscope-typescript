@@ -267,7 +267,7 @@ describe('Human-in-the-loop', () => {
             metadata: {},
             name: 'Friday',
             role: 'assistant',
-            timestamp: expect.any(String),
+            created_at: expect.any(String),
         });
     });
 
@@ -508,7 +508,7 @@ describe('Human-in-the-loop', () => {
             metadata: {},
             name: 'Friday',
             role: 'assistant',
-            timestamp: expect.any(String),
+            created_at: expect.any(String),
         });
     });
 
