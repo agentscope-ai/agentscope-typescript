@@ -137,9 +137,9 @@ export function useDocuments() {
                 async (event: AgentEvent) => {
                     // Intercept TOOL_CALL_DELTA to stream DocumentWrite content via typewriter
                     if (event.type === EventType.TOOL_CALL_DELTA) {
-                        const prev = toolCallInputsRef.current.get(event.toolCallId) ?? '';
+                        const prev = toolCallInputsRef.current.get(event.tool_call_id) ?? '';
                         const accumulated = prev + event.delta;
-                        toolCallInputsRef.current.set(event.toolCallId, accumulated);
+                        toolCallInputsRef.current.set(event.tool_call_id, accumulated);
 
                         // Extract the partial value of the "content" field from incomplete JSON
                         const match = /"content"\s*:\s*"((?:[^"\\]|\\.)*)/.exec(accumulated);
@@ -158,7 +158,7 @@ export function useDocuments() {
                     }
 
                     // Handle the REQUIRE_EXTERNAL_EXECUTION event by executing the requested tools and sending back the results
-                    const results = event.toolCalls.map(toolCall => {
+                    const results = event.tool_calls.map(toolCall => {
                         const input = JSON.parse(toolCall.input || '{}');
                         switch (toolCall.name) {
                             case 'DocumentRead':
@@ -203,9 +203,9 @@ export function useDocuments() {
                     await window.api.editor.sendMessage(currentDocumentId, 'friday', undefined, {
                         type: EventType.EXTERNAL_EXECUTION_RESULT,
                         id: crypto.randomUUID(),
-                        createdAt: new Date().toISOString(),
-                        replyId: event.replyId,
-                        executionResults: results,
+                        created_at: new Date().toISOString(),
+                        reply_id: event.reply_id,
+                        execution_results: results,
                     } as ExternalExecutionResultEvent);
                 }
             );
@@ -321,9 +321,9 @@ export function useDocuments() {
         await window.api.editor.sendMessage(docId, 'friday', undefined, {
             type: EventType.USER_CONFIRM_RESULT,
             id: crypto.randomUUID(),
-            createdAt: new Date().toISOString(),
-            replyId,
-            confirmResults: [{ confirmed: confirm, toolCall }],
+            created_at: new Date().toISOString(),
+            reply_id: replyId,
+            confirm_results: [{ confirmed: confirm, tool_call: toolCall }],
         } as UserConfirmResultEvent);
     };
 

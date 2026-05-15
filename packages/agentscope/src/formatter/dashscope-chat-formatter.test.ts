@@ -157,7 +157,7 @@ describe('DashScopeChatFormatter', () => {
                         source: {
                             type: 'url',
                             url: 'https://example.com/image.png',
-                            mediaType: 'image/png',
+                            media_type: 'image/png',
                         },
                     },
                 ],
@@ -180,7 +180,7 @@ describe('DashScopeChatFormatter', () => {
                     {
                         id: crypto.randomUUID(),
                         type: 'data',
-                        source: { type: 'base64', data: 'xxx', mediaType: 'audio/mp3' },
+                        source: { type: 'base64', data: 'xxx', media_type: 'audio/mp3' },
                     },
                     {
                         id: crypto.randomUUID(),
@@ -188,7 +188,7 @@ describe('DashScopeChatFormatter', () => {
                         source: {
                             type: 'url',
                             url: 'file:///local/path/to/video.mp4',
-                            mediaType: 'video/mp4',
+                            media_type: 'video/mp4',
                         },
                     },
                     {
@@ -197,7 +197,7 @@ describe('DashScopeChatFormatter', () => {
                         source: {
                             type: 'url',
                             url: 'file:///C:/local/path/to/image.jpg',
-                            mediaType: 'image/jpg',
+                            media_type: 'image/jpg',
                         },
                     },
                 ],
@@ -276,19 +276,19 @@ describe('DashScopeChatFormatter', () => {
                                 source: {
                                     type: 'url',
                                     url: 'https://example.com/image1.png',
-                                    mediaType: 'image/png',
+                                    media_type: 'image/png',
                                 },
                             },
                             { id: crypto.randomUUID(), type: 'text', text: 'content 2' },
                             {
                                 id: crypto.randomUUID(),
                                 type: 'data',
-                                source: { type: 'base64', data: 'xxx', mediaType: 'image/png' },
+                                source: { type: 'base64', data: 'xxx', media_type: 'image/png' },
                             },
                             {
                                 id: crypto.randomUUID(),
                                 type: 'data',
-                                source: { type: 'base64', data: 'yyy', mediaType: 'audio/mp3' },
+                                source: { type: 'base64', data: 'yyy', media_type: 'audio/mp3' },
                             },
                             {
                                 id: crypto.randomUUID(),
@@ -296,7 +296,7 @@ describe('DashScopeChatFormatter', () => {
                                 source: {
                                     type: 'url',
                                     url: '/local/path/to/video1.mp4',
-                                    mediaType: 'video/mp4',
+                                    media_type: 'video/mp4',
                                 },
                             },
                         ],

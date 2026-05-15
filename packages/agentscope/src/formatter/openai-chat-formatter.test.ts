@@ -133,13 +133,13 @@ describe('OpenAIChatFormatter', () => {
                         source: {
                             type: 'url',
                             url: 'https://example.com/image.png',
-                            mediaType: 'image/png',
+                            media_type: 'image/png',
                         },
                     },
                     {
                         id: crypto.randomUUID(),
                         type: 'data',
-                        source: { type: 'base64', data: 'xxx', mediaType: 'audio/mp3' },
+                        source: { type: 'base64', data: 'xxx', media_type: 'audio/mp3' },
                     },
                 ],
                 role: 'user',
@@ -153,7 +153,7 @@ describe('OpenAIChatFormatter', () => {
                         source: {
                             type: 'base64',
                             data: 'assistant-audio',
-                            mediaType: 'audio/mp3',
+                            media_type: 'audio/mp3',
                         },
                     },
                 ],
@@ -204,7 +204,7 @@ describe('OpenAIChatFormatter', () => {
                             { type: 'text', text: 'content 1', id: crypto.randomUUID() },
                             {
                                 type: 'data',
-                                source: { type: 'base64', data: 'img64', mediaType: 'image/png' },
+                                source: { type: 'base64', data: 'img64', media_type: 'image/png' },
                                 id: crypto.randomUUID(),
                             },
                         ],

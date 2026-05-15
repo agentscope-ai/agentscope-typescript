@@ -13,7 +13,7 @@ describe('Message', () => {
         ]);
         expect(msg.role).toBe('user');
         expect(msg.metadata).toEqual({});
-        expect(msg.timestamp).toBeDefined();
+        expect(msg.created_at).toBeDefined();
         expect(msg.id).toBeDefined();
         expect(getTextContent(msg)).toBe('Hello, world!');
 

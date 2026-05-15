@@ -39,10 +39,10 @@ export abstract class FormatterBase {
                     textualOutput.push(block.text);
                     break;
                 default:
-                    const type = block.source.mediaType.split('/')[0];
+                    const type = block.source.media_type.split('/')[0];
                     if (type !== 'image' && type !== 'audio' && type !== 'video') {
                         console.log(
-                            `Unsupported media type '${block.source.mediaType}' in tool output. Only image, audio and video are supported.`
+                            `Unsupported media type '${block.source.media_type}' in tool output. Only image, audio and video are supported.`
                         );
                         break;
                     }
@@ -79,7 +79,7 @@ export abstract class FormatterBase {
         // Attach prefix and suffix system-info tags if there are promoted blocks
         const promotedBlocks: (TextBlock | DataBlock)[] = [];
         promotedData.forEach(({ id, block }) => {
-            const type = block.source.mediaType.split('/')[0];
+            const type = block.source.media_type.split('/')[0];
             promotedBlocks.push({
                 id: crypto.randomUUID(),
                 type: 'text',

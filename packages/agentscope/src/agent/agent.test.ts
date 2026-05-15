@@ -93,7 +93,7 @@ describe('Human-in-the-loop', () => {
 
         expect(lastEvent).toMatchObject({
             type: EventType.REQUIRE_USER_CONFIRM,
-            toolCalls: [
+            tool_calls: [
                 {
                     type: 'tool_call',
                     id: '1',
@@ -112,7 +112,7 @@ describe('Human-in-the-loop', () => {
         });
 
         expect(await agent.toJSON()).toMatchObject({
-            replyId: expect.any(String),
+            reply_id: expect.any(String),
             confirmedToolCallIds: [],
             curIter: 0,
         });
@@ -140,7 +140,7 @@ describe('Human-in-the-loop', () => {
                 metadata: {},
                 name: 'Friday',
                 role: 'assistant',
-                timestamp: expect.any(String),
+                created_at: expect.any(String),
             },
         ]);
 
@@ -148,13 +148,13 @@ describe('Human-in-the-loop', () => {
         for await (const event of agent.replyStream({
             event: {
                 id: 'xxx',
-                createdAt: new Date().toISOString(),
+                created_at: new Date().toISOString(),
                 type: EventType.USER_CONFIRM_RESULT,
-                replyId: agent.replyId,
-                confirmResults: [
+                reply_id: agent.replyId,
+                confirm_results: [
                     {
                         confirmed: true,
-                        toolCall: {
+                        tool_call: {
                             type: 'tool_call',
                             id: '1',
                             name: 'Bash',
@@ -170,8 +170,8 @@ describe('Human-in-the-loop', () => {
         // Verify the agent still yields user confirmation for the second tool call
         expect(lastEvent).toMatchObject({
             type: EventType.REQUIRE_USER_CONFIRM,
-            replyId: expect.any(String),
-            toolCalls: [
+            reply_id: expect.any(String),
+            tool_calls: [
                 {
                     type: 'tool_call',
                     id: '2',
@@ -219,13 +219,13 @@ describe('Human-in-the-loop', () => {
         const res = agent.replyStream({
             event: {
                 id: 'xxx',
-                createdAt: new Date().toISOString(),
+                created_at: new Date().toISOString(),
                 type: EventType.USER_CONFIRM_RESULT,
-                replyId: agent.replyId,
-                confirmResults: [
+                reply_id: agent.replyId,
+                confirm_results: [
                     {
                         confirmed: false,
-                        toolCall: {
+                        tool_call: {
                             type: 'tool_call',
                             id: '2',
                             name: 'Bash',
@@ -249,9 +249,9 @@ describe('Human-in-the-loop', () => {
         // Verify the lastEvent
         expect(lastEvent).toMatchObject({
             id: expect.any(String),
-            type: EventType.RUN_FINISHED,
-            createdAt: expect.any(String),
-            replyId: agent.replyId,
+            type: EventType.REPLY_END,
+            created_at: expect.any(String),
+            reply_id: agent.replyId,
         });
 
         // Verify the final agent reply msg
@@ -330,7 +330,7 @@ describe('Human-in-the-loop', () => {
         // Verify the agent emits REQUIRE_EXTERNAL_EXECUTION event
         expect(lastEvent).toMatchObject({
             type: EventType.REQUIRE_EXTERNAL_EXECUTION,
-            toolCalls: [
+            tool_calls: [
                 {
                     type: 'tool_call',
                     id: '1',
@@ -348,7 +348,7 @@ describe('Human-in-the-loop', () => {
 
         // Verify agent state
         expect(await agent.toJSON()).toMatchObject({
-            replyId: expect.any(String),
+            reply_id: expect.any(String),
             confirmedToolCallIds: [],
             curIter: 0,
         });
@@ -374,7 +374,7 @@ describe('Human-in-the-loop', () => {
                 metadata: {},
                 name: 'Friday',
                 role: 'assistant',
-                timestamp: expect.any(String),
+                created_at: expect.any(String),
             },
         ]);
 
@@ -382,10 +382,10 @@ describe('Human-in-the-loop', () => {
         for await (const event of agent.replyStream({
             event: {
                 id: 'xxx',
-                createdAt: new Date().toISOString(),
+                created_at: new Date().toISOString(),
                 type: EventType.EXTERNAL_EXECUTION_RESULT,
-                replyId: agent.replyId,
-                executionResults: [
+                reply_id: agent.replyId,
+                execution_results: [
                     {
                         type: 'tool_result',
                         id: '1',
@@ -408,8 +408,8 @@ describe('Human-in-the-loop', () => {
         // Verify the agent still requires external execution for the second tool
         expect(lastEvent).toMatchObject({
             type: EventType.REQUIRE_EXTERNAL_EXECUTION,
-            replyId: expect.any(String),
-            toolCalls: [
+            reply_id: expect.any(String),
+            tool_calls: [
                 {
                     type: 'tool_call',
                     id: '2',
@@ -456,10 +456,10 @@ describe('Human-in-the-loop', () => {
         const res = agent.replyStream({
             event: {
                 id: 'xxx',
-                createdAt: new Date().toISOString(),
+                created_at: new Date().toISOString(),
                 type: EventType.EXTERNAL_EXECUTION_RESULT,
-                replyId: agent.replyId,
-                executionResults: [
+                reply_id: agent.replyId,
+                execution_results: [
                     {
                         type: 'tool_result',
                         id: '2',
@@ -490,9 +490,9 @@ describe('Human-in-the-loop', () => {
         // Verify the lastEvent is RUN_FINISHED
         expect(lastEvent).toMatchObject({
             id: expect.any(String),
-            type: EventType.RUN_FINISHED,
-            createdAt: expect.any(String),
-            replyId: agent.replyId,
+            type: EventType.REPLY_END,
+            created_at: expect.any(String),
+            reply_id: agent.replyId,
         });
 
         // Verify the final agent reply msg
@@ -602,7 +602,7 @@ describe('Human-in-the-loop', () => {
         // Verify the agent emits REQUIRE_EXTERNAL_EXECUTION event for the first tool
         expect(lastEvent).toMatchObject({
             type: EventType.REQUIRE_EXTERNAL_EXECUTION,
-            toolCalls: [
+            tool_calls: [
                 {
                     type: 'tool_call',
                     id: '1',
@@ -614,7 +614,7 @@ describe('Human-in-the-loop', () => {
 
         // Verify agent state
         expect(await agent.toJSON()).toMatchObject({
-            replyId: expect.any(String),
+            reply_id: expect.any(String),
             confirmedToolCallIds: [],
             curIter: 0,
         });
@@ -623,10 +623,10 @@ describe('Human-in-the-loop', () => {
         for await (const event of agent.replyStream({
             event: {
                 id: 'xxx',
-                createdAt: new Date().toISOString(),
+                created_at: new Date().toISOString(),
                 type: EventType.EXTERNAL_EXECUTION_RESULT,
-                replyId: agent.replyId,
-                executionResults: [
+                reply_id: agent.replyId,
+                execution_results: [
                     {
                         type: 'tool_result',
                         id: '1',
@@ -649,8 +649,8 @@ describe('Human-in-the-loop', () => {
         // Verify the agent now requires user confirmation for the second tool
         expect(lastEvent).toMatchObject({
             type: EventType.REQUIRE_USER_CONFIRM,
-            replyId: expect.any(String),
-            toolCalls: [
+            reply_id: expect.any(String),
+            tool_calls: [
                 {
                     type: 'tool_call',
                     id: '2',
@@ -663,7 +663,7 @@ describe('Human-in-the-loop', () => {
 
         // Verify agent state after external execution
         expect(await agent.toJSON()).toMatchObject({
-            replyId: expect.any(String),
+            reply_id: expect.any(String),
             confirmedToolCallIds: [],
             curIter: 0,
         });
@@ -681,13 +681,13 @@ describe('Human-in-the-loop', () => {
         for await (const event of agent.replyStream({
             event: {
                 id: 'xxx',
-                createdAt: new Date().toISOString(),
+                created_at: new Date().toISOString(),
                 type: EventType.USER_CONFIRM_RESULT,
-                replyId: agent.replyId,
-                confirmResults: [
+                reply_id: agent.replyId,
+                confirm_results: [
                     {
                         confirmed: true,
-                        toolCall: {
+                        tool_call: {
                             type: 'tool_call',
                             id: '2',
                             name: 'ConfirmTool',
@@ -703,9 +703,9 @@ describe('Human-in-the-loop', () => {
         // Verify the lastEvent is RUN_FINISHED
         expect(lastEvent).toMatchObject({
             id: expect.any(String),
-            type: EventType.RUN_FINISHED,
-            createdAt: expect.any(String),
-            replyId: agent.replyId,
+            type: EventType.REPLY_END,
+            created_at: expect.any(String),
+            reply_id: agent.replyId,
         });
 
         // Verify the agent context includes all three tool calls, their results, and the final text
@@ -841,7 +841,7 @@ describe('Human-in-the-loop', () => {
         // Verify the agent emits REQUIRE_USER_CONFIRM event for both tools
         expect(lastEvent).toMatchObject({
             type: EventType.REQUIRE_USER_CONFIRM,
-            toolCalls: [
+            tool_calls: [
                 {
                     type: 'tool_call',
                     id: '1',
@@ -861,7 +861,7 @@ describe('Human-in-the-loop', () => {
 
         // Verify agent state
         expect(await agent.toJSON()).toMatchObject({
-            replyId: expect.any(String),
+            reply_id: expect.any(String),
             confirmedToolCallIds: [],
             curIter: 0,
         });
@@ -870,13 +870,13 @@ describe('Human-in-the-loop', () => {
         for await (const event of agent.replyStream({
             event: {
                 id: 'xxx',
-                createdAt: new Date().toISOString(),
+                created_at: new Date().toISOString(),
                 type: EventType.USER_CONFIRM_RESULT,
-                replyId: agent.replyId,
-                confirmResults: [
+                reply_id: agent.replyId,
+                confirm_results: [
                     {
                         confirmed: true,
-                        toolCall: {
+                        tool_call: {
                             type: 'tool_call',
                             id: '1',
                             name: 'ExternalAndConfirmTool',
@@ -885,7 +885,7 @@ describe('Human-in-the-loop', () => {
                     },
                     {
                         confirmed: true,
-                        toolCall: {
+                        tool_call: {
                             type: 'tool_call',
                             id: '2',
                             name: 'ConfirmOnlyTool',
@@ -901,8 +901,8 @@ describe('Human-in-the-loop', () => {
         // After user confirmation, the first tool requires external execution
         expect(lastEvent).toMatchObject({
             type: EventType.REQUIRE_EXTERNAL_EXECUTION,
-            replyId: expect.any(String),
-            toolCalls: [
+            reply_id: expect.any(String),
+            tool_calls: [
                 {
                     type: 'tool_call',
                     id: '1',
@@ -914,7 +914,7 @@ describe('Human-in-the-loop', () => {
 
         // Verify agent state after user confirmation
         expect(await agent.toJSON()).toMatchObject({
-            replyId: expect.any(String),
+            reply_id: expect.any(String),
             confirmedToolCallIds: ['1', '2'],
             curIter: 0,
         });
@@ -944,10 +944,10 @@ describe('Human-in-the-loop', () => {
         for await (const event of agent.replyStream({
             event: {
                 id: 'xxx',
-                createdAt: new Date().toISOString(),
+                created_at: new Date().toISOString(),
                 type: EventType.EXTERNAL_EXECUTION_RESULT,
-                replyId: agent.replyId,
-                executionResults: [
+                reply_id: agent.replyId,
+                execution_results: [
                     {
                         type: 'tool_result',
                         id: '1',
@@ -971,9 +971,9 @@ describe('Human-in-the-loop', () => {
         // because it was already confirmed in the previous step
         expect(lastEvent).toMatchObject({
             id: expect.any(String),
-            type: EventType.RUN_FINISHED,
-            createdAt: expect.any(String),
-            replyId: agent.replyId,
+            type: EventType.REPLY_END,
+            created_at: expect.any(String),
+            reply_id: agent.replyId,
         });
 
         // Verify the final agent context includes all tool calls, their results, and the final text

@@ -444,7 +444,7 @@ describe('LocalFileStorage', () => {
                             source: {
                                 type: 'url',
                                 url: 'https://example.com/image.png',
-                                mediaType: 'image/png',
+                                media_type: 'image/png',
                             },
                         },
                     ],
@@ -483,7 +483,7 @@ describe('LocalFileStorage', () => {
                             source: {
                                 type: 'base64',
                                 data: base64Data,
-                                mediaType: 'text/plain',
+                                media_type: 'text/plain',
                             },
                         },
                     ],
@@ -562,7 +562,7 @@ describe('LocalFileStorage', () => {
                             source: {
                                 type: 'url',
                                 url: 'https://example.com/image.png',
-                                mediaType: 'image/png',
+                                media_type: 'image/png',
                             },
                         },
                         { type: 'text', text: 'What do you see?', id: 'text-35' },

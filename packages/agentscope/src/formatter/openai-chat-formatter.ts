@@ -156,7 +156,7 @@ export class OpenAIChatFormatter extends FormatterBase {
         block: DataBlock;
         role: Msg['role'];
     }): Promise<Record<string, unknown>[]> {
-        const type = block.source.mediaType.split('/')[0];
+        const type = block.source.media_type.split('/')[0];
         if (type === 'image') {
             return [
                 {
@@ -182,7 +182,7 @@ export class OpenAIChatFormatter extends FormatterBase {
         }
 
         console.log(
-            `Skip unsupported media type ${block.source.mediaType} in OpenAIChatFormatter. Only image and audio are supported.`
+            `Skip unsupported media type ${block.source.media_type} in OpenAIChatFormatter. Only image and audio are supported.`
         );
         return [];
     }
@@ -194,7 +194,7 @@ export class OpenAIChatFormatter extends FormatterBase {
      */
     protected async _toOpenAIImageURL(block: DataBlock): Promise<string> {
         if (block.source.type === 'base64') {
-            return `data:${block.source.mediaType};base64,${block.source.data}`;
+            return `data:${block.source.media_type};base64,${block.source.data}`;
         }
 
         const sourceUrl = block.source.url;
@@ -219,7 +219,7 @@ export class OpenAIChatFormatter extends FormatterBase {
         }
 
         const file = await readFile(localPath);
-        const mime = block.source.mediaType || `image/${ext.slice(1)}`;
+        const mime = block.source.media_type || `image/${ext.slice(1)}`;
         return `data:${mime};base64,${file.toString('base64')}`;
     }
 
@@ -239,10 +239,10 @@ export class OpenAIChatFormatter extends FormatterBase {
         ]);
 
         if (block.source.type === 'base64') {
-            const format = supportedMediaTypes.get(block.source.mediaType);
+            const format = supportedMediaTypes.get(block.source.media_type);
             if (!format) {
                 throw new TypeError(
-                    `Unsupported audio media type: ${block.source.mediaType}, only audio/wav and audio/mp3 are supported.`
+                    `Unsupported audio media type: ${block.source.media_type}, only audio/wav and audio/mp3 are supported.`
                 );
             }
             return { data: block.source.data, format };

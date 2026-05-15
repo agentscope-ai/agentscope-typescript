@@ -233,12 +233,12 @@ export class LocalFileStorage extends StorageBase {
                     case 'data':
                         if (block.source.type === 'url') {
                             msgContent.push(
-                                `${msg.name}: <data src={${block.source.url}} type={${block.source.mediaType}} />`
+                                `${msg.name}: <data src={${block.source.url}} type={${block.source.media_type}} />`
                             );
                         } else if (block.source.type === 'base64') {
                             // Save the base64 data to a file and add a reference to the file in the offload content
-                            const mainType = block.source.mediaType.split('/')[0];
-                            const extension = mime.extension(block.source.mediaType) || 'bin';
+                            const mainType = block.source.media_type.split('/')[0];
+                            const extension = mime.extension(block.source.media_type) || 'bin';
                             const filePath = path.join(
                                 offloadDataDir,
                                 `${mainType}-${Date.now()}.${extension}`
@@ -249,7 +249,7 @@ export class LocalFileStorage extends StorageBase {
                             const buffer = Buffer.from(block.source.data, 'base64');
                             fs.writeFileSync(filePath, buffer);
                             msgContent.push(
-                                `${msg.name}: <data src={${filePath}} type={${block.source.mediaType}} />`
+                                `${msg.name}: <data src={${filePath}} type={${block.source.media_type}} />`
                             );
                         }
                         break;

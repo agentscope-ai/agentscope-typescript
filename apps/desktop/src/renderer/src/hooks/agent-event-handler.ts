@@ -18,16 +18,16 @@ export function applyAgentEvent(
     setSending: Dispatch<SetStateAction<boolean>>
 ) {
     switch (event.type) {
-        case EventType.RUN_STARTED: {
+        case EventType.REPLY_START: {
             setSending(true);
             setMessages(prev => {
-                const existingMsg = prev.find(m => m.id === event.replyId);
+                const existingMsg = prev.find(m => m.id === event.reply_id);
                 if (existingMsg) {
-                    return prev.map(m => (m.id === event.replyId ? { ...m, streaming: true } : m));
+                    return prev.map(m => (m.id === event.reply_id ? { ...m, streaming: true } : m));
                 }
                 const newMsg: StreamingMsg = {
                     ...createMsg({
-                        id: event.replyId,
+                        id: event.reply_id,
                         role: event.role,
                         name: event.name,
                         content: [],
@@ -39,27 +39,27 @@ export function applyAgentEvent(
             break;
         }
 
-        case EventType.RUN_FINISHED: {
+        case EventType.REPLY_END: {
             setSending(false);
             setMessages(prev =>
-                prev.map(m => (m.id === event.replyId ? { ...m, streaming: false } : m))
+                prev.map(m => (m.id === event.reply_id ? { ...m, streaming: false } : m))
             );
             break;
         }
 
-        case EventType.MODEL_CALL_STARTED:
+        case EventType.MODEL_CALL_START:
             break;
 
-        case EventType.MODEL_CALL_ENDED: {
+        case EventType.MODEL_CALL_END: {
             setMessages(prev =>
                 prev.map(m => {
-                    if (m.id !== event.replyId) return m;
+                    if (m.id !== event.reply_id) return m;
                     const currentUsage = m.usage || { inputTokens: 0, outputTokens: 0 };
                     return {
                         ...m,
                         usage: {
-                            inputTokens: currentUsage.inputTokens + event.inputTokens,
-                            outputTokens: currentUsage.outputTokens + event.outputTokens,
+                            inputTokens: currentUsage.inputTokens + event.input_tokens,
+                            outputTokens: currentUsage.outputTokens + event.output_tokens,
                         },
                     };
                 })
@@ -70,11 +70,11 @@ export function applyAgentEvent(
         case EventType.TEXT_BLOCK_START: {
             setMessages(prev =>
                 prev.map(m => {
-                    if (m.id !== event.replyId || !Array.isArray(m.content)) return m;
-                    if (m.content.find(b => b.type === 'text' && b.id === event.blockId)) return m;
+                    if (m.id !== event.reply_id || !Array.isArray(m.content)) return m;
+                    if (m.content.find(b => b.type === 'text' && b.id === event.block_id)) return m;
                     return {
                         ...m,
-                        content: [...m.content, { type: 'text', id: event.blockId, text: '' }],
+                        content: [...m.content, { type: 'text', id: event.block_id, text: '' }],
                     };
                 })
             );
@@ -84,11 +84,11 @@ export function applyAgentEvent(
         case EventType.TEXT_BLOCK_DELTA: {
             setMessages(prev =>
                 prev.map(m => {
-                    if (m.id !== event.replyId || !Array.isArray(m.content)) return m;
+                    if (m.id !== event.reply_id || !Array.isArray(m.content)) return m;
                     return {
                         ...m,
                         content: m.content.map(b =>
-                            b.type === 'text' && b.id === event.blockId
+                            b.type === 'text' && b.id === event.block_id
                                 ? { ...b, text: b.text + event.delta }
                                 : b
                         ),
@@ -104,14 +104,14 @@ export function applyAgentEvent(
         case EventType.THINKING_BLOCK_START: {
             setMessages(prev =>
                 prev.map(m => {
-                    if (m.id !== event.replyId || !Array.isArray(m.content)) return m;
-                    if (m.content.find(b => b.type === 'thinking' && b.id === event.blockId))
+                    if (m.id !== event.reply_id || !Array.isArray(m.content)) return m;
+                    if (m.content.find(b => b.type === 'thinking' && b.id === event.block_id))
                         return m;
                     return {
                         ...m,
                         content: [
                             ...m.content,
-                            { type: 'thinking', id: event.blockId, thinking: '' },
+                            { type: 'thinking', id: event.block_id, thinking: '' },
                         ],
                     };
                 })
@@ -122,11 +122,11 @@ export function applyAgentEvent(
         case EventType.THINKING_BLOCK_DELTA: {
             setMessages(prev =>
                 prev.map(m => {
-                    if (m.id !== event.replyId || !Array.isArray(m.content)) return m;
+                    if (m.id !== event.reply_id || !Array.isArray(m.content)) return m;
                     return {
                         ...m,
                         content: m.content.map(b =>
-                            b.type === 'thinking' && b.id === event.blockId
+                            b.type === 'thinking' && b.id === event.block_id
                                 ? { ...b, thinking: b.thinking + event.delta }
                                 : b
                         ),
@@ -139,19 +139,19 @@ export function applyAgentEvent(
         case EventType.THINKING_BLOCK_END:
             break;
 
-        case EventType.BINARY_BLOCK_START: {
+        case EventType.DATA_BLOCK_START: {
             setMessages(prev =>
                 prev.map(m => {
-                    if (m.id !== event.replyId || !Array.isArray(m.content)) return m;
-                    if (m.content.find(b => b.type === 'data' && b.id === event.blockId)) return m;
+                    if (m.id !== event.reply_id || !Array.isArray(m.content)) return m;
+                    if (m.content.find(b => b.type === 'data' && b.id === event.block_id)) return m;
                     return {
                         ...m,
                         content: [
                             ...m.content,
                             {
                                 type: 'data',
-                                id: event.blockId,
-                                source: { type: 'base64', data: '', mediaType: event.mediaType },
+                                id: event.block_id,
+                                source: { type: 'base64', data: '', media_type: event.media_type },
                             },
                         ],
                     };
@@ -160,16 +160,16 @@ export function applyAgentEvent(
             break;
         }
 
-        case EventType.BINARY_BLOCK_DELTA: {
+        case EventType.DATA_BLOCK_DELTA: {
             setMessages(prev =>
                 prev.map(m => {
-                    if (m.id !== event.replyId || !Array.isArray(m.content)) return m;
+                    if (m.id !== event.reply_id || !Array.isArray(m.content)) return m;
                     return {
                         ...m,
                         content: m.content.map(b => {
                             if (
                                 b.type === 'data' &&
-                                b.id === event.blockId &&
+                                b.id === event.block_id &&
                                 b.source.type === 'base64'
                             ) {
                                 return {
@@ -185,14 +185,14 @@ export function applyAgentEvent(
             break;
         }
 
-        case EventType.BINARY_BLOCK_END:
+        case EventType.DATA_BLOCK_END:
             break;
 
         case EventType.TOOL_CALL_START: {
             setMessages(prev =>
                 prev.map(m => {
-                    if (m.id !== event.replyId || !Array.isArray(m.content)) return m;
-                    if (m.content.find(b => b.type === 'tool_call' && b.id === event.toolCallId))
+                    if (m.id !== event.reply_id || !Array.isArray(m.content)) return m;
+                    if (m.content.find(b => b.type === 'tool_call' && b.id === event.tool_call_id))
                         return m;
                     return {
                         ...m,
@@ -200,8 +200,8 @@ export function applyAgentEvent(
                             ...m.content,
                             {
                                 type: 'tool_call',
-                                id: event.toolCallId,
-                                name: event.toolCallName,
+                                id: event.tool_call_id,
+                                name: event.tool_call_name,
                                 input: '',
                             },
                         ],
@@ -214,13 +214,13 @@ export function applyAgentEvent(
         case EventType.TOOL_CALL_DELTA: {
             setMessages(prev =>
                 prev.map(m => {
-                    if (m.id !== event.replyId || !Array.isArray(m.content)) return m;
+                    if (m.id !== event.reply_id || !Array.isArray(m.content)) return m;
                     return {
                         ...m,
                         content: m.content.map(b => {
                             if (
                                 b.type === 'tool_call' &&
-                                b.id === event.toolCallId &&
+                                b.id === event.tool_call_id &&
                                 typeof b.input === 'string'
                             ) {
                                 return { ...b, input: b.input + event.delta };
@@ -239,8 +239,10 @@ export function applyAgentEvent(
         case EventType.TOOL_RESULT_START: {
             setMessages(prev =>
                 prev.map(m => {
-                    if (m.id !== event.replyId || !Array.isArray(m.content)) return m;
-                    if (m.content.find(b => b.type === 'tool_result' && b.id === event.toolCallId))
+                    if (m.id !== event.reply_id || !Array.isArray(m.content)) return m;
+                    if (
+                        m.content.find(b => b.type === 'tool_result' && b.id === event.tool_call_id)
+                    )
                         return m;
                     return {
                         ...m,
@@ -248,8 +250,8 @@ export function applyAgentEvent(
                             ...m.content,
                             {
                                 type: 'tool_result',
-                                id: event.toolCallId,
-                                name: event.toolCallName,
+                                id: event.tool_call_id,
+                                name: event.tool_call_name,
                                 output: [],
                                 state: 'running',
                             },
@@ -263,11 +265,11 @@ export function applyAgentEvent(
         case EventType.TOOL_RESULT_TEXT_DELTA: {
             setMessages(prev =>
                 prev.map(m => {
-                    if (m.id !== event.replyId || !Array.isArray(m.content)) return m;
+                    if (m.id !== event.reply_id || !Array.isArray(m.content)) return m;
                     return {
                         ...m,
                         content: m.content.map(b => {
-                            if (b.type === 'tool_result' && b.id === event.toolCallId) {
+                            if (b.type === 'tool_result' && b.id === event.tool_call_id) {
                                 const output = Array.isArray(b.output) ? b.output : [];
                                 const last = output[output.length - 1];
                                 if (last && last.type === 'text') {
@@ -299,14 +301,14 @@ export function applyAgentEvent(
             break;
         }
 
-        case EventType.TOOL_RESULT_BINARY_DELTA: {
+        case EventType.TOOL_RESULT_DATA_DELTA: {
             setMessages(prev =>
                 prev.map(m => {
-                    if (m.id !== event.replyId || !Array.isArray(m.content)) return m;
+                    if (m.id !== event.reply_id || !Array.isArray(m.content)) return m;
                     return {
                         ...m,
                         content: m.content.map(b => {
-                            if (b.type === 'tool_result' && b.id === event.toolCallId) {
+                            if (b.type === 'tool_result' && b.id === event.tool_call_id) {
                                 const output = Array.isArray(b.output) ? b.output : [];
                                 return {
                                     ...b,
@@ -319,12 +321,12 @@ export function applyAgentEvent(
                                                 ? {
                                                       type: 'url',
                                                       url: event.url,
-                                                      mediaType: event.mediaType,
+                                                      media_type: event.media_type,
                                                   }
                                                 : {
                                                       type: 'base64',
                                                       data: event.data || '',
-                                                      mediaType: event.mediaType,
+                                                      media_type: event.media_type,
                                                   },
                                         },
                                     ],
@@ -340,35 +342,35 @@ export function applyAgentEvent(
 
         case EventType.TOOL_RESULT_END: {
             setMessages(prev => {
-                const msg = prev.find(m => m.id === event.replyId);
+                const msg = prev.find(m => m.id === event.reply_id);
                 if (!msg || !Array.isArray(msg.content)) return prev;
                 const newContent = msg.content.map(b => {
                     if (
                         b.type === 'tool_result' &&
-                        b.id === event.toolCallId &&
+                        b.id === event.tool_call_id &&
                         b.state === 'running'
                     ) {
                         return { ...b, state: event.state } as ToolResultBlock;
                     }
                     return b;
                 });
-                return prev.map(m => (m.id === event.replyId ? { ...m, content: newContent } : m));
+                return prev.map(m => (m.id === event.reply_id ? { ...m, content: newContent } : m));
             });
             break;
         }
 
         case EventType.REQUIRE_USER_CONFIRM: {
             setMessages(prev => {
-                const msg = prev.find(m => m.id === event.replyId);
+                const msg = prev.find(m => m.id === event.reply_id);
                 if (!msg || !Array.isArray(msg.content)) return prev;
-                const toolCallIds = event.toolCalls.map(tc => tc.id);
+                const toolCallIds = event.tool_calls.map(tc => tc.id);
                 const newContent = msg.content.map(b => {
                     if (b.type === 'tool_call' && toolCallIds.includes(b.id)) {
                         return { ...b, awaitUserConfirmation: true };
                     }
                     return b;
                 });
-                return prev.map(m => (m.id === event.replyId ? { ...m, content: newContent } : m));
+                return prev.map(m => (m.id === event.reply_id ? { ...m, content: newContent } : m));
             });
             break;
         }
