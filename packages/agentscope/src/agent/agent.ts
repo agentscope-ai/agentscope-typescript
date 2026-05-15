@@ -14,10 +14,10 @@ import { ActingOptions, ObserveOptions, ReasoningOptions, ReplyOptions } from '.
 import {
     AgentEvent,
     EventType,
-    ModelCallEndedEvent,
-    ModelCallStartedEvent,
-    RunFinishedEvent,
-    RunStartedEvent,
+    ModelCallEndEvent,
+    ModelCallStartEvent,
+    ReplyEndEvent,
+    ReplyStartEvent,
     TextBlockDeltaEvent,
     TextBlockEndEvent,
     TextBlockStartEvent,
@@ -27,7 +27,7 @@ import {
     ToolCallDeltaEvent,
     ToolCallEndEvent,
     ToolCallStartEvent,
-    ToolResultBinaryDeltaEvent,
+    ToolResultDataDeltaEvent,
     ToolResultEndEvent,
     ToolResultStartEvent,
     ToolResultTextDeltaEvent,
@@ -194,7 +194,7 @@ export class Agent {
             agentId: this.name,
             context: this.context,
             metadata: {
-                replyId: this.replyId,
+                reply_id: this.replyId,
                 curIter: this.curIter,
                 curSummary: this.curSummary,
             },
@@ -383,47 +383,47 @@ export class Agent {
             const event = options.event;
             if (event.type === EventType.EXTERNAL_EXECUTION_RESULT) {
                 // Record the tool results into context and go on acting
-                this._saveToContext(event.executionResults);
+                this._saveToContext(event.execution_results);
             } else if (event.type === EventType.USER_CONFIRM_RESULT) {
-                for (const result of event.confirmResults) {
+                for (const result of event.confirm_results) {
                     if (result.confirmed) {
-                        this.confirmedToolCallIds.push(result.toolCall.id);
+                        this.confirmedToolCallIds.push(result.tool_call.id);
                     } else {
                         // If user rejected, add a rejection result and handle the pending tool calls
-                        const rejectionRes = `<system-info>**Note** the user rejected the execution of tool "${result.toolCall.name}"!</system-info>`;
+                        const rejectionRes = `<system-info>**Note** the user rejected the execution of tool "${result.tool_call.name}"!</system-info>`;
                         yield {
                             id: crypto.randomUUID(),
-                            createdAt: new Date().toISOString(),
+                            created_at: new Date().toISOString(),
                             type: EventType.TOOL_RESULT_START,
-                            replyId: this.replyId,
-                            toolCallId: result.toolCall.id,
+                            reply_id: this.replyId,
+                            tool_call_id: result.tool_call.id,
                         } as ToolResultStartEvent;
                         yield {
                             id: crypto.randomUUID(),
-                            createdAt: new Date().toISOString(),
+                            created_at: new Date().toISOString(),
                             type: EventType.TOOL_RESULT_TEXT_DELTA,
-                            replyId: this.replyId,
-                            toolCallId: result.toolCall.id,
+                            reply_id: this.replyId,
+                            tool_call_id: result.tool_call.id,
                             delta: rejectionRes,
                         } as ToolResultTextDeltaEvent;
                         yield {
                             id: crypto.randomUUID(),
-                            createdAt: new Date().toISOString(),
+                            created_at: new Date().toISOString(),
                             type: EventType.TOOL_RESULT_END,
-                            replyId: this.replyId,
-                            toolCallId: result.toolCall.id,
+                            reply_id: this.replyId,
+                            tool_call_id: result.tool_call.id,
                             state: 'interrupted',
                         } as ToolResultEndEvent;
                         this._saveToContext([
                             {
                                 type: 'tool_result',
-                                id: result.toolCall.id,
-                                name: result.toolCall.name,
+                                id: result.tool_call.id,
+                                name: result.tool_call.name,
                                 output: [
                                     {
                                         id: crypto.randomUUID(),
                                         type: 'text',
-                                        text: `<system-info>**Note** the user rejected the execution of tool "${result.toolCall.name}"!</system-info>`,
+                                        text: `<system-info>**Note** the user rejected the execution of tool "${result.tool_call.name}"!</system-info>`,
                                     },
                                 ],
                                 state: 'interrupted',
@@ -432,7 +432,9 @@ export class Agent {
                     }
                 }
                 // Remove the tool call from the awaiting state
-                const processedToolCallIds = event.confirmResults.map(result => result.toolCall.id);
+                const processedToolCallIds = event.confirm_results.map(
+                    result => result.tool_call.id
+                );
                 // Set the awaitingUserConfirmation flag to undefined for UI update
                 this.context.at(-1)?.content.forEach(content => {
                     if (content.type === 'tool_call' && processedToolCallIds.includes(content.id)) {
@@ -449,13 +451,13 @@ export class Agent {
             // Yield the run started event
             yield {
                 id: crypto.randomUUID(),
-                type: EventType.RUN_STARTED,
-                createdAt: new Date().toISOString(),
-                sessionId: '',
-                replyId: this.replyId,
+                type: EventType.REPLY_START,
+                created_at: new Date().toISOString(),
+                session_id: '',
+                reply_id: this.replyId,
                 name: this.name,
                 role: 'assistant',
-            } as RunStartedEvent;
+            } as ReplyStartEvent;
         }
 
         // Store the incoming message into memory
@@ -490,10 +492,10 @@ export class Agent {
             if (awaitingType) {
                 yield {
                     id: crypto.randomUUID(),
-                    createdAt: new Date().toISOString(),
+                    created_at: new Date().toISOString(),
                     type: awaitingType,
-                    replyId: this.replyId,
-                    toolCalls: awaitingToolCalls,
+                    reply_id: this.replyId,
+                    tool_calls: awaitingToolCalls,
                 };
 
                 return createMsg({
@@ -528,11 +530,11 @@ export class Agent {
         // Yield the run finished event
         yield {
             id: crypto.randomUUID(),
-            type: EventType.RUN_FINISHED,
-            createdAt: new Date().toISOString(),
-            sessionId: '',
-            replyId: this.replyId,
-        } as RunFinishedEvent;
+            type: EventType.REPLY_END,
+            created_at: new Date().toISOString(),
+            session_id: '',
+            reply_id: this.replyId,
+        } as ReplyEndEvent;
 
         return createMsg({
             id: this.replyId,
@@ -557,11 +559,11 @@ export class Agent {
         const tools = this.toolkit.getJSONSchemas();
         yield {
             id: crypto.randomUUID(),
-            createdAt: new Date().toISOString(),
-            type: EventType.MODEL_CALL_STARTED,
-            replyId: this.replyId,
-            modelName: this.model.modelName,
-        } as ModelCallStartedEvent;
+            created_at: new Date().toISOString(),
+            type: EventType.MODEL_CALL_START,
+            reply_id: this.replyId,
+            model_name: this.model.modelName,
+        } as ModelCallStartEvent;
         const res = await this.model.call({
             messages: [
                 createMsg({
@@ -620,41 +622,41 @@ export class Agent {
         if (blockIds.textBlockId) {
             yield {
                 id: crypto.randomUUID(),
-                createdAt: new Date().toISOString(),
+                created_at: new Date().toISOString(),
                 type: EventType.TEXT_BLOCK_END,
-                replyId: this.replyId,
-                blockId: blockIds.textBlockId,
+                reply_id: this.replyId,
+                block_id: blockIds.textBlockId,
             } as TextBlockEndEvent;
         }
         if (blockIds.thinkingBlockId) {
             yield {
                 id: crypto.randomUUID(),
-                createdAt: new Date().toISOString(),
+                created_at: new Date().toISOString(),
                 type: EventType.THINKING_BLOCK_END,
-                replyId: this.replyId,
-                blockId: blockIds.thinkingBlockId,
+                reply_id: this.replyId,
+                block_id: blockIds.thinkingBlockId,
             } as ThinkingBlockEndEvent;
         }
         if (blockIds.toolCallIds.length > 0) {
-            for (const toolCallId of blockIds.toolCallIds) {
+            for (const tool_call_id of blockIds.toolCallIds) {
                 yield {
                     id: crypto.randomUUID(),
-                    createdAt: new Date().toISOString(),
+                    created_at: new Date().toISOString(),
                     type: EventType.TOOL_CALL_END,
-                    replyId: this.replyId,
-                    toolCallId,
+                    reply_id: this.replyId,
+                    tool_call_id,
                 } as ToolCallEndEvent;
             }
         }
 
         yield {
             id: crypto.randomUUID(),
-            createdAt: new Date().toISOString(),
-            type: EventType.MODEL_CALL_ENDED,
-            replyId: this.replyId,
-            inputTokens: completedResponse.usage?.inputTokens || 0,
-            outputTokens: completedResponse.usage?.outputTokens || 0,
-        } as ModelCallEndedEvent;
+            created_at: new Date().toISOString(),
+            type: EventType.MODEL_CALL_END,
+            reply_id: this.replyId,
+            input_tokens: completedResponse.usage?.inputTokens || 0,
+            output_tokens: completedResponse.usage?.outputTokens || 0,
+        } as ModelCallEndEvent;
 
         return completedResponse;
     }
@@ -672,10 +674,10 @@ export class Agent {
         yield {
             type: EventType.TOOL_RESULT_START,
             id: crypto.randomUUID(),
-            createdAt: new Date().toISOString(),
-            replyId: this.replyId,
-            toolCallId: options.toolCall.id,
-            toolCallName: options.toolCall.name,
+            created_at: new Date().toISOString(),
+            reply_id: this.replyId,
+            tool_call_id: options.toolCall.id,
+            tool_call_name: options.toolCall.name,
         } as ToolResultStartEvent;
 
         while (true) {
@@ -741,18 +743,18 @@ export class Agent {
                         responseId.textBlockId = crypto.randomUUID();
                         yield {
                             id: crypto.randomUUID(),
-                            createdAt: new Date().toISOString(),
+                            created_at: new Date().toISOString(),
                             type: EventType.TEXT_BLOCK_START,
-                            replyId: this.replyId,
-                            blockId: responseId.textBlockId,
+                            reply_id: this.replyId,
+                            block_id: responseId.textBlockId,
                         } as TextBlockStartEvent;
                     }
                     yield {
                         id: crypto.randomUUID(),
-                        createdAt: new Date().toISOString(),
+                        created_at: new Date().toISOString(),
                         type: EventType.TEXT_BLOCK_DELTA,
-                        replyId: this.replyId,
-                        blockId: responseId.textBlockId,
+                        reply_id: this.replyId,
+                        block_id: responseId.textBlockId,
                         delta: block.text,
                     } as TextBlockDeltaEvent;
                     break;
@@ -762,18 +764,18 @@ export class Agent {
                         responseId.thinkingBlockId = crypto.randomUUID();
                         yield {
                             id: crypto.randomUUID(),
-                            createdAt: new Date().toISOString(),
+                            created_at: new Date().toISOString(),
                             type: EventType.THINKING_BLOCK_START,
-                            replyId: this.replyId,
-                            blockId: responseId.thinkingBlockId,
+                            reply_id: this.replyId,
+                            block_id: responseId.thinkingBlockId,
                         } as ThinkingBlockStartEvent;
                     }
                     yield {
                         id: crypto.randomUUID(),
-                        createdAt: new Date().toISOString(),
+                        created_at: new Date().toISOString(),
                         type: EventType.THINKING_BLOCK_DELTA,
-                        replyId: this.replyId,
-                        blockId: responseId.thinkingBlockId,
+                        reply_id: this.replyId,
+                        block_id: responseId.thinkingBlockId,
                         delta: block.thinking,
                     } as ThinkingBlockDeltaEvent;
                     break;
@@ -784,19 +786,19 @@ export class Agent {
                         yield {
                             id: crypto.randomUUID(),
                             type: EventType.TOOL_CALL_START,
-                            createdAt: new Date().toISOString(),
-                            replyId: this.replyId,
-                            toolCallId: block.id,
-                            toolCallName: block.name,
+                            created_at: new Date().toISOString(),
+                            reply_id: this.replyId,
+                            tool_call_id: block.id,
+                            tool_call_name: block.name,
                         } as ToolCallStartEvent;
                     }
                     yield {
                         id: crypto.randomUUID(),
-                        createdAt: new Date().toISOString(),
+                        created_at: new Date().toISOString(),
                         type: EventType.TOOL_CALL_DELTA,
                         delta: block.input,
-                        replyId: this.replyId,
-                        toolCallId: block.id,
+                        reply_id: this.replyId,
+                        tool_call_id: block.id,
                     } as ToolCallDeltaEvent;
             }
         }
@@ -816,10 +818,10 @@ export class Agent {
                 case 'text':
                     yield {
                         id: crypto.randomUUID(),
-                        createdAt: new Date().toISOString(),
+                        created_at: new Date().toISOString(),
                         type: EventType.TOOL_RESULT_TEXT_DELTA,
-                        replyId: this.replyId,
-                        toolCallId: toolCall.id,
+                        reply_id: this.replyId,
+                        tool_call_id: toolCall.id,
                         delta: block.text,
                     } as ToolResultTextDeltaEvent;
                     break;
@@ -828,33 +830,33 @@ export class Agent {
                     if (block.source.type === 'base64') {
                         yield {
                             id: crypto.randomUUID(),
-                            createdAt: new Date().toISOString(),
-                            type: EventType.TOOL_RESULT_BINARY_DELTA,
-                            replyId: this.replyId,
-                            toolCallId: toolCall.id,
-                            mediaType: block.source.mediaType,
+                            created_at: new Date().toISOString(),
+                            type: EventType.TOOL_RESULT_DATA_DELTA,
+                            reply_id: this.replyId,
+                            tool_call_id: toolCall.id,
+                            media_type: block.source.media_type,
                             data: block.source.data,
-                        } as ToolResultBinaryDeltaEvent;
+                        } as ToolResultDataDeltaEvent;
                     } else if (block.source.type === 'url') {
                         yield {
                             id: crypto.randomUUID(),
-                            createdAt: new Date().toISOString(),
-                            type: EventType.TOOL_RESULT_BINARY_DELTA,
-                            replyId: this.replyId,
-                            toolCallId: toolCall.id,
-                            mediaType: block.source.mediaType,
+                            created_at: new Date().toISOString(),
+                            type: EventType.TOOL_RESULT_DATA_DELTA,
+                            reply_id: this.replyId,
+                            tool_call_id: toolCall.id,
+                            media_type: block.source.media_type,
                             url: block.source.url,
-                        } as ToolResultBinaryDeltaEvent;
+                        } as ToolResultDataDeltaEvent;
                     }
                     break;
             }
         }
         yield {
             id: crypto.randomUUID(),
-            createdAt: new Date().toISOString(),
+            created_at: new Date().toISOString(),
             type: EventType.TOOL_RESULT_END,
-            replyId: this.replyId,
-            toolCallId: toolCall.id,
+            reply_id: this.replyId,
+            tool_call_id: toolCall.id,
             state: toolRes.state,
         } as ToolResultEndEvent;
     }
@@ -865,7 +867,7 @@ export class Agent {
      */
     public async toJSON() {
         return {
-            replyId: this.replyId,
+            reply_id: this.replyId,
             confirmedToolCallIds: this.confirmedToolCallIds,
             curIter: this.curIter,
         };

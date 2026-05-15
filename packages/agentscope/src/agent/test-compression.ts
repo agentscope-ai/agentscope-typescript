@@ -39,7 +39,7 @@ const getUserInput = (): Promise<string> => {
 };
 
 /**
- *
+ * The main functions run a compression test for the agent.
  */
 async function main() {
     console.log('Compression test started. Type "exit" to quit.\n');

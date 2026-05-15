@@ -21,7 +21,9 @@ export interface Msg {
     /** Arbitrary key-value metadata attached to the message. */
     metadata: Record<string, JSONSerializableObject>;
     /** ISO-8601 creation timestamp. */
-    timestamp: string;
+    created_at: string;
+    /** ISO-8601 finished timestamp. */
+    finished_at?: string | null;
     /** Usage information for the message, such as token counts. */
     usage?: {
         inputTokens: number;
@@ -30,17 +32,18 @@ export interface Msg {
 }
 
 /**
- * Create a new {@link Msg} object, filling in `id` and `timestamp` when omitted.
- *
+ * Create a new {@link Msg} object, filling in `id` and `created_at` when omitted.
+ * A plain string `content` is automatically wrapped in a single {@link TextBlock}.
  * @param root0
  * @param root0.name
  * @param root0.content
  * @param root0.role
  * @param root0.metadata
  * @param root0.id
- * @param root0.timestamp
+ * @param root0.created_at
+ * @param root0.finished_at
  * @param root0.usage
- * @returns A fully-populated {@link Msg} object.
+ * @returns A Msg object.
  */
 export function createMsg({
     name,
@@ -48,11 +51,99 @@ export function createMsg({
     role,
     metadata = {},
     id = crypto.randomUUID(),
-    timestamp = new Date().toISOString(),
+    created_at = new Date().toISOString(),
+    finished_at,
     usage,
-}: Omit<Msg, 'id' | 'timestamp' | 'metadata'> &
-    Partial<Pick<Msg, 'id' | 'timestamp' | 'metadata'>>): Msg {
-    return { id, name, role, content, metadata, timestamp, usage } as Msg;
+}: Omit<Msg, 'id' | 'created_at' | 'metadata' | 'content'> &
+    Partial<Pick<Msg, 'id' | 'created_at' | 'metadata'>> & {
+        content: string | ContentBlock[];
+    }): Msg {
+    const contentBlocks: ContentBlock[] =
+        typeof content === 'string'
+            ? [{ id: crypto.randomUUID(), type: 'text', text: content } as TextBlock]
+            : content;
+    return { id, name, role, content: contentBlocks, metadata, created_at, finished_at, usage };
+}
+
+/**
+ * Create a user {@link Msg}.
+ * @param root0
+ * @param root0.name
+ * @param root0.content
+ * @param root0.metadata
+ * @param root0.id
+ * @param root0.created_at
+ * @returns A Msg object with role 'user'.
+ */
+export function UserMsg({
+    name,
+    content,
+    metadata = {},
+    id = crypto.randomUUID(),
+    created_at = new Date().toISOString(),
+}: {
+    name: string;
+    content: string | ContentBlock[];
+    metadata?: Record<string, JSONSerializableObject>;
+    id?: string;
+    created_at?: string;
+}): Msg {
+    return createMsg({ name, content, role: 'user', metadata, id, created_at });
+}
+
+/**
+ * Create an assistant {@link Msg}.
+ * @param root0
+ * @param root0.name
+ * @param root0.content
+ * @param root0.metadata
+ * @param root0.id
+ * @param root0.created_at
+ * @param root0.usage
+ * @returns A Msg object with role 'assistant'.
+ */
+export function AssistantMsg({
+    name,
+    content,
+    metadata = {},
+    id = crypto.randomUUID(),
+    created_at = new Date().toISOString(),
+    usage,
+}: {
+    name: string;
+    content: string | ContentBlock[];
+    metadata?: Record<string, JSONSerializableObject>;
+    id?: string;
+    created_at?: string;
+    usage?: Msg['usage'];
+}): Msg {
+    return createMsg({ name, content, role: 'assistant', metadata, id, created_at, usage });
+}
+
+/**
+ * Create a system {@link Msg}.
+ * @param root0
+ * @param root0.name
+ * @param root0.content
+ * @param root0.metadata
+ * @param root0.id
+ * @param root0.created_at
+ * @returns A Msg object with role 'system'.
+ */
+export function SystemMsg({
+    name,
+    content,
+    metadata = {},
+    id = crypto.randomUUID(),
+    created_at = new Date().toISOString(),
+}: {
+    name: string;
+    content: string | ContentBlock[];
+    metadata?: Record<string, JSONSerializableObject>;
+    id?: string;
+    created_at?: string;
+}): Msg {
+    return createMsg({ name, content, role: 'system', metadata, id, created_at });
 }
 
 /**
@@ -67,9 +158,7 @@ export function createMsg({
  */
 export function getTextContent(msg: Msg, separator: string = '\n'): string | null {
     const textBlocks = msg.content.filter(block => block.type === 'text');
-    if (textBlocks.length === 0) {
-        return null;
-    }
+    if (textBlocks.length === 0) return null;
     return textBlocks.map(block => (block as TextBlock).text).join(separator);
 }
 
@@ -82,45 +171,10 @@ export function getTextContent(msg: Msg, separator: string = '\n'): string | nul
  * @returns An array of all {@link ContentBlock} objects.
  */
 export function getContentBlocks(msg: Msg): ContentBlock[];
-/**
- * Return all {@link TextBlock} objects from a message.
- *
- * @param msg - The message to read.
- * @param blockType - `'text'`
- * @returns An array of {@link TextBlock} objects.
- */
 export function getContentBlocks(msg: Msg, blockType: 'text'): TextBlock[];
-/**
- * Return all {@link ThinkingBlock} objects from a message.
- *
- * @param msg - The message to read.
- * @param blockType - `'thinking'`
- * @returns An array of {@link ThinkingBlock} objects.
- */
 export function getContentBlocks(msg: Msg, blockType: 'thinking'): ThinkingBlock[];
-/**
- * Return all {@link DataBlock} objects from a message.
- *
- * @param msg - The message to read.
- * @param blockType - `'video'`
- * @returns An array of {@link DataBlock} objects.
- */
 export function getContentBlocks(msg: Msg, blockType: 'data'): DataBlock[];
-/**
- * Return all {@link ToolCallBlock} objects from a message.
- *
- * @param msg - The message to read.
- * @param blockType - `'tool_call'`
- * @returns An array of {@link ToolCallBlock} objects.
- */
 export function getContentBlocks(msg: Msg, blockType: 'tool_call'): ToolCallBlock[];
-/**
- * Return all {@link ToolResultBlock} objects from a message.
- *
- * @param msg - The message to read.
- * @param blockType - `'tool_result'`
- * @returns An array of {@link ToolResultBlock} objects.
- */
 export function getContentBlocks(msg: Msg, blockType: 'tool_result'): ToolResultBlock[];
 export function getContentBlocks(
     msg: Msg,

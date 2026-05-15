@@ -327,8 +327,8 @@ function ToolCallGroup({
             } else {
                 const resultStrs = result.output.map(b => {
                     if (b.type === 'text') return b.text;
-                    const mainType = b.source.mediaType.split('/')[0].toUpperCase();
-                    const extension = (mime.extension(b.source.mediaType) || 'bin').toLowerCase();
+                    const mainType = b.source.media_type.split('/')[0].toUpperCase();
+                    const extension = (mime.extension(b.source.media_type) || 'bin').toLowerCase();
                     return `[${mainType}.${extension}]`;
                 });
                 resultStr = resultStrs.join('\n');
@@ -461,12 +461,12 @@ function renderBlock(
             );
 
         case 'data': {
-            const dataType = block.source.mediaType.split('/')[0];
+            const dataType = block.source.media_type.split('/')[0];
             let data: string;
             if (block.source.type === 'url') {
                 data = block.source.url;
             } else {
-                data = `data:${block.source.mediaType};base64,${block.source.data}`;
+                data = `data:${block.source.media_type};base64,${block.source.data}`;
             }
             switch (dataType) {
                 case 'image':

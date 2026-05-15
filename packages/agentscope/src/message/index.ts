@@ -1,4 +1,12 @@
-export { Msg, createMsg, getTextContent, getContentBlocks } from './message';
+export {
+    Msg,
+    createMsg,
+    UserMsg,
+    AssistantMsg,
+    SystemMsg,
+    getTextContent,
+    getContentBlocks,
+} from './message';
 export {
     TextBlock,
     ThinkingBlock,

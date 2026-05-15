@@ -87,7 +87,7 @@ export class MCPTool implements Tool {
                     content.push({
                         id: crypto.randomUUID(),
                         type: 'data',
-                        source: { type: 'base64', mediaType: item.mimeType, data: item.data },
+                        source: { type: 'base64', media_type: item.mimeType, data: item.data },
                     });
                 } else {
                     console.warn(

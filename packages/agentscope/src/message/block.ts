@@ -35,13 +35,13 @@ export interface ToolResultBlock {
 export interface Base64Source {
     type: 'base64';
     data: string;
-    mediaType: string;
+    media_type: string;
 }
 
 export interface URLSource {
     type: 'url';
     url: string;
-    mediaType: string;
+    media_type: string;
 }
 
 export interface DataBlock {

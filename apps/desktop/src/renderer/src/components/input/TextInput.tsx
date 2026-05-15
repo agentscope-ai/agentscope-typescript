@@ -106,7 +106,7 @@ export const TextInput = forwardRef<TextInputRef, TextInputProps>(
                         const urlSource: URLSource = {
                             type: 'url',
                             url: `file://${filePath}`,
-                            mediaType: file.type || 'application/octet-stream',
+                            media_type: file.type || 'application/octet-stream',
                         };
                         const dataBlock: DataBlock = {
                             id: crypto.randomUUID(),

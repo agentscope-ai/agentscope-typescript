@@ -87,12 +87,12 @@ export function useMessages(sessionId: string | null) {
         await window.api.chat.sendMessage(sessionId, agentKey, undefined, {
             type: EventType.USER_CONFIRM_RESULT,
             id: crypto.randomUUID(),
-            createdAt: new Date().toISOString(),
-            replyId: replyId,
-            confirmResults: [
+            created_at: new Date().toISOString(),
+            reply_id: replyId,
+            confirm_results: [
                 {
                     confirmed: confirm,
-                    toolCall: toolCall,
+                    tool_call: toolCall,
                 },
             ],
         } as UserConfirmResultEvent);

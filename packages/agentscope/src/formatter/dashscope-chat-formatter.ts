@@ -141,11 +141,11 @@ export class DashScopeChatFormatter extends FormatterBase {
      * @returns An object representing the formatted multimodal content.
      */
     _formatMultimodalBlock(block: DataBlock) {
-        const type = block.source.mediaType.split('/')[0];
+        const type = block.source.media_type.split('/')[0];
 
         if (!['image', 'audio', 'video'].includes(type)) {
             console.log(
-                `Skip unsupported media type ${block.source.mediaType} in DashScopeChatFormatter. Only image, audio and video are supported.`
+                `Skip unsupported media type ${block.source.media_type} in DashScopeChatFormatter. Only image, audio and video are supported.`
             );
             return [];
         }
@@ -156,7 +156,7 @@ export class DashScopeChatFormatter extends FormatterBase {
 
         return [
             {
-                [type]: `data:${block.source.mediaType};base64,${block.source.data}`,
+                [type]: `data:${block.source.media_type};base64,${block.source.data}`,
             },
         ];
     }
