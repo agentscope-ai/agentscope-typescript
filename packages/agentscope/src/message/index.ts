@@ -6,12 +6,15 @@ export {
     SystemMsg,
     getTextContent,
     getContentBlocks,
+    appendEvent,
 } from './message';
 export {
     TextBlock,
     ThinkingBlock,
     ToolCallBlock,
+    ToolCallState,
     ToolResultBlock,
+    ToolResultState,
     ContentBlock,
     Base64Source,
     URLSource,

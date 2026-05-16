@@ -6,7 +6,10 @@ import {
     ToolResultBlock,
     ToolCallBlock,
     DataBlock,
+    Base64Source,
+    URLSource,
 } from './block';
+import { AgentEvent, EventType } from '../event';
 
 /** A chat message exchanged between agents or between an agent and a model. */
 export interface Msg {
@@ -182,4 +185,210 @@ export function getContentBlocks(
 ): ContentBlock[] {
     if (!blockType) return msg.content;
     return msg.content.filter(block => block.type === blockType);
+}
+
+/**
+ * Find a content block by type and id within a message.
+ * @param msg
+ * @param blockType
+ * @param blockId
+ * @returns The matching {@link ContentBlock}, or `undefined` if not found.
+ */
+function findBlock(msg: Msg, blockType: string, blockId: string): ContentBlock | undefined {
+    return msg.content.find(block => block.type === blockType && block.id === blockId);
+}
+
+/**
+ * Apply a streaming {@link AgentEvent} to a {@link Msg}, mutating it in place.
+ *
+ * Only `content` and `finished_at` are ever modified. Events whose
+ * `reply_id` does not match `msg.id` are skipped with a warning.
+ * @param msg
+ * @param event
+ * @returns The mutated {@link Msg} object.
+ */
+export function appendEvent(msg: Msg, event: AgentEvent): Msg {
+    if (!('reply_id' in event)) return msg;
+    if (event.reply_id !== msg.id) {
+        console.warn(
+            `Event reply_id "${event.reply_id}" does not match message id "${msg.id}", skipping.`
+        );
+        return msg;
+    }
+
+    switch (event.type) {
+        case EventType.REPLY_END:
+            msg.finished_at = event.created_at;
+            break;
+
+        case EventType.TEXT_BLOCK_START:
+            msg.content.push({ type: 'text', id: event.block_id, text: '' });
+            break;
+
+        case EventType.TEXT_BLOCK_DELTA: {
+            const block = findBlock(msg, 'text', event.block_id);
+            if (!block) {
+                console.warn(`TextBlock "${event.block_id}" not found, skipping.`);
+            } else {
+                (block as TextBlock).text += event.delta;
+            }
+            break;
+        }
+
+        case EventType.TEXT_BLOCK_END:
+            break;
+
+        case EventType.THINKING_BLOCK_START:
+            msg.content.push({ type: 'thinking', id: event.block_id, thinking: '' });
+            break;
+
+        case EventType.THINKING_BLOCK_DELTA: {
+            const block = findBlock(msg, 'thinking', event.block_id);
+            if (!block) {
+                console.warn(`ThinkingBlock "${event.block_id}" not found, skipping.`);
+            } else {
+                (block as ThinkingBlock).thinking += event.delta;
+            }
+            break;
+        }
+
+        case EventType.THINKING_BLOCK_END:
+            break;
+
+        case EventType.DATA_BLOCK_START:
+            msg.content.push({
+                type: 'data',
+                id: event.block_id,
+                source: { type: 'base64', data: '', media_type: event.media_type },
+            });
+            break;
+
+        case EventType.DATA_BLOCK_DELTA: {
+            const block = findBlock(msg, 'data', event.block_id);
+            if (!block) {
+                console.warn(`DataBlock "${event.block_id}" not found, skipping.`);
+            } else {
+                ((block as DataBlock).source as Base64Source).data += event.data;
+            }
+            break;
+        }
+
+        case EventType.DATA_BLOCK_END:
+            break;
+
+        case EventType.TOOL_CALL_START:
+            msg.content.push({
+                type: 'tool_call',
+                id: event.tool_call_id,
+                name: event.tool_call_name,
+                input: '',
+                state: 'pending',
+            });
+            break;
+
+        case EventType.TOOL_CALL_DELTA: {
+            const block = findBlock(msg, 'tool_call', event.tool_call_id);
+            if (!block) {
+                console.warn(`ToolCallBlock "${event.tool_call_id}" not found, skipping.`);
+            } else {
+                (block as ToolCallBlock).input += event.delta;
+            }
+            break;
+        }
+
+        case EventType.TOOL_CALL_END:
+            break;
+
+        case EventType.TOOL_RESULT_START:
+            msg.content.push({
+                type: 'tool_result',
+                id: event.tool_call_id,
+                name: event.tool_call_name,
+                output: [],
+                state: 'running',
+            });
+            break;
+
+        case EventType.TOOL_RESULT_TEXT_DELTA: {
+            const block = findBlock(msg, 'tool_result', event.tool_call_id);
+            if (!block) {
+                console.warn(`ToolResultBlock "${event.tool_call_id}" not found, skipping.`);
+            } else {
+                const trb = block as ToolResultBlock;
+                if (typeof trb.output === 'string') {
+                    trb.output = [{ type: 'text', id: crypto.randomUUID(), text: trb.output }];
+                }
+                const last = trb.output[trb.output.length - 1];
+                if (!last || last.type !== 'text') {
+                    trb.output.push({
+                        type: 'text',
+                        id: event.block_id ?? crypto.randomUUID(),
+                        text: event.delta,
+                    });
+                } else {
+                    (last as TextBlock).text += event.delta;
+                }
+            }
+            break;
+        }
+
+        case EventType.TOOL_RESULT_DATA_DELTA: {
+            const block = findBlock(msg, 'tool_result', event.tool_call_id);
+            if (!block) {
+                console.warn(`ToolResultBlock "${event.tool_call_id}" not found, skipping.`);
+            } else {
+                const trb = block as ToolResultBlock;
+                if (typeof trb.output === 'string') {
+                    trb.output = [{ type: 'text', id: crypto.randomUUID(), text: trb.output }];
+                }
+                const source: Base64Source | URLSource =
+                    event.data != null
+                        ? { type: 'base64', data: event.data, media_type: event.media_type }
+                        : { type: 'url', url: event.url!, media_type: event.media_type };
+                trb.output.push({ type: 'data', id: event.block_id, source });
+            }
+            break;
+        }
+
+        case EventType.TOOL_RESULT_END: {
+            const block = findBlock(msg, 'tool_result', event.tool_call_id);
+            if (!block) {
+                console.warn(`ToolResultBlock "${event.tool_call_id}" not found, skipping.`);
+            } else {
+                (block as ToolResultBlock).state = event.state;
+            }
+            break;
+        }
+
+        case EventType.REQUIRE_USER_CONFIRM:
+            for (const tc of event.tool_calls) {
+                const b = findBlock(msg, 'tool_call', tc.id);
+                if (b) (b as ToolCallBlock).state = 'asking';
+            }
+            break;
+
+        case EventType.USER_CONFIRM_RESULT:
+            for (const result of event.confirm_results) {
+                const b = findBlock(msg, 'tool_call', result.tool_call.id);
+                if (b) {
+                    (b as ToolCallBlock).state = result.confirmed ? 'allowed' : 'finished';
+                }
+            }
+            break;
+
+        case EventType.REQUIRE_EXTERNAL_EXECUTION:
+            for (const tc of event.tool_calls) {
+                const b = findBlock(msg, 'tool_call', tc.id);
+                if (b) (b as ToolCallBlock).state = 'submitted';
+            }
+            break;
+
+        case EventType.EXTERNAL_EXECUTION_RESULT:
+            for (const result of event.execution_results) {
+                msg.content.push(result);
+            }
+            break;
+    }
+
+    return msg;
 }

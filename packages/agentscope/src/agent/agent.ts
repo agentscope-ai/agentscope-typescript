@@ -322,7 +322,7 @@ export class Agent {
                 this.toolkit.requireUserConfirm(toolCall.name) &&
                 !this.confirmedToolCallIds.includes(toolCall.id)
             ) {
-                toolCall.awaitUserConfirmation = true;
+                toolCall.state = 'asking';
                 // Find the continuous tool calls that require user confirmation
                 let i = index + 1;
                 for (; i < pendingToolCalls.length; i++) {
@@ -332,7 +332,7 @@ export class Agent {
                         this.confirmedToolCallIds.includes(nextToolCall.id)
                     )
                         break;
-                    nextToolCall.awaitUserConfirmation = true;
+                    nextToolCall.state = 'asking';
                 }
                 return {
                     awaitingType: EventType.REQUIRE_USER_CONFIRM,
@@ -431,14 +431,20 @@ export class Agent {
                         ]);
                     }
                 }
-                // Remove the tool call from the awaiting state
-                const processedToolCallIds = event.confirm_results.map(
-                    result => result.tool_call.id
+                // Update tool call states based on confirm results
+                const confirmedIds = new Set(
+                    event.confirm_results.filter(r => r.confirmed).map(r => r.tool_call.id)
                 );
-                // Set the awaitingUserConfirmation flag to undefined for UI update
+                const deniedIds = new Set(
+                    event.confirm_results.filter(r => !r.confirmed).map(r => r.tool_call.id)
+                );
                 this.context.at(-1)?.content.forEach(content => {
-                    if (content.type === 'tool_call' && processedToolCallIds.includes(content.id)) {
-                        delete content.awaitUserConfirmation;
+                    if (content.type === 'tool_call') {
+                        if (confirmedIds.has(content.id)) {
+                            content.state = 'allowed';
+                        } else if (deniedIds.has(content.id)) {
+                            content.state = 'finished';
+                        }
                     }
                 });
             }

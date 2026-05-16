@@ -98,6 +98,7 @@ function groupToolCalls(content: ContentBlock[]): ExtendedContentBlock[] {
                         id: block.id,
                         name: block.name,
                         input: '',
+                        state: 'pending',
                     },
                     result: block,
                 });
@@ -259,7 +260,7 @@ function ToolCallGroup({
     const { t } = useTranslation();
     if (block.calls.length === 0) return null;
 
-    const firstNeedConfirm = block.calls.findIndex(item => item.call.awaitUserConfirmation);
+    const firstNeedConfirm = block.calls.findIndex(item => item.call.state === 'asking');
 
     const renderToolCalls =
         firstNeedConfirm === -1 ? block.calls : block.calls.slice(0, firstNeedConfirm + 1);
@@ -318,7 +319,7 @@ function ToolCallGroup({
             }
 
             let resultStr: string;
-            if (call.awaitUserConfirmation || !result || result.state === 'running') {
+            if (call.state === 'asking' || !result || result.state === 'running') {
                 resultStr = t('common.running') + ' ...';
             } else if (result.state === 'interrupted') {
                 resultStr = t('common.interrupted');
@@ -508,7 +509,7 @@ export function MessageBubble({ message, onUserConfirm }: MessageBubbleProps) {
         return processedContent.map((block, i) =>
             renderBlock(block, i, (toolCall: ToolCallBlock, confirm: boolean) => {
                 onUserConfirm(toolCall, confirm, message.id);
-                toolCall.awaitUserConfirmation = false; // Ensure the confirmation UI is removed after user responds
+                toolCall.state = 'allowed'; // Ensure the confirmation UI is removed after user responds
             })
         );
     };

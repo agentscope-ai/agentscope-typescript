@@ -122,6 +122,7 @@ describe('DashScopeChatModel', () => {
             name: 'get_current_weather',
             id: 'call-123',
             input: '{"location"',
+            state: 'pending',
         });
 
         // Chunk 4: Tool call with second part of arguments (delta)
@@ -131,6 +132,7 @@ describe('DashScopeChatModel', () => {
             name: 'get_current_weather',
             id: 'call-123',
             input: ':"Beijing"}',
+            state: 'pending',
         });
 
         // Chunk 5: Empty content with usage info
@@ -158,6 +160,7 @@ describe('DashScopeChatModel', () => {
             name: 'get_current_weather',
             id: 'call-123',
             input: '{"location":"Beijing"}',
+            state: 'pending',
         });
 
         // Verify usage
@@ -266,6 +269,7 @@ describe('DashScopeChatModel', () => {
             name: 'get_current_weather',
             id: 'call-123',
             input: '{"location":"Beijing"}',
+            state: 'pending',
         });
 
         // Verify usage

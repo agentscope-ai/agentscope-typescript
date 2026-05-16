@@ -212,6 +212,7 @@ export class OllamaChatModel extends ChatModelBase {
                         id: toolId,
                         name: func.name,
                         input: JSON.stringify(func.arguments),
+                        state: 'pending' as const,
                     };
 
                     toolCalls.set(toolId, toolCallBlock);
@@ -284,6 +285,7 @@ export class OllamaChatModel extends ChatModelBase {
                     id: `${idx}_${toolCall.function.name}`,
                     name: toolCall.function.name,
                     input: JSON.stringify(toolCall.function.arguments),
+                    state: 'pending',
                 });
             }
         }

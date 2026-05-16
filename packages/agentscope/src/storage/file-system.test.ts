@@ -529,6 +529,7 @@ describe('LocalFileStorage', () => {
                             id: 'call-123',
                             name: 'search',
                             input: JSON.stringify({ query: 'test' }),
+                            state: 'pending',
                         },
                     ],
                     role: 'assistant',

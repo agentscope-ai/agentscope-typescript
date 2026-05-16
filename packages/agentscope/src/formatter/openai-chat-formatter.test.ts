@@ -54,12 +54,14 @@ describe('OpenAIChatFormatter', () => {
                         id: '1',
                         name: 'google_search',
                         input: '{"query": "example1"}',
+                        state: 'pending',
                     },
                     {
                         type: 'tool_call',
                         id: '2',
                         name: 'bing_search',
                         input: '{"query": "example2"}',
+                        state: 'pending',
                     },
                     {
                         type: 'tool_result',
@@ -195,7 +197,13 @@ describe('OpenAIChatFormatter', () => {
             createMsg({
                 name: 'assistant',
                 content: [
-                    { type: 'tool_call', id: '1', name: 'google_search', input: '{"query": "A"}' },
+                    {
+                        type: 'tool_call',
+                        id: '1',
+                        name: 'google_search',
+                        input: '{"query": "A"}',
+                        state: 'pending',
+                    },
                     {
                         type: 'tool_result',
                         id: '1',

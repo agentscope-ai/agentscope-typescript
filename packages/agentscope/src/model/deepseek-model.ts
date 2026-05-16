@@ -191,6 +191,7 @@ export class DeepSeekChatModel extends ChatModelBase {
                         id: String(toolCall.id),
                         name: String(toolCall.function.name),
                         input: inputString,
+                        state: 'pending',
                     });
                 }
             });
@@ -314,6 +315,7 @@ export class DeepSeekChatModel extends ChatModelBase {
                                 id: meta.id,
                                 name: meta.name,
                                 input: deltaArgs,
+                                state: 'pending',
                             });
                         }
                     });
@@ -347,6 +349,7 @@ export class DeepSeekChatModel extends ChatModelBase {
                 id: meta.id,
                 name: meta.name,
                 input: accToolInputs.get(index) || '{}',
+                state: 'pending',
             });
         });
 
