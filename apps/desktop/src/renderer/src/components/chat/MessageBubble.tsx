@@ -509,7 +509,8 @@ export function MessageBubble({ message, onUserConfirm }: MessageBubbleProps) {
         return processedContent.map((block, i) =>
             renderBlock(block, i, (toolCall: ToolCallBlock, confirm: boolean) => {
                 onUserConfirm(toolCall, confirm, message.id);
-                toolCall.state = 'allowed'; // Ensure the confirmation UI is removed after user responds
+                toolCall.state = confirm ? 'allowed' : 'finished';
+                // Remove confirmation UI while preserving denied state
             })
         );
     };
