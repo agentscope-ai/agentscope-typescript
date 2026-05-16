@@ -4,12 +4,12 @@ import {
     UserConfirmResultEvent,
     ExternalExecutionResultEvent,
 } from '@agentscope-ai/agentscope/event';
-import { ContentBlock, createMsg, ToolCallBlock } from '@agentscope-ai/agentscope/message';
+import { ContentBlock, createMsg, Msg, ToolCallBlock } from '@agentscope-ai/agentscope/message';
 import type { Document } from '@shared/types/document';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
 
-import { applyAgentEvent, type StreamingMsg } from './agent-event-handler';
+import { applyAgentEvent } from './agent-event-handler';
 import { executeDocumentRead, executeDocumentEdit } from '@/pages/editor/frontend-tool';
 
 const TYPEWRITER_INTERVAL = 50; // ms per tick
@@ -50,7 +50,7 @@ export function useDocuments() {
     const [isDirty, setIsDirty] = useState(false);
 
     // ── Agent state ───────────────────────────────────────────────────────────
-    const [messages, setMessages] = useState<StreamingMsg[]>([]);
+    const [messages, setMessages] = useState<Msg[]>([]);
     const [sending, setSending] = useState(false);
 
     // Keep a ref to content so the useEffect closure always reads the latest value

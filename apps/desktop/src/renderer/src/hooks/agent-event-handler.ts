@@ -2,10 +2,6 @@ import { EventType, type AgentEvent } from '@agentscope-ai/agentscope/event';
 import { createMsg, appendEvent, Msg } from '@agentscope-ai/agentscope/message';
 import type { Dispatch, SetStateAction } from 'react';
 
-export interface StreamingMsg extends Msg {
-    streaming?: boolean;
-}
-
 /**
  * Applies an agent event to update message and sending state.
  * @param event
@@ -14,7 +10,7 @@ export interface StreamingMsg extends Msg {
  */
 export function applyAgentEvent(
     event: AgentEvent,
-    setMessages: Dispatch<SetStateAction<StreamingMsg[]>>,
+    setMessages: Dispatch<SetStateAction<Msg[]>>,
     setSending: Dispatch<SetStateAction<boolean>>
 ) {
     switch (event.type) {
@@ -23,16 +19,19 @@ export function applyAgentEvent(
             setMessages(prev => {
                 const existingMsg = prev.find(m => m.id === event.reply_id);
                 if (existingMsg) {
-                    return prev.map(m => (m.id === event.reply_id ? { ...m, streaming: true } : m));
+                    // Already exists, mark as not finished
+                    return prev.map(m =>
+                        m.id === event.reply_id ? { ...m, finished_at: undefined } : m
+                    );
                 }
-                const newMsg: StreamingMsg = {
+                const newMsg: Msg = {
                     ...createMsg({
                         id: event.reply_id,
                         role: event.role,
                         name: event.name,
                         content: [],
                     }),
-                    streaming: true,
+                    finished_at: undefined,
                 };
                 return [...prev, newMsg];
             });
@@ -44,9 +43,9 @@ export function applyAgentEvent(
             setMessages(prev => {
                 return prev.map(m => {
                     if (m.id !== event.reply_id) return m;
-                    const cloned: StreamingMsg = { ...m, content: m.content.map(b => ({ ...b })) };
+                    const cloned: Msg = { ...m, content: m.content.map(b => ({ ...b })) };
                     appendEvent(cloned, event);
-                    return { ...cloned, streaming: false };
+                    return cloned;
                 });
             });
             break;
@@ -83,7 +82,7 @@ export function applyAgentEvent(
                     // Deep clone content blocks to avoid mutation side effects
                     // (React Strict Mode calls updaters twice to detect impure functions)
                     // tool_result blocks need their output array deep-cloned too
-                    const cloned: StreamingMsg = {
+                    const cloned: Msg = {
                         ...m,
                         content: m.content.map(b => {
                             if (b.type === 'tool_result') {

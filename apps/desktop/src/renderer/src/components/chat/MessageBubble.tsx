@@ -485,7 +485,7 @@ function renderBlock(
 }
 
 interface MessageBubbleProps {
-    message: Msg & { streaming?: boolean };
+    message: Msg;
     onUserConfirm: (toolCallBlock: ToolCallBlock, confirm: boolean, replyId: string) => void;
 }
 

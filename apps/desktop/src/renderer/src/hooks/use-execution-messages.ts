@@ -1,7 +1,8 @@
+import { Msg } from '@agentscope-ai/agentscope/message';
 import type { ScheduleExecution } from '@shared/types/schedule';
 import { useState, useEffect, startTransition } from 'react';
 
-import { applyAgentEvent, type StreamingMsg } from './agent-event-handler';
+import { applyAgentEvent } from './agent-event-handler';
 import { useSchedule } from '@/contexts/ScheduleContext';
 
 /**
@@ -16,7 +17,7 @@ export function useExecutionMessages(
     execution: ScheduleExecution | null
 ) {
     const { getExecutionMessages, subscribeExecutionAgentEvents } = useSchedule();
-    const [messages, setMessages] = useState<StreamingMsg[]>([]);
+    const [messages, setMessages] = useState<Msg[]>([]);
     const [sending, setSending] = useState(false);
 
     useEffect(() => {
