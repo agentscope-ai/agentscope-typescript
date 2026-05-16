@@ -215,6 +215,7 @@ describe('HTTPStatefulMCPClient', () => {
             name: 'add',
             type: 'tool_call',
             input: `{"a": 10, "b": 20}`,
+            state: 'pending',
         });
         for await (const item of res) {
             expect(item.content.length).toBeGreaterThan(0);
@@ -288,6 +289,7 @@ describe('HTTPStatelessMCPClient', () => {
             name: 'add',
             type: 'tool_call',
             input: `{"a": 15, "b": 25}`,
+            state: 'pending',
         });
         const collectedRes: ToolResponse[] = [];
         for await (const item of res) {

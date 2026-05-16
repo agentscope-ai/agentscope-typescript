@@ -106,6 +106,7 @@ describe('DeepSeekChatModel', () => {
             name: 'get_current_weather',
             id: 'call-123',
             input: '{"location":"Beijing"}',
+            state: 'pending',
         });
 
         // Verify usage
@@ -209,6 +210,7 @@ describe('DeepSeekChatModel', () => {
             name: 'get_current_weather',
             id: 'call-123',
             input: '{"location":"Beijing"}',
+            state: 'pending',
         });
 
         // Verify usage

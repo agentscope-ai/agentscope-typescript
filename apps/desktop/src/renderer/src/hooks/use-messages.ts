@@ -3,10 +3,10 @@ import {
     type AgentEvent,
     UserConfirmResultEvent,
 } from '@agentscope-ai/agentscope/event';
-import { ContentBlock, createMsg, ToolCallBlock } from '@agentscope-ai/agentscope/message';
+import { ContentBlock, createMsg, Msg, ToolCallBlock } from '@agentscope-ai/agentscope/message';
 import { useState, useEffect, useRef, startTransition } from 'react';
 
-import { applyAgentEvent, type StreamingMsg } from './agent-event-handler';
+import { applyAgentEvent } from './agent-event-handler';
 
 /**
  * A custom hook for managing chat messages within a session.
@@ -15,7 +15,7 @@ import { applyAgentEvent, type StreamingMsg } from './agent-event-handler';
  * @returns An object containing messages, sending state, and message sending function.
  */
 export function useMessages(sessionId: string | null) {
-    const [messages, setMessages] = useState<StreamingMsg[]>([]);
+    const [messages, setMessages] = useState<Msg[]>([]);
     const [sending, setSending] = useState(false);
     const prevSessionIdRef = useRef<string | null>(null);
 

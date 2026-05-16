@@ -92,6 +92,7 @@ describe('Toolkit', () => {
             type: 'tool_call',
             name: 'test_function',
             input: '{"a":"hello","b":5}',
+            state: 'pending',
             id: '1',
         });
 
@@ -162,6 +163,7 @@ describe('Toolkit', () => {
             type: 'tool_call',
             name: 'test_function',
             input: '{"a":"hello","b":5}',
+            state: 'pending',
             id: '1b',
         });
 
@@ -229,6 +231,7 @@ describe('Toolkit', () => {
             name: 'no_param_function',
             id: '2',
             input: '{}',
+            state: 'pending',
         });
 
         for await (const chunk of res) {
@@ -263,6 +266,7 @@ describe('Toolkit', () => {
             name: 'count_function',
             id: '3',
             input: '{"count":3}',
+            state: 'pending',
         });
 
         // Verify intermediate chunks
@@ -325,6 +329,7 @@ describe('Toolkit', () => {
             name: 'async_count_function',
             id: '4',
             input: '{"count":2}',
+            state: 'pending',
         });
 
         // Verify intermediate chunks
@@ -376,6 +381,7 @@ describe('Toolkit', () => {
             name: 'string_count_function',
             id: '8',
             input: '{"count":3}',
+            state: 'pending',
         });
 
         const chunks = [];
@@ -429,6 +435,7 @@ describe('Toolkit', () => {
             name: 'async_string_count_function',
             id: '9',
             input: '{"count":2}',
+            state: 'pending',
         });
 
         const chunks = [];
@@ -467,6 +474,7 @@ describe('Toolkit', () => {
             name: 'non_existent_function',
             id: '5',
             input: '{}',
+            state: 'pending',
         });
 
         for await (const chunk of res) {
@@ -495,6 +503,7 @@ describe('Toolkit', () => {
             name: 'test_function',
             id: '6',
             input: '{"a":"hello","b":20}',
+            state: 'pending',
         });
 
         for await (const chunk of res2) {
@@ -526,6 +535,7 @@ describe('Toolkit', () => {
             name: 'test_function',
             id: '7',
             input: '{"a":"hello","b":20}',
+            state: 'pending',
         });
 
         for await (const chunk of res3) {
@@ -582,6 +592,7 @@ This skill demonstrates how to use the Skill tool to retrieve skill content.`;
                 type: 'tool_call',
                 name: 'Skill',
                 input: '{"name":"test_skill"}',
+                state: 'pending',
                 id: 'skill_test_1',
             });
 
@@ -610,6 +621,7 @@ This skill demonstrates how to use the Skill tool to retrieve skill content.`;
                 type: 'tool_call',
                 name: 'Skill',
                 input: '{"name":"non_existent_skill"}',
+                state: 'pending',
                 id: 'skill_test_2',
             });
 

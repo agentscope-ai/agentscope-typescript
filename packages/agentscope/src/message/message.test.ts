@@ -38,6 +38,7 @@ describe('Message', () => {
                     id: '1',
                     name: 'test',
                     input: "{ query: 'What is AI?' }",
+                    state: 'pending',
                 },
                 {
                     type: 'tool_result',
@@ -64,6 +65,7 @@ describe('Message', () => {
                 id: '1',
                 name: 'test',
                 input: "{ query: 'What is AI?' }",
+                state: 'pending',
             },
         ]);
         expect(getContentBlocks(msg, 'tool_result')).toStrictEqual([

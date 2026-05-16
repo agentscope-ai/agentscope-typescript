@@ -106,6 +106,7 @@ describe('OllamaChatModel', () => {
             type: 'tool_call',
             name: 'get_current_weather',
             input: '{"location":"Beijing"}',
+            state: 'pending',
         });
 
         // Verify usage

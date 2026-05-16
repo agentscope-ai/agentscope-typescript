@@ -63,12 +63,14 @@ describe('DashScopeChatFormatter', () => {
                         id: '1',
                         name: 'google_search',
                         input: '{"query": "example1"}',
+                        state: 'pending',
                     },
                     {
                         type: 'tool_call',
                         id: '2',
                         name: 'bing_search',
                         input: '{"query": "example2"}',
+                        state: 'pending',
                     },
                     {
                         type: 'tool_result',
@@ -263,6 +265,7 @@ describe('DashScopeChatFormatter', () => {
                         id: '1',
                         name: 'google_search',
                         input: '{\"query\": \"example1\"}',
+                        state: 'pending',
                     },
                     {
                         type: 'tool_result',

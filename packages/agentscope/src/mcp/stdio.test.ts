@@ -77,6 +77,7 @@ describeUnlessWindows('StdIOMCPClient', () => {
             name: 'read_file',
             type: 'tool_call',
             input: `{"path": "${testFilePath}"}`,
+            state: 'pending',
         });
         for await (const item of res) {
             expect(item.content.length).toBeGreaterThan(0);

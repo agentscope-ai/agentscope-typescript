@@ -76,12 +76,14 @@ describe('Human-in-the-loop', () => {
                 id: '1',
                 name: 'Bash',
                 input: `{"command": "echo Hello"}`,
+                state: 'pending',
             },
             {
                 type: 'tool_call',
                 id: '2',
                 name: 'Bash',
                 input: `{"command": "echo World"}`,
+                state: 'pending',
             },
         ];
 
@@ -99,14 +101,14 @@ describe('Human-in-the-loop', () => {
                     id: '1',
                     name: 'Bash',
                     input: '{"command": "echo Hello"}',
-                    awaitUserConfirmation: true,
+                    state: 'asking',
                 },
                 {
                     type: 'tool_call',
                     id: '2',
                     name: 'Bash',
                     input: '{"command": "echo World"}',
-                    awaitUserConfirmation: true,
+                    state: 'asking',
                 },
             ],
         });
@@ -126,14 +128,14 @@ describe('Human-in-the-loop', () => {
                         input: '{"command": "echo Hello"}',
                         name: 'Bash',
                         type: 'tool_call',
-                        awaitUserConfirmation: true,
+                        state: 'asking',
                     },
                     {
                         id: '2',
                         input: '{"command": "echo World"}',
                         name: 'Bash',
                         type: 'tool_call',
-                        awaitUserConfirmation: true,
+                        state: 'asking',
                     },
                 ],
                 id: expect.any(String),
@@ -159,6 +161,7 @@ describe('Human-in-the-loop', () => {
                             id: '1',
                             name: 'Bash',
                             input: '{"command": "echo Hello"}',
+                            state: 'pending',
                         },
                     },
                 ],
@@ -177,6 +180,7 @@ describe('Human-in-the-loop', () => {
                     id: '2',
                     name: 'Bash',
                     input: '{"command": "echo World"}',
+                    state: 'asking',
                 },
             ],
         });
@@ -189,13 +193,14 @@ describe('Human-in-the-loop', () => {
                     input: '{"command": "echo Hello"}',
                     name: 'Bash',
                     type: 'tool_call',
+                    state: 'allowed',
                 },
                 {
                     id: '2',
                     input: '{"command": "echo World"}',
                     name: 'Bash',
                     type: 'tool_call',
-                    awaitUserConfirmation: true,
+                    state: 'asking',
                 },
                 {
                     id: '1',
@@ -230,6 +235,7 @@ describe('Human-in-the-loop', () => {
                             id: '2',
                             name: 'Bash',
                             input: '{"command": "echo World"}',
+                            state: 'pending',
                         },
                     },
                 ],
@@ -312,12 +318,14 @@ describe('Human-in-the-loop', () => {
                 id: '1',
                 name: 'ExternalTool1',
                 input: `{"query": "test query"}`,
+                state: 'pending',
             },
             {
                 type: 'tool_call',
                 id: '2',
                 name: 'ExternalTool2',
                 input: `{"data": "test data"}`,
+                state: 'pending',
             },
         ];
 
@@ -336,12 +344,14 @@ describe('Human-in-the-loop', () => {
                     id: '1',
                     name: 'ExternalTool1',
                     input: '{"query": "test query"}',
+                    state: 'pending',
                 },
                 {
                     type: 'tool_call',
                     id: '2',
                     name: 'ExternalTool2',
                     input: '{"data": "test data"}',
+                    state: 'pending',
                 },
             ],
         });
@@ -362,12 +372,14 @@ describe('Human-in-the-loop', () => {
                         input: '{"query": "test query"}',
                         name: 'ExternalTool1',
                         type: 'tool_call',
+                        state: 'pending',
                     },
                     {
                         id: '2',
                         input: '{"data": "test data"}',
                         name: 'ExternalTool2',
                         type: 'tool_call',
+                        state: 'pending',
                     },
                 ],
                 id: expect.any(String),
@@ -375,6 +387,7 @@ describe('Human-in-the-loop', () => {
                 name: 'Friday',
                 role: 'assistant',
                 created_at: expect.any(String),
+                finished_at: undefined,
             },
         ]);
 
@@ -415,6 +428,7 @@ describe('Human-in-the-loop', () => {
                     id: '2',
                     name: 'ExternalTool2',
                     input: '{"data": "test data"}',
+                    state: 'pending',
                 },
             ],
         });
@@ -427,12 +441,14 @@ describe('Human-in-the-loop', () => {
                     input: '{"query": "test query"}',
                     name: 'ExternalTool1',
                     type: 'tool_call',
+                    state: 'pending',
                 },
                 {
                     id: '2',
                     input: '{"data": "test data"}',
                     name: 'ExternalTool2',
                     type: 'tool_call',
+                    state: 'pending',
                 },
                 {
                     id: '1',
@@ -578,18 +594,21 @@ describe('Human-in-the-loop', () => {
                 id: '1',
                 name: 'ExternalTool',
                 input: `{"query": "external query"}`,
+                state: 'pending',
             },
             {
                 type: 'tool_call',
                 id: '2',
                 name: 'ConfirmTool',
                 input: `{"action": "delete file"}`,
+                state: 'pending',
             },
             {
                 type: 'tool_call',
                 id: '3',
                 name: 'NormalTool',
                 input: `{"data": "normal data"}`,
+                state: 'pending',
             },
         ];
 
@@ -608,6 +627,7 @@ describe('Human-in-the-loop', () => {
                     id: '1',
                     name: 'ExternalTool',
                     input: '{"query": "external query"}',
+                    state: 'pending',
                 },
             ],
         });
@@ -656,7 +676,7 @@ describe('Human-in-the-loop', () => {
                     id: '2',
                     name: 'ConfirmTool',
                     input: '{"action": "delete file"}',
-                    awaitUserConfirmation: true,
+                    state: 'asking',
                 },
             ],
         });
@@ -692,6 +712,7 @@ describe('Human-in-the-loop', () => {
                             id: '2',
                             name: 'ConfirmTool',
                             input: '{"action": "delete file"}',
+                            state: 'pending',
                         },
                     },
                 ],
@@ -716,18 +737,21 @@ describe('Human-in-the-loop', () => {
                     input: '{"query": "external query"}',
                     name: 'ExternalTool',
                     type: 'tool_call',
+                    state: 'pending',
                 },
                 {
                     id: '2',
                     input: '{"action": "delete file"}',
                     name: 'ConfirmTool',
                     type: 'tool_call',
+                    state: 'allowed',
                 },
                 {
                     id: '3',
                     input: '{"data": "normal data"}',
                     name: 'NormalTool',
                     type: 'tool_call',
+                    state: 'pending',
                 },
                 {
                     id: '1',
@@ -823,12 +847,14 @@ describe('Human-in-the-loop', () => {
                 id: '1',
                 name: 'ExternalAndConfirmTool',
                 input: `{"command": "rm -rf /"}`,
+                state: 'pending',
             },
             {
                 type: 'tool_call',
                 id: '2',
                 name: 'ConfirmOnlyTool',
                 input: `{"action": "delete database"}`,
+                state: 'pending',
             },
         ];
 
@@ -847,14 +873,14 @@ describe('Human-in-the-loop', () => {
                     id: '1',
                     name: 'ExternalAndConfirmTool',
                     input: '{"command": "rm -rf /"}',
-                    awaitUserConfirmation: true,
+                    state: 'asking',
                 },
                 {
                     type: 'tool_call',
                     id: '2',
                     name: 'ConfirmOnlyTool',
                     input: '{"action": "delete database"}',
-                    awaitUserConfirmation: true,
+                    state: 'asking',
                 },
             ],
         });
@@ -881,6 +907,7 @@ describe('Human-in-the-loop', () => {
                             id: '1',
                             name: 'ExternalAndConfirmTool',
                             input: '{"command": "rm -rf /"}',
+                            state: 'pending',
                         },
                     },
                     {
@@ -890,6 +917,7 @@ describe('Human-in-the-loop', () => {
                             id: '2',
                             name: 'ConfirmOnlyTool',
                             input: '{"action": "delete database"}',
+                            state: 'pending',
                         },
                     },
                 ],
@@ -908,6 +936,7 @@ describe('Human-in-the-loop', () => {
                     id: '1',
                     name: 'ExternalAndConfirmTool',
                     input: '{"command": "rm -rf /"}',
+                    state: 'allowed',
                 },
             ],
         });
@@ -927,12 +956,14 @@ describe('Human-in-the-loop', () => {
                     input: '{"command": "rm -rf /"}',
                     name: 'ExternalAndConfirmTool',
                     type: 'tool_call',
+                    state: 'allowed',
                 },
                 {
                     id: '2',
                     input: '{"action": "delete database"}',
                     name: 'ConfirmOnlyTool',
                     type: 'tool_call',
+                    state: 'allowed',
                 },
             ],
         ]);
@@ -984,12 +1015,14 @@ describe('Human-in-the-loop', () => {
                     input: '{"command": "rm -rf /"}',
                     name: 'ExternalAndConfirmTool',
                     type: 'tool_call',
+                    state: 'allowed',
                 },
                 {
                     id: '2',
                     input: '{"action": "delete database"}',
                     name: 'ConfirmOnlyTool',
                     type: 'tool_call',
+                    state: 'allowed',
                 },
                 {
                     id: '1',

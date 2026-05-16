@@ -117,6 +117,7 @@ export class OpenAIChatModel extends ChatModelBase {
                         id: toolCall.id,
                         name: toolCall.function.name,
                         input: toolCall.function.arguments,
+                        state: 'pending',
                     });
                 }
             });
@@ -238,6 +239,7 @@ export class OpenAIChatModel extends ChatModelBase {
                                 id: meta.id,
                                 name: meta.name,
                                 input: deltaArgs,
+                                state: 'pending',
                             });
                         }
                     });
@@ -276,6 +278,7 @@ export class OpenAIChatModel extends ChatModelBase {
                 id: meta.id,
                 name: meta.name,
                 input: accToolInputs.get(index) || '{}',
+                state: 'pending',
             });
         });
 

@@ -16,20 +16,24 @@ export interface HintBlock {
     id: string;
 }
 
+export type ToolCallState = 'pending' | 'asking' | 'allowed' | 'submitted' | 'finished';
+
 export interface ToolCallBlock {
     type: 'tool_call';
     name: string;
     id: string;
     input: string;
-    awaitUserConfirmation?: boolean;
+    state: ToolCallState;
 }
+
+export type ToolResultState = 'success' | 'error' | 'interrupted' | 'denied' | 'running';
 
 export interface ToolResultBlock {
     type: 'tool_result';
     id: string;
     name: string;
     output: string | (TextBlock | DataBlock)[];
-    state: 'success' | 'error' | 'interrupted' | 'running';
+    state: ToolResultState;
 }
 
 export interface Base64Source {
