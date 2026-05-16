@@ -194,7 +194,7 @@ export class Agent {
             agentId: this.name,
             context: this.context,
             metadata: {
-                reply_id: this.replyId,
+                replyId: this.replyId,
                 curIter: this.curIter,
                 curSummary: this.curSummary,
             },
