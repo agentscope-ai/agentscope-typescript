@@ -360,10 +360,26 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             break;
         }
 
+        case EventType.MODEL_CALL_END:
+            // Accumulated the input and output tokens here.
+            if (msg.usage) {
+                msg.usage.inputTokens += event.input_tokens;
+                msg.usage.outputTokens += event.output_tokens;
+            } else {
+                msg.usage = {
+                    inputTokens: event.input_tokens,
+                    outputTokens: event.output_tokens,
+                };
+            }
+            break;
+
         case EventType.REQUIRE_USER_CONFIRM:
             for (const tc of event.tool_calls) {
                 const b = findBlock(msg, 'tool_call', tc.id);
-                if (b) (b as ToolCallBlock).state = 'asking';
+                if (b) {
+                    (b as ToolCallBlock).state = 'asking';
+                    (b as ToolCallBlock).suggested_rules = tc.suggested_rules ?? [];
+                }
             }
             break;
 

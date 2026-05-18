@@ -1,3 +1,5 @@
+import { PermissionRule } from '../permission';
+
 export interface TextBlock {
     type: 'text';
     text: string;
@@ -24,6 +26,7 @@ export interface ToolCallBlock {
     id: string;
     input: string;
     state: ToolCallState;
+    suggested_rules?: PermissionRule[];
 }
 
 export type ToolResultState = 'success' | 'error' | 'interrupted' | 'denied' | 'running';
