@@ -378,7 +378,9 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                 const b = findBlock(msg, 'tool_call', tc.id);
                 if (b) {
                     (b as ToolCallBlock).state = 'asking';
-                    (b as ToolCallBlock).suggested_rules = tc.suggested_rules ?? [];
+                    if (tc.suggested_rules !== undefined) {
+                        (b as ToolCallBlock).suggested_rules = tc.suggested_rules;
+                    }
                 }
             }
             break;
