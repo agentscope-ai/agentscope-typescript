@@ -29,8 +29,8 @@ export interface Msg {
     finished_at?: string | null;
     /** Usage information for the message, such as token counts. */
     usage?: {
-        inputTokens: number;
-        outputTokens: number;
+        input_tokens: number;
+        output_tokens: number;
     };
 }
 
@@ -47,6 +47,44 @@ export interface Msg {
  * @param root0.finished_at
  * @param root0.usage
  * @returns A Msg object.
+ */
+/**
+ * Validate that content blocks are allowed for the given role.
+ *
+ * Mirrors the Python `_assert_user_content_blocks` / `_assert_system_content_blocks`
+ * guards: user messages may only contain text or data blocks; system messages
+ * may only contain text blocks; assistant messages accept any block type.
+ * @param role
+ * @param content
+ */
+function assertContentBlocksForRole(role: Msg['role'], content: ContentBlock[]): void {
+    if (role === 'user') {
+        for (const block of content) {
+            if (block.type !== 'text' && block.type !== 'data') {
+                throw new Error('User message can only contain text blocks or data blocks.');
+            }
+        }
+    } else if (role === 'system') {
+        for (const block of content) {
+            if (block.type !== 'text') {
+                throw new Error('System message can only contain text blocks.');
+            }
+        }
+    }
+}
+
+/**
+ * createMsg is a low-level utility for constructing Msg objects with proper defaults and validation.
+ * @param root0
+ * @param root0.name
+ * @param root0.content
+ * @param root0.role
+ * @param root0.metadata
+ * @param root0.id
+ * @param root0.created_at
+ * @param root0.finished_at
+ * @param root0.usage
+ * @returns A Msg object with the specified properties, and defaults for any omitted fields.
  */
 export function createMsg({
     name,
@@ -65,6 +103,7 @@ export function createMsg({
         typeof content === 'string'
             ? [{ id: crypto.randomUUID(), type: 'text', text: content } as TextBlock]
             : content;
+    assertContentBlocksForRole(role, contentBlocks);
     return { id, name, role, content: contentBlocks, metadata, created_at, finished_at, usage };
 }
 
@@ -76,6 +115,7 @@ export function createMsg({
  * @param root0.metadata
  * @param root0.id
  * @param root0.created_at
+ * @param root0.finished_at
  * @returns A Msg object with role 'user'.
  */
 export function UserMsg({
@@ -84,14 +124,24 @@ export function UserMsg({
     metadata = {},
     id = crypto.randomUUID(),
     created_at = new Date().toISOString(),
+    finished_at,
 }: {
     name: string;
     content: string | ContentBlock[];
     metadata?: Record<string, JSONSerializableObject>;
     id?: string;
     created_at?: string;
+    finished_at?: string | null;
 }): Msg {
-    return createMsg({ name, content, role: 'user', metadata, id, created_at });
+    return createMsg({
+        name,
+        content,
+        role: 'user',
+        metadata,
+        id,
+        created_at,
+        finished_at: finished_at ?? created_at,
+    });
 }
 
 /**
@@ -131,6 +181,7 @@ export function AssistantMsg({
  * @param root0.metadata
  * @param root0.id
  * @param root0.created_at
+ * @param root0.finished_at
  * @returns A Msg object with role 'system'.
  */
 export function SystemMsg({
@@ -139,14 +190,24 @@ export function SystemMsg({
     metadata = {},
     id = crypto.randomUUID(),
     created_at = new Date().toISOString(),
+    finished_at,
 }: {
     name: string;
     content: string | ContentBlock[];
     metadata?: Record<string, JSONSerializableObject>;
     id?: string;
     created_at?: string;
+    finished_at?: string | null;
 }): Msg {
-    return createMsg({ name, content, role: 'system', metadata, id, created_at });
+    return createMsg({
+        name,
+        content,
+        role: 'system',
+        metadata,
+        id,
+        created_at,
+        finished_at: finished_at ?? created_at,
+    });
 }
 
 /**
@@ -267,7 +328,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             const block = findBlock(msg, 'data', event.block_id);
             if (!block) {
                 console.warn(`DataBlock "${event.block_id}" not found, skipping.`);
-            } else {
+            } else if (event.data) {
                 ((block as DataBlock).source as Base64Source).data += event.data;
             }
             break;
@@ -322,7 +383,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                 if (!last || last.type !== 'text') {
                     trb.output.push({
                         type: 'text',
-                        id: event.block_id ?? crypto.randomUUID(),
+                        id: crypto.randomUUID(),
                         text: event.delta,
                     });
                 } else {
@@ -345,7 +406,11 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                     event.data != null
                         ? { type: 'base64', data: event.data, media_type: event.media_type }
                         : { type: 'url', url: event.url!, media_type: event.media_type };
-                trb.output.push({ type: 'data', id: event.block_id, source });
+                trb.output.push({
+                    type: 'data',
+                    id: event.block_id ?? crypto.randomUUID(),
+                    source,
+                });
             }
             break;
         }
@@ -363,12 +428,12 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
         case EventType.MODEL_CALL_END:
             // Accumulated the input and output tokens here.
             if (msg.usage) {
-                msg.usage.inputTokens += event.input_tokens;
-                msg.usage.outputTokens += event.output_tokens;
+                msg.usage.input_tokens += event.input_tokens;
+                msg.usage.output_tokens += event.output_tokens;
             } else {
                 msg.usage = {
-                    inputTokens: event.input_tokens,
-                    outputTokens: event.output_tokens,
+                    input_tokens: event.input_tokens,
+                    output_tokens: event.output_tokens,
                 };
             }
             break;
@@ -378,9 +443,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                 const b = findBlock(msg, 'tool_call', tc.id);
                 if (b) {
                     (b as ToolCallBlock).state = 'asking';
-                    if (tc.suggested_rules !== undefined) {
-                        (b as ToolCallBlock).suggested_rules = tc.suggested_rules;
-                    }
+                    (b as ToolCallBlock).suggested_rules = tc.suggested_rules || [];
                 }
             }
             break;

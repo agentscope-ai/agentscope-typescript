@@ -261,26 +261,39 @@ export class Agent {
      * @param usage
      */
     protected _saveToContext(blocks: ContentBlock[], usage?: ChatUsage): void {
+        const msgUsage: Msg['usage'] = usage
+            ? { input_tokens: usage.inputTokens, output_tokens: usage.outputTokens }
+            : undefined;
         const lastMsg = this.context.at(-1);
         if (this.context.length === 0) {
             this.context.push(
-                createMsg({ name: this.name, content: blocks, role: 'assistant', usage })
+                createMsg({
+                    name: this.name,
+                    content: blocks,
+                    role: 'assistant',
+                    usage: msgUsage,
+                })
             );
         } else if (lastMsg && lastMsg.role === 'assistant' && lastMsg.name === this.name) {
             lastMsg.content.push(...blocks);
-            if (usage) {
+            if (msgUsage) {
                 if (!lastMsg.usage) {
                     lastMsg.usage = {
-                        inputTokens: 0,
-                        outputTokens: 0,
+                        input_tokens: 0,
+                        output_tokens: 0,
                     };
                 }
-                lastMsg.usage.inputTokens = lastMsg.usage.inputTokens + usage.inputTokens;
-                lastMsg.usage.outputTokens = lastMsg.usage.outputTokens + usage.outputTokens;
+                lastMsg.usage.input_tokens = lastMsg.usage.input_tokens + msgUsage.input_tokens;
+                lastMsg.usage.output_tokens = lastMsg.usage.output_tokens + msgUsage.output_tokens;
             }
         } else {
             this.context.push(
-                createMsg({ name: this.name, content: blocks, role: 'assistant', usage })
+                createMsg({
+                    name: this.name,
+                    content: blocks,
+                    role: 'assistant',
+                    usage: msgUsage,
+                })
             );
         }
     }

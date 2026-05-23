@@ -8,6 +8,7 @@ import {
     ToolCallBlock,
     ToolResultBlock,
 } from './block';
+import { PermissionRule } from '../permission';
 
 // Fixed IDs used throughout
 const REPLY_ID = 'reply_001';
@@ -84,15 +85,19 @@ function dbUrl(blockId: string, url: string, mediaType: string): DataBlock {
  * @param name
  * @param inp
  * @param state
+ * @param suggestedRules
  * @returns A tool call block object.
  */
 function tcb(
     tcId: string,
     name: string,
     inp: string,
-    state: ToolCallBlock['state']
+    state: ToolCallBlock['state'],
+    suggestedRules?: PermissionRule[]
 ): ToolCallBlock {
-    return { type: 'tool_call', id: tcId, name, input: inp, state };
+    const block: ToolCallBlock = { type: 'tool_call', id: tcId, name, input: inp, state };
+    if (suggestedRules !== undefined) block.suggested_rules = suggestedRules;
+    return block;
 }
 
 /**
@@ -370,7 +375,9 @@ describe('appendEvent', () => {
             reply_id: REPLY_ID,
             tool_calls: [tcAllowBlock],
         });
-        groundTruths.push(base([...s4Prefix, tcb(TC_ALLOW, 'search', '{"q": "hi"}', 'asking')]));
+        groundTruths.push(
+            base([...s4Prefix, tcb(TC_ALLOW, 'search', '{"q": "hi"}', 'asking', [])])
+        );
 
         // UserConfirmResultEvent (confirmed=true) → state: asking → allowed
         events.push({
@@ -380,7 +387,9 @@ describe('appendEvent', () => {
             reply_id: REPLY_ID,
             confirm_results: [{ confirmed: true, tool_call: tcAllowBlock }],
         });
-        groundTruths.push(base([...s4Prefix, tcb(TC_ALLOW, 'search', '{"q": "hi"}', 'allowed')]));
+        groundTruths.push(
+            base([...s4Prefix, tcb(TC_ALLOW, 'search', '{"q": "hi"}', 'allowed', [])])
+        );
 
         // ToolResult for TC_ALLOW - text output
         events.push({
@@ -391,7 +400,7 @@ describe('appendEvent', () => {
             tool_call_id: TC_ALLOW,
             tool_call_name: 'search',
         });
-        const s4bPrefix = [...s4Prefix, tcb(TC_ALLOW, 'search', '{"q": "hi"}', 'allowed')];
+        const s4bPrefix = [...s4Prefix, tcb(TC_ALLOW, 'search', '{"q": "hi"}', 'allowed', [])];
         groundTruths.push(base([...s4bPrefix, trb(TC_ALLOW, 'search', [], 'running')]));
 
         // ToolResult text deltas
@@ -401,7 +410,6 @@ describe('appendEvent', () => {
             type: EventType.TOOL_RESULT_TEXT_DELTA,
             reply_id: REPLY_ID,
             tool_call_id: TC_ALLOW,
-            block_id: 'auto_1',
             delta: 'Found:',
         });
         groundTruths.push(
@@ -422,7 +430,6 @@ describe('appendEvent', () => {
             type: EventType.TOOL_RESULT_TEXT_DELTA,
             reply_id: REPLY_ID,
             tool_call_id: TC_ALLOW,
-            block_id: 'auto_1',
             delta: ' 3 items',
         });
         groundTruths.push(
@@ -501,7 +508,7 @@ describe('appendEvent', () => {
             reply_id: REPLY_ID,
             tool_calls: [tcDenyBlock],
         });
-        groundTruths.push(base([...s5Prefix, tcb(TC_DENY, 'delete', '', 'asking')]));
+        groundTruths.push(base([...s5Prefix, tcb(TC_DENY, 'delete', '', 'asking', [])]));
 
         events.push({
             id: '26',
@@ -510,10 +517,10 @@ describe('appendEvent', () => {
             reply_id: REPLY_ID,
             confirm_results: [{ confirmed: false, tool_call: tcDenyBlock }],
         });
-        groundTruths.push(base([...s5Prefix, tcb(TC_DENY, 'delete', '', 'finished')]));
+        groundTruths.push(base([...s5Prefix, tcb(TC_DENY, 'delete', '', 'finished', [])]));
 
         // Stage 6: ToolCall (TC_EXT) → external execution
-        const s6Prefix = [...s5Prefix, tcb(TC_DENY, 'delete', '', 'finished')];
+        const s6Prefix = [...s5Prefix, tcb(TC_DENY, 'delete', '', 'finished', [])];
 
         events.push({
             id: '27',
@@ -753,7 +760,6 @@ describe('appendEvent', () => {
                 type: EventType.TOOL_RESULT_TEXT_DELTA,
                 reply_id: REPLY_ID,
                 tool_call_id: 'ghost',
-                block_id: 'b',
                 delta: 'x',
             },
             {

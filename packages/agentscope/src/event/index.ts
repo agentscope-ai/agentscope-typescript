@@ -160,7 +160,6 @@ export interface ToolResultTextDeltaEvent extends EventBase {
     type: EventType.TOOL_RESULT_TEXT_DELTA;
     reply_id: string;
     tool_call_id: string;
-    block_id: string;
     delta: string;
 }
 
@@ -168,7 +167,8 @@ export interface ToolResultDataDeltaEvent extends EventBase {
     type: EventType.TOOL_RESULT_DATA_DELTA;
     reply_id: string;
     tool_call_id: string;
-    block_id: string;
+    /** Auto-generated in {@link appendEvent} when not provided. */
+    block_id?: string;
     media_type: string;
     data?: string;
     url?: string;
