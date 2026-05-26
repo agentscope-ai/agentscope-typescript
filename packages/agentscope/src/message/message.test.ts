@@ -27,8 +27,8 @@ describe('Message', () => {
 
     test('obtain different content from message', () => {
         const msg = createMsg({
-            name: 'user',
-            role: 'user',
+            name: 'assistant',
+            role: 'assistant',
             content: [
                 { id: crypto.randomUUID(), type: 'text', text: 'Hello' },
                 { id: crypto.randomUUID(), type: 'thinking', thinking: '...' },

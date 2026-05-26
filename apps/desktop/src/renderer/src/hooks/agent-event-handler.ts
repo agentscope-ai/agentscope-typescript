@@ -59,14 +59,14 @@ export function applyAgentEvent(
                 prev.map(m => {
                     if (m.id !== event.reply_id) return m;
                     const currentUsage = m.usage || {
-                        inputTokens: 0,
-                        outputTokens: 0,
+                        input_tokens: 0,
+                        output_tokens: 0,
                     };
                     return {
                         ...m,
                         usage: {
-                            inputTokens: currentUsage.inputTokens + event.input_tokens,
-                            outputTokens: currentUsage.outputTokens + event.output_tokens,
+                            input_tokens: currentUsage.input_tokens + event.input_tokens,
+                            output_tokens: currentUsage.output_tokens + event.output_tokens,
                         },
                     };
                 })
