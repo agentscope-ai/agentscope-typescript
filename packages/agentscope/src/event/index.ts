@@ -36,6 +36,8 @@ export enum EventType {
 
     USER_CONFIRM_RESULT = 'USER_CONFIRM_RESULT',
     EXTERNAL_EXECUTION_RESULT = 'EXTERNAL_EXECUTION_RESULT',
+
+    CUSTOM = 'CUSTOM',
 }
 
 export interface EventBase {
@@ -217,6 +219,16 @@ export interface ExternalExecutionResultEvent extends EventBase {
     execution_results: ToolResultBlock[];
 }
 
+/**
+ * A custom event carrying an arbitrary name and payload.
+ * Mirrors the Python `agentscope.event.CustomEvent` model.
+ */
+export interface CustomEvent extends EventBase {
+    type: EventType.CUSTOM;
+    name: string;
+    value: Record<string, unknown>;
+}
+
 export type AgentEvent =
     // The control events for the whole run
     | ReplyStartEvent
@@ -245,4 +257,6 @@ export type AgentEvent =
     | ToolResultEndEvent
     // The events from the external execution or user confirmation
     | UserConfirmResultEvent
-    | ExternalExecutionResultEvent;
+    | ExternalExecutionResultEvent
+    // Custom events
+    | CustomEvent;
