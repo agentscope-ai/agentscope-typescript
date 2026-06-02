@@ -329,7 +329,14 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             if (!block) {
                 console.warn(`DataBlock "${event.block_id}" not found, skipping.`);
             } else if (event.data) {
-                ((block as DataBlock).source as Base64Source).data += event.data;
+                // Each delta is an independently base64-encoded chunk (with
+                // its own padding); naive string concat would inject '=' into
+                // the middle of the byte stream and corrupt it. Decode, concat
+                // bytes, re-encode.
+                const src = (block as DataBlock).source as Base64Source;
+                const existing = src.data ? Buffer.from(src.data, 'base64') : Buffer.alloc(0);
+                const incoming = Buffer.from(event.data, 'base64');
+                src.data = Buffer.concat([existing, incoming]).toString('base64');
             }
             break;
         }

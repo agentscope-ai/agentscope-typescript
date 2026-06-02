@@ -265,20 +265,29 @@ describe('appendEvent', () => {
             ])
         );
 
+        // Use independently base64-encoded chunks whose raw byte lengths
+        // aren't multiples of 3 — each chunk's base64 carries its own '='
+        // padding. The accumulated base64 must equal base64(concat(raw
+        // bytes)), NOT string-concat of the per-chunk base64 (which would
+        // splice padding into the middle of the stream and corrupt it).
+        const DATA_CHUNK_1 = Buffer.from([0x01, 0x02]).toString('base64'); // "AQI="
+        const DATA_CHUNK_2 = Buffer.from([0x03]).toString('base64'); // "Aw=="
+        const DATA_MERGED = Buffer.from([0x01, 0x02, 0x03]).toString('base64'); // "AQID"
+
         events.push({
             id: '10',
             created_at: '',
             type: EventType.DATA_BLOCK_DELTA,
             reply_id: REPLY_ID,
             block_id: B_DATA,
-            data: 'abc',
+            data: DATA_CHUNK_1,
             media_type: 'image/png',
         });
         groundTruths.push(
             base([
                 tb(B_TEXT, 'Hello World'),
                 thb(B_THINK, 'Let me think'),
-                dbB64(B_DATA, 'abc', 'image/png'),
+                dbB64(B_DATA, DATA_CHUNK_1, 'image/png'),
             ])
         );
 
@@ -288,14 +297,14 @@ describe('appendEvent', () => {
             type: EventType.DATA_BLOCK_DELTA,
             reply_id: REPLY_ID,
             block_id: B_DATA,
-            data: 'def',
+            data: DATA_CHUNK_2,
             media_type: 'image/png',
         });
         groundTruths.push(
             base([
                 tb(B_TEXT, 'Hello World'),
                 thb(B_THINK, 'Let me think'),
-                dbB64(B_DATA, 'abcdef', 'image/png'),
+                dbB64(B_DATA, DATA_MERGED, 'image/png'),
             ])
         );
 
@@ -310,7 +319,7 @@ describe('appendEvent', () => {
             base([
                 tb(B_TEXT, 'Hello World'),
                 thb(B_THINK, 'Let me think'),
-                dbB64(B_DATA, 'abcdef', 'image/png'),
+                dbB64(B_DATA, DATA_MERGED, 'image/png'),
             ])
         );
 
@@ -318,7 +327,7 @@ describe('appendEvent', () => {
         const s4Prefix = [
             tb(B_TEXT, 'Hello World'),
             thb(B_THINK, 'Let me think'),
-            dbB64(B_DATA, 'abcdef', 'image/png'),
+            dbB64(B_DATA, DATA_MERGED, 'image/png'),
         ];
 
         events.push({
