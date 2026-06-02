@@ -10,6 +10,7 @@ export default defineConfig({
         'event/index': 'src/event/index.ts',
         'mcp/index': 'src/mcp/index.ts',
         'storage/index': 'src/storage/index.ts',
+        'state/index': 'src/state/index.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,

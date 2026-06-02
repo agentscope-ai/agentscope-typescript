@@ -43,6 +43,11 @@
             "types": "./dist/storage/index.d.ts",
             "import": "./dist/storage/index.mjs",
             "require": "./dist/storage/index.js"
+        },
+        "./state": {
+            "types": "./dist/state/index.d.ts",
+            "import": "./dist/state/index.mjs",
+            "require": "./dist/state/index.js"
         }
     },
     "scripts": {

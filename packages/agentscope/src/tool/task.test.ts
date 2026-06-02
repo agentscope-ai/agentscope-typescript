@@ -22,13 +22,13 @@ describe('Task Tools', () => {
     };
 
     describe('TaskCreate', () => {
-        it('creates a task with pending status', () => {
+        it('creates a task with pending state', () => {
             const response = taskCreate.call!({
                 subject: 'Fix bug',
                 description: 'Fix the authentication bug',
             }) as ToolResponse;
             const result = getTextFromResponse(response);
-            expect(result).toContain('Task #1 created successfully');
+            expect(result).toContain('Task 1 created successfully');
             expect(result).toContain('Fix bug');
         });
 
@@ -39,18 +39,17 @@ describe('Task Tools', () => {
                 description: 'Second task',
             }) as ToolResponse;
             const result = getTextFromResponse(response);
-            expect(result).toContain('Task #2 created successfully');
+            expect(result).toContain('Task 2 created successfully');
         });
 
-        it('supports optional activeForm and metadata', () => {
+        it('supports optional metadata', () => {
             const response = taskCreate.call!({
                 subject: 'Run tests',
                 description: 'Execute test suite',
-                activeForm: 'Running tests',
                 metadata: { priority: 'high' },
             }) as ToolResponse;
             const result = getTextFromResponse(response);
-            expect(result).toContain('Task #1 created successfully');
+            expect(result).toContain('Task 1 created successfully');
         });
     });
 
@@ -59,18 +58,18 @@ describe('Task Tools', () => {
             taskCreate.call!({ subject: 'Task 1', description: 'First task' });
         });
 
-        it('updates task status', () => {
+        it('updates task state', () => {
             const response = taskUpdate.call!({
                 taskId: '1',
                 status: 'in_progress',
             }) as ToolResponse;
             const result = getTextFromResponse(response);
-            expect(result).toContain('Task #1 updated successfully');
+            expect(result).toContain('Task 1 updated successfully');
 
             // Verify the update by getting the task
             const getResponse = taskGet.call!({ taskId: '1' }) as ToolResponse;
             const getResult = getTextFromResponse(getResponse);
-            expect(getResult).toContain('Status: in_progress');
+            expect(getResult).toContain('State: in_progress');
         });
 
         it('updates task subject and description', () => {
@@ -182,7 +181,7 @@ describe('Task Tools', () => {
                 status: 'deleted',
             }) as ToolResponse;
             const result = getTextFromResponse(response);
-            expect(result).toContain('Task #1 deleted successfully');
+            expect(result).toContain('Task 1 deleted successfully');
 
             // Verify task is gone
             expect(() => taskGet.call!({ taskId: '1' })).toThrow('Task not found: 1');
@@ -194,21 +193,18 @@ describe('Task Tools', () => {
             taskCreate.call!({
                 subject: 'Test task',
                 description: 'Test description',
-                activeForm: 'Testing',
                 metadata: { priority: 'high' },
             });
 
             const response = taskGet.call!({ taskId: '1' }) as ToolResponse;
             const result = getTextFromResponse(response);
 
-            expect(result).toContain('Task #1: Test task');
-            expect(result).toContain('Status: pending');
+            expect(result).toContain('Task 1: Test task');
+            expect(result).toContain('State: pending');
             expect(result).toContain('Description: Test description');
-            expect(result).toContain('Active Form: Testing');
             expect(result).toContain('priority');
             expect(result).toContain('high');
             expect(result).toContain('Created:');
-            expect(result).toContain('Updated:');
         });
 
         it('throws on non-existent task', () => {
@@ -220,7 +216,7 @@ describe('Task Tools', () => {
         it('returns empty message when no tasks exist', () => {
             const response = taskList.call!({}) as ToolResponse;
             const result = getTextFromResponse(response);
-            expect(result).toBe('No active tasks found');
+            expect(result).toBe('No tasks available.');
         });
 
         it('lists pending and in_progress tasks', () => {
@@ -231,8 +227,8 @@ describe('Task Tools', () => {
             const response = taskList.call!({}) as ToolResponse;
             const result = getTextFromResponse(response);
 
-            expect(result).toContain('#1 [pending] Task 1');
-            expect(result).toContain('#2 [in_progress] Task 2');
+            expect(result).toContain('1 [pending] Task 1');
+            expect(result).toContain('2 [in_progress] Task 2');
         });
 
         it('filters out completed tasks', () => {
@@ -244,7 +240,7 @@ describe('Task Tools', () => {
             const result = getTextFromResponse(response);
 
             expect(result).not.toContain('Task 1');
-            expect(result).toContain('#2 [pending] Task 2');
+            expect(result).toContain('2 [pending] Task 2');
         });
 
         it('filters out deleted tasks', () => {
@@ -256,7 +252,7 @@ describe('Task Tools', () => {
             const result = getTextFromResponse(response);
 
             expect(result).not.toContain('Task 1');
-            expect(result).toContain('#2 [pending] Task 2');
+            expect(result).toContain('2 [pending] Task 2');
         });
 
         it('shows blocked tasks with dependencies', () => {
@@ -267,7 +263,7 @@ describe('Task Tools', () => {
             const response = taskList.call!({}) as ToolResponse;
             const result = getTextFromResponse(response);
 
-            expect(result).toContain('#2 [pending] Task 2 (blocked by: #1)');
+            expect(result).toContain('2 [pending] Task 2[blocked by 1]');
         });
 
         it('sorts tasks by ID', () => {
@@ -279,9 +275,9 @@ describe('Task Tools', () => {
             const result = getTextFromResponse(response);
 
             const lines = result.split('\n');
-            expect(lines[0]).toContain('#1');
-            expect(lines[1]).toContain('#2');
-            expect(lines[2]).toContain('#3');
+            expect(lines[0]).toContain('1');
+            expect(lines[1]).toContain('2');
+            expect(lines[2]).toContain('3');
         });
 
         it('returns empty when all tasks are completed', () => {
@@ -293,7 +289,7 @@ describe('Task Tools', () => {
             const response = taskList.call!({}) as ToolResponse;
             const result = getTextFromResponse(response);
 
-            expect(result).toBe('No active tasks found');
+            expect(result).toBe('No tasks available.');
         });
     });
 });

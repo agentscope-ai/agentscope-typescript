@@ -1,48 +1,40 @@
 import { z } from 'zod';
 
 import { createToolResponse, ToolResponse } from './response';
+import type { Task } from '../state';
 
-// Task type definitions
-export type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'deleted';
+export type { Task, TaskContext } from '../state';
 
-export interface Task {
-    id: string;
-    subject: string;
-    description: string;
-    status: TaskStatus;
-    activeForm?: string;
-    owner?: string;
-    metadata?: Record<string, unknown>;
-    blocks: string[];
-    blockedBy: string[];
-    createdAt: string;
-    updatedAt: string;
-}
+/** Task state — mirrors Python's ``Literal["pending", "in_progress", "completed"]``. */
+export type TaskState = Task['state'];
 
 // Module-level storage
 const taskStore = new Map<string, Task>();
-let nextId = 1;
 
 /**
- * Generate a unique task ID
- * @returns A unique task ID as a string
+ * Generate the next sequential task ID based on existing tasks.
+ * @returns A unique task ID as a string (e.g. "1", "2", "3").
  */
 function generateId(): string {
-    return String(nextId++);
+    let maxNumeric = 0;
+    for (const [id] of taskStore) {
+        const n = Number(id);
+        if (!isNaN(n) && n > maxNumeric) maxNumeric = n;
+    }
+    return String(maxNumeric + 1);
 }
 
 /**
- * Reset task store for testing purposes
+ * Reset task store for testing purposes.
  * @internal
  */
 export function _resetTaskStore(): void {
     taskStore.clear();
-    nextId = 1;
 }
 
 /**
- * Tool for creating tasks
- * @returns A Tool object for creating tasks
+ * Tool for creating tasks.
+ * @returns A Tool object for creating tasks.
  */
 export function TaskCreate() {
     return {
@@ -59,7 +51,7 @@ Use this tool proactively in these scenarios:
 - User explicitly requests todo list - When the user directly asks you to use the todo list
 - User provides multiple tasks - When users provide a list of things to be done (numbered or comma-separated)
 
-All tasks are created with status 'pending'.`,
+All tasks are created with state 'pending'.`,
         inputSchema: z.object({
             subject: z
                 .string()
@@ -71,12 +63,6 @@ All tasks are created with status 'pending'.`,
                 .describe(
                     'Detailed description of what needs to be done, including context and acceptance criteria'
                 ),
-            activeForm: z
-                .string()
-                .optional()
-                .describe(
-                    'Present continuous form shown in the spinner when the task is in_progress (e.g., "Fixing authentication bug"). If omitted, the spinner shows the subject instead.'
-                ),
             metadata: z
                 .record(z.string(), z.unknown())
                 .optional()
@@ -87,28 +73,24 @@ All tasks are created with status 'pending'.`,
         call({
             subject,
             description,
-            activeForm,
             metadata,
         }: {
             subject: string;
             description: string;
-            activeForm?: string;
             metadata?: Record<string, unknown>;
         }): ToolResponse {
             const id = generateId();
-            const now = new Date().toISOString();
 
             const task: Task = {
                 id,
                 subject,
                 description,
-                status: 'pending',
-                activeForm,
-                metadata,
+                state: 'pending',
+                metadata: metadata ?? {},
+                owner: null,
                 blocks: [],
-                blockedBy: [],
-                createdAt: now,
-                updatedAt: now,
+                blocked_by: [],
+                created_at: new Date().toISOString(),
             };
 
             taskStore.set(id, task);
@@ -118,7 +100,7 @@ All tasks are created with status 'pending'.`,
                     {
                         id: crypto.randomUUID(),
                         type: 'text',
-                        text: `Task #${id} created successfully: ${subject}`,
+                        text: `Task ${id} created successfully: ${subject}`,
                     },
                 ],
                 state: 'success',
@@ -128,8 +110,8 @@ All tasks are created with status 'pending'.`,
 }
 
 /**
- * Tool for updating tasks
- * @returns A Tool object for updating tasks
+ * Tool for updating tasks.
+ * @returns A Tool object for updating tasks.
  */
 export function TaskUpdate() {
     return {
@@ -158,12 +140,6 @@ export function TaskUpdate() {
                 .describe('New status for the task'),
             subject: z.string().optional().describe('New subject for the task'),
             description: z.string().optional().describe('New description for the task'),
-            activeForm: z
-                .string()
-                .optional()
-                .describe(
-                    'Present continuous form shown in spinner when in_progress (e.g., "Running tests")'
-                ),
             owner: z.string().optional().describe('New owner for the task'),
             metadata: z
                 .record(z.string(), z.unknown())
@@ -179,17 +155,15 @@ export function TaskUpdate() {
             status,
             subject,
             description,
-            activeForm,
             owner,
             metadata,
             addBlocks,
             addBlockedBy,
         }: {
             taskId: string;
-            status?: TaskStatus;
+            status?: 'pending' | 'in_progress' | 'completed' | 'deleted';
             subject?: string;
             description?: string;
-            activeForm?: string;
             owner?: string;
             metadata?: Record<string, unknown>;
             addBlocks?: string[];
@@ -219,14 +193,10 @@ export function TaskUpdate() {
             // Update fields
             if (subject !== undefined) task.subject = subject;
             if (description !== undefined) task.description = description;
-            if (activeForm !== undefined) task.activeForm = activeForm;
             if (owner !== undefined) task.owner = owner;
 
             // Merge metadata
             if (metadata !== undefined) {
-                if (!task.metadata) {
-                    task.metadata = {};
-                }
                 for (const [key, value] of Object.entries(metadata)) {
                     if (value === null) {
                         delete task.metadata[key];
@@ -241,10 +211,8 @@ export function TaskUpdate() {
                 task.blocks = [...new Set([...task.blocks, ...addBlocks])];
             }
             if (addBlockedBy) {
-                task.blockedBy = [...new Set([...task.blockedBy, ...addBlockedBy])];
+                task.blocked_by = [...new Set([...task.blocked_by, ...addBlockedBy])];
             }
-
-            task.updatedAt = new Date().toISOString();
 
             // Handle status change
             if (status !== undefined) {
@@ -255,13 +223,13 @@ export function TaskUpdate() {
                             {
                                 id: crypto.randomUUID(),
                                 type: 'text',
-                                text: `Task #${taskId} deleted successfully`,
+                                text: `Task ${taskId} deleted successfully`,
                             },
                         ],
                         state: 'success',
                     });
                 }
-                task.status = status;
+                task.state = status;
             }
 
             return createToolResponse({
@@ -269,7 +237,7 @@ export function TaskUpdate() {
                     {
                         id: crypto.randomUUID(),
                         type: 'text',
-                        text: `Task #${taskId} updated successfully`,
+                        text: `Task ${taskId} updated successfully`,
                     },
                 ],
                 state: 'success',
@@ -279,8 +247,8 @@ export function TaskUpdate() {
 }
 
 /**
- * Tool for retrieving a single task
- * @returns A Tool object for retrieving a task by ID
+ * Tool for retrieving a single task.
+ * @returns A Tool object for retrieving a task by ID.
  */
 export function TaskGet() {
     return {
@@ -303,27 +271,23 @@ export function TaskGet() {
                 throw new Error(`Task not found: ${taskId}`);
             }
 
-            let text = `Task #${task.id}: ${task.subject}\n`;
-            text += `Status: ${task.status}\n`;
+            let text = `Task ${task.id}: ${task.subject}\n`;
+            text += `State: ${task.state}\n`;
             text += `Description: ${task.description}\n`;
 
-            if (task.activeForm) {
-                text += `Active Form: ${task.activeForm}\n`;
-            }
             if (task.owner) {
                 text += `Owner: ${task.owner}\n`;
             }
             if (task.blocks.length > 0) {
                 text += `Blocks: ${task.blocks.join(', ')}\n`;
             }
-            if (task.blockedBy.length > 0) {
-                text += `Blocked By: ${task.blockedBy.join(', ')}\n`;
+            if (task.blocked_by.length > 0) {
+                text += `Blocked By: ${task.blocked_by.join(', ')}\n`;
             }
             if (task.metadata && Object.keys(task.metadata).length > 0) {
                 text += `Metadata: ${JSON.stringify(task.metadata, null, 2)}\n`;
             }
-            text += `Created: ${task.createdAt}\n`;
-            text += `Updated: ${task.updatedAt}`;
+            text += `Created: ${task.created_at}`;
 
             return createToolResponse({
                 content: [
@@ -340,8 +304,8 @@ export function TaskGet() {
 }
 
 /**
- * Tool for listing all active tasks
- * @returns A Tool object for listing all active tasks
+ * Tool for listing all active tasks.
+ * @returns A Tool object for listing all active tasks.
  */
 export function TaskList() {
     return {
@@ -358,9 +322,8 @@ export function TaskList() {
         requireUserConfirm: false,
 
         call(): ToolResponse {
-            // Filter to only pending and in_progress tasks
             const activeTasks = Array.from(taskStore.values())
-                .filter(task => task.status === 'pending' || task.status === 'in_progress')
+                .filter(task => task.state === 'pending' || task.state === 'in_progress')
                 .sort((a, b) => Number(a.id) - Number(b.id));
 
             if (activeTasks.length === 0) {
@@ -369,7 +332,7 @@ export function TaskList() {
                         {
                             id: crypto.randomUUID(),
                             type: 'text',
-                            text: 'No active tasks found',
+                            text: 'No tasks available.',
                         },
                     ],
                     state: 'success',
@@ -377,9 +340,12 @@ export function TaskList() {
             }
 
             const lines = activeTasks.map(task => {
-                let line = `#${task.id} [${task.status}] ${task.subject}`;
-                if (task.blockedBy.length > 0) {
-                    line += ` (blocked by: #${task.blockedBy.join(', #')})`;
+                let line = `${task.id} [${task.state}] ${task.subject}`;
+                if (task.owner) {
+                    line += `(${task.owner})`;
+                }
+                if (task.blocked_by.length > 0) {
+                    line += `[blocked by ${task.blocked_by.join(', ')}]`;
                 }
                 return line;
             });
