@@ -1,4 +1,4 @@
-import { ToolCallBlock, ToolResultBlock } from '../message';
+import { DataBlock, TextBlock, ToolCallBlock, ToolResultBlock } from '../message';
 import { PermissionRule } from '../permission';
 
 export enum EventType {
@@ -19,6 +19,8 @@ export enum EventType {
     THINKING_BLOCK_START = 'THINKING_BLOCK_START',
     THINKING_BLOCK_DELTA = 'THINKING_BLOCK_DELTA',
     THINKING_BLOCK_END = 'THINKING_BLOCK_END',
+
+    HINT_BLOCK = 'HINT_BLOCK',
 
     TOOL_CALL_START = 'TOOL_CALL_START',
     TOOL_CALL_DELTA = 'TOOL_CALL_DELTA',
@@ -129,6 +131,24 @@ export interface ThinkingBlockEndEvent extends EventBase {
     type: EventType.THINKING_BLOCK_END;
     reply_id: string;
     block_id: string;
+}
+
+/**
+ * One-shot hint block event.
+ *
+ * Unlike text/thinking blocks, hint blocks are not streamed — the
+ * full content is available at creation time (team messages,
+ * background tool results, user interruptions, …). A single event
+ * carries the complete {@link HintBlock} content.
+ */
+export interface HintBlockEvent extends EventBase {
+    type: EventType.HINT_BLOCK;
+    reply_id: string;
+    block_id: string;
+    /** Sender or origin of this hint (e.g. `"alice"`, `"system"`). */
+    source?: string | null;
+    /** Complete hint content — `string` or `(TextBlock | DataBlock)[]`. */
+    hint: string | (TextBlock | DataBlock)[];
 }
 
 export interface ToolCallStartEvent extends EventBase {
@@ -248,6 +268,7 @@ export type AgentEvent =
     | ThinkingBlockStartEvent
     | ThinkingBlockDeltaEvent
     | ThinkingBlockEndEvent
+    | HintBlockEvent
     | ToolCallStartEvent
     | ToolCallDeltaEvent
     | ToolCallEndEvent

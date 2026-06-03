@@ -6,6 +6,7 @@ import {
     ToolResultBlock,
     ToolCallBlock,
     DataBlock,
+    HintBlock,
     Base64Source,
     URLSource,
 } from './block';
@@ -237,12 +238,13 @@ export function getTextContent(msg: Msg, separator: string = '\n'): string | nul
 export function getContentBlocks(msg: Msg): ContentBlock[];
 export function getContentBlocks(msg: Msg, blockType: 'text'): TextBlock[];
 export function getContentBlocks(msg: Msg, blockType: 'thinking'): ThinkingBlock[];
+export function getContentBlocks(msg: Msg, blockType: 'hint'): HintBlock[];
 export function getContentBlocks(msg: Msg, blockType: 'data'): DataBlock[];
 export function getContentBlocks(msg: Msg, blockType: 'tool_call'): ToolCallBlock[];
 export function getContentBlocks(msg: Msg, blockType: 'tool_result'): ToolResultBlock[];
 export function getContentBlocks(
     msg: Msg,
-    blockType?: 'text' | 'thinking' | 'data' | 'tool_call' | 'tool_result'
+    blockType?: 'text' | 'thinking' | 'hint' | 'data' | 'tool_call' | 'tool_result'
 ): ContentBlock[] {
     if (!blockType) return msg.content;
     return msg.content.filter(block => block.type === blockType);
@@ -315,6 +317,19 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
 
         case EventType.THINKING_BLOCK_END:
             break;
+
+        case EventType.HINT_BLOCK: {
+            // Hint blocks are not streamed — the full content arrives in
+            // a single event and is appended as a complete HintBlock.
+            const hintBlock: HintBlock = {
+                type: 'hint',
+                id: event.block_id,
+                hint: event.hint,
+                source: event.source ?? null,
+            };
+            msg.content.push(hintBlock);
+            break;
+        }
 
         case EventType.DATA_BLOCK_START:
             msg.content.push({
