@@ -12,10 +12,26 @@ export interface ThinkingBlock {
     id: string;
 }
 
+/**
+ * A block used to provide instructions or hints to the LLM during the
+ * reasoning-acting loop. When passed to the LLM API, the hint block is
+ * converted into a user message.
+ *
+ * The `hint` field can be a plain string (text-only) or a list of
+ * {@link TextBlock} / {@link DataBlock} for multimodal content
+ * (e.g. a background tool result containing both text and an image).
+ */
 export interface HintBlock {
     type: 'hint';
-    hint: string;
+    /** Plain text, or a list of content blocks for multimodal data. */
+    hint: string | (TextBlock | DataBlock)[];
     id: string;
+    /**
+     * The sender or origin of this hint. For team messages this is the
+     * sender's display name (e.g. `"alice"`); for system notifications
+     * it may be `"system"` or `null`/omitted.
+     */
+    source?: string | null;
 }
 
 export type ToolCallState = 'pending' | 'asking' | 'allowed' | 'submitted' | 'finished';

@@ -727,6 +727,50 @@ describe('appendEvent', () => {
         expect(msgDump(msg)).toEqual(original);
     });
 
+    test('HINT_BLOCK one-shot event appends a complete HintBlock', () => {
+        const HINT_ID_1 = 'h_001';
+        const HINT_ID_2 = 'h_002';
+
+        // String hint with source
+        appendEvent(msg, {
+            id: 'e1',
+            created_at: '',
+            type: EventType.HINT_BLOCK,
+            reply_id: REPLY_ID,
+            block_id: HINT_ID_1,
+            source: 'alice',
+            hint: 'Please review my code',
+        });
+        expect(msg.content).toEqual([
+            { type: 'hint', id: HINT_ID_1, hint: 'Please review my code', source: 'alice' },
+        ]);
+
+        // Multimodal hint (list of text + data blocks), source omitted → null
+        const hintBlocks: (TextBlock | DataBlock)[] = [
+            { type: 'text', id: 'tb1', text: 'See screenshot:' },
+            {
+                type: 'data',
+                id: 'db1',
+                source: { type: 'url', url: 'https://example.com/x.png', media_type: 'image/png' },
+            },
+        ];
+        appendEvent(msg, {
+            id: 'e2',
+            created_at: '',
+            type: EventType.HINT_BLOCK,
+            reply_id: REPLY_ID,
+            block_id: HINT_ID_2,
+            hint: hintBlocks,
+        });
+        expect(msg.content).toHaveLength(2);
+        expect(msg.content[1]).toEqual({
+            type: 'hint',
+            id: HINT_ID_2,
+            hint: hintBlocks,
+            source: null,
+        });
+    });
+
     test('missing block does not crash', () => {
         const original = msgDump(msg);
         const ghostEvents: AgentEvent[] = [

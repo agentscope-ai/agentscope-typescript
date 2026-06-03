@@ -11,6 +11,7 @@ export {
 export {
     TextBlock,
     ThinkingBlock,
+    HintBlock,
     ToolCallBlock,
     ToolCallState,
     ToolResultBlock,
