@@ -41,6 +41,7 @@ export enum EventType {
 export interface EventBase {
     id: string;
     created_at: string;
+    metadata?: Record<string, unknown>;
 }
 
 export interface ReplyStartEvent extends EventBase {
