@@ -10,6 +10,7 @@ import {
     Base64Source,
     URLSource,
 } from './block';
+import { base64ToBytes, bytesToBase64 } from '../_utils/common';
 import { AgentEvent, EventType } from '../event';
 
 /** A chat message exchanged between agents or between an agent and a model. */
@@ -349,9 +350,12 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                 // the middle of the byte stream and corrupt it. Decode, concat
                 // bytes, re-encode.
                 const src = (block as DataBlock).source as Base64Source;
-                const existing = src.data ? Buffer.from(src.data, 'base64') : Buffer.alloc(0);
-                const incoming = Buffer.from(event.data, 'base64');
-                src.data = Buffer.concat([existing, incoming]).toString('base64');
+                const existing = src.data ? base64ToBytes(src.data) : new Uint8Array(0);
+                const incoming = base64ToBytes(event.data);
+                const merged = new Uint8Array(existing.length + incoming.length);
+                merged.set(existing, 0);
+                merged.set(incoming, existing.length);
+                src.data = bytesToBase64(merged);
             }
             break;
         }
