@@ -6,6 +6,7 @@ import { JSONSerializableObject } from '../type';
  * Decode a base64 string to a Uint8Array.
  * Works in both Node.js and browser environments.
  * @param b64
+ * @returns The decoded bytes.
  */
 export function base64ToBytes(b64: string): Uint8Array {
     const binary = atob(b64);
@@ -18,6 +19,7 @@ export function base64ToBytes(b64: string): Uint8Array {
  * Encode a Uint8Array to a base64 string.
  * Works in both Node.js and browser environments.
  * @param bytes
+ * @returns The base64-encoded string.
  */
 export function bytesToBase64(bytes: Uint8Array): string {
     let binary = '';
