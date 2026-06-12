@@ -1,6 +1,6 @@
 {
     "name": "@agentscope-ai/agentscope",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "description": "",
     "exports": {
         "./message": {
