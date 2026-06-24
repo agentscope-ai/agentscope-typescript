@@ -447,6 +447,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                 console.warn(`ToolResultBlock "${event.tool_call_id}" not found, skipping.`);
             } else {
                 (block as ToolResultBlock).state = event.state;
+                (block as ToolResultBlock).metadata = event.metadata;
             }
             break;
         }

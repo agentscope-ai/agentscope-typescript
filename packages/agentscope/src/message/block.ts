@@ -53,6 +53,7 @@ export interface ToolResultBlock {
     name: string;
     output: string | (TextBlock | DataBlock)[];
     state: ToolResultState;
+    metadata?: Record<string, unknown>;
 }
 
 export interface Base64Source {
