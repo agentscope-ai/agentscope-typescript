@@ -202,6 +202,7 @@ export interface ToolResultEndEvent extends EventBase {
     reply_id: string;
     tool_call_id: string;
     state: ToolResultBlock['state'];
+    metadata?: Record<string, unknown>;
 }
 
 export interface ExceedMaxItersEvent extends EventBase {
