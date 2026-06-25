@@ -1,6 +1,6 @@
 {
     "name": "@agentscope-ai/agentscope",
-    "version": "0.0.11",
+    "version": "0.0.12",
     "description": "",
     "exports": {
         "./message": {
@@ -48,6 +48,11 @@
             "types": "./dist/state/index.d.ts",
             "import": "./dist/state/index.mjs",
             "require": "./dist/state/index.js"
+        },
+        "./permission": {
+            "types": "./dist/permission/index.d.ts",
+            "import": "./dist/permission/index.mjs",
+            "require": "./dist/permission/index.js"
         }
     },
     "scripts": {
