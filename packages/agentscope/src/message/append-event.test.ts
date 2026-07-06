@@ -461,9 +461,11 @@ describe('appendEvent', () => {
             tool_call_id: TC_ALLOW,
             state: 'success',
         });
+        // After TOOL_RESULT_END the paired tool_call flips to 'finished'.
+        const s4cPrefix = [...s4Prefix, tcb(TC_ALLOW, 'search', '{"q": "hi"}', 'finished', [])];
         groundTruths.push(
             base([
-                ...s4bPrefix,
+                ...s4cPrefix,
                 trb(
                     TC_ALLOW,
                     'search',
@@ -475,7 +477,7 @@ describe('appendEvent', () => {
 
         // Stage 5: ToolCall (TC_DENY) → confirm → denied (finished)
         const s5Prefix = [
-            ...s4bPrefix,
+            ...s4cPrefix,
             trb(
                 TC_ALLOW,
                 'search',
@@ -669,9 +671,11 @@ describe('appendEvent', () => {
             tool_call_id: TC_IMG,
             state: 'error',
         });
+        // After TOOL_RESULT_END the paired tool_call flips to 'finished'.
+        const s7cPrefix = [...s7Prefix, tcb(TC_IMG, 'screenshot', '', 'finished')];
         groundTruths.push(
             base([
-                ...s7bPrefix,
+                ...s7cPrefix,
                 trb(
                     TC_IMG,
                     'screenshot',
@@ -693,7 +697,7 @@ describe('appendEvent', () => {
             session_id: SESSION_ID,
         });
         const finalContent = [
-            ...s7bPrefix,
+            ...s7cPrefix,
             trb(
                 TC_IMG,
                 'screenshot',
