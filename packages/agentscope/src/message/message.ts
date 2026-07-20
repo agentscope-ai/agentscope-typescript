@@ -11,7 +11,7 @@ import {
     URLSource,
 } from './block';
 import { base64ToBytes, bytesToBase64 } from '../_utils/common';
-import { AgentEvent, EventType } from '../event';
+import { AgentEvent, EventType, ReplyFinishedReason, ErrorInfo } from '../event';
 
 /** A chat message exchanged between agents or between an agent and a model. */
 export interface Msg {
@@ -29,6 +29,16 @@ export interface Msg {
     created_at: string;
     /** ISO-8601 finished timestamp. */
     finished_at?: string | null;
+    /**
+     * Terminal reason of this reply (error / interrupted / exceed_max_iters).
+     * Undefined/null until a REPLY_END event is applied.
+     */
+    finished_reason?: ReplyFinishedReason | null;
+    /**
+     * Structured error info, populated only when
+     * `finished_reason === ReplyFinishedReason.ERROR`.
+     */
+    error?: ErrorInfo | null;
     /** Usage information for the message, such as token counts. */
     usage?: {
         input_tokens: number;
@@ -283,6 +293,8 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
     switch (event.type) {
         case EventType.REPLY_END:
             msg.finished_at = event.created_at;
+            msg.finished_reason = event.finished_reason;
+            msg.error = event.error ?? null;
             break;
 
         case EventType.TEXT_BLOCK_START:
