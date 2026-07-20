@@ -1,5 +1,5 @@
 import { Msg, createMsg, appendEvent } from './message';
-import { EventType, AgentEvent } from '../event';
+import { EventType, AgentEvent, ReplyFinishedReason } from '../event';
 import {
     ContentBlock,
     DataBlock,
@@ -135,9 +135,14 @@ describe('appendEvent', () => {
      * Creates a base message object for comparison in tests.
      * @param content
      * @param finishedAt
+     * @param finishedReason
      * @returns A plain message object for comparison.
      */
-    function base(content: ContentBlock[], finishedAt: string | null = null) {
+    function base(
+        content: ContentBlock[],
+        finishedAt: string | null = null,
+        finishedReason: ReplyFinishedReason | null = null
+    ) {
         return {
             id: REPLY_ID,
             name: 'TestAgent',
@@ -145,6 +150,8 @@ describe('appendEvent', () => {
             metadata: {},
             created_at: createdAt,
             finished_at: finishedAt,
+            finished_reason: finishedReason,
+            error: null,
             content,
         };
     }
@@ -162,6 +169,8 @@ describe('appendEvent', () => {
             metadata: m.metadata,
             created_at: m.created_at,
             finished_at: m.finished_at ?? null,
+            finished_reason: m.finished_reason ?? null,
+            error: m.error ?? null,
             content: m.content,
         };
     }
@@ -695,6 +704,7 @@ describe('appendEvent', () => {
             type: EventType.REPLY_END,
             reply_id: REPLY_ID,
             session_id: SESSION_ID,
+            finished_reason: ReplyFinishedReason.COMPLETED,
         });
         const finalContent = [
             ...s7cPrefix,
@@ -708,7 +718,7 @@ describe('appendEvent', () => {
                 'error'
             ),
         ];
-        groundTruths.push(base(finalContent, FIXED_END_TS));
+        groundTruths.push(base(finalContent, FIXED_END_TS, ReplyFinishedReason.COMPLETED));
 
         // Apply all events and check ground truths
         expect(events.length).toBe(groundTruths.length);

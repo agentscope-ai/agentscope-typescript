@@ -17,6 +17,7 @@ import {
     ModelCallEndEvent,
     ModelCallStartEvent,
     ReplyEndEvent,
+    ReplyFinishedReason,
     ReplyStartEvent,
     TextBlockDeltaEvent,
     TextBlockEndEvent,
@@ -553,6 +554,7 @@ export class Agent {
             created_at: new Date().toISOString(),
             session_id: '',
             reply_id: this.replyId,
+            finished_reason: ReplyFinishedReason.COMPLETED,
         } as ReplyEndEvent;
 
         return createMsg({
