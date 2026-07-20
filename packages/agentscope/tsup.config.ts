@@ -11,6 +11,7 @@ export default defineConfig({
         'mcp/index': 'src/mcp/index.ts',
         'storage/index': 'src/storage/index.ts',
         'state/index': 'src/state/index.ts',
+        'permission/index': 'src/permission/index.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,

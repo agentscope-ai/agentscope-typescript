@@ -461,6 +461,12 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                 (block as ToolResultBlock).state = event.state;
                 (block as ToolResultBlock).metadata = event.metadata;
             }
+            // The paired ToolCallBlock's lifecycle ends with its
+            // result — flip it to 'finished'
+            const callBlock = findBlock(msg, 'tool_call', event.tool_call_id);
+            if (callBlock) {
+                (callBlock as ToolCallBlock).state = 'finished';
+            }
             break;
         }
 
@@ -490,7 +496,10 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
         case EventType.USER_CONFIRM_RESULT:
             for (const result of event.confirm_results) {
                 const b = findBlock(msg, 'tool_call', result.tool_call.id);
-                if (b) {
+                // Only 'asking' calls can transition; skip stale
+                // results (e.g. arriving after an interrupt already
+                // resolved the tool call to 'finished').
+                if (b && (b as ToolCallBlock).state === 'asking') {
                     (b as ToolCallBlock).state = result.confirmed ? 'allowed' : 'finished';
                 }
             }
@@ -503,11 +512,23 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             }
             break;
 
-        case EventType.EXTERNAL_EXECUTION_RESULT:
+        case EventType.EXTERNAL_EXECUTION_RESULT: {
+            // Dedupe by existing tool_result id — skip results whose
+            // tool_call already has a persisted tool_result (e.g. a
+            // late arrival after an interrupt already injected a
+            // fake tool_result). Mirrors the Python backend's guard
+            // in ``agentscope.message._base.Msg.append_event``.
+            const existingResultIds = new Set(
+                msg.content
+                    .filter(b => b.type === 'tool_result')
+                    .map(b => (b as ToolResultBlock).id)
+            );
             for (const result of event.execution_results) {
+                if (existingResultIds.has(result.id)) continue;
                 msg.content.push(result);
             }
             break;
+        }
     }
 
     return msg;
