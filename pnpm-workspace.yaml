@@ -1,3 +1,9 @@
 packages:
-    - 'packages/*'
-    - 'apps/*'
+  - 'packages/*'
+  - 'apps/*'
+allowBuilds:
+  electron: true
+  electron-winstaller: true
+  esbuild: true
+  typeit: true
+  unrs-resolver: true
