@@ -210,10 +210,16 @@ export class DashScopeChatModel extends ChatModelBase {
                 type: 'thinking',
                 thinking: choice.message.reasoning_content,
                 id: crypto.randomUUID(),
+                created_at: new Date().toISOString(),
             });
         }
         if (choice.message.content) {
-            blocks.push({ type: 'text', text: choice.message.content, id: crypto.randomUUID() });
+            blocks.push({
+                type: 'text',
+                text: choice.message.content,
+                id: crypto.randomUUID(),
+                created_at: new Date().toISOString(),
+            });
         }
         if (choice.message.tool_calls && Array.isArray(choice.message.tool_calls)) {
             choice.message.tool_calls.forEach((toolCall: object) => {
@@ -232,6 +238,7 @@ export class DashScopeChatModel extends ChatModelBase {
                         name: String(toolCall.function.name),
                         input: inputString,
                         state: 'pending',
+                        created_at: new Date().toISOString(),
                     });
                 }
             });
@@ -356,6 +363,7 @@ export class DashScopeChatModel extends ChatModelBase {
                                 name: meta.name,
                                 input: deltaArgs,
                                 state: 'pending',
+                                created_at: new Date().toISOString(),
                             });
                         }
                     });
@@ -390,6 +398,7 @@ export class DashScopeChatModel extends ChatModelBase {
                 name: meta.name,
                 input: accToolInputs.get(index) || '{}',
                 state: 'pending',
+                created_at: new Date().toISOString(),
             });
         });
 
@@ -418,10 +427,20 @@ export class DashScopeChatModel extends ChatModelBase {
     ): (TextBlock | ThinkingBlock | ToolCallBlock)[] {
         const blocks: (TextBlock | ThinkingBlock | ToolCallBlock)[] = [];
         if (thinking) {
-            blocks.push({ type: 'thinking', thinking: thinking, id: crypto.randomUUID() });
+            blocks.push({
+                type: 'thinking',
+                thinking: thinking,
+                id: crypto.randomUUID(),
+                created_at: new Date().toISOString(),
+            });
         }
         if (text) {
-            blocks.push({ type: 'text', text: text, id: crypto.randomUUID() });
+            blocks.push({
+                type: 'text',
+                text: text,
+                id: crypto.randomUUID(),
+                created_at: new Date().toISOString(),
+            });
         }
         // Push the tool calls into the blocks
         if (toolCalls.size > 0) {

@@ -213,6 +213,7 @@ export class OllamaChatModel extends ChatModelBase {
                         name: func.name,
                         input: JSON.stringify(func.arguments),
                         state: 'pending' as const,
+                        created_at: new Date().toISOString(),
                     };
 
                     toolCalls.set(toolId, toolCallBlock);
@@ -265,6 +266,7 @@ export class OllamaChatModel extends ChatModelBase {
                 id: crypto.randomUUID(),
                 type: 'thinking',
                 thinking: response.message.thinking,
+                created_at: new Date().toISOString(),
             });
         }
 
@@ -273,6 +275,7 @@ export class OllamaChatModel extends ChatModelBase {
                 id: crypto.randomUUID(),
                 type: 'text',
                 text: response.message.content,
+                created_at: new Date().toISOString(),
             });
         }
 
@@ -286,6 +289,7 @@ export class OllamaChatModel extends ChatModelBase {
                     name: toolCall.function.name,
                     input: JSON.stringify(toolCall.function.arguments),
                     state: 'pending',
+                    created_at: new Date().toISOString(),
                 });
             }
         }
@@ -324,11 +328,21 @@ export class OllamaChatModel extends ChatModelBase {
         const blocks: Array<TextBlock | ThinkingBlock | ToolCallBlock> = [];
 
         if (thinking) {
-            blocks.push({ id: crypto.randomUUID(), type: 'thinking', thinking });
+            blocks.push({
+                id: crypto.randomUUID(),
+                type: 'thinking',
+                thinking,
+                created_at: new Date().toISOString(),
+            });
         }
 
         if (text) {
-            blocks.push({ id: crypto.randomUUID(), type: 'text', text });
+            blocks.push({
+                id: crypto.randomUUID(),
+                type: 'text',
+                text,
+                created_at: new Date().toISOString(),
+            });
         }
 
         toolCalls.forEach(toolCall => {

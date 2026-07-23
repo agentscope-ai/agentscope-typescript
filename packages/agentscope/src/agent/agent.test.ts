@@ -77,6 +77,7 @@ describe('Human-in-the-loop', () => {
                 name: 'Bash',
                 input: `{"command": "echo Hello"}`,
                 state: 'pending',
+                created_at: '2024-01-01T00:00:00.000Z',
             },
             {
                 type: 'tool_call',
@@ -84,6 +85,7 @@ describe('Human-in-the-loop', () => {
                 name: 'Bash',
                 input: `{"command": "echo World"}`,
                 state: 'pending',
+                created_at: '2024-01-01T00:00:00.000Z',
             },
         ];
 
@@ -129,6 +131,7 @@ describe('Human-in-the-loop', () => {
                         name: 'Bash',
                         type: 'tool_call',
                         state: 'asking',
+                        created_at: expect.any(String),
                     },
                     {
                         id: '2',
@@ -136,6 +139,7 @@ describe('Human-in-the-loop', () => {
                         name: 'Bash',
                         type: 'tool_call',
                         state: 'asking',
+                        created_at: expect.any(String),
                     },
                 ],
                 id: expect.any(String),
@@ -162,6 +166,7 @@ describe('Human-in-the-loop', () => {
                             name: 'Bash',
                             input: '{"command": "echo Hello"}',
                             state: 'pending',
+                            created_at: '2024-01-01T00:00:00.000Z',
                         },
                     },
                 ],
@@ -194,6 +199,7 @@ describe('Human-in-the-loop', () => {
                     name: 'Bash',
                     type: 'tool_call',
                     state: 'allowed',
+                    created_at: expect.any(String),
                 },
                 {
                     id: '2',
@@ -201,6 +207,7 @@ describe('Human-in-the-loop', () => {
                     name: 'Bash',
                     type: 'tool_call',
                     state: 'asking',
+                    created_at: expect.any(String),
                 },
                 {
                     id: '1',
@@ -210,15 +217,24 @@ describe('Human-in-the-loop', () => {
                             id: expect.any(String),
                             text: 'Hello\n',
                             type: 'text',
+                            created_at: expect.any(String),
                         },
                     ],
                     type: 'tool_result',
                     state: 'success',
+                    created_at: expect.any(String),
                 },
             ],
         ]);
 
-        model.mockContent = [{ type: 'text', text: 'Finished', id: expect.any(String) }];
+        model.mockContent = [
+            {
+                type: 'text',
+                text: 'Finished',
+                id: expect.any(String),
+                created_at: '2024-01-01T00:00:00.000Z',
+            },
+        ];
 
         // Reject the second tool call by simulating user confirmation result
         const res = agent.replyStream({
@@ -236,6 +252,7 @@ describe('Human-in-the-loop', () => {
                             name: 'Bash',
                             input: '{"command": "echo World"}',
                             state: 'pending',
+                            created_at: '2024-01-01T00:00:00.000Z',
                         },
                     },
                 ],
@@ -319,6 +336,7 @@ describe('Human-in-the-loop', () => {
                 name: 'ExternalTool1',
                 input: `{"query": "test query"}`,
                 state: 'pending',
+                created_at: '2024-01-01T00:00:00.000Z',
             },
             {
                 type: 'tool_call',
@@ -326,6 +344,7 @@ describe('Human-in-the-loop', () => {
                 name: 'ExternalTool2',
                 input: `{"data": "test data"}`,
                 state: 'pending',
+                created_at: '2024-01-01T00:00:00.000Z',
             },
         ];
 
@@ -373,6 +392,7 @@ describe('Human-in-the-loop', () => {
                         name: 'ExternalTool1',
                         type: 'tool_call',
                         state: 'pending',
+                        created_at: expect.any(String),
                     },
                     {
                         id: '2',
@@ -380,6 +400,7 @@ describe('Human-in-the-loop', () => {
                         name: 'ExternalTool2',
                         type: 'tool_call',
                         state: 'pending',
+                        created_at: expect.any(String),
                     },
                 ],
                 id: expect.any(String),
@@ -408,9 +429,11 @@ describe('Human-in-the-loop', () => {
                                 id: 'output-1',
                                 type: 'text',
                                 text: 'Result from ExternalTool1',
+                                created_at: '2024-01-01T00:00:00.000Z',
                             },
                         ],
                         state: 'success',
+                        created_at: '2024-01-01T00:00:00.000Z',
                     },
                 ],
             },
@@ -442,6 +465,7 @@ describe('Human-in-the-loop', () => {
                     name: 'ExternalTool1',
                     type: 'tool_call',
                     state: 'pending',
+                    created_at: expect.any(String),
                 },
                 {
                     id: '2',
@@ -449,6 +473,7 @@ describe('Human-in-the-loop', () => {
                     name: 'ExternalTool2',
                     type: 'tool_call',
                     state: 'pending',
+                    created_at: expect.any(String),
                 },
                 {
                     id: '1',
@@ -458,15 +483,24 @@ describe('Human-in-the-loop', () => {
                             id: expect.any(String),
                             text: 'Result from ExternalTool1',
                             type: 'text',
+                            created_at: expect.any(String),
                         },
                     ],
                     type: 'tool_result',
                     state: 'success',
+                    created_at: expect.any(String),
                 },
             ],
         ]);
 
-        model.mockContent = [{ type: 'text', text: 'All tools executed', id: expect.any(String) }];
+        model.mockContent = [
+            {
+                type: 'text',
+                text: 'All tools executed',
+                id: expect.any(String),
+                created_at: '2024-01-01T00:00:00.000Z',
+            },
+        ];
 
         // Provide execution result for the second tool call
         const res = agent.replyStream({
@@ -485,9 +519,11 @@ describe('Human-in-the-loop', () => {
                                 id: expect.any(String),
                                 type: 'text',
                                 text: 'Result from ExternalTool2',
+                                created_at: '2024-01-01T00:00:00.000Z',
                             },
                         ],
                         state: 'success',
+                        created_at: '2024-01-01T00:00:00.000Z',
                     },
                 ],
             },
@@ -595,6 +631,7 @@ describe('Human-in-the-loop', () => {
                 name: 'ExternalTool',
                 input: `{"query": "external query"}`,
                 state: 'pending',
+                created_at: '2024-01-01T00:00:00.000Z',
             },
             {
                 type: 'tool_call',
@@ -602,6 +639,7 @@ describe('Human-in-the-loop', () => {
                 name: 'ConfirmTool',
                 input: `{"action": "delete file"}`,
                 state: 'pending',
+                created_at: '2024-01-01T00:00:00.000Z',
             },
             {
                 type: 'tool_call',
@@ -609,6 +647,7 @@ describe('Human-in-the-loop', () => {
                 name: 'NormalTool',
                 input: `{"data": "normal data"}`,
                 state: 'pending',
+                created_at: '2024-01-01T00:00:00.000Z',
             },
         ];
 
@@ -656,9 +695,11 @@ describe('Human-in-the-loop', () => {
                                 id: expect.any(String),
                                 type: 'text',
                                 text: 'External execution result',
+                                created_at: '2024-01-01T00:00:00.000Z',
                             },
                         ],
                         state: 'success',
+                        created_at: '2024-01-01T00:00:00.000Z',
                     },
                 ],
             },
@@ -694,6 +735,7 @@ describe('Human-in-the-loop', () => {
                 type: 'text',
                 text: 'All tools completed successfully',
                 id: expect.any(String),
+                created_at: '2024-01-01T00:00:00.000Z',
             },
         ];
 
@@ -713,6 +755,7 @@ describe('Human-in-the-loop', () => {
                             name: 'ConfirmTool',
                             input: '{"action": "delete file"}',
                             state: 'pending',
+                            created_at: '2024-01-01T00:00:00.000Z',
                         },
                     },
                 ],
@@ -738,6 +781,7 @@ describe('Human-in-the-loop', () => {
                     name: 'ExternalTool',
                     type: 'tool_call',
                     state: 'pending',
+                    created_at: expect.any(String),
                 },
                 {
                     id: '2',
@@ -745,6 +789,7 @@ describe('Human-in-the-loop', () => {
                     name: 'ConfirmTool',
                     type: 'tool_call',
                     state: 'allowed',
+                    created_at: expect.any(String),
                 },
                 {
                     id: '3',
@@ -752,6 +797,7 @@ describe('Human-in-the-loop', () => {
                     name: 'NormalTool',
                     type: 'tool_call',
                     state: 'pending',
+                    created_at: expect.any(String),
                 },
                 {
                     id: '1',
@@ -761,10 +807,12 @@ describe('Human-in-the-loop', () => {
                             id: expect.any(String),
                             text: 'External execution result',
                             type: 'text',
+                            created_at: expect.any(String),
                         },
                     ],
                     type: 'tool_result',
                     state: 'success',
+                    created_at: expect.any(String),
                 },
                 {
                     id: '2',
@@ -774,10 +822,12 @@ describe('Human-in-the-loop', () => {
                             id: expect.any(String),
                             text: 'Executed action: delete file',
                             type: 'text',
+                            created_at: expect.any(String),
                         },
                     ],
                     type: 'tool_result',
                     state: 'success',
+                    created_at: expect.any(String),
                 },
                 {
                     id: '3',
@@ -787,15 +837,18 @@ describe('Human-in-the-loop', () => {
                             id: expect.any(String),
                             text: 'Processed data: normal data',
                             type: 'text',
+                            created_at: expect.any(String),
                         },
                     ],
                     type: 'tool_result',
                     state: 'success',
+                    created_at: expect.any(String),
                 },
                 {
                     id: expect.any(String),
                     type: 'text',
                     text: 'All tools completed successfully',
+                    created_at: expect.any(String),
                 },
             ],
         ]);
@@ -848,6 +901,7 @@ describe('Human-in-the-loop', () => {
                 name: 'ExternalAndConfirmTool',
                 input: `{"command": "rm -rf /"}`,
                 state: 'pending',
+                created_at: '2024-01-01T00:00:00.000Z',
             },
             {
                 type: 'tool_call',
@@ -855,6 +909,7 @@ describe('Human-in-the-loop', () => {
                 name: 'ConfirmOnlyTool',
                 input: `{"action": "delete database"}`,
                 state: 'pending',
+                created_at: '2024-01-01T00:00:00.000Z',
             },
         ];
 
@@ -908,6 +963,7 @@ describe('Human-in-the-loop', () => {
                             name: 'ExternalAndConfirmTool',
                             input: '{"command": "rm -rf /"}',
                             state: 'pending',
+                            created_at: '2024-01-01T00:00:00.000Z',
                         },
                     },
                     {
@@ -918,6 +974,7 @@ describe('Human-in-the-loop', () => {
                             name: 'ConfirmOnlyTool',
                             input: '{"action": "delete database"}',
                             state: 'pending',
+                            created_at: '2024-01-01T00:00:00.000Z',
                         },
                     },
                 ],
@@ -957,6 +1014,7 @@ describe('Human-in-the-loop', () => {
                     name: 'ExternalAndConfirmTool',
                     type: 'tool_call',
                     state: 'allowed',
+                    created_at: expect.any(String),
                 },
                 {
                     id: '2',
@@ -964,12 +1022,20 @@ describe('Human-in-the-loop', () => {
                     name: 'ConfirmOnlyTool',
                     type: 'tool_call',
                     state: 'allowed',
+                    created_at: expect.any(String),
                 },
             ],
         ]);
 
         // Update mock content to return final text response
-        model.mockContent = [{ type: 'text', text: 'All operations completed', id: 'abc' }];
+        model.mockContent = [
+            {
+                type: 'text',
+                text: 'All operations completed',
+                id: 'abc',
+                created_at: '2024-01-01T00:00:00.000Z',
+            },
+        ];
 
         // Provide external execution result for the first tool
         for await (const event of agent.replyStream({
@@ -988,9 +1054,11 @@ describe('Human-in-the-loop', () => {
                                 id: expect.any(String),
                                 type: 'text',
                                 text: 'External command executed',
+                                created_at: '2024-01-01T00:00:00.000Z',
                             },
                         ],
                         state: 'success',
+                        created_at: '2024-01-01T00:00:00.000Z',
                     },
                 ],
             },
@@ -1016,6 +1084,7 @@ describe('Human-in-the-loop', () => {
                     name: 'ExternalAndConfirmTool',
                     type: 'tool_call',
                     state: 'allowed',
+                    created_at: expect.any(String),
                 },
                 {
                     id: '2',
@@ -1023,6 +1092,7 @@ describe('Human-in-the-loop', () => {
                     name: 'ConfirmOnlyTool',
                     type: 'tool_call',
                     state: 'allowed',
+                    created_at: expect.any(String),
                 },
                 {
                     id: '1',
@@ -1032,10 +1102,12 @@ describe('Human-in-the-loop', () => {
                             id: expect.any(String),
                             text: 'External command executed',
                             type: 'text',
+                            created_at: expect.any(String),
                         },
                     ],
                     type: 'tool_result',
                     state: 'success',
+                    created_at: expect.any(String),
                 },
                 {
                     id: '2',
@@ -1045,15 +1117,18 @@ describe('Human-in-the-loop', () => {
                             id: expect.any(String),
                             text: 'Executed action: delete database',
                             type: 'text',
+                            created_at: expect.any(String),
                         },
                     ],
                     type: 'tool_result',
                     state: 'success',
+                    created_at: expect.any(String),
                 },
                 {
                     id: expect.any(String),
                     type: 'text',
                     text: 'All operations completed',
+                    created_at: expect.any(String),
                 },
             ],
         ]);

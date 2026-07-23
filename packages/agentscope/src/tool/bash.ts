@@ -117,6 +117,7 @@ While the Bash tool can do similar things, it's better to use the built-in tools
                         content: [
                             {
                                 id: crypto.randomUUID(),
+                                created_at: new Date().toISOString(),
                                 type: 'text',
                                 text:
                                     normalizedOutput.substring(0, maxOutputLength) +
@@ -128,7 +129,14 @@ While the Bash tool can do similar things, it's better to use the built-in tools
                 }
 
                 return createToolResponse({
-                    content: [{ id: crypto.randomUUID(), type: 'text', text: normalizedOutput }],
+                    content: [
+                        {
+                            id: crypto.randomUUID(),
+                            created_at: new Date().toISOString(),
+                            type: 'text',
+                            text: normalizedOutput,
+                        },
+                    ],
                     state: 'success',
                 });
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -143,7 +151,14 @@ While the Bash tool can do similar things, it's better to use the built-in tools
                 if (errorMessage && !stderr) result += `\nError: ${errorMessage}`;
 
                 return createToolResponse({
-                    content: [{ id: crypto.randomUUID(), type: 'text', text: result }],
+                    content: [
+                        {
+                            id: crypto.randomUUID(),
+                            created_at: new Date().toISOString(),
+                            type: 'text',
+                            text: result,
+                        },
+                    ],
                     state: 'error',
                 });
             }

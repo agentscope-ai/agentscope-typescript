@@ -105,7 +105,12 @@ export class OpenAIChatModel extends ChatModelBase {
 
         // handling text block
         if (choice.message.content) {
-            blocks.push({ id: crypto.randomUUID(), type: 'text', text: choice.message.content });
+            blocks.push({
+                id: crypto.randomUUID(),
+                type: 'text',
+                text: choice.message.content,
+                created_at: new Date().toISOString(),
+            });
         }
 
         // handling tool calls
@@ -118,6 +123,7 @@ export class OpenAIChatModel extends ChatModelBase {
                         name: toolCall.function.name,
                         input: toolCall.function.arguments,
                         state: 'pending',
+                        created_at: new Date().toISOString(),
                     });
                 }
             });
@@ -240,6 +246,7 @@ export class OpenAIChatModel extends ChatModelBase {
                                 name: meta.name,
                                 input: deltaArgs,
                                 state: 'pending',
+                                created_at: new Date().toISOString(),
                             });
                         }
                     });
@@ -279,6 +286,7 @@ export class OpenAIChatModel extends ChatModelBase {
                 name: meta.name,
                 input: accToolInputs.get(index) || '{}',
                 state: 'pending',
+                created_at: new Date().toISOString(),
             });
         });
 
@@ -307,7 +315,12 @@ export class OpenAIChatModel extends ChatModelBase {
     ): (TextBlock | ToolCallBlock)[] {
         const blocks: (TextBlock | ToolCallBlock)[] = [];
         if (text) {
-            blocks.push({ id: crypto.randomUUID(), type: 'text', text: text });
+            blocks.push({
+                id: crypto.randomUUID(),
+                type: 'text',
+                text: text,
+                created_at: new Date().toISOString(),
+            });
         }
         // Push the tool calls into the blocks
         if (toolCalls.size > 0) {

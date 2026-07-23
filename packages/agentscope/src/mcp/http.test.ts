@@ -216,6 +216,7 @@ describe('HTTPStatefulMCPClient', () => {
             type: 'tool_call',
             input: `{"a": 10, "b": 20}`,
             state: 'pending',
+            created_at: '2024-01-01T00:00:00.000Z',
         });
         for await (const item of res) {
             expect(item.content.length).toBeGreaterThan(0);
@@ -290,6 +291,7 @@ describe('HTTPStatelessMCPClient', () => {
             type: 'tool_call',
             input: `{"a": 15, "b": 25}`,
             state: 'pending',
+            created_at: '2024-01-01T00:00:00.000Z',
         });
         const collectedRes: ToolResponse[] = [];
         for await (const item of res) {

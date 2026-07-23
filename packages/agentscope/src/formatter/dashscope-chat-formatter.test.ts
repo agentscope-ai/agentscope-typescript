@@ -7,18 +7,37 @@ describe('DashScopeChatFormatter', () => {
             createMsg({
                 name: 'system',
                 content: [
-                    { id: crypto.randomUUID(), type: 'text', text: 'You are a helpful assistant.' },
+                    {
+                        id: crypto.randomUUID(),
+                        created_at: '2024-01-01T00:00:00.000Z',
+                        type: 'text',
+                        text: 'You are a helpful assistant.',
+                    },
                 ],
                 role: 'system',
             }),
             createMsg({
                 name: 'user',
-                content: [{ id: crypto.randomUUID(), type: 'text', text: 'Hello, how are you?' }],
+                content: [
+                    {
+                        id: crypto.randomUUID(),
+                        created_at: '2024-01-01T00:00:00.000Z',
+                        type: 'text',
+                        text: 'Hello, how are you?',
+                    },
+                ],
                 role: 'user',
             }),
             createMsg({
                 name: 'assistant',
-                content: [{ id: crypto.randomUUID(), type: 'text', text: 'I am fine, thank you!' }],
+                content: [
+                    {
+                        id: crypto.randomUUID(),
+                        created_at: '2024-01-01T00:00:00.000Z',
+                        type: 'text',
+                        text: 'I am fine, thank you!',
+                    },
+                ],
                 role: 'assistant',
             }),
         ];
@@ -46,13 +65,25 @@ describe('DashScopeChatFormatter', () => {
             createMsg({
                 name: 'system',
                 content: [
-                    { type: 'text', text: 'You are a helpful assistant.', id: crypto.randomUUID() },
+                    {
+                        type: 'text',
+                        text: 'You are a helpful assistant.',
+                        id: crypto.randomUUID(),
+                        created_at: '2024-01-01T00:00:00.000Z',
+                    },
                 ],
                 role: 'system',
             }),
             createMsg({
                 name: 'user',
-                content: [{ type: 'text', text: 'Please use the tool.', id: crypto.randomUUID() }],
+                content: [
+                    {
+                        type: 'text',
+                        text: 'Please use the tool.',
+                        id: crypto.randomUUID(),
+                        created_at: '2024-01-01T00:00:00.000Z',
+                    },
+                ],
                 role: 'user',
             }),
             createMsg({
@@ -64,6 +95,7 @@ describe('DashScopeChatFormatter', () => {
                         name: 'google_search',
                         input: '{"query": "example1"}',
                         state: 'pending',
+                        created_at: '2024-01-01T00:00:00.000Z',
                     },
                     {
                         type: 'tool_call',
@@ -71,6 +103,7 @@ describe('DashScopeChatFormatter', () => {
                         name: 'bing_search',
                         input: '{"query": "example2"}',
                         state: 'pending',
+                        created_at: '2024-01-01T00:00:00.000Z',
                     },
                     {
                         type: 'tool_result',
@@ -78,6 +111,7 @@ describe('DashScopeChatFormatter', () => {
                         name: 'google_search',
                         output: 'Google search result for example1',
                         state: 'success',
+                        created_at: '2024-01-01T00:00:00.000Z',
                     },
                     {
                         type: 'tool_result',
@@ -85,6 +119,7 @@ describe('DashScopeChatFormatter', () => {
                         name: 'bing_search',
                         output: 'Bing search result for example2',
                         state: 'success',
+                        created_at: '2024-01-01T00:00:00.000Z',
                     },
                 ],
                 role: 'assistant',
@@ -145,16 +180,27 @@ describe('DashScopeChatFormatter', () => {
             createMsg({
                 name: 'system',
                 content: [
-                    { id: crypto.randomUUID(), type: 'text', text: 'You are a helpful assistant.' },
+                    {
+                        id: crypto.randomUUID(),
+                        created_at: '2024-01-01T00:00:00.000Z',
+                        type: 'text',
+                        text: 'You are a helpful assistant.',
+                    },
                 ],
                 role: 'system',
             }),
             createMsg({
                 name: 'user',
                 content: [
-                    { id: crypto.randomUUID(), type: 'text', text: 'Please see the image below.' },
                     {
                         id: crypto.randomUUID(),
+                        created_at: '2024-01-01T00:00:00.000Z',
+                        type: 'text',
+                        text: 'Please see the image below.',
+                    },
+                    {
+                        id: crypto.randomUUID(),
+                        created_at: '2024-01-01T00:00:00.000Z',
                         type: 'data',
                         source: {
                             type: 'url',
@@ -170,6 +216,7 @@ describe('DashScopeChatFormatter', () => {
                 content: [
                     {
                         id: crypto.randomUUID(),
+                        created_at: '2024-01-01T00:00:00.000Z',
                         type: 'text',
                         text: 'Here is the image you requested.',
                     },
@@ -181,11 +228,13 @@ describe('DashScopeChatFormatter', () => {
                 content: [
                     {
                         id: crypto.randomUUID(),
+                        created_at: '2024-01-01T00:00:00.000Z',
                         type: 'data',
                         source: { type: 'base64', data: 'xxx', media_type: 'audio/mp3' },
                     },
                     {
                         id: crypto.randomUUID(),
+                        created_at: '2024-01-01T00:00:00.000Z',
                         type: 'data',
                         source: {
                             type: 'url',
@@ -195,6 +244,7 @@ describe('DashScopeChatFormatter', () => {
                     },
                     {
                         id: crypto.randomUUID(),
+                        created_at: '2024-01-01T00:00:00.000Z',
                         type: 'data',
                         source: {
                             type: 'url',
@@ -254,7 +304,14 @@ describe('DashScopeChatFormatter', () => {
         const msgs = [
             createMsg({
                 name: 'user',
-                content: [{ id: crypto.randomUUID(), type: 'text', text: 'Please use the tool.' }],
+                content: [
+                    {
+                        id: crypto.randomUUID(),
+                        created_at: '2024-01-01T00:00:00.000Z',
+                        type: 'text',
+                        text: 'Please use the tool.',
+                    },
+                ],
                 role: 'user',
             }),
             createMsg({
@@ -266,15 +323,22 @@ describe('DashScopeChatFormatter', () => {
                         name: 'google_search',
                         input: '{\"query\": \"example1\"}',
                         state: 'pending',
+                        created_at: '2024-01-01T00:00:00.000Z',
                     },
                     {
                         type: 'tool_result',
                         id: '1',
                         name: 'google_search',
                         output: [
-                            { type: 'text', text: 'content 1', id: crypto.randomUUID() },
+                            {
+                                type: 'text',
+                                text: 'content 1',
+                                id: crypto.randomUUID(),
+                                created_at: '2024-01-01T00:00:00.000Z',
+                            },
                             {
                                 id: crypto.randomUUID(),
+                                created_at: '2024-01-01T00:00:00.000Z',
                                 type: 'data',
                                 source: {
                                     type: 'url',
@@ -282,19 +346,27 @@ describe('DashScopeChatFormatter', () => {
                                     media_type: 'image/png',
                                 },
                             },
-                            { id: crypto.randomUUID(), type: 'text', text: 'content 2' },
                             {
                                 id: crypto.randomUUID(),
+                                created_at: '2024-01-01T00:00:00.000Z',
+                                type: 'text',
+                                text: 'content 2',
+                            },
+                            {
+                                id: crypto.randomUUID(),
+                                created_at: '2024-01-01T00:00:00.000Z',
                                 type: 'data',
                                 source: { type: 'base64', data: 'xxx', media_type: 'image/png' },
                             },
                             {
                                 id: crypto.randomUUID(),
+                                created_at: '2024-01-01T00:00:00.000Z',
                                 type: 'data',
                                 source: { type: 'base64', data: 'yyy', media_type: 'audio/mp3' },
                             },
                             {
                                 id: crypto.randomUUID(),
+                                created_at: '2024-01-01T00:00:00.000Z',
                                 type: 'data',
                                 source: {
                                     type: 'url',
@@ -304,6 +376,7 @@ describe('DashScopeChatFormatter', () => {
                             },
                         ],
                         state: 'success',
+                        created_at: '2024-01-01T00:00:00.000Z',
                     },
                 ],
                 role: 'assistant',

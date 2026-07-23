@@ -6,6 +6,7 @@ import { createMsg } from '../message';
 
 describe('LocalFileStorage', () => {
     const testDir = path.join(__dirname, '.test-storage');
+    const createdAt = '2024-01-01T00:00:00.000Z';
     let storage: LocalFileStorage;
 
     beforeEach(() => {
@@ -28,12 +29,14 @@ describe('LocalFileStorage', () => {
             const context = [
                 createMsg({
                     name: 'user',
-                    content: [{ type: 'text', text: 'Hello', id: 'text-1' }],
+                    content: [{ type: 'text', text: 'Hello', id: 'text-1', created_at: createdAt }],
                     role: 'user',
                 }),
                 createMsg({
                     name: 'assistant',
-                    content: [{ type: 'text', text: 'Hi there!', id: 'text-2' }],
+                    content: [
+                        { type: 'text', text: 'Hi there!', id: 'text-2', created_at: createdAt },
+                    ],
                     role: 'assistant',
                 }),
             ];
@@ -59,11 +62,13 @@ describe('LocalFileStorage', () => {
                 type: 'text',
                 text: 'Hello',
                 id: 'text-1',
+                created_at: createdAt,
             });
             expect(loaded.context[1].content[0]).toEqual({
                 type: 'text',
                 text: 'Hi there!',
                 id: 'text-2',
+                created_at: createdAt,
             });
             expect(loaded.metadata.replyId).toBe('reply-123');
             expect(loaded.metadata.curIter).toBe(1);
@@ -79,17 +84,19 @@ describe('LocalFileStorage', () => {
         it('should handle incremental context updates', async () => {
             const msg1 = createMsg({
                 name: 'user',
-                content: [{ type: 'text', text: 'Message 1', id: 'text-3' }],
+                content: [{ type: 'text', text: 'Message 1', id: 'text-3', created_at: createdAt }],
                 role: 'user',
             });
             const msg2 = createMsg({
                 name: 'assistant',
-                content: [{ type: 'text', text: 'Response 1', id: 'text-4' }],
+                content: [
+                    { type: 'text', text: 'Response 1', id: 'text-4', created_at: createdAt },
+                ],
                 role: 'assistant',
             });
             const msg3 = createMsg({
                 name: 'user',
-                content: [{ type: 'text', text: 'Message 2', id: 'text-5' }],
+                content: [{ type: 'text', text: 'Message 2', id: 'text-5', created_at: createdAt }],
                 role: 'user',
             });
 
@@ -114,6 +121,7 @@ describe('LocalFileStorage', () => {
                 type: 'text',
                 text: 'Message 2',
                 id: 'text-5',
+                created_at: createdAt,
             });
         });
     });
@@ -124,7 +132,14 @@ describe('LocalFileStorage', () => {
             const allMessages = Array.from({ length: 10 }, (_, i) =>
                 createMsg({
                     name: i % 2 === 0 ? 'user' : 'assistant',
-                    content: [{ type: 'text', text: `Message ${i + 1}`, id: `text-${i + 6}` }],
+                    content: [
+                        {
+                            type: 'text',
+                            text: `Message ${i + 1}`,
+                            id: `text-${i + 6}`,
+                            created_at: createdAt,
+                        },
+                    ],
                     role: i % 2 === 0 ? 'user' : 'assistant',
                 })
             );
@@ -178,16 +193,19 @@ describe('LocalFileStorage', () => {
                 type: 'text',
                 text: 'Message 8',
                 id: 'text-13',
+                created_at: createdAt,
             });
             expect(loaded.context[1].content[0]).toEqual({
                 type: 'text',
                 text: 'Message 9',
                 id: 'text-14',
+                created_at: createdAt,
             });
             expect(loaded.context[2].content[0]).toEqual({
                 type: 'text',
                 text: 'Message 10',
                 id: 'text-15',
+                created_at: createdAt,
             });
             expect(loaded.metadata.curSummary).toBe(
                 '<system-info>Summary of messages 1-7</system-info>'
@@ -200,7 +218,12 @@ describe('LocalFileStorage', () => {
                 createMsg({
                     name: 'user',
                     content: [
-                        { type: 'text', text: `Batch 1 Message ${i + 1}`, id: `text-${i + 16}` },
+                        {
+                            type: 'text',
+                            text: `Batch 1 Message ${i + 1}`,
+                            id: `text-${i + 16}`,
+                            created_at: createdAt,
+                        },
                     ],
                     role: 'user',
                 })
@@ -230,6 +253,7 @@ describe('LocalFileStorage', () => {
                                 type: 'text',
                                 text: `Batch 2 Message ${i + 1}`,
                                 id: `text-${i + 21}`,
+                                created_at: createdAt,
                             },
                         ],
                         role: 'user',
@@ -257,6 +281,7 @@ describe('LocalFileStorage', () => {
                 type: 'text',
                 text: 'Batch 2 Message 3',
                 id: 'text-23',
+                created_at: createdAt,
             });
             expect(loaded.metadata.curSummary).toBe('Summary 2');
         });
@@ -265,7 +290,7 @@ describe('LocalFileStorage', () => {
             const context = [
                 createMsg({
                     name: 'user',
-                    content: [{ type: 'text', text: 'Test', id: 'text-26' }],
+                    content: [{ type: 'text', text: 'Test', id: 'text-26', created_at: createdAt }],
                     role: 'user',
                 }),
             ];
@@ -299,14 +324,28 @@ describe('LocalFileStorage', () => {
             const agent1Context = [
                 createMsg({
                     name: 'user',
-                    content: [{ type: 'text', text: 'Agent 1 message', id: 'text-27' }],
+                    content: [
+                        {
+                            type: 'text',
+                            text: 'Agent 1 message',
+                            id: 'text-27',
+                            created_at: createdAt,
+                        },
+                    ],
                     role: 'user',
                 }),
             ];
             const agent2Context = [
                 createMsg({
                     name: 'user',
-                    content: [{ type: 'text', text: 'Agent 2 message', id: 'text-28' }],
+                    content: [
+                        {
+                            type: 'text',
+                            text: 'Agent 2 message',
+                            id: 'text-28',
+                            created_at: createdAt,
+                        },
+                    ],
                     role: 'user',
                 }),
             ];
@@ -330,11 +369,13 @@ describe('LocalFileStorage', () => {
                 type: 'text',
                 text: 'Agent 1 message',
                 id: 'text-27',
+                created_at: createdAt,
             });
             expect(loaded2.context[0].content[0]).toEqual({
                 type: 'text',
                 text: 'Agent 2 message',
                 id: 'text-28',
+                created_at: createdAt,
             });
             expect(loaded1.metadata.replyId).toBe('reply-1');
             expect(loaded2.metadata.replyId).toBe('reply-2');
@@ -346,7 +387,14 @@ describe('LocalFileStorage', () => {
             const msgs = [
                 createMsg({
                     name: 'user',
-                    content: [{ type: 'text', text: 'Test message', id: 'text-29' }],
+                    content: [
+                        {
+                            type: 'text',
+                            text: 'Test message',
+                            id: 'text-29',
+                            created_at: createdAt,
+                        },
+                    ],
                     role: 'user',
                 }),
             ];
@@ -365,12 +413,16 @@ describe('LocalFileStorage', () => {
             const msgs = [
                 createMsg({
                     name: 'user',
-                    content: [{ type: 'text', text: 'Hello world', id: 'text-30' }],
+                    content: [
+                        { type: 'text', text: 'Hello world', id: 'text-30', created_at: createdAt },
+                    ],
                     role: 'user',
                 }),
                 createMsg({
                     name: 'assistant',
-                    content: [{ type: 'text', text: 'Hi there!', id: 'text-31' }],
+                    content: [
+                        { type: 'text', text: 'Hi there!', id: 'text-31', created_at: createdAt },
+                    ],
                     role: 'assistant',
                 }),
             ];
@@ -398,7 +450,9 @@ describe('LocalFileStorage', () => {
             const msgs1 = [
                 createMsg({
                     name: 'user',
-                    content: [{ type: 'text', text: 'First batch', id: 'text-32' }],
+                    content: [
+                        { type: 'text', text: 'First batch', id: 'text-32', created_at: createdAt },
+                    ],
                     role: 'user',
                 }),
             ];
@@ -406,7 +460,14 @@ describe('LocalFileStorage', () => {
             const msgs2 = [
                 createMsg({
                     name: 'user',
-                    content: [{ type: 'text', text: 'Second batch', id: 'text-33' }],
+                    content: [
+                        {
+                            type: 'text',
+                            text: 'Second batch',
+                            id: 'text-33',
+                            created_at: createdAt,
+                        },
+                    ],
                     role: 'user',
                 }),
             ];
@@ -441,6 +502,7 @@ describe('LocalFileStorage', () => {
                         {
                             type: 'data',
                             id: 'data-1',
+                            created_at: createdAt,
                             source: {
                                 type: 'url',
                                 url: 'https://example.com/image.png',
@@ -480,6 +542,7 @@ describe('LocalFileStorage', () => {
                         {
                             type: 'data',
                             id: 'data-2',
+                            created_at: createdAt,
                             source: {
                                 type: 'base64',
                                 data: base64Data,
@@ -527,6 +590,7 @@ describe('LocalFileStorage', () => {
                         {
                             type: 'tool_call',
                             id: 'call-123',
+                            created_at: createdAt,
                             name: 'search',
                             input: JSON.stringify({ query: 'test' }),
                             state: 'pending',
@@ -556,17 +620,28 @@ describe('LocalFileStorage', () => {
                 createMsg({
                     name: 'user',
                     content: [
-                        { type: 'text', text: 'Here is an image:', id: 'text-34' },
+                        {
+                            type: 'text',
+                            text: 'Here is an image:',
+                            id: 'text-34',
+                            created_at: createdAt,
+                        },
                         {
                             type: 'data',
                             id: 'data-3',
+                            created_at: createdAt,
                             source: {
                                 type: 'url',
                                 url: 'https://example.com/image.png',
                                 media_type: 'image/png',
                             },
                         },
-                        { type: 'text', text: 'What do you see?', id: 'text-35' },
+                        {
+                            type: 'text',
+                            text: 'What do you see?',
+                            id: 'text-35',
+                            created_at: createdAt,
+                        },
                     ],
                     role: 'user',
                 }),

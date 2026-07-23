@@ -57,7 +57,14 @@ async function main() {
         const res = agent.replyStream({
             msgs: createMsg({
                 name: 'user',
-                content: [{ id: crypto.randomUUID(), type: 'text', text: userInput }],
+                content: [
+                    {
+                        id: crypto.randomUUID(),
+                        type: 'text',
+                        text: userInput,
+                        created_at: new Date().toISOString(),
+                    },
+                ],
                 role: 'user',
             }),
         });

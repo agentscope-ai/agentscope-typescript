@@ -212,6 +212,7 @@ ${JSON.stringify(schedule, null, 2)}
                     {
                         id: crypto.randomUUID(),
                         type: 'text',
+                        created_at: new Date().toISOString(),
                         text: '<system-reminder>Now begin to execute the scheduled task!</system-reminder>',
                     },
                 ],

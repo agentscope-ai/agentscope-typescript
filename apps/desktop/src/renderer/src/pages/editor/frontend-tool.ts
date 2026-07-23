@@ -48,12 +48,14 @@ export function executeDocumentRead(
     if (content.length === 0) {
         return {
             type: 'tool_result',
+            created_at: new Date().toISOString(),
             id: toolCallId,
             name: 'DocumentRead',
             output: [
                 {
                     id: crypto.randomUUID(),
                     type: 'text',
+                    created_at: new Date().toISOString(),
                     text: '<system-info>The document is currently empty.</system-info>',
                 },
             ],
@@ -65,12 +67,14 @@ export function executeDocumentRead(
 
     return {
         type: 'tool_result',
+        created_at: new Date().toISOString(),
         id: toolCallId,
         name: 'DocumentRead',
         output: [
             {
                 id: crypto.randomUUID(),
                 type: 'text',
+                created_at: new Date().toISOString(),
                 text: formatted,
             },
         ],
@@ -98,12 +102,14 @@ export function executeDocumentWrite(
         const lineCount = params.content.split('\n').length;
         return {
             type: 'tool_result',
+            created_at: new Date().toISOString(),
             id: toolCallId,
             name: 'DocumentWrite',
             output: [
                 {
                     id: crypto.randomUUID(),
                     type: 'text',
+                    created_at: new Date().toISOString(),
                     text: `The document has been written successfully (${lineCount} lines).`,
                 },
             ],
@@ -112,12 +118,14 @@ export function executeDocumentWrite(
     } catch (error) {
         return {
             type: 'tool_result',
+            created_at: new Date().toISOString(),
             id: toolCallId,
             name: 'DocumentWrite',
             output: [
                 {
                     id: crypto.randomUUID(),
                     type: 'text',
+                    created_at: new Date().toISOString(),
                     text: `Failed to write document: ${error instanceof Error ? error.message : String(error)}`,
                 },
             ],
@@ -145,9 +153,12 @@ export function executeDocumentEdit(
 ): ToolResultBlock {
     const makeError = (text: string): ToolResultBlock => ({
         type: 'tool_result',
+        created_at: new Date().toISOString(),
         id: toolCallId,
         name: 'DocumentEdit',
-        output: [{ id: crypto.randomUUID(), type: 'text', text }],
+        output: [
+            { id: crypto.randomUUID(), type: 'text', created_at: new Date().toISOString(), text },
+        ],
         state: 'error',
     });
 
@@ -187,12 +198,14 @@ export function executeDocumentEdit(
 
     return {
         type: 'tool_result',
+        created_at: new Date().toISOString(),
         id: toolCallId,
         name: 'DocumentEdit',
         output: [
             {
                 id: crypto.randomUUID(),
                 type: 'text',
+                created_at: new Date().toISOString(),
                 text: 'The document has been edited successfully.',
             },
         ],

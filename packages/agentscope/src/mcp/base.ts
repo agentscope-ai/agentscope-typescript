@@ -82,12 +82,18 @@ export class MCPTool implements Tool {
             const content: ToolResponse['content'] = [];
             result.content.forEach(item => {
                 if (item.type === 'text') {
-                    content.push({ type: 'text', text: item.text, id: crypto.randomUUID() });
+                    content.push({
+                        type: 'text',
+                        text: item.text,
+                        id: crypto.randomUUID(),
+                        created_at: new Date().toISOString(),
+                    });
                 } else if (item.type === 'image' || item.type === 'audio') {
                     content.push({
                         id: crypto.randomUUID(),
                         type: 'data',
                         source: { type: 'base64', media_type: item.mimeType, data: item.data },
+                        created_at: new Date().toISOString(),
                     });
                 } else {
                     console.warn(
@@ -103,6 +109,7 @@ export class MCPTool implements Tool {
                         id: crypto.randomUUID(),
                         type: 'text',
                         text: `Error calling tool '${this.name}': ${error}`,
+                        created_at: new Date().toISOString(),
                     },
                 ],
                 state: 'error',

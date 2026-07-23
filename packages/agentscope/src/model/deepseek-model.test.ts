@@ -46,7 +46,14 @@ describe('DeepSeekChatModel', () => {
                 createMsg({
                     name: 'user',
                     role: 'user',
-                    content: [{ id: crypto.randomUUID(), type: 'text', text: '查询北京天气' }],
+                    content: [
+                        {
+                            id: crypto.randomUUID(),
+                            type: 'text',
+                            text: '查询北京天气',
+                            created_at: '2024-01-01T00:00:00.000Z',
+                        },
+                    ],
                 }),
             ],
             tools: [
@@ -165,7 +172,14 @@ describe('DeepSeekChatModel', () => {
                 createMsg({
                     name: 'user',
                     role: 'user',
-                    content: [{ id: crypto.randomUUID(), type: 'text', text: '查询北京天气' }],
+                    content: [
+                        {
+                            id: crypto.randomUUID(),
+                            type: 'text',
+                            text: '查询北京天气',
+                            created_at: '2024-01-01T00:00:00.000Z',
+                        },
+                    ],
                 }),
             ],
             tools: [

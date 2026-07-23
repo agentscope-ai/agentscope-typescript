@@ -99,6 +99,7 @@ All tasks are created with state 'pending'.`,
                 content: [
                     {
                         id: crypto.randomUUID(),
+                        created_at: new Date().toISOString(),
                         type: 'text',
                         text: `Task ${id} created successfully: ${subject}`,
                     },
@@ -222,6 +223,7 @@ export function TaskUpdate() {
                         content: [
                             {
                                 id: crypto.randomUUID(),
+                                created_at: new Date().toISOString(),
                                 type: 'text',
                                 text: `Task ${taskId} deleted successfully`,
                             },
@@ -236,6 +238,7 @@ export function TaskUpdate() {
                 content: [
                     {
                         id: crypto.randomUUID(),
+                        created_at: new Date().toISOString(),
                         type: 'text',
                         text: `Task ${taskId} updated successfully`,
                     },
@@ -293,6 +296,7 @@ export function TaskGet() {
                 content: [
                     {
                         id: crypto.randomUUID(),
+                        created_at: new Date().toISOString(),
                         type: 'text',
                         text,
                     },
@@ -331,6 +335,7 @@ export function TaskList() {
                     content: [
                         {
                             id: crypto.randomUUID(),
+                            created_at: new Date().toISOString(),
                             type: 'text',
                             text: 'No tasks available.',
                         },
@@ -354,6 +359,7 @@ export function TaskList() {
                 content: [
                     {
                         id: crypto.randomUUID(),
+                        created_at: new Date().toISOString(),
                         type: 'text',
                         text: lines.join('\n'),
                     },
