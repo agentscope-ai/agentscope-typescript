@@ -46,7 +46,12 @@ describe('OllamaChatModel', () => {
                     name: 'user',
                     role: 'user',
                     content: [
-                        { type: 'text', text: "How's the weather today?", id: crypto.randomUUID() },
+                        {
+                            type: 'text',
+                            text: "How's the weather today?",
+                            id: crypto.randomUUID(),
+                            created_at: '2024-01-01T00:00:00.000Z',
+                        },
                     ],
                 }),
             ],
@@ -146,7 +151,12 @@ describe('OllamaChatModel', () => {
                     name: 'user',
                     role: 'user',
                     content: [
-                        { type: 'text', text: '你好，请简单介绍一下自己', id: crypto.randomUUID() },
+                        {
+                            type: 'text',
+                            text: '你好，请简单介绍一下自己',
+                            id: crypto.randomUUID(),
+                            created_at: '2024-01-01T00:00:00.000Z',
+                        },
                     ],
                 }),
             ],
@@ -213,6 +223,7 @@ describe('OllamaChatModel', () => {
                             type: 'text',
                             text: '计算 123 * 456 等于多少？',
                             id: crypto.randomUUID(),
+                            created_at: '2024-01-01T00:00:00.000Z',
                         },
                     ],
                 }),

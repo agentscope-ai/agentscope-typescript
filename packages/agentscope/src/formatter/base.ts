@@ -84,12 +84,14 @@ export abstract class FormatterBase {
                 id: crypto.randomUUID(),
                 type: 'text',
                 text: `<${type}_data id='${id}'>`,
+                created_at: new Date().toISOString(),
             });
             promotedBlocks.push(block);
             promotedBlocks.push({
                 id: crypto.randomUUID(),
                 type: 'text',
                 text: `</${type}_data>\n`,
+                created_at: new Date().toISOString(),
             });
         });
 
@@ -105,6 +107,7 @@ export abstract class FormatterBase {
                     id: crypto.randomUUID(),
                     type: 'text',
                     text: `${prefix}`,
+                    created_at: new Date().toISOString(),
                 });
             }
 
@@ -115,12 +118,14 @@ export abstract class FormatterBase {
                     id: crypto.randomUUID(),
                     type: 'text',
                     text: `${lastBlock.text}</system-info>`,
+                    created_at: new Date().toISOString(),
                 };
             } else {
                 promotedBlocks.push({
                     id: crypto.randomUUID(),
                     type: 'text',
                     text: `</system-info>`,
+                    created_at: new Date().toISOString(),
                 });
             }
         }

@@ -4,12 +4,20 @@ export interface TextBlock {
     type: 'text';
     text: string;
     id: string;
+    /** ISO-8601 creation timestamp of the block. */
+    created_at: string;
+    /** ISO-8601 finished timestamp of the block. */
+    finished_at?: string | null;
 }
 
 export interface ThinkingBlock {
     type: 'thinking';
     thinking: string;
     id: string;
+    /** ISO-8601 creation timestamp of the block. */
+    created_at: string;
+    /** ISO-8601 finished timestamp of the block. */
+    finished_at?: string | null;
 }
 
 /**
@@ -32,6 +40,10 @@ export interface HintBlock {
      * it may be `"system"` or `null`/omitted.
      */
     source?: string | null;
+    /** ISO-8601 creation timestamp of the block. */
+    created_at: string;
+    /** ISO-8601 finished timestamp of the block. */
+    finished_at?: string | null;
 }
 
 export type ToolCallState = 'pending' | 'asking' | 'allowed' | 'submitted' | 'finished';
@@ -43,6 +55,10 @@ export interface ToolCallBlock {
     input: string;
     state: ToolCallState;
     suggested_rules?: PermissionRule[];
+    /** ISO-8601 creation timestamp of the block. */
+    created_at: string;
+    /** ISO-8601 finished timestamp of the block. */
+    finished_at?: string | null;
 }
 
 export type ToolResultState = 'success' | 'error' | 'interrupted' | 'denied' | 'running';
@@ -54,6 +70,10 @@ export interface ToolResultBlock {
     output: string | (TextBlock | DataBlock)[];
     state: ToolResultState;
     metadata?: Record<string, unknown>;
+    /** ISO-8601 creation timestamp of the block. */
+    created_at: string;
+    /** ISO-8601 finished timestamp of the block. */
+    finished_at?: string | null;
 }
 
 export interface Base64Source {
@@ -73,6 +93,10 @@ export interface DataBlock {
     source: Base64Source | URLSource;
     id: string;
     name?: string;
+    /** ISO-8601 creation timestamp of the block. */
+    created_at: string;
+    /** ISO-8601 finished timestamp of the block. */
+    finished_at?: string | null;
 }
 
 export type ContentBlock =

@@ -170,10 +170,16 @@ export class DeepSeekChatModel extends ChatModelBase {
                 id: crypto.randomUUID(),
                 type: 'thinking',
                 thinking: choice.message.reasoning_content,
+                created_at: new Date().toISOString(),
             });
         }
         if (choice.message.content) {
-            blocks.push({ id: crypto.randomUUID(), type: 'text', text: choice.message.content });
+            blocks.push({
+                id: crypto.randomUUID(),
+                type: 'text',
+                text: choice.message.content,
+                created_at: new Date().toISOString(),
+            });
         }
         if (choice.message.tool_calls && Array.isArray(choice.message.tool_calls)) {
             choice.message.tool_calls.forEach((toolCall: object) => {
@@ -192,6 +198,7 @@ export class DeepSeekChatModel extends ChatModelBase {
                         name: String(toolCall.function.name),
                         input: inputString,
                         state: 'pending',
+                        created_at: new Date().toISOString(),
                     });
                 }
             });
@@ -316,6 +323,7 @@ export class DeepSeekChatModel extends ChatModelBase {
                                 name: meta.name,
                                 input: deltaArgs,
                                 state: 'pending',
+                                created_at: new Date().toISOString(),
                             });
                         }
                     });
@@ -350,6 +358,7 @@ export class DeepSeekChatModel extends ChatModelBase {
                 name: meta.name,
                 input: accToolInputs.get(index) || '{}',
                 state: 'pending',
+                created_at: new Date().toISOString(),
             });
         });
 
@@ -378,10 +387,20 @@ export class DeepSeekChatModel extends ChatModelBase {
     ): (TextBlock | ThinkingBlock | ToolCallBlock)[] {
         const blocks: (TextBlock | ThinkingBlock | ToolCallBlock)[] = [];
         if (thinking) {
-            blocks.push({ id: crypto.randomUUID(), type: 'thinking', thinking: thinking });
+            blocks.push({
+                id: crypto.randomUUID(),
+                type: 'thinking',
+                thinking: thinking,
+                created_at: new Date().toISOString(),
+            });
         }
         if (text) {
-            blocks.push({ id: crypto.randomUUID(), type: 'text', text: text });
+            blocks.push({
+                id: crypto.randomUUID(),
+                type: 'text',
+                text: text,
+                created_at: new Date().toISOString(),
+            });
         }
         // Push the tool calls into the blocks
         if (toolCalls.size > 0) {

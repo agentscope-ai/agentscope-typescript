@@ -152,6 +152,7 @@ Usage:
                 content: [
                     {
                         id: crypto.randomUUID(),
+                        created_at: new Date().toISOString(),
                         type: 'text',
                         text: `FunctionNotFoundError: Cannot find the function named ${toolCall.name}`,
                     },
@@ -181,6 +182,7 @@ Usage:
                 content: [
                     {
                         id: crypto.randomUUID(),
+                        created_at: new Date().toISOString(),
                         type: 'text',
                         text: `InvalidArgumentError: ${String(error)}`,
                     },
@@ -210,6 +212,7 @@ Usage:
                     content: [
                         {
                             id: crypto.randomUUID(),
+                            created_at: new Date().toISOString(),
                             type: 'text',
                             text: res,
                         },
@@ -238,6 +241,7 @@ Usage:
                             content: [
                                 {
                                     id: crypto.randomUUID(),
+                                    created_at: new Date().toISOString(),
                                     type: 'text',
                                     text: currentValue,
                                 },
@@ -250,6 +254,7 @@ Usage:
                         // Accumulate the text content into finalRes
                         accContent.push({
                             id: crypto.randomUUID(),
+                            created_at: new Date().toISOString(),
                             type: 'text',
                             text: currentValue,
                         });
@@ -282,6 +287,7 @@ Usage:
                             content: [
                                 {
                                     id: crypto.randomUUID(),
+                                    created_at: new Date().toISOString(),
                                     type: 'text',
                                     text: currentValue,
                                 },
@@ -293,6 +299,7 @@ Usage:
                         // Accumulate the text content into finalRes
                         accContent.push({
                             id: crypto.randomUUID(),
+                            created_at: new Date().toISOString(),
                             type: 'text',
                             text: currentValue,
                         });
@@ -313,6 +320,7 @@ Usage:
                     content: [
                         {
                             id: crypto.randomUUID(),
+                            created_at: new Date().toISOString(),
                             type: 'text',
                             text: String(res),
                         },
@@ -327,6 +335,7 @@ Usage:
                 content: [
                     {
                         id: crypto.randomUUID(),
+                        created_at: new Date().toISOString(),
                         type: 'text',
                         text: `ToolExecutionError: ${String(error)}`,
                     },
@@ -342,6 +351,7 @@ Usage:
                 content: [
                     {
                         id: crypto.randomUUID(),
+                        created_at: new Date().toISOString(),
                         type: 'text',
                         text: `Tool ${toolCall.name} executed successfully.`,
                     },
@@ -361,6 +371,7 @@ Usage:
                 if (textBuffer) {
                     cleanedContent.push({
                         id: crypto.randomUUID(),
+                        created_at: new Date().toISOString(),
                         type: 'text',
                         text: textBuffer,
                     });
@@ -373,6 +384,7 @@ Usage:
         if (textBuffer) {
             cleanedContent.push({
                 id: crypto.randomUUID(),
+                created_at: new Date().toISOString(),
                 type: 'text',
                 text: textBuffer,
             });
@@ -537,6 +549,7 @@ ${skillsXml}
                         content: [
                             {
                                 id: crypto.randomUUID(),
+                                created_at: new Date().toISOString(),
                                 type: 'text',
                                 text: fileContent,
                             },
@@ -558,6 +571,7 @@ ${skillsXml}
                     content: [
                         {
                             id: crypto.randomUUID(),
+                            created_at: new Date().toISOString(),
                             type: 'text',
                             text: fileContent,
                         },
@@ -571,6 +585,7 @@ ${skillsXml}
             content: [
                 {
                     id: crypto.randomUUID(),
+                    created_at: new Date().toISOString(),
                     type: 'text',
                     text: `SkillNotFoundError: Cannot find the skill named ${name}, current available skills are ${Object.keys(this._skillCache).join(', ')}`,
                 },

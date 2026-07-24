@@ -113,7 +113,14 @@ export function createMsg({
     }): Msg {
     const contentBlocks: ContentBlock[] =
         typeof content === 'string'
-            ? [{ id: crypto.randomUUID(), type: 'text', text: content } as TextBlock]
+            ? [
+                  {
+                      id: crypto.randomUUID(),
+                      type: 'text',
+                      text: content,
+                      created_at: new Date().toISOString(),
+                  } as TextBlock,
+              ]
             : content;
     assertContentBlocksForRole(role, contentBlocks);
     return { id, name, role, content: contentBlocks, metadata, created_at, finished_at, usage };
@@ -298,7 +305,12 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             break;
 
         case EventType.TEXT_BLOCK_START:
-            msg.content.push({ type: 'text', id: event.block_id, text: '' });
+            msg.content.push({
+                type: 'text',
+                id: event.block_id,
+                text: '',
+                created_at: event.created_at,
+            });
             break;
 
         case EventType.TEXT_BLOCK_DELTA: {
@@ -311,11 +323,23 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             break;
         }
 
-        case EventType.TEXT_BLOCK_END:
+        case EventType.TEXT_BLOCK_END: {
+            const block = findBlock(msg, 'text', event.block_id);
+            if (!block) {
+                console.warn(`TextBlock "${event.block_id}" not found, skipping.`);
+            } else {
+                (block as TextBlock).finished_at = event.created_at;
+            }
             break;
+        }
 
         case EventType.THINKING_BLOCK_START:
-            msg.content.push({ type: 'thinking', id: event.block_id, thinking: '' });
+            msg.content.push({
+                type: 'thinking',
+                id: event.block_id,
+                thinking: '',
+                created_at: event.created_at,
+            });
             break;
 
         case EventType.THINKING_BLOCK_DELTA: {
@@ -328,8 +352,15 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             break;
         }
 
-        case EventType.THINKING_BLOCK_END:
+        case EventType.THINKING_BLOCK_END: {
+            const block = findBlock(msg, 'thinking', event.block_id);
+            if (!block) {
+                console.warn(`ThinkingBlock "${event.block_id}" not found, skipping.`);
+            } else {
+                (block as ThinkingBlock).finished_at = event.created_at;
+            }
             break;
+        }
 
         case EventType.HINT_BLOCK: {
             // Hint blocks are not streamed — the full content arrives in
@@ -339,6 +370,8 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                 id: event.block_id,
                 hint: event.hint,
                 source: event.source ?? null,
+                created_at: event.created_at,
+                finished_at: event.created_at,
             };
             msg.content.push(hintBlock);
             break;
@@ -349,6 +382,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                 type: 'data',
                 id: event.block_id,
                 source: { type: 'base64', data: '', media_type: event.media_type },
+                created_at: event.created_at,
             });
             break;
 
@@ -372,8 +406,15 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             break;
         }
 
-        case EventType.DATA_BLOCK_END:
+        case EventType.DATA_BLOCK_END: {
+            const block = findBlock(msg, 'data', event.block_id);
+            if (!block) {
+                console.warn(`DataBlock "${event.block_id}" not found, skipping.`);
+            } else {
+                (block as DataBlock).finished_at = event.created_at;
+            }
             break;
+        }
 
         case EventType.TOOL_CALL_START:
             msg.content.push({
@@ -382,6 +423,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                 name: event.tool_call_name,
                 input: '',
                 state: 'pending',
+                created_at: event.created_at,
             });
             break;
 
@@ -395,8 +437,15 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             break;
         }
 
-        case EventType.TOOL_CALL_END:
+        case EventType.TOOL_CALL_END: {
+            const block = findBlock(msg, 'tool_call', event.tool_call_id);
+            if (!block) {
+                console.warn(`ToolCallBlock "${event.tool_call_id}" not found, skipping.`);
+            } else {
+                (block as ToolCallBlock).finished_at = event.created_at;
+            }
             break;
+        }
 
         case EventType.TOOL_RESULT_START:
             msg.content.push({
@@ -405,6 +454,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                 name: event.tool_call_name,
                 output: [],
                 state: 'running',
+                created_at: event.created_at,
             });
             break;
 
@@ -415,7 +465,14 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             } else {
                 const trb = block as ToolResultBlock;
                 if (typeof trb.output === 'string') {
-                    trb.output = [{ type: 'text', id: crypto.randomUUID(), text: trb.output }];
+                    trb.output = [
+                        {
+                            type: 'text',
+                            id: crypto.randomUUID(),
+                            text: trb.output,
+                            created_at: event.created_at,
+                        },
+                    ];
                 }
                 const last = trb.output[trb.output.length - 1];
                 if (!last || last.type !== 'text') {
@@ -423,6 +480,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                         type: 'text',
                         id: crypto.randomUUID(),
                         text: event.delta,
+                        created_at: event.created_at,
                     });
                 } else {
                     (last as TextBlock).text += event.delta;
@@ -438,7 +496,14 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             } else {
                 const trb = block as ToolResultBlock;
                 if (typeof trb.output === 'string') {
-                    trb.output = [{ type: 'text', id: crypto.randomUUID(), text: trb.output }];
+                    trb.output = [
+                        {
+                            type: 'text',
+                            id: crypto.randomUUID(),
+                            text: trb.output,
+                            created_at: event.created_at,
+                        },
+                    ];
                 }
                 const source: Base64Source | URLSource =
                     event.data != null
@@ -448,6 +513,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                     type: 'data',
                     id: event.block_id ?? crypto.randomUUID(),
                     source,
+                    created_at: event.created_at,
                 });
             }
             break;
@@ -460,6 +526,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             } else {
                 (block as ToolResultBlock).state = event.state;
                 (block as ToolResultBlock).metadata = event.metadata;
+                (block as ToolResultBlock).finished_at = event.created_at;
             }
             // The paired ToolCallBlock's lifecycle ends with its
             // result — flip it to 'finished'
@@ -525,6 +592,9 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             );
             for (const result of event.execution_results) {
                 if (existingResultIds.has(result.id)) continue;
+                if (result.finished_at == null) {
+                    result.finished_at = event.created_at;
+                }
                 msg.content.push(result);
             }
             break;

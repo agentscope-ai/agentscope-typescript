@@ -438,9 +438,11 @@ export class Agent {
                                         id: crypto.randomUUID(),
                                         type: 'text',
                                         text: `<system-info>**Note** the user rejected the execution of tool "${result.tool_call.name}"!</system-info>`,
+                                        created_at: new Date().toISOString(),
                                     },
                                 ],
                                 state: 'interrupted',
+                                created_at: new Date().toISOString(),
                             },
                         ]);
                     }
@@ -528,6 +530,7 @@ export class Agent {
                                 awaitingType === EventType.REQUIRE_USER_CONFIRM
                                     ? 'Waiting for user confirmation ...'
                                     : 'Waiting for external execution ...',
+                            created_at: new Date().toISOString(),
                         },
                     ],
                     role: 'assistant',
@@ -589,7 +592,14 @@ export class Agent {
             messages: [
                 createMsg({
                     name: 'system',
-                    content: [{ type: 'text', text: this.sysPrompt, id: crypto.randomUUID() }],
+                    content: [
+                        {
+                            type: 'text',
+                            text: this.sysPrompt,
+                            id: crypto.randomUUID(),
+                            created_at: new Date().toISOString(),
+                        },
+                    ],
                     role: 'system',
                 }),
                 ...(this.curSummary
@@ -597,7 +607,12 @@ export class Agent {
                           createMsg({
                               name: 'user',
                               content: [
-                                  { type: 'text', text: this.curSummary, id: crypto.randomUUID() },
+                                  {
+                                      type: 'text',
+                                      text: this.curSummary,
+                                      id: crypto.randomUUID(),
+                                      created_at: new Date().toISOString(),
+                                  },
                               ],
                               role: 'user',
                           }),
@@ -710,6 +725,7 @@ export class Agent {
                     name: options.toolCall.name,
                     output: value.content,
                     state: value.state,
+                    created_at: new Date().toISOString(),
                 } as ToolResultBlock;
             }
             yield* this.convertToolResponseToEvent(options.toolCall, value);
@@ -983,7 +999,14 @@ export class Agent {
         const messages = [
             createMsg({
                 name: 'system',
-                content: [{ type: 'text', text: this.sysPrompt, id: crypto.randomUUID() }],
+                content: [
+                    {
+                        type: 'text',
+                        text: this.sysPrompt,
+                        id: crypto.randomUUID(),
+                        created_at: new Date().toISOString(),
+                    },
+                ],
                 role: 'system',
             }),
             ...toCompressedContext,
@@ -996,6 +1019,7 @@ export class Agent {
                         type: 'text',
                         text:
                             this.compressionConfig.compressionPrompt || DEFAULT_COMPRESSION_PROMPT,
+                        created_at: new Date().toISOString(),
                     },
                 ],
                 role: 'user',
@@ -1017,7 +1041,14 @@ export class Agent {
             messages: [
                 createMsg({
                     name: 'system',
-                    content: [{ type: 'text', text: this.sysPrompt, id: crypto.randomUUID() }],
+                    content: [
+                        {
+                            type: 'text',
+                            text: this.sysPrompt,
+                            id: crypto.randomUUID(),
+                            created_at: new Date().toISOString(),
+                        },
+                    ],
                     role: 'system',
                 }),
                 ...toCompressedContext,
@@ -1031,6 +1062,7 @@ export class Agent {
                             text:
                                 this.compressionConfig.compressionPrompt ||
                                 DEFAULT_COMPRESSION_PROMPT,
+                            created_at: new Date().toISOString(),
                         },
                     ],
                     role: 'user',

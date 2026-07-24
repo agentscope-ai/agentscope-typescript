@@ -99,6 +99,7 @@ function groupToolCalls(content: ContentBlock[]): ExtendedContentBlock[] {
                         name: block.name,
                         input: '',
                         state: 'pending',
+                        created_at: new Date().toISOString(),
                     },
                     result: block,
                 });

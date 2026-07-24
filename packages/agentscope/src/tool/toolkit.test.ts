@@ -16,7 +16,12 @@ import { Toolkit } from './toolkit';
 function testFunction(input: { a: string; b: number }) {
     return createToolResponse({
         content: [
-            { type: 'text', text: `Received a=${input.a}, b=${input.b}`, id: crypto.randomUUID() },
+            {
+                type: 'text',
+                text: `Received a=${input.a}, b=${input.b}`,
+                id: crypto.randomUUID(),
+                created_at: '2024-01-01T00:00:00.000Z',
+            },
         ],
         state: 'success',
     });
@@ -90,6 +95,7 @@ describe('Toolkit', () => {
 
         const gen = toolkit.callToolFunction({
             type: 'tool_call',
+            created_at: '2024-01-01T00:00:00.000Z',
             name: 'test_function',
             input: '{"a":"hello","b":5}',
             state: 'pending',
@@ -98,7 +104,12 @@ describe('Toolkit', () => {
 
         for await (const chunk of gen) {
             expect(chunk.content).toEqual([
-                { id: expect.any(String), type: 'text', text: 'Received a=hello, b=5' },
+                {
+                    id: expect.any(String),
+                    created_at: expect.any(String),
+                    type: 'text',
+                    text: 'Received a=hello, b=5',
+                },
             ]);
             expect(chunk.isLast).toBe(true);
         }
@@ -161,6 +172,7 @@ describe('Toolkit', () => {
 
         const gen = toolkit.callToolFunction({
             type: 'tool_call',
+            created_at: '2024-01-01T00:00:00.000Z',
             name: 'test_function',
             input: '{"a":"hello","b":5}',
             state: 'pending',
@@ -169,7 +181,12 @@ describe('Toolkit', () => {
 
         for await (const chunk of gen) {
             expect(chunk.content).toEqual([
-                { id: expect.any(String), type: 'text', text: 'Received a=hello, b=5' },
+                {
+                    id: expect.any(String),
+                    created_at: expect.any(String),
+                    type: 'text',
+                    text: 'Received a=hello, b=5',
+                },
             ]);
             expect(chunk.isLast).toBe(true);
         }
@@ -181,7 +198,12 @@ describe('Toolkit', () => {
             call: () =>
                 createToolResponse({
                     content: [
-                        { type: 'text', text: 'No parameters here', id: crypto.randomUUID() },
+                        {
+                            type: 'text',
+                            text: 'No parameters here',
+                            id: crypto.randomUUID(),
+                            created_at: '2024-01-01T00:00:00.000Z',
+                        },
                     ],
                     state: 'success',
                 }),
@@ -228,6 +250,7 @@ describe('Toolkit', () => {
 
         const res = await toolkit.callToolFunction({
             type: 'tool_call',
+            created_at: '2024-01-01T00:00:00.000Z',
             name: 'no_param_function',
             id: '2',
             input: '{}',
@@ -236,7 +259,12 @@ describe('Toolkit', () => {
 
         for await (const chunk of res) {
             expect(chunk.content).toEqual([
-                { id: expect.any(String), type: 'text', text: 'No parameters here' },
+                {
+                    id: expect.any(String),
+                    created_at: expect.any(String),
+                    type: 'text',
+                    text: 'No parameters here',
+                },
             ]);
         }
     });
@@ -247,7 +275,14 @@ describe('Toolkit', () => {
             call: function* (input: { count: number }) {
                 for (let i = 0; i < input.count; i++) {
                     yield createToolResponse({
-                        content: [{ type: 'text', text: `Count: ${i}`, id: crypto.randomUUID() }],
+                        content: [
+                            {
+                                type: 'text',
+                                text: `Count: ${i}`,
+                                id: crypto.randomUUID(),
+                                created_at: '2024-01-01T00:00:00.000Z',
+                            },
+                        ],
                         stream: true,
                         isLast: i === input.count - 1,
                         state: 'success',
@@ -263,6 +298,7 @@ describe('Toolkit', () => {
 
         const gen = toolkit.callToolFunction({
             type: 'tool_call',
+            created_at: '2024-01-01T00:00:00.000Z',
             name: 'count_function',
             id: '3',
             input: '{"count":3}',
@@ -283,21 +319,41 @@ describe('Toolkit', () => {
 
         expect(chunks).toHaveLength(3);
         expect(chunks[0].content).toEqual([
-            { id: expect.any(String), type: 'text', text: 'Count: 0' },
+            {
+                id: expect.any(String),
+                created_at: expect.any(String),
+                type: 'text',
+                text: 'Count: 0',
+            },
         ]);
         expect(chunks[0].isLast).toBe(false);
         expect(chunks[1].content).toEqual([
-            { id: expect.any(String), type: 'text', text: 'Count: 1' },
+            {
+                id: expect.any(String),
+                created_at: expect.any(String),
+                type: 'text',
+                text: 'Count: 1',
+            },
         ]);
         expect(chunks[1].isLast).toBe(false);
         expect(chunks[2].content).toEqual([
-            { id: expect.any(String), type: 'text', text: 'Count: 2' },
+            {
+                id: expect.any(String),
+                created_at: expect.any(String),
+                type: 'text',
+                text: 'Count: 2',
+            },
         ]);
         expect(chunks[2].isLast).toBe(true);
 
         // Verify final accumulated result
         expect(finalRes!.content).toEqual([
-            { id: expect.any(String), type: 'text', text: 'Count: 0Count: 1Count: 2' },
+            {
+                id: expect.any(String),
+                created_at: expect.any(String),
+                type: 'text',
+                text: 'Count: 0Count: 1Count: 2',
+            },
         ]);
         expect(finalRes!.isLast).toBe(true);
     });
@@ -309,7 +365,12 @@ describe('Toolkit', () => {
                 for (let i = 0; i < input.count; i++) {
                     yield createToolResponse({
                         content: [
-                            { type: 'text', text: `Async Count: ${i}`, id: crypto.randomUUID() },
+                            {
+                                type: 'text',
+                                text: `Async Count: ${i}`,
+                                id: crypto.randomUUID(),
+                                created_at: '2024-01-01T00:00:00.000Z',
+                            },
                         ],
                         stream: true,
                         state: 'success',
@@ -326,6 +387,7 @@ describe('Toolkit', () => {
 
         const gen = toolkit.callToolFunction({
             type: 'tool_call',
+            created_at: '2024-01-01T00:00:00.000Z',
             name: 'async_count_function',
             id: '4',
             input: '{"count":2}',
@@ -346,17 +408,32 @@ describe('Toolkit', () => {
 
         expect(chunks).toHaveLength(2);
         expect(chunks[0].content).toEqual([
-            { id: expect.any(String), type: 'text', text: 'Async Count: 0' },
+            {
+                id: expect.any(String),
+                created_at: expect.any(String),
+                type: 'text',
+                text: 'Async Count: 0',
+            },
         ]);
         expect(chunks[0].isLast).toBe(false);
         expect(chunks[1].content).toEqual([
-            { id: expect.any(String), type: 'text', text: 'Async Count: 1' },
+            {
+                id: expect.any(String),
+                created_at: expect.any(String),
+                type: 'text',
+                text: 'Async Count: 1',
+            },
         ]);
         expect(chunks[1].isLast).toBe(true);
 
         // Verify final accumulated result
         expect(finalRes!.content).toEqual([
-            { id: expect.any(String), type: 'text', text: 'Async Count: 0Async Count: 1' },
+            {
+                id: expect.any(String),
+                created_at: expect.any(String),
+                type: 'text',
+                text: 'Async Count: 0Async Count: 1',
+            },
         ]);
         expect(finalRes!.isLast).toBe(true);
     });
@@ -378,6 +455,7 @@ describe('Toolkit', () => {
 
         const gen = toolkit.callToolFunction({
             type: 'tool_call',
+            created_at: '2024-01-01T00:00:00.000Z',
             name: 'string_count_function',
             id: '8',
             input: '{"count":3}',
@@ -397,20 +475,40 @@ describe('Toolkit', () => {
 
         expect(chunks).toHaveLength(3);
         expect(chunks[0].content).toEqual([
-            { id: expect.any(String), type: 'text', text: 'Chunk: 0' },
+            {
+                id: expect.any(String),
+                created_at: expect.any(String),
+                type: 'text',
+                text: 'Chunk: 0',
+            },
         ]);
         expect(chunks[0].isLast).toBe(false);
         expect(chunks[1].content).toEqual([
-            { id: expect.any(String), type: 'text', text: 'Chunk: 1' },
+            {
+                id: expect.any(String),
+                created_at: expect.any(String),
+                type: 'text',
+                text: 'Chunk: 1',
+            },
         ]);
         expect(chunks[1].isLast).toBe(false);
         expect(chunks[2].content).toEqual([
-            { id: expect.any(String), type: 'text', text: 'Chunk: 2' },
+            {
+                id: expect.any(String),
+                created_at: expect.any(String),
+                type: 'text',
+                text: 'Chunk: 2',
+            },
         ]);
         expect(chunks[2].isLast).toBe(true);
 
         expect(finalRes!.content).toEqual([
-            { id: expect.any(String), type: 'text', text: 'Chunk: 0Chunk: 1Chunk: 2' },
+            {
+                id: expect.any(String),
+                created_at: expect.any(String),
+                type: 'text',
+                text: 'Chunk: 0Chunk: 1Chunk: 2',
+            },
         ]);
         expect(finalRes!.isLast).toBe(true);
     });
@@ -432,6 +530,7 @@ describe('Toolkit', () => {
 
         const gen = toolkit.callToolFunction({
             type: 'tool_call',
+            created_at: '2024-01-01T00:00:00.000Z',
             name: 'async_string_count_function',
             id: '9',
             input: '{"count":2}',
@@ -451,16 +550,31 @@ describe('Toolkit', () => {
 
         expect(chunks).toHaveLength(2);
         expect(chunks[0].content).toEqual([
-            { id: expect.any(String), type: 'text', text: 'Async Chunk: 0' },
+            {
+                id: expect.any(String),
+                created_at: expect.any(String),
+                type: 'text',
+                text: 'Async Chunk: 0',
+            },
         ]);
         expect(chunks[0].isLast).toBe(false);
         expect(chunks[1].content).toEqual([
-            { id: expect.any(String), type: 'text', text: 'Async Chunk: 1' },
+            {
+                id: expect.any(String),
+                created_at: expect.any(String),
+                type: 'text',
+                text: 'Async Chunk: 1',
+            },
         ]);
         expect(chunks[1].isLast).toBe(true);
 
         expect(finalRes!.content).toEqual([
-            { id: expect.any(String), type: 'text', text: 'Async Chunk: 0Async Chunk: 1' },
+            {
+                id: expect.any(String),
+                created_at: expect.any(String),
+                type: 'text',
+                text: 'Async Chunk: 0Async Chunk: 1',
+            },
         ]);
         expect(finalRes!.isLast).toBe(true);
     });
@@ -471,6 +585,7 @@ describe('Toolkit', () => {
         // Unregistered function
         const res = await toolkit.callToolFunction({
             type: 'tool_call',
+            created_at: '2024-01-01T00:00:00.000Z',
             name: 'non_existent_function',
             id: '5',
             input: '{}',
@@ -481,6 +596,7 @@ describe('Toolkit', () => {
             expect(chunk.content).toEqual([
                 {
                     id: expect.any(String),
+                    created_at: expect.any(String),
                     type: 'text',
                     text: 'FunctionNotFoundError: Cannot find the function named non_existent_function',
                 },
@@ -500,6 +616,7 @@ describe('Toolkit', () => {
 
         const res2 = await toolkit.callToolFunction({
             type: 'tool_call',
+            created_at: '2024-01-01T00:00:00.000Z',
             name: 'test_function',
             id: '6',
             input: '{"a":"hello","b":20}',
@@ -509,6 +626,7 @@ describe('Toolkit', () => {
         for await (const chunk of res2) {
             expect(chunk.content[0]).toEqual({
                 id: expect.any(String),
+                created_at: expect.any(String),
                 type: 'text',
                 text: 'InvalidArgumentError: [\n  {\n    "origin": "number",\n    "code": "too_big",\n    "maximum": 10,\n    "inclusive": true,\n    "path": [\n      "b"\n    ],\n    "message": "Too big: expected number to be <=10"\n  }\n]',
             });
@@ -532,6 +650,7 @@ describe('Toolkit', () => {
 
         const res3 = toolkit2.callToolFunction({
             type: 'tool_call',
+            created_at: '2024-01-01T00:00:00.000Z',
             name: 'test_function',
             id: '7',
             input: '{"a":"hello","b":20}',
@@ -590,6 +709,7 @@ This skill demonstrates how to use the Skill tool to retrieve skill content.`;
             // Call the Skill tool with the test skill name
             const gen = toolkit.callToolFunction({
                 type: 'tool_call',
+                created_at: '2024-01-01T00:00:00.000Z',
                 name: 'Skill',
                 input: '{"name":"test_skill"}',
                 state: 'pending',
@@ -619,6 +739,7 @@ This skill demonstrates how to use the Skill tool to retrieve skill content.`;
             // Test error case: non-existent skill
             const errorGen = toolkit.callToolFunction({
                 type: 'tool_call',
+                created_at: '2024-01-01T00:00:00.000Z',
                 name: 'Skill',
                 input: '{"name":"non_existent_skill"}',
                 state: 'pending',

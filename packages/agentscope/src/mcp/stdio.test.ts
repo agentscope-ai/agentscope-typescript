@@ -78,6 +78,7 @@ describeUnlessWindows('StdIOMCPClient', () => {
             type: 'tool_call',
             input: `{"path": "${testFilePath}"}`,
             state: 'pending',
+            created_at: '2024-01-01T00:00:00.000Z',
         });
         for await (const item of res) {
             expect(item.content.length).toBeGreaterThan(0);

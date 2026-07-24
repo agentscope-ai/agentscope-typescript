@@ -85,7 +85,14 @@ Usage:
 
             if (rawContent.length === 0) {
                 return createToolResponse({
-                    content: [{ id: crypto.randomUUID(), type: 'text', text: rawContent }],
+                    content: [
+                        {
+                            id: crypto.randomUUID(),
+                            created_at: new Date().toISOString(),
+                            type: 'text',
+                            text: rawContent,
+                        },
+                    ],
                     state: 'success',
                 });
             }
@@ -109,7 +116,14 @@ Usage:
                 .join('\n');
 
             return createToolResponse({
-                content: [{ id: crypto.randomUUID(), type: 'text', text: formatted }],
+                content: [
+                    {
+                        id: crypto.randomUUID(),
+                        created_at: new Date().toISOString(),
+                        type: 'text',
+                        text: formatted,
+                    },
+                ],
                 state: 'success',
             });
         },

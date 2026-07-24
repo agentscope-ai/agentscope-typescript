@@ -93,6 +93,7 @@ export const TextInput = forwardRef<TextInputRef, TextInputProps>(
                     id: crypto.randomUUID(),
                     type: 'text',
                     text: value.trim(),
+                    created_at: new Date().toISOString(),
                 };
                 blocks.push(textBlock);
             }
@@ -113,6 +114,7 @@ export const TextInput = forwardRef<TextInputRef, TextInputProps>(
                             type: 'data',
                             source: urlSource,
                             name: file.name,
+                            created_at: new Date().toISOString(),
                         };
                         blocks.push(dataBlock);
                     }
