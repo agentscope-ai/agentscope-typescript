@@ -87,6 +87,7 @@
         "typescript": "^5.5.3"
     },
     "dependencies": {
+        "@anthropic-ai/sdk": "^0.111.0",
         "@cfworker/json-schema": "^4.1.1",
         "@modelcontextprotocol/sdk": "^1.27.1",
         "gray-matter": "^4.0.3",
