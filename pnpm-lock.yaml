@@ -242,6 +242,9 @@ importers:
 
     packages/agentscope:
         dependencies:
+            '@anthropic-ai/sdk':
+                specifier: ^0.111.0
+                version: 0.111.0(zod@4.3.6)
             '@cfworker/json-schema':
                 specifier: ^4.1.1
                 version: 4.1.1
@@ -355,6 +358,18 @@ packages:
             {
                 integrity: sha512-MGQsmw10ZyI+EJo45CdSER4zEb+p31LpDAFp2Z3gkSd1yqVZGi0Ebx++YTEMonJy4oChEMLsxZ64j8FH6sSqtQ==,
             }
+
+    '@anthropic-ai/sdk@0.111.0':
+        resolution:
+            {
+                integrity: sha512-1hUqKi+uJQoS5X90+InwHbFAXMvgq0DnsC5hVLEeSRaODiU5WvmqDAcVCmGS2wC0pN9Z8jtWCbWw7JLzeDdm/Q==,
+            }
+        hasBin: true
+        peerDependencies:
+            zod: ^3.25.0 || ^4.0.0
+        peerDependenciesMeta:
+            zod:
+                optional: true
 
     '@babel/code-frame@7.29.0':
         resolution:
@@ -3477,6 +3492,12 @@ packages:
                 integrity: sha512-36/hTbH2uaWuGVERyC6da9YwGWnzUZXuPro/F2LfsdOsLnCojz/iSH8MxUt/FD2S5XBSVPhmArFUXcpCQ2Hkiw==,
             }
 
+    '@stablelib/base64@1.0.1':
+        resolution:
+            {
+                integrity: sha512-0a0+q6JRqQm6kTma7g7sM8NvYF+AL9O19yCkmYpKPD7wIUBNE/bzgzY6dRIRHm2sTqqsgYq7mE17eVW5Lc7dmg==,
+            }
+
     '@szmarczak/http-timer@4.0.6':
         resolution:
             {
@@ -6578,6 +6599,12 @@ packages:
                 integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==,
             }
 
+    fast-sha256@1.3.0:
+        resolution:
+            {
+                integrity: sha512-n11RGP/l2JiU2oY7JOy1V67J2gNzU1yPgKAHzBFsO9/XhUncWbHGBQWuyIhBViVFiErBA7HmKo28+rtY3q6sDg==,
+            }
+
     fast-uri@3.1.0:
         resolution:
             {
@@ -7973,6 +8000,13 @@ packages:
             {
                 integrity: sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==,
             }
+
+    json-schema-to-ts@3.1.1:
+        resolution:
+            {
+                integrity: sha512-+DWg8jCJG2TEnpy7kOm/7/AxaYoaRbjVB4LFZLySZlWn8exGs3A4OLJR966cVvU26N7X9TWxl+Jsw7dzAqKT6g==,
+            }
+        engines: { node: '>=16' }
 
     json-schema-traverse@0.4.1:
         resolution:
@@ -10605,6 +10639,12 @@ packages:
             }
         engines: { node: '>=10' }
 
+    standardwebhooks@1.0.0:
+        resolution:
+            {
+                integrity: sha512-BbHGOQK9olHPMvQNHWul6MYlrRTAOKn03rOe4A8O3CLWhNf4YHBqq2HJKKC+sfqpxiBY52pNeesD6jIiLDz8jg==,
+            }
+
     stat-mode@1.0.0:
         resolution:
             {
@@ -11002,6 +11042,12 @@ packages:
         resolution:
             {
                 integrity: sha512-95Pu1QXQvruGEhv62XCMO3Mm90GscOCClvrIUwCM0PYOXK3kaF3l3sIHxx71ThJfcbM2O5Au6SO3AWCSEfW4mQ==,
+            }
+
+    ts-algebra@2.0.0:
+        resolution:
+            {
+                integrity: sha512-FPAhNPFMrkwz76P7cdjdmiShwMynZYN6SgOujD1urY4oNm80Ou9oMdmbR45LotcKOXoy7wSmHkRFE6Mxbrhefw==,
             }
 
     ts-api-utils@2.4.0:
@@ -11775,6 +11821,13 @@ snapshots:
         dependencies:
             package-manager-detector: 1.6.0
             tinyexec: 1.0.2
+
+    '@anthropic-ai/sdk@0.111.0(zod@4.3.6)':
+        dependencies:
+            json-schema-to-ts: 3.1.1
+            standardwebhooks: 1.0.0
+        optionalDependencies:
+            zod: 4.3.6
 
     '@babel/code-frame@7.29.0':
         dependencies:
@@ -14316,6 +14369,8 @@ snapshots:
         dependencies:
             '@sinonjs/commons': 3.0.1
 
+    '@stablelib/base64@1.0.1': {}
+
     '@szmarczak/http-timer@4.0.6':
         dependencies:
             defer-to-connect: 2.0.1
@@ -16464,6 +16519,8 @@ snapshots:
 
     fast-levenshtein@2.0.6: {}
 
+    fast-sha256@1.3.0: {}
+
     fast-uri@3.1.0: {}
 
     fault@1.0.4:
@@ -17502,6 +17559,11 @@ snapshots:
     json-buffer@3.0.1: {}
 
     json-parse-even-better-errors@2.3.1: {}
+
+    json-schema-to-ts@3.1.1:
+        dependencies:
+            '@babel/runtime': 7.28.6
+            ts-algebra: 2.0.0
 
     json-schema-traverse@0.4.1: {}
 
@@ -19402,6 +19464,11 @@ snapshots:
         dependencies:
             escape-string-regexp: 2.0.0
 
+    standardwebhooks@1.0.0:
+        dependencies:
+            '@stablelib/base64': 1.0.1
+            fast-sha256: 1.3.0
+
     stat-mode@1.0.0: {}
 
     statuses@2.0.2: {}
@@ -19647,6 +19714,8 @@ snapshots:
     truncate-utf8-bytes@1.0.2:
         dependencies:
             utf8-byte-length: 1.0.5
+
+    ts-algebra@2.0.0: {}
 
     ts-api-utils@2.4.0(typescript@5.9.3):
         dependencies:
