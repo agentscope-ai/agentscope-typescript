@@ -1,6 +1,7 @@
 export * from './chunker';
 export * from './document';
 export * from './elasticsearch';
+export * from './knowledge';
 export * from './milvus';
 export * from './mongodb';
 export * from './parser';

@@ -4022,9 +4022,9 @@
             "sha256": "5d3858c044d6eb632844be70c2944e5b62eb665da66f81bf25c5545df92d2ecb",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/middleware_rag_test.py"],
+            "typescriptTests": ["packages/agentscope/src/rag/knowledge.parity.test.ts"]
         },
         {
             "path": "src/agentscope/rag/_parser/__init__.py",
