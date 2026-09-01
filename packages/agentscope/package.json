@@ -178,8 +178,12 @@
     "optionalDependencies": {
         "@alibaba-group/opensandbox": "^0.1.11",
         "@daytona/sdk": "^0.207.0",
+        "@elastic/elasticsearch": "~9.4.0",
         "@kubernetes/client-node": "^2.0.0",
+        "@qdrant/js-client-rest": "~1.17.0",
+        "@zilliz/milvus2-sdk-node": "^3.0.5",
         "dockerode": "^4.0.12",
-        "e2b": "^2.46.1"
+        "e2b": "^2.46.1",
+        "mongodb": "^7.6.0"
     }
 }

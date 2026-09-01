@@ -4148,54 +4148,114 @@
             "sha256": "3810f616046fc049acbe69e21e64c7a4eba83ae5f9bda058f0c8c81acb6caba4",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/rag_vdb_elasticsearch_test.py",
+                "tests/rag_vdb_milvus_lite_test.py",
+                "tests/rag_vdb_mongodb_test.py",
+                "tests/rag_vdb_qdrant_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/elasticsearch.parity.test.ts",
+                "packages/agentscope/src/rag/milvus.parity.test.ts",
+                "packages/agentscope/src/rag/mongodb.parity.test.ts",
+                "packages/agentscope/src/rag/qdrant.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_vdb/_elasticsearch.py",
             "sha256": "7c45952b8c19848e331babfb0b8ee714b8ed638ddb65f0ef03c524a408e8ef66",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/rag_vdb_elasticsearch_test.py",
+                "tests/rag_vdb_milvus_lite_test.py",
+                "tests/rag_vdb_mongodb_test.py",
+                "tests/rag_vdb_qdrant_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/elasticsearch.parity.test.ts",
+                "packages/agentscope/src/rag/milvus.parity.test.ts",
+                "packages/agentscope/src/rag/mongodb.parity.test.ts",
+                "packages/agentscope/src/rag/qdrant.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_vdb/_milvus_lite.py",
             "sha256": "cb9082f02ed4f538da22f9bc39cdb70b2e359d6f058c6c6e012f1243123a77e8",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/rag_vdb_elasticsearch_test.py",
+                "tests/rag_vdb_milvus_lite_test.py",
+                "tests/rag_vdb_mongodb_test.py",
+                "tests/rag_vdb_qdrant_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/elasticsearch.parity.test.ts",
+                "packages/agentscope/src/rag/milvus.parity.test.ts",
+                "packages/agentscope/src/rag/mongodb.parity.test.ts",
+                "packages/agentscope/src/rag/qdrant.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_vdb/_mongodb.py",
             "sha256": "6e6ef35ac191b0ff404f08088f7c11878b112372c002fe9a7e0a0e2fbb85a387",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/rag_vdb_elasticsearch_test.py",
+                "tests/rag_vdb_milvus_lite_test.py",
+                "tests/rag_vdb_mongodb_test.py",
+                "tests/rag_vdb_qdrant_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/elasticsearch.parity.test.ts",
+                "packages/agentscope/src/rag/milvus.parity.test.ts",
+                "packages/agentscope/src/rag/mongodb.parity.test.ts",
+                "packages/agentscope/src/rag/qdrant.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_vdb/_qdrant.py",
             "sha256": "a745061efe58575ac1e1c40f6a52a901a97fcf3091d8cf862e573e93fd226d17",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/rag_vdb_elasticsearch_test.py",
+                "tests/rag_vdb_milvus_lite_test.py",
+                "tests/rag_vdb_mongodb_test.py",
+                "tests/rag_vdb_qdrant_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/elasticsearch.parity.test.ts",
+                "packages/agentscope/src/rag/milvus.parity.test.ts",
+                "packages/agentscope/src/rag/mongodb.parity.test.ts",
+                "packages/agentscope/src/rag/qdrant.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_vdb/_vector_store.py",
             "sha256": "b976e5e21c32cf7f9805809ffeb5236992cd0ab108b23024da92bc31b8321af7",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/rag_vdb_elasticsearch_test.py",
+                "tests/rag_vdb_milvus_lite_test.py",
+                "tests/rag_vdb_mongodb_test.py",
+                "tests/rag_vdb_qdrant_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/elasticsearch.parity.test.ts",
+                "packages/agentscope/src/rag/milvus.parity.test.ts",
+                "packages/agentscope/src/rag/mongodb.parity.test.ts",
+                "packages/agentscope/src/rag/qdrant.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/skill/__init__.py",
