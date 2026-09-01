@@ -5,6 +5,7 @@ export * from './index-task-consumer';
 export * from './index-worker';
 export * from './knowledge-base-service';
 export * from './chat-service';
+export * from './channel-service';
 export * from './mcp-render';
 export * from './toolkit-service';
 export * from './model-service';

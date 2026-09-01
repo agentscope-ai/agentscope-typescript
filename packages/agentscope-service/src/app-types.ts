@@ -8,7 +8,7 @@ import type { WorkspaceBase } from '@agentscope-ai/agentscope/workspace';
 import type { ResourceAccessPolicyBase } from './access';
 import type { MessageBus } from './message-bus';
 import type { BlobStoreBase, KnowledgeBaseManagerBase } from './rag';
-import type { ChannelClients, EventProjector } from './service/chat-service';
+import type { ChannelClientsLike, EventProjector } from './service/chat-service';
 import type { StorageBase } from './storage';
 import type { SubAgentTemplate } from './tool';
 import type { WorkspaceManagerBase } from './workspace-manager';
@@ -50,7 +50,7 @@ export interface AgentScopeServiceAppOptions {
     agentClass?: new (options: AgentOptions) => import('@agentscope-ai/agentscope/agent').Agent;
     resourceAccessPolicy?: ResourceAccessPolicyBase | null;
     extraProjectors?: EventProjector[];
-    channelClients?: ChannelClients | null;
+    channelClients?: ChannelClientsLike | null;
     additionalResources?: ServiceLifecycleResource[];
     downloadSecret?: string | null;
     title?: string;

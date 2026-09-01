@@ -761,9 +761,9 @@
             "sha256": "8e2e3f613535f10e13edb569f390f349e5ca3388f89baf42cf5bcb9b994807d3",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/channel_clients_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/channel-service.test.ts"]
         },
         {
             "path": "src/agentscope/app/_service/_chat.py",
@@ -1160,27 +1160,33 @@
             "sha256": "8c5a6209718de91c5736836402657d7075c60a10d39d3ed97b8e6e7426de37ea",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/channel",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/channel_gateway_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/channel-base.test.ts"]
         },
         {
             "path": "src/agentscope/app/channel/_clients.py",
             "sha256": "523e2b26636991b8ece0b07caccd0920d1ccb31601687d23981d7e39af12a45e",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/channel",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/channel_clients_test.py",
+                "tests/service_chat_channel_delivery_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/channel-clients.parity.test.ts",
+                "packages/agentscope-service/test/chat-service.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/channel/_decision.py",
             "sha256": "ad3472922390ca4ba6ffda099c0e1a15448001f427e2455f24832d14753d41d4",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/channel",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/channel_gateway_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/channel-gateway.parity.test.ts"]
         },
         {
             "path": "src/agentscope/app/channel/_dingtalk/__init__.py",
@@ -1304,18 +1310,20 @@
             "sha256": "890e2a4376f93a87fdedbd95a0b846888520eb59b63b368e5f7a3f3a509f5735",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/channel",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/channel_clients_test.py"],
+            "typescriptTests": [
+                "packages/agentscope-service/test/channel-dispatcher-worker.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/channel/_errors.py",
             "sha256": "11a44c134fb402b8b46fa0ee23e27856f325f8f743bfccbc4888e6e2135835ac",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/channel",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/channel_gateway_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/channel-gateway.parity.test.ts"]
         },
         {
             "path": "src/agentscope/app/channel/_feishu/__init__.py",
@@ -1412,45 +1420,50 @@
             "sha256": "983da13c1613dffd6d7e82657eb6a9d7c60cb1d9fec3339d2d139e851d850452",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/channel",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/channel_gateway_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/channel-gateway.parity.test.ts"]
         },
         {
             "path": "src/agentscope/app/channel/_registry.py",
             "sha256": "4fa501387778820cfa515a52639e92dfddd5b15d0beab7ce111afc1f51021cbb",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/channel",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/channel_clients_test.py"],
+            "typescriptTests": [
+                "packages/agentscope-service/test/channel-clients.parity.test.ts",
+                "packages/agentscope-service/test/channel-service.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/channel/_routing.py",
             "sha256": "201855241f741a2dbe4727cf6f8a8b34ab5ad5439a6d153f0e64769e5494db02",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/channel",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/channel_routing_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/channel-routing.parity.test.ts"]
         },
         {
             "path": "src/agentscope/app/channel/_stream.py",
             "sha256": "e38fde4bc4cdb88f7ccbee9d233c04ba310e553563098fac11b955bc649626a5",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/channel",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/channel_stream_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/channel-stream.parity.test.ts"]
         },
         {
             "path": "src/agentscope/app/channel/worker/__init__.py",
             "sha256": "69ba5eea7345696db689908c4da01b0b0ce4d39550accac806fe4a1058add739",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/channel/worker",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/channel_worker_test.py"],
+            "typescriptTests": [
+                "packages/agentscope-service/test/channel-dispatcher-worker.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/deps.py",

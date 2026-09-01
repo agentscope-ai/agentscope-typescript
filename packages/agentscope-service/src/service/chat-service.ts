@@ -73,11 +73,11 @@ export type AgentMiddlewareFactory = (
 export interface ChannelClient {
     readonly displayName: string;
     listTools(workspace: WorkspaceBase): Promise<ToolBase[]>;
-    chatKind(chatId: string): Promise<'group' | 'private' | string>;
+    chatKind(chatId: string): Promise<'group' | 'private' | string | null>;
     chatName(chatId: string): Promise<string | null>;
 }
 
-export interface ChannelClients {
+export interface ChannelClientsLike {
     get(channelId: string): Promise<ChannelClient | null>;
     deliver(options: {
         sessionId: string;
@@ -94,7 +94,7 @@ export interface ChatServiceOptions {
     customSubagentTemplates?: Record<string, SubAgentTemplate> | null;
     agentClass?: new (options: AgentOptions) => Agent;
     extraProjectors?: EventProjector[];
-    channelClients?: ChannelClients | null;
+    channelClients?: ChannelClientsLike | null;
     modelResolver?: typeof getModel;
     ttsModelResolver?: typeof getTTSModel;
 }

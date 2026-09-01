@@ -20,6 +20,11 @@
             "import": "./dist/access/index.mjs",
             "require": "./dist/access/index.js"
         },
+        "./channel": {
+            "types": "./dist/channel/index.d.ts",
+            "import": "./dist/channel/index.mjs",
+            "require": "./dist/channel/index.js"
+        },
         "./hub": {
             "types": "./dist/hub/index.d.ts",
             "import": "./dist/hub/index.mjs",
