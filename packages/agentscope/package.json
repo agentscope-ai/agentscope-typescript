@@ -2,6 +2,9 @@
     "name": "@agentscope-ai/agentscope",
     "version": "0.0.15",
     "description": "",
+    "files": [
+        "dist"
+    ],
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",

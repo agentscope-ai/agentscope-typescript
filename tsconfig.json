@@ -14,6 +14,9 @@
             "path": "./packages/agentscope"
         },
         {
+            "path": "./packages/agentscope-service"
+        },
+        {
             "path": "./apps/desktop"
         }
     ]

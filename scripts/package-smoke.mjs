@@ -6,13 +6,27 @@ import { fileURLToPath } from 'node:url';
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, '..');
-const packageRoot = path.join(repositoryRoot, 'packages/agentscope');
-const packageJson = JSON.parse(await readFile(path.join(packageRoot, 'package.json'), 'utf8'));
-const packageSpecifiers = Object.keys(packageJson.exports).map(subpath => {
-    return `${packageJson.name}${subpath.slice(1)}`;
-});
+const packageRoots = [
+    path.join(repositoryRoot, 'packages/agentscope'),
+    path.join(repositoryRoot, 'packages/agentscope-service'),
+];
+const packageMetadata = await Promise.all(
+    packageRoots.map(async packageRoot => {
+        const packageJson = JSON.parse(
+            await readFile(path.join(packageRoot, 'package.json'), 'utf8')
+        );
+        return {
+            packageRoot,
+            specifiers: Object.keys(packageJson.exports).map(subpath => {
+                return `${packageJson.name}${subpath.slice(1)}`;
+            }),
+        };
+    })
+);
+const packageSpecifiers = packageMetadata.flatMap(metadata => metadata.specifiers);
 const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), 'agentscope-package-smoke-'));
 const npmExecutable = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+const pnpmExecutable = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
 
 /**
  * Run an npm command in the isolated package consumer directory.
@@ -30,6 +44,27 @@ function runNpm(arguments_) {
 }
 
 /**
+ * Pack a workspace package with publish-time workspace dependency rewriting.
+ *
+ * @param {string} packageRoot Package directory.
+ * @returns {string} Absolute tarball path.
+ */
+function packWorkspacePackage(packageRoot) {
+    const output = execFileSync(
+        pnpmExecutable,
+        ['pack', '--json', '--pack-destination', temporaryRoot],
+        {
+            cwd: packageRoot,
+            encoding: 'utf8',
+            shell: process.platform === 'win32',
+            stdio: ['ignore', 'pipe', 'inherit'],
+        }
+    );
+    const filename = JSON.parse(output).filename;
+    return path.isAbsolute(filename) ? filename : path.join(temporaryRoot, filename);
+}
+
+/**
  * Run a Node.js expression in the isolated package consumer directory.
  *
  * @param {string[]} arguments_ Node.js arguments.
@@ -42,12 +77,12 @@ function runNode(arguments_) {
 }
 
 try {
-    const packOutput = runNpm(['pack', '--json', '--pack-destination', temporaryRoot, packageRoot]);
-    const packResult = JSON.parse(packOutput);
-    const tarballPath = path.join(temporaryRoot, packResult[0].filename);
+    const tarballPaths = packageMetadata.map(metadata => {
+        return packWorkspacePackage(metadata.packageRoot);
+    });
 
     runNpm(['init', '--yes']);
-    runNpm(['install', '--ignore-scripts', '--no-audit', '--no-fund', tarballPath]);
+    runNpm(['install', '--ignore-scripts', '--no-audit', '--no-fund', ...tarballPaths]);
 
     const specifiersJson = JSON.stringify(packageSpecifiers);
     runNode([

@@ -1,0 +1,39 @@
+{
+    "name": "@agentscope-ai/agentscope-service",
+    "version": "0.0.1",
+    "description": "Node.js service runtime for AgentScope TypeScript",
+    "type": "commonjs",
+    "files": [
+        "dist"
+    ],
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.js"
+        },
+        "./storage": {
+            "types": "./dist/storage/index.d.ts",
+            "import": "./dist/storage/index.mjs",
+            "require": "./dist/storage/index.js"
+        }
+    },
+    "scripts": {
+        "build": "tsup",
+        "clean": "rm -rf dist",
+        "test": "jest",
+        "typecheck": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@agentscope-ai/agentscope": "workspace:^0.0.15",
+        "zod": "^4.3.6"
+    },
+    "devDependencies": {
+        "@types/jest": "^30.0.0",
+        "@types/node": "^22.19.15",
+        "jest": "^30.2.0",
+        "ts-jest": "^29.4.6",
+        "tsup": "^8.5.1",
+        "typescript": "^5.5.3"
+    }
+}
