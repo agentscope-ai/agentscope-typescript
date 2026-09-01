@@ -2887,18 +2887,18 @@
             "sha256": "aaa1a3932eeafc81cc56273753f7b48aab0675bc8f4dc2f47a7b487ce59fbd1a",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/middleware_filesystem_memory_test.py"],
+            "typescriptTests": ["packages/agentscope/src/middleware/agentic-memory.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_longterm_memory/_agentic_memory/_middleware.py",
             "sha256": "687f8e15433671b3291dc3b8d6da5bccf02b3aada56bee444598a754e916ea20",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/middleware_filesystem_memory_test.py"],
+            "typescriptTests": ["packages/agentscope/src/middleware/agentic-memory.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_longterm_memory/_mem0/__init__.py",
