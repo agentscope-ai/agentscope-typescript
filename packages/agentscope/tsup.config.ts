@@ -19,6 +19,7 @@ export default defineConfig({
         'state/index': 'src/state/index.ts',
         'permission/index': 'src/permission/index.ts',
         'skill/index': 'src/skill/index.ts',
+        'credential/index': 'src/credential/index.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,

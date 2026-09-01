@@ -88,6 +88,11 @@
             "types": "./dist/skill/index.d.ts",
             "import": "./dist/skill/index.mjs",
             "require": "./dist/skill/index.js"
+        },
+        "./credential": {
+            "types": "./dist/credential/index.d.ts",
+            "import": "./dist/credential/index.mjs",
+            "require": "./dist/credential/index.js"
         }
     },
     "scripts": {

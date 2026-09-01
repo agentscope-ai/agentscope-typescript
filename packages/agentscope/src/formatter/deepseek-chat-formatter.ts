@@ -1,131 +1,126 @@
+/* eslint-disable jsdoc/require-jsdoc */
+
 import { FormatterBase } from './base';
-import { getContentBlocks } from '../message/message';
-import type { Msg } from '../message/message';
+import type { FormatterOptions } from './base';
+import type { Msg } from '../message';
+import { getContentBlocks, getTextContent } from '../message';
 
-interface DeepSeekFormatterOptions {
-    /**
-     * Most LLM APIs don't support multimodal tool outputs, this option controls whether to
-     * promote multimodal tool results to follow-up user messages.
-     */
-    promoteMultimodalToolResult?:
-        | {
-              image?: boolean;
-              audio?: boolean;
-              video?: boolean;
-          }
-        | boolean;
-}
-
-/**
- * Format AgentScope message objects into DeepSeek Chat Completions message format.
- */
+/** Format messages for DeepSeek's OpenAI-compatible API. */
 export class DeepSeekChatFormatter extends FormatterBase {
-    private promoteMultimodalToolResult:
-        | { image?: boolean; audio?: boolean; video?: boolean }
-        | boolean;
-
-    /**
-     * Initializes a new instance of the DeepSeekChatFormatter class.
-     * @param root0
-     * @param root0.promoteMultimodalToolResult
-     */
-    constructor({ promoteMultimodalToolResult = false }: DeepSeekFormatterOptions = {}) {
-        super();
-        this.promoteMultimodalToolResult = promoteMultimodalToolResult;
+    constructor(options: FormatterOptions = {}) {
+        super({ inputTypes: options.inputTypes ?? ['text/plain'] });
     }
 
-    /**
-     * Format the input messages into the structure expected by DeepSeek Chat Completions API.
-     * @param root0
-     * @param root0.msgs
-     * @returns An array of formatted message objects ready to be sent to the DeepSeek API.
-     */
-    async format({ msgs }: { msgs: Array<Msg> }): Promise<Record<string, unknown>[]> {
-        const formattedMsgs: Array<Record<string, unknown>> = [];
-        let index = 0;
-
-        while (index < msgs.length) {
-            const msg = msgs[index];
-            const formattedMsg: {
-                role: string;
-                name: string;
-                content: Record<string, unknown>[] | null;
-                tool_calls?: {
-                    id: string;
-                    type: 'function';
-                    function: {
-                        name: string;
-                        arguments: string;
-                    };
-                }[];
-            } = {
-                role: msg.role,
-                name: msg.name,
-                content: null,
+    async format({ msgs }: { msgs: Msg[] }): Promise<Record<string, unknown>[]> {
+        FormatterBase.assertListOfMsgs(msgs);
+        const messages: Record<string, unknown>[] = [];
+        for (const msg of msgs) {
+            let content: string[] = [];
+            let reasoning: string[] = [];
+            let toolCalls: Record<string, unknown>[] = [];
+            const flush = (): void => {
+                if (content.length === 0 && reasoning.length === 0 && toolCalls.length === 0)
+                    return;
+                const item: Record<string, unknown> = {
+                    role: msg.role,
+                    content: content.join('\n') || (toolCalls.length > 0 ? null : ''),
+                };
+                if (msg.role === 'assistant') item.reasoning_content = reasoning.join('\n');
+                if (toolCalls.length > 0) item.tool_calls = toolCalls;
+                messages.push(item);
+                content = [];
+                reasoning = [];
+                toolCalls = [];
             };
-            const content: Record<string, unknown>[] = [];
-
-            // Cache tool-result messages to keep the sequence right after current message.
-            const cachedMsgs: Record<string, unknown>[] = [];
             for (const block of getContentBlocks(msg)) {
-                switch (block.type) {
-                    case 'text':
-                        content.push({
-                            type: 'text',
-                            text: block.text,
+                if (block.type === 'text') content.push(block.text);
+                else if (block.type === 'thinking') reasoning.push(block.thinking);
+                else if (block.type === 'hint') {
+                    flush();
+                    if (typeof block.hint === 'string') {
+                        messages.push({ role: 'user', content: block.hint });
+                    } else {
+                        const parts = block.hint.map(item => {
+                            return item.type === 'text'
+                                ? item.text
+                                : `[${item.source.media_type} attached, not supported by this provider]`;
                         });
-                        break;
-                    case 'thinking':
-                        break;
-                    case 'tool_call':
-                        if (!formattedMsg.tool_calls) {
-                            formattedMsg.tool_calls = [];
+                        if (parts.length > 0) {
+                            messages.push({ role: 'user', content: parts.join('\n') });
                         }
-                        formattedMsg.tool_calls.push({
-                            id: block.id,
-                            type: 'function',
-                            function: {
-                                name: block.name,
-                                arguments: block.input,
-                            },
-                        });
-                        break;
-                    case 'tool_result':
-                        const formattedToolResult = this.convertToolOutputToString(
-                            block.output,
-                            this.promoteMultimodalToolResult
-                        );
-                        cachedMsgs.push({
-                            role: 'tool',
-                            tool_call_id: block.id,
-                            name: block.name,
-                            content: formattedToolResult.text,
-                        });
-                        if (formattedToolResult.promotedMsg?.content.length) {
-                            msgs.splice(index + 1, 0, formattedToolResult.promotedMsg);
-                        }
-                        break;
-                    case 'data':
-                        console.warn(
-                            `DeepSeek models don't support multimodal data for now (2026-03), skip the data block in message content.`
-                        );
-                        break;
+                    }
+                } else if (block.type === 'tool_call') {
+                    toolCalls.push({
+                        id: block.id,
+                        type: 'function',
+                        function: { name: block.name, arguments: block.input },
+                    });
+                } else if (block.type === 'tool_result') {
+                    flush();
+                    const [text] = this.convertToolResultToString(block.output);
+                    messages.push({
+                        role: 'tool',
+                        tool_call_id: block.id,
+                        content: text,
+                        name: block.name,
+                    });
                 }
             }
-
-            if (content.length > 0) {
-                formattedMsg.content = content;
-            }
-            if (formattedMsg.content || formattedMsg.tool_calls) {
-                formattedMsgs.push(formattedMsg);
-            }
-            if (cachedMsgs.length > 0) {
-                formattedMsgs.push(...cachedMsgs);
-            }
-
-            index++;
+            flush();
         }
+        return messages;
+    }
+}
 
-        return formattedMsgs;
+export interface DeepSeekMultiAgentFormatterOptions extends FormatterOptions {
+    conversationHistoryPrompt?: string;
+}
+
+/** Format attributed multi-agent histories for DeepSeek. */
+export class DeepSeekMultiAgentFormatter extends FormatterBase {
+    readonly conversationHistoryPrompt: string;
+
+    constructor(options: DeepSeekMultiAgentFormatterOptions = {}) {
+        super({ inputTypes: options.inputTypes ?? ['text/plain'] });
+        this.conversationHistoryPrompt =
+            options.conversationHistoryPrompt ??
+            '# Conversation History\n' +
+                'The content between <history></history> tags contains your conversation history\n';
+    }
+
+    async format({ msgs }: { msgs: Msg[] }): Promise<Record<string, unknown>[]> {
+        FormatterBase.assertListOfMsgs(msgs);
+        const formatted: Record<string, unknown>[] = [];
+        let startIndex = 0;
+        if (msgs[0]?.role === 'system') {
+            formatted.push({ role: 'system', content: getTextContent(msgs[0]) });
+            startIndex = 1;
+        }
+        let isFirst = true;
+        for await (const [type, group] of this.groupMessages(msgs.slice(startIndex))) {
+            if (type === 'tool_sequence') {
+                formatted.push(
+                    ...(await new DeepSeekChatFormatter({ inputTypes: this.inputTypes }).format({
+                        msgs: group,
+                    }))
+                );
+            } else {
+                const text: string[] = [];
+                for (const msg of group) {
+                    for (const block of getContentBlocks(msg)) {
+                        if (block.type === 'text') text.push(`${msg.name}: ${block.text}`);
+                    }
+                }
+                if (text.length > 0) {
+                    const prefix = isFirst ? this.conversationHistoryPrompt : '';
+                    formatted.push({
+                        role: 'user',
+                        content: `${prefix}<history>\n${text.join('\n')}\n</history>`,
+                    });
+                }
+                isFirst = false;
+            }
+        }
+        return formatted;
     }
 }

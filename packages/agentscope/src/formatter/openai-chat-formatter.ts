@@ -1,303 +1,269 @@
-import { existsSync } from 'fs';
+/* eslint-disable jsdoc/require-jsdoc */
+
 import { readFile } from 'fs/promises';
-import { extname } from 'path';
 import { fileURLToPath } from 'url';
 
-import { FormatterBase } from './base';
-import type { DataBlock, TextBlock } from '../message/block';
-import { getContentBlocks } from '../message/message';
-import type { Msg } from '../message/message';
+import { minimatch } from 'minimatch';
 
-interface OpenAIFormatterOptions {
-    /**
-     * Most LLM APIs don't support multimodal tool outputs, this option controls whether to
-     * promote multimodal tool results to follow-up user messages.
-     */
-    promoteMultimodalToolResult?:
-        | {
-              image?: boolean;
-              audio?: boolean;
-              video?: boolean;
-          }
-        | boolean;
+import { FormatterBase } from './base';
+import type { FormatterOptions } from './base';
+import type { DataBlock, Msg } from '../message';
+import { getContentBlocks, getTextContent } from '../message';
+
+export interface OpenAIFormatterOptions extends FormatterOptions {
+    /** @deprecated Supported media are controlled by inputTypes. */
+    promoteMultimodalToolResult?: { image?: boolean; audio?: boolean; video?: boolean } | boolean;
 }
 
-/**
- * Format AgentScope message objects into OpenAI Chat Completions message format.
- */
-export class OpenAIChatFormatter extends FormatterBase {
-    private promoteMultimodalToolResult:
-        | { image?: boolean; audio?: boolean; video?: boolean }
-        | boolean;
+type OpenAIContentPart = Record<string, unknown>;
 
-    /**
-     * Initializes a new instance of the OpenAIChatFormatter class.
-     * @param root0
-     * @param root0.promoteMultimodalToolResult
-     */
-    constructor({ promoteMultimodalToolResult = false }: OpenAIFormatterOptions = {}) {
-        super();
-        this.promoteMultimodalToolResult = promoteMultimodalToolResult;
+export abstract class OpenAIFormatterBase extends FormatterBase {
+    protected constructor(options: FormatterOptions = {}) {
+        super({
+            inputTypes: options.inputTypes ?? [
+                'text/plain',
+                'image/*',
+                'audio/*',
+                'application/pdf',
+            ],
+        });
     }
 
-    /**
-     * Format the input messages into OpenAI Chat Completions message format.
-     * @param root0
-     * @param root0.msgs
-     * @returns An array of formatted messages compatible with OpenAI Chat Completions API.
-     */
-    async format({ msgs }: { msgs: Array<Msg> }): Promise<Record<string, unknown>[]> {
-        const formattedMsgs: Array<Record<string, unknown>> = [];
-        let index = 0;
-
-        while (index < msgs.length) {
-            const msg = msgs[index];
-            const formattedMsg: {
-                role: string;
-                name: string;
-                content: Record<string, unknown>[] | null;
-                tool_calls?: {
-                    id: string;
-                    type: 'function';
-                    function: {
-                        name: string;
-                        arguments: string;
-                    };
-                }[];
-            } = {
-                role: msg.role,
-                name: msg.name,
-                content: null,
-            };
-            const content: Record<string, unknown>[] = [];
-
-            // Cache tool-result messages to keep the sequence right after current message.
-            const cachedMsgs: Record<string, unknown>[] = [];
-            for (const block of getContentBlocks(msg)) {
-                switch (block.type) {
-                    case 'text':
-                        content.push(this._formatTextBlock(block));
-                        break;
-                    case 'thinking':
-                        break;
-                    case 'tool_call':
-                        if (!formattedMsg.tool_calls) {
-                            formattedMsg.tool_calls = [];
-                        }
-                        formattedMsg.tool_calls.push({
-                            id: block.id,
-                            type: 'function',
-                            function: {
-                                name: block.name,
-                                arguments: block.input,
-                            },
-                        });
-                        break;
-                    case 'tool_result':
-                        const formattedToolResult = this.convertToolOutputToString(
-                            block.output,
-                            this.promoteMultimodalToolResult
-                        );
-                        cachedMsgs.push({
-                            role: 'tool',
-                            tool_call_id: block.id,
-                            name: block.name,
-                            content: formattedToolResult.text,
-                        });
-                        if (formattedToolResult.promotedMsg?.content.length) {
-                            msgs.splice(index + 1, 0, formattedToolResult.promotedMsg);
-                        }
-                        break;
-                    case 'data':
-                        content.push(
-                            ...(await this._formatMultimodalBlock({ block, role: msg.role }))
-                        );
-                        break;
-                }
-            }
-
-            if (content.length > 0) {
-                formattedMsg.content = content;
-            }
-            if (formattedMsg.content || formattedMsg.tool_calls) {
-                formattedMsgs.push(formattedMsg);
-            }
-            if (cachedMsgs.length > 0) {
-                formattedMsgs.push(...cachedMsgs);
-            }
-
-            index++;
+    protected async formatOpenAIDataBlock(block: DataBlock): Promise<OpenAIContentPart | null> {
+        if (
+            !this.supportedInputMediaTypes.some(pattern => {
+                return minimatch(block.source.media_type, pattern);
+            })
+        ) {
+            console.warn(
+                `Unsupported media type ${block.source.media_type} for OpenAI API. ` +
+                    `Supported types: ${this.supportedInputMediaTypes.join(', ')}. ` +
+                    'This block will be skipped.'
+            );
+            return null;
         }
 
-        return formattedMsgs;
+        const mainType = block.source.media_type.split('/')[0];
+        if (mainType === 'image') return this.formatImageSource(block.source);
+        if (mainType === 'audio') return this.formatAudioSource(block.source);
+        if (block.source.media_type === 'application/pdf') {
+            return this.formatFileSource(block.source, block.name);
+        }
+        console.warn(
+            `Unsupported main media type ${mainType} for OpenAI API. This block will be skipped.`
+        );
+        return null;
     }
 
-    /**
-     * Format a text block into OpenAI Chat Completions message content format.
-     * @param block
-     * @returns An object representing the formatted text block.
-     */
-    _formatTextBlock(block: TextBlock) {
+    protected async formatImageSource(source: DataBlock['source']): Promise<OpenAIContentPart> {
+        let url: string;
+        if (source.type === 'base64') {
+            url = `data:${source.media_type};base64,${source.data}`;
+        } else if (source.url.startsWith('file://')) {
+            const data = await readFile(fileURLToPath(source.url));
+            url = `data:${source.media_type};base64,${data.toString('base64')}`;
+        } else {
+            url = source.url;
+        }
+        return { type: 'image_url', image_url: { url } };
+    }
+
+    private async formatAudioSource(source: DataBlock['source']): Promise<OpenAIContentPart> {
+        const formats: Record<string, 'wav' | 'mp3'> = {
+            'audio/wav': 'wav',
+            'audio/mp3': 'mp3',
+            'audio/mpeg': 'mp3',
+        };
+        const format = formats[source.media_type];
+        if (!format) {
+            throw new TypeError(
+                `Unsupported audio media type: ${source.media_type}, ` +
+                    'only WAV and MP3 audio are supported.'
+            );
+        }
+        const data = await this.readSourceAsBase64(source);
+        return { type: 'input_audio', input_audio: { data, format } };
+    }
+
+    private async formatFileSource(
+        source: DataBlock['source'],
+        name?: string | null
+    ): Promise<OpenAIContentPart> {
+        const data = await this.readSourceAsBase64(source);
         return {
-            type: 'text',
-            text: block.text,
+            type: 'file',
+            file: {
+                filename: name ?? 'document.pdf',
+                file_data: `data:${source.media_type};base64,${data}`,
+            },
         };
     }
 
-    /**
-     * Format a multimodal data block into OpenAI Chat Completions message content format.
-     * @param root0
-     * @param root0.block
-     * @param root0.role
-     * @returns The formatted content blocks
-     */
-    async _formatMultimodalBlock({
-        block,
-        role,
-    }: {
-        block: DataBlock;
-        role: Msg['role'];
-    }): Promise<Record<string, unknown>[]> {
-        const type = block.source.media_type.split('/')[0];
-        if (type === 'image') {
-            return [
-                {
-                    type: 'image_url',
-                    image_url: {
-                        url: await this._toOpenAIImageURL(block),
-                    },
-                },
-            ];
+    private async readSourceAsBase64(source: DataBlock['source']): Promise<string> {
+        if (source.type === 'base64') return source.data;
+        if (source.url.startsWith('file://')) {
+            return (await readFile(fileURLToPath(source.url))).toString('base64');
         }
+        const response = await fetch(source.url);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch media from URL: ${source.url} (${response.status})`);
+        }
+        return Buffer.from(await response.arrayBuffer()).toString('base64');
+    }
+}
 
-        if (type === 'audio') {
-            // Skip assistant output audio to avoid carrying generated audio back into next request.
-            if (role === 'assistant') {
-                return [];
+/** Format AgentScope messages for the OpenAI Chat Completions API. */
+export class OpenAIChatFormatter extends OpenAIFormatterBase {
+    constructor(options: OpenAIFormatterOptions = {}) {
+        super(options);
+    }
+
+    async format({ msgs }: { msgs: Msg[] }): Promise<Record<string, unknown>[]> {
+        FormatterBase.assertListOfMsgs(msgs);
+        const messages: Record<string, unknown>[] = [];
+
+        for (const msg of msgs) {
+            let contentBlocks: OpenAIContentPart[] = [];
+            let toolCalls: Record<string, unknown>[] = [];
+
+            const flush = (): void => {
+                if (contentBlocks.length === 0 && toolCalls.length === 0) return;
+                const message: Record<string, unknown> = {
+                    role: msg.role,
+                    name: msg.name,
+                    content: contentBlocks.length > 0 ? contentBlocks : null,
+                };
+                if (toolCalls.length > 0) message.tool_calls = toolCalls;
+                messages.push(message);
+                contentBlocks = [];
+                toolCalls = [];
+            };
+
+            for (const block of getContentBlocks(msg)) {
+                if (block.type === 'text') {
+                    contentBlocks.push({ type: 'text', text: block.text });
+                } else if (block.type === 'data') {
+                    const formatted = await this.formatOpenAIDataBlock(block);
+                    if (formatted) contentBlocks.push(formatted);
+                } else if (block.type === 'hint') {
+                    flush();
+                    const hintParts: OpenAIContentPart[] = [];
+                    if (typeof block.hint === 'string') {
+                        hintParts.push({ type: 'text', text: block.hint });
+                    } else {
+                        for (const item of block.hint) {
+                            if (item.type === 'text') {
+                                hintParts.push({ type: 'text', text: item.text });
+                            } else {
+                                const formatted = await this.formatOpenAIDataBlock(item);
+                                if (formatted) hintParts.push(formatted);
+                            }
+                        }
+                    }
+                    if (hintParts.length > 0) messages.push({ role: 'user', content: hintParts });
+                } else if (block.type === 'tool_call') {
+                    toolCalls.push({
+                        id: block.id,
+                        type: 'function',
+                        function: { name: block.name, arguments: block.input },
+                    });
+                } else if (block.type === 'tool_result') {
+                    flush();
+                    const [text, media] = this.convertToolResultToString(block.output);
+                    messages.push({
+                        role: 'tool',
+                        tool_call_id: block.id,
+                        content: text,
+                        name: block.name,
+                    });
+                    const promoted: OpenAIContentPart[] = [];
+                    for (const item of media) {
+                        if (item.type === 'text') {
+                            promoted.push({ type: 'text', text: item.text });
+                        } else {
+                            const formatted = await this.formatOpenAIDataBlock(item);
+                            if (formatted) promoted.push(formatted);
+                        }
+                    }
+                    if (promoted.length > 0) {
+                        messages.push({
+                            role: 'user',
+                            name: 'system-reminder',
+                            content: promoted,
+                        });
+                    }
+                }
             }
-            return [
-                {
-                    type: 'input_audio',
-                    input_audio: await this._toOpenAIAudioData(block),
-                },
-            ];
+            flush();
         }
+        return messages;
+    }
+}
 
-        console.log(
-            `Skip unsupported media type ${block.source.media_type} in OpenAIChatFormatter. Only image and audio are supported.`
-        );
-        return [];
+export interface OpenAIMultiAgentFormatterOptions extends FormatterOptions {
+    conversationHistoryPrompt?: string;
+}
+
+/** Format multi-agent histories as attributed OpenAI user messages. */
+export class OpenAIMultiAgentFormatter extends OpenAIFormatterBase {
+    readonly conversationHistoryPrompt: string;
+
+    constructor(options: OpenAIMultiAgentFormatterOptions = {}) {
+        super(options);
+        this.conversationHistoryPrompt =
+            options.conversationHistoryPrompt ??
+            '# Conversation History\n' +
+                'The content between <history></history> tags contains your conversation history\n';
     }
 
-    /**
-     * Convert the data block to an OpenAI compatible image URL.
-     * @param block
-     * @returns A promise that resolves to a string representing the image URL in a format compatible with OpenAI Chat Completions API.
-     */
-    protected async _toOpenAIImageURL(block: DataBlock): Promise<string> {
-        if (block.source.type === 'base64') {
-            return `data:${block.source.media_type};base64,${block.source.data}`;
+    async format({ msgs }: { msgs: Msg[] }): Promise<Record<string, unknown>[]> {
+        FormatterBase.assertListOfMsgs(msgs);
+        const formatted: Record<string, unknown>[] = [];
+        let startIndex = 0;
+        if (msgs[0]?.role === 'system') {
+            formatted.push({ role: 'system', content: getTextContent(msgs[0]) });
+            startIndex = 1;
         }
-
-        const sourceUrl = block.source.url;
-        if (sourceUrl.startsWith('http://') || sourceUrl.startsWith('https://')) {
-            return sourceUrl;
-        }
-        if (sourceUrl.startsWith('data:')) {
-            return sourceUrl;
-        }
-
-        const localPath = this._toLocalPath(sourceUrl);
-        if (!localPath || !existsSync(localPath)) {
-            throw new Error(`Image path not found: ${sourceUrl}`);
-        }
-
-        const ext = extname(localPath).toLowerCase();
-        const supportedImageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
-        if (!supportedImageExtensions.includes(ext)) {
-            throw new TypeError(
-                `Unsupported image extension: ${ext}. Supported: ${supportedImageExtensions.join(', ')}`
-            );
-        }
-
-        const file = await readFile(localPath);
-        const mime = block.source.media_type || `image/${ext.slice(1)}`;
-        return `data:${mime};base64,${file.toString('base64')}`;
-    }
-
-    /**
-     * Converts a data block to OpenAI compatible audio data format.
-     *
-     * @param block - The data block containing audio information.
-     * @returns A promise that resolves to an object with audio data and format.
-     */
-    protected async _toOpenAIAudioData(
-        block: DataBlock
-    ): Promise<{ data: string; format: 'wav' | 'mp3' }> {
-        const supportedMediaTypes = new Map<string, 'wav' | 'mp3'>([
-            ['audio/wav', 'wav'],
-            ['audio/mp3', 'mp3'],
-            ['audio/mpeg', 'mp3'],
-        ]);
-
-        if (block.source.type === 'base64') {
-            const format = supportedMediaTypes.get(block.source.media_type);
-            if (!format) {
-                throw new TypeError(
-                    `Unsupported audio media type: ${block.source.media_type}, only audio/wav and audio/mp3 are supported.`
+        let isFirstAgentMessage = true;
+        for await (const [type, group] of this.groupMessages(msgs.slice(startIndex))) {
+            if (type === 'tool_sequence') {
+                formatted.push(
+                    ...(await new OpenAIChatFormatter({ inputTypes: this.inputTypes }).format({
+                        msgs: group,
+                    }))
                 );
+            } else {
+                formatted.push(...(await this.formatAgentMessage(group, isFirstAgentMessage)));
+                isFirstAgentMessage = false;
             }
-            return { data: block.source.data, format };
         }
-
-        const sourceUrl = block.source.url;
-        const localPath = this._toLocalPath(sourceUrl);
-        let data: string;
-
-        if (localPath && existsSync(localPath)) {
-            const file = await readFile(localPath);
-            data = file.toString('base64');
-        } else if (sourceUrl.startsWith('http://') || sourceUrl.startsWith('https://')) {
-            const response = await fetch(sourceUrl);
-            if (!response.ok) {
-                throw new Error(
-                    `Failed to fetch audio from URL: ${sourceUrl} (${response.status})`
-                );
-            }
-            const arr = await response.arrayBuffer();
-            data = Buffer.from(arr).toString('base64');
-        } else {
-            throw new Error(
-                `Unsupported audio source: ${sourceUrl}, it should be a local file path, file URL, or an HTTP URL.`
-            );
-        }
-
-        const ext = extname(localPath || sourceUrl).toLowerCase();
-        const extToFormat = new Map<string, 'wav' | 'mp3'>([
-            ['.wav', 'wav'],
-            ['.mp3', 'mp3'],
-        ]);
-        const format = extToFormat.get(ext);
-        if (!format) {
-            throw new TypeError(`Unsupported audio extension: ${ext}, wav and mp3 are supported.`);
-        }
-
-        return { data, format };
+        return formatted;
     }
 
-    /**
-     * Converts a URL or path to a local file path.
-     *
-     * @param urlOrPath - The URL or path to convert.
-     * @returns The local file path, or null if not a local path.
-     */
-    protected _toLocalPath(urlOrPath: string) {
-        if (urlOrPath.startsWith('file://')) {
-            return fileURLToPath(urlOrPath);
+    private async formatAgentMessage(
+        msgs: Msg[],
+        isFirst: boolean
+    ): Promise<Record<string, unknown>[]> {
+        const text: string[] = [];
+        const media: OpenAIContentPart[] = [];
+        for (const msg of msgs) {
+            for (const block of getContentBlocks(msg)) {
+                if (block.type === 'text') text.push(`${msg.name}: ${block.text}`);
+                else if (block.type === 'data') {
+                    const formatted = await this.formatOpenAIDataBlock(block);
+                    if (formatted) media.push(formatted);
+                }
+            }
         }
-        if (!urlOrPath.includes('://')) {
-            return urlOrPath;
+        const content: OpenAIContentPart[] = [];
+        if (text.length > 0) {
+            const prefix = isFirst ? this.conversationHistoryPrompt : '';
+            content.push({
+                type: 'text',
+                text: `${prefix}<history>\n${text.join('\n')}\n</history>`,
+            });
         }
-        return null;
+        content.push(...media);
+        return content.length > 0 ? [{ role: 'user', content }] : [];
     }
 }

@@ -205,21 +205,20 @@ export class DeepSeekChatModel extends ChatModelBase {
         }
 
         const usage = res.usage
-            ? {
-                  type: 'chat_usage',
+            ? new ChatUsage({
                   inputTokens: res.usage.prompt_tokens || 0,
                   outputTokens: res.usage.completion_tokens || 0,
                   time: (Date.now() - startTime) / 1000,
-              }
-            : undefined;
+              })
+            : null;
 
-        return {
-            type: 'chat',
+        return new ChatResponse({
             id: _generateId(),
             createdAt: _generateTimestamp(),
             content: blocks,
             usage,
-        } as ChatResponse;
+            isLast: true,
+        });
     }
 
     /**
@@ -332,21 +331,20 @@ export class DeepSeekChatModel extends ChatModelBase {
                 // Create a delta ChatResponse object
                 const deltaBlocks = this._accDataToBlocks(deltaText, deltaThinking, deltaToolCalls);
                 lastUsage = jsonObj.usage
-                    ? {
-                          type: 'chat_usage',
+                    ? new ChatUsage({
                           inputTokens: jsonObj.usage.prompt_tokens || 0,
                           outputTokens: jsonObj.usage.completion_tokens || 0,
                           time: (Date.now() - startTime) / 1000,
-                      }
+                      })
                     : undefined;
 
-                yield {
-                    type: 'chat',
+                yield new ChatResponse({
                     id: _generateId(),
                     createdAt: _generateTimestamp(),
                     content: deltaBlocks,
-                    usage: lastUsage,
-                } as ChatResponse;
+                    usage: lastUsage ?? null,
+                    isLast: false,
+                });
             }
         }
         // Build final tool calls with complete JSON strings
@@ -363,13 +361,13 @@ export class DeepSeekChatModel extends ChatModelBase {
         });
 
         const blocks = this._accDataToBlocks(accText, accThinking, finalToolCalls);
-        return {
-            type: 'chat',
+        return new ChatResponse({
             id: _generateId(),
             createdAt: _generateTimestamp(),
             content: blocks,
-            usage: lastUsage,
-        } as ChatResponse;
+            usage: lastUsage ?? null,
+            isLast: true,
+        });
     }
 
     /**

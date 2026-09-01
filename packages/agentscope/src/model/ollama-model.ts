@@ -224,33 +224,32 @@ export class OllamaChatModel extends ChatModelBase {
 
             // Calculate usage
             const currentTime = (Date.now() - startTime) / 1000;
-            lastUsage = {
-                type: 'chat_usage',
+            lastUsage = new ChatUsage({
                 inputTokens: chunk.prompt_eval_count || 0,
                 outputTokens: chunk.eval_count || 0,
                 time: currentTime,
-            };
+            });
 
             // Yield delta response
             const deltaBlocks = this._buildContentBlocks(deltaText, deltaThinking, deltaToolCalls);
-            yield {
-                type: 'chat',
+            yield new ChatResponse({
                 id: _generateId(),
                 createdAt: _generateTimestamp(),
                 content: deltaBlocks,
                 usage: lastUsage,
-            } as ChatResponse;
+                isLast: false,
+            });
         }
 
         // Return complete response
         const blocks = this._buildContentBlocks(accText, accThinking, toolCalls);
-        return {
-            type: 'chat',
+        return new ChatResponse({
             id: _generateId(),
             createdAt: _generateTimestamp(),
             content: blocks,
             usage: lastUsage,
-        } as ChatResponse;
+            isLast: true,
+        });
     }
 
     /**
@@ -297,21 +296,20 @@ export class OllamaChatModel extends ChatModelBase {
 
         const usage =
             response.prompt_eval_count !== undefined && response.eval_count !== undefined
-                ? {
-                      type: 'chat_usage',
+                ? new ChatUsage({
                       inputTokens: response.prompt_eval_count || 0,
                       outputTokens: response.eval_count || 0,
                       time: (Date.now() - startTime) / 1000,
-                  }
-                : undefined;
+                  })
+                : null;
 
-        return {
-            type: 'chat',
+        return new ChatResponse({
             id: _generateId(),
             createdAt: _generateTimestamp(),
             content: blocks,
             usage,
-        } as ChatResponse;
+            isLast: true,
+        });
     }
 
     /**

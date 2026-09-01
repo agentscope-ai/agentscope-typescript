@@ -217,12 +217,24 @@ describe('OpenAIChatFormatter', () => {
                     },
                 ],
             },
+            {
+                role: 'assistant',
+                name: 'assistant',
+                content: [
+                    {
+                        type: 'input_audio',
+                        input_audio: {
+                            data: 'assistant-audio',
+                            format: 'mp3',
+                        },
+                    },
+                ],
+            },
         ]);
     });
 
     test('format tool result with promoted multimodal blocks', async () => {
-        const mockRandom = jest.spyOn(Math, 'random');
-        mockRandom.mockReturnValueOnce(0.123456789);
+        const imageId = crypto.randomUUID();
 
         const msgs = [
             createMsg({
@@ -250,7 +262,7 @@ describe('OpenAIChatFormatter', () => {
                             {
                                 type: 'data',
                                 source: { type: 'base64', data: 'img64', media_type: 'image/png' },
-                                id: crypto.randomUUID(),
+                                id: imageId,
                                 created_at: '2024-01-01T00:00:00.000Z',
                             },
                         ],
@@ -266,7 +278,6 @@ describe('OpenAIChatFormatter', () => {
             promoteMultimodalToolResult: { image: true },
         });
         const res = await formatter.format({ msgs });
-        mockRandom.mockRestore();
 
         expect(res).toEqual([
             {
@@ -285,16 +296,19 @@ describe('OpenAIChatFormatter', () => {
                 role: 'tool',
                 tool_call_id: '1',
                 name: 'google_search',
-                content:
-                    "content 1\n<system-info>One returned image is embedded with ID '4fzzzxjy' and will be attached within '<system-info></system-info>' tags later.</system-info>",
+                content: `content 1\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [${imageId}].</system-reminder>`,
             },
             {
                 role: 'user',
-                name: 'user',
+                name: 'system-reminder',
                 content: [
                     {
                         type: 'text',
-                        text: "<system-info>The multimodal contents returned from the tool call are as follows:\n<image_data id='4fzzzxjy'>",
+                        text: '<system-reminder>The multimodal data and their identifiers are listed as follows:',
+                    },
+                    {
+                        type: 'text',
+                        text: `- ${imageId} (image file): `,
                     },
                     {
                         type: 'image_url',
@@ -302,7 +316,7 @@ describe('OpenAIChatFormatter', () => {
                             url: 'data:image/png;base64,img64',
                         },
                     },
-                    { type: 'text', text: '</image_data>\n</system-info>' },
+                    { type: 'text', text: '</system-reminder>' },
                 ],
             },
         ]);

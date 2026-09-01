@@ -1,447 +1,142 @@
-import { createMsg } from '../message';
-import { DashScopeChatFormatter } from './dashscope-chat-formatter';
+import {
+    Base64Source,
+    DataBlock,
+    HintBlock,
+    TextBlock,
+    ThinkingBlock,
+    ToolCallBlock,
+    ToolResultBlock,
+    createMsg,
+} from '../message';
+import { DashScopeChatFormatter, DashScopeMultiAgentFormatter } from './dashscope-chat-formatter';
 
-describe('DashScopeChatFormatter', () => {
-    test('format textual messages', async () => {
+describe('DashScope formatters', () => {
+    test('formats text, preserved thinking, hints and tools', async () => {
+        const formatter = new DashScopeChatFormatter({
+            inputTypes: ['text/plain', 'application/x-thinking'],
+        });
         const msgs = [
             createMsg({
-                name: 'system',
-                content: [
-                    {
-                        id: crypto.randomUUID(),
-                        created_at: '2024-01-01T00:00:00.000Z',
-                        type: 'text',
-                        text: 'You are a helpful assistant.',
-                    },
-                ],
-                role: 'system',
-            }),
-            createMsg({
-                name: 'user',
-                content: [
-                    {
-                        id: crypto.randomUUID(),
-                        created_at: '2024-01-01T00:00:00.000Z',
-                        type: 'text',
-                        text: 'Hello, how are you?',
-                    },
-                ],
-                role: 'user',
-            }),
-            createMsg({
                 name: 'assistant',
-                content: [
-                    {
-                        id: crypto.randomUUID(),
-                        created_at: '2024-01-01T00:00:00.000Z',
-                        type: 'text',
-                        text: 'I am fine, thank you!',
-                    },
-                ],
                 role: 'assistant',
+                content: [
+                    ThinkingBlock({ thinking: 'reason' }),
+                    TextBlock({ text: 'answer' }),
+                    HintBlock({ hint: 'continue' }),
+                    ToolCallBlock({ id: 'call-1', name: 'search', input: '{"q":"x"}' }),
+                    ToolResultBlock({ id: 'call-1', name: 'search', output: 'done' }),
+                ],
             }),
         ];
 
-        const formatter = new DashScopeChatFormatter();
-        const res = await formatter.format({ msgs });
-        expect(res).toEqual([
-            {
-                role: 'system',
-                content: [{ text: 'You are a helpful assistant.' }],
-            },
-            {
-                role: 'user',
-                content: [{ text: 'Hello, how are you?' }],
-            },
+        await expect(formatter.format({ msgs })).resolves.toEqual([
             {
                 role: 'assistant',
-                content: [{ text: 'I am fine, thank you!' }],
+                content: [{ type: 'text', text: 'answer' }],
+                reasoning_content: 'reason',
             },
-        ]);
-    });
-
-    test('format tool messages', async () => {
-        const msgs = [
-            createMsg({
-                name: 'system',
-                content: [
-                    {
-                        type: 'text',
-                        text: 'You are a helpful assistant.',
-                        id: crypto.randomUUID(),
-                        created_at: '2024-01-01T00:00:00.000Z',
-                    },
-                ],
-                role: 'system',
-            }),
-            createMsg({
-                name: 'user',
-                content: [
-                    {
-                        type: 'text',
-                        text: 'Please use the tool.',
-                        id: crypto.randomUUID(),
-                        created_at: '2024-01-01T00:00:00.000Z',
-                    },
-                ],
-                role: 'user',
-            }),
-            createMsg({
-                name: 'assistant',
-                content: [
-                    {
-                        type: 'tool_call',
-                        id: '1',
-                        name: 'google_search',
-                        input: '{"query": "example1"}',
-                        state: 'pending',
-                        created_at: '2024-01-01T00:00:00.000Z',
-                    },
-                    {
-                        type: 'tool_call',
-                        id: '2',
-                        name: 'bing_search',
-                        input: '{"query": "example2"}',
-                        state: 'pending',
-                        created_at: '2024-01-01T00:00:00.000Z',
-                    },
-                    {
-                        type: 'tool_result',
-                        id: '1',
-                        name: 'google_search',
-                        output: 'Google search result for example1',
-                        state: 'success',
-                        created_at: '2024-01-01T00:00:00.000Z',
-                    },
-                    {
-                        type: 'tool_result',
-                        id: '2',
-                        name: 'bing_search',
-                        output: 'Bing search result for example2',
-                        state: 'success',
-                        created_at: '2024-01-01T00:00:00.000Z',
-                    },
-                ],
-                role: 'assistant',
-            }),
-        ];
-
-        const formatter = new DashScopeChatFormatter();
-
-        const res = await formatter.format({ msgs });
-        expect(res).toEqual([
-            {
-                role: 'system',
-                content: [{ text: 'You are a helpful assistant.' }],
-            },
-            {
-                role: 'user',
-                content: [{ text: 'Please use the tool.' }],
-            },
+            { role: 'user', content: [{ type: 'text', text: 'continue' }] },
             {
                 role: 'assistant',
-                content: [],
+                content: null,
                 tool_calls: [
                     {
-                        id: '1',
+                        id: 'call-1',
                         type: 'function',
-                        function: {
-                            name: 'google_search',
-                            arguments: '{"query": "example1"}',
-                        },
-                    },
-                    {
-                        id: '2',
-                        type: 'function',
-                        function: {
-                            name: 'bing_search',
-                            arguments: '{"query": "example2"}',
-                        },
+                        function: { name: 'search', arguments: '{"q":"x"}' },
                     },
                 ],
             },
             {
                 role: 'tool',
-                tool_call_id: '1',
-                name: 'google_search',
-                content: 'Google search result for example1',
+                tool_call_id: 'call-1',
+                content: 'done',
+                name: 'search',
             },
+        ]);
+    });
+
+    test('formats all supported media and promotes tool-result media by stable id', async () => {
+        const image = DataBlock({
+            id: 'image-1',
+            source: Base64Source({ media_type: 'image/png', data: 'image-data' }),
+        });
+        const audio = DataBlock({
+            id: 'audio-1',
+            source: Base64Source({ media_type: 'audio/mpeg', data: 'audio-data' }),
+        });
+        const formatter = new DashScopeChatFormatter();
+        const msgs = [
+            createMsg({
+                name: 'assistant',
+                role: 'assistant',
+                content: [
+                    ToolResultBlock({
+                        id: 'call-1',
+                        name: 'media',
+                        output: [TextBlock({ text: 'files' }), image, audio],
+                    }),
+                ],
+            }),
+        ];
+
+        await expect(formatter.format({ msgs })).resolves.toEqual([
             {
                 role: 'tool',
-                tool_call_id: '2',
-                name: 'bing_search',
-                content: 'Bing search result for example2',
-            },
-        ]);
-    });
-
-    test('format multimodal messages', async () => {
-        const msgs = [
-            createMsg({
-                name: 'system',
-                content: [
-                    {
-                        id: crypto.randomUUID(),
-                        created_at: '2024-01-01T00:00:00.000Z',
-                        type: 'text',
-                        text: 'You are a helpful assistant.',
-                    },
-                ],
-                role: 'system',
-            }),
-            createMsg({
-                name: 'user',
-                content: [
-                    {
-                        id: crypto.randomUUID(),
-                        created_at: '2024-01-01T00:00:00.000Z',
-                        type: 'text',
-                        text: 'Please see the image below.',
-                    },
-                    {
-                        id: crypto.randomUUID(),
-                        created_at: '2024-01-01T00:00:00.000Z',
-                        type: 'data',
-                        source: {
-                            type: 'url',
-                            url: 'https://example.com/image.png',
-                            media_type: 'image/png',
-                        },
-                    },
-                ],
-                role: 'user',
-            }),
-            createMsg({
-                name: 'assistant',
-                content: [
-                    {
-                        id: crypto.randomUUID(),
-                        created_at: '2024-01-01T00:00:00.000Z',
-                        type: 'text',
-                        text: 'Here is the image you requested.',
-                    },
-                ],
-                role: 'assistant',
-            }),
-            createMsg({
-                name: 'user',
-                content: [
-                    {
-                        id: crypto.randomUUID(),
-                        created_at: '2024-01-01T00:00:00.000Z',
-                        type: 'data',
-                        source: { type: 'base64', data: 'xxx', media_type: 'audio/mp3' },
-                    },
-                    {
-                        id: crypto.randomUUID(),
-                        created_at: '2024-01-01T00:00:00.000Z',
-                        type: 'data',
-                        source: {
-                            type: 'url',
-                            url: 'file:///local/path/to/video.mp4',
-                            media_type: 'video/mp4',
-                        },
-                    },
-                    {
-                        id: crypto.randomUUID(),
-                        created_at: '2024-01-01T00:00:00.000Z',
-                        type: 'data',
-                        source: {
-                            type: 'url',
-                            url: 'file:///C:/local/path/to/image.jpg',
-                            media_type: 'image/jpg',
-                        },
-                    },
-                ],
-                role: 'user',
-            }),
-        ];
-
-        const formatter = new DashScopeChatFormatter();
-
-        const res = await formatter.format({ msgs });
-        expect(res).toEqual([
-            {
-                role: 'system',
-                content: [{ text: 'You are a helpful assistant.' }],
-            },
-            {
-                role: 'user',
-                content: [
-                    { text: 'Please see the image below.' },
-                    {
-                        image: 'https://example.com/image.png',
-                    },
-                ],
-            },
-            {
-                role: 'assistant',
-                content: [{ text: 'Here is the image you requested.' }],
-            },
-            {
-                role: 'user',
-                content: [
-                    {
-                        audio: 'data:audio/mp3;base64,xxx',
-                    },
-                    {
-                        video: 'file:///local/path/to/video.mp4',
-                    },
-                    {
-                        image: 'file:///C:/local/path/to/image.jpg',
-                    },
-                ],
-            },
-        ]);
-    });
-
-    test('format multimodal tool results', async () => {
-        // Mock Math.random to generate predictable IDs
-        const mockRandom = jest.spyOn(Math, 'random');
-        mockRandom.mockReturnValueOnce(0.123456789); // Will generate '4fzzzxjy'
-        mockRandom.mockReturnValueOnce(0.456789012); // Will generate 'gfzy4slm'
-
-        const msgs = [
-            createMsg({
-                name: 'user',
-                content: [
-                    {
-                        id: crypto.randomUUID(),
-                        created_at: '2024-01-01T00:00:00.000Z',
-                        type: 'text',
-                        text: 'Please use the tool.',
-                    },
-                ],
-                role: 'user',
-            }),
-            createMsg({
-                name: 'assistant',
-                content: [
-                    {
-                        type: 'tool_call',
-                        id: '1',
-                        name: 'google_search',
-                        input: '{\"query\": \"example1\"}',
-                        state: 'pending',
-                        created_at: '2024-01-01T00:00:00.000Z',
-                    },
-                    {
-                        type: 'tool_result',
-                        id: '1',
-                        name: 'google_search',
-                        output: [
-                            {
-                                type: 'text',
-                                text: 'content 1',
-                                id: crypto.randomUUID(),
-                                created_at: '2024-01-01T00:00:00.000Z',
-                            },
-                            {
-                                id: crypto.randomUUID(),
-                                created_at: '2024-01-01T00:00:00.000Z',
-                                type: 'data',
-                                source: {
-                                    type: 'url',
-                                    url: 'https://example.com/image1.png',
-                                    media_type: 'image/png',
-                                },
-                            },
-                            {
-                                id: crypto.randomUUID(),
-                                created_at: '2024-01-01T00:00:00.000Z',
-                                type: 'text',
-                                text: 'content 2',
-                            },
-                            {
-                                id: crypto.randomUUID(),
-                                created_at: '2024-01-01T00:00:00.000Z',
-                                type: 'data',
-                                source: { type: 'base64', data: 'xxx', media_type: 'image/png' },
-                            },
-                            {
-                                id: crypto.randomUUID(),
-                                created_at: '2024-01-01T00:00:00.000Z',
-                                type: 'data',
-                                source: { type: 'base64', data: 'yyy', media_type: 'audio/mp3' },
-                            },
-                            {
-                                id: crypto.randomUUID(),
-                                created_at: '2024-01-01T00:00:00.000Z',
-                                type: 'data',
-                                source: {
-                                    type: 'url',
-                                    url: '/local/path/to/video1.mp4',
-                                    media_type: 'video/mp4',
-                                },
-                            },
-                        ],
-                        state: 'success',
-                        created_at: '2024-01-01T00:00:00.000Z',
-                    },
-                ],
-                role: 'assistant',
-            }),
-        ];
-
-        const formatter = new DashScopeChatFormatter({ promoteMultimodalToolResult: true });
-
-        const res = await formatter.format({ msgs });
-
-        // Restore the mock
-        mockRandom.mockRestore();
-
-        expect(res).toEqual([
-            {
-                content: [
-                    {
-                        text: 'Please use the tool.',
-                    },
-                ],
-                role: 'user',
-            },
-            {
-                content: [],
-                role: 'assistant',
-                tool_calls: [
-                    {
-                        function: {
-                            arguments: '{"query": "example1"}',
-                            name: 'google_search',
-                        },
-                        id: '1',
-                        type: 'function',
-                    },
-                ],
-            },
-            {
+                tool_call_id: 'call-1',
+                name: 'media',
                 content:
-                    "content 1\n<system-info>One returned image can be found at: https://example.com/image1.png</system-info>\ncontent 2\n<system-info>One returned image is embedded with ID '4fzzzxjy' and will be attached within '<system-info></system-info>' tags later.</system-info>\n<system-info>One returned audio is embedded with ID 'gfzy4slm' and will be attached within '<system-info></system-info>' tags later.</system-info>\n<system-info>One returned video can be found at: /local/path/to/video1.mp4</system-info>",
-                name: 'google_search',
-                role: 'tool',
-                tool_call_id: '1',
+                    'files\n' +
+                    '<system-reminder>A(n) image file is returned and will be presented to you with the identifier [image-1].</system-reminder>\n' +
+                    '<system-reminder>A(n) audio file is returned and will be presented to you with the identifier [audio-1].</system-reminder>',
             },
             {
+                role: 'user',
                 content: [
                     {
-                        text: "<system-info>The multimodal contents returned from the tool call are as follows:\n<image_data id='4fzzzxjy'>",
+                        type: 'text',
+                        text: '<system-reminder>The multimodal data and their identifiers are listed as follows:',
                     },
+                    { type: 'text', text: '- image-1 (image file): ' },
                     {
-                        image: 'data:image/png;base64,xxx',
+                        type: 'image_url',
+                        image_url: { url: 'data:image/png;base64,image-data' },
                     },
+                    { type: 'text', text: '- audio-1 (audio file): ' },
                     {
-                        text: '</image_data>\n',
+                        type: 'input_audio',
+                        input_audio: { data: 'data:;base64,audio-data', format: 'mp3' },
                     },
+                    { type: 'text', text: '</system-reminder>' },
+                ],
+            },
+        ]);
+    });
+
+    test('collapses non-tool multi-agent history', async () => {
+        const formatter = new DashScopeMultiAgentFormatter();
+        const msgs = [
+            createMsg({ name: 'system', role: 'system', content: 'Be useful.' }),
+            createMsg({ name: 'alice', role: 'user', content: 'Question' }),
+            createMsg({ name: 'bob', role: 'assistant', content: 'Answer' }),
+        ];
+        const result = await formatter.format({ msgs });
+        expect(result).toEqual([
+            { role: 'system', content: 'Be useful.' },
+            {
+                role: 'user',
+                content: [
                     {
-                        text: "<audio_data id='gfzy4slm'>",
-                    },
-                    {
-                        audio: 'data:audio/mp3;base64,yyy',
-                    },
-                    {
-                        text: '</audio_data>\n</system-info>',
+                        type: 'text',
+                        text:
+                            '# Conversation History\n' +
+                            'The content between <history></history> tags contains your conversation history\n' +
+                            '<history>\n' +
+                            'alice: Question\n' +
+                            'bob: Answer\n' +
+                            '</history>',
                     },
                 ],
-                role: 'user',
             },
         ]);
     });

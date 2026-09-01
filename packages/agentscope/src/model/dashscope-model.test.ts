@@ -99,8 +99,8 @@ describe('DashScopeChatModel', () => {
             yieldedChunks.push(result.value);
         }
 
-        // Verify we received 5 yielded chunks (before the final return)
-        expect(yieldedChunks.length).toBe(5);
+        // Empty provider carrier chunks are suppressed by ChatModelBase.
+        expect(yieldedChunks.length).toBe(4);
 
         // Chunk 1: First part of thinking
         expect(yieldedChunks[0].content.length).toBe(1);
@@ -136,14 +136,10 @@ describe('DashScopeChatModel', () => {
             state: 'pending',
         });
 
-        // Chunk 5: Empty content with usage info
-        expect(yieldedChunks[4].content.length).toBe(0);
-        expect(yieldedChunks[4].usage).toBeDefined();
-        expect(yieldedChunks[4].usage?.inputTokens).toBe(100);
-        expect(yieldedChunks[4].usage?.outputTokens).toBe(50);
-
         // Verify the final complete response has correct structure
         expect(completeResponse.content.length).toBe(2);
+        expect(completeResponse.usage?.inputTokens).toBe(100);
+        expect(completeResponse.usage?.outputTokens).toBe(50);
 
         // Check thinking block - should be complete after accumulation
         const thinkingBlock = completeResponse.content.find(b => b.type === 'thinking');

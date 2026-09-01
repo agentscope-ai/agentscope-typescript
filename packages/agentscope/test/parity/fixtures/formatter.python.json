@@ -1,0 +1,798 @@
+{
+    "chat_messages": [
+        {
+            "name": "system",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Follow instructions.",
+                    "id": "text-system",
+                    "created_at": "2026-01-02T03:04:05.000Z",
+                    "finished_at": null
+                }
+            ],
+            "role": "system",
+            "id": "msg-system",
+            "metadata": {},
+            "created_at": "2026-01-02T03:04:05.000Z",
+            "usage": null,
+            "finished_at": null,
+            "finished_reason": null,
+            "structured_output": null,
+            "error": null
+        },
+        {
+            "name": "assistant",
+            "content": [
+                {
+                    "type": "thinking",
+                    "thinking": "Reasoning",
+                    "id": "thinking-1",
+                    "created_at": "2026-01-02T03:04:05.000Z",
+                    "finished_at": null,
+                    "signature": "signed",
+                    "reasoning_item_id": "reasoning-1"
+                },
+                {
+                    "type": "text",
+                    "text": "Answer",
+                    "id": "text-answer",
+                    "created_at": "2026-01-02T03:04:05.000Z",
+                    "finished_at": null
+                },
+                {
+                    "type": "hint",
+                    "hint": "Continue now",
+                    "id": "hint-1",
+                    "source": null,
+                    "created_at": "2026-01-02T03:04:05.000Z",
+                    "finished_at": "2026-01-02T03:04:05.000Z"
+                },
+                {
+                    "type": "tool_call",
+                    "id": "call-1",
+                    "name": "search",
+                    "input": "{\"query\":\"agent\"}",
+                    "state": "pending",
+                    "suggested_rules": [],
+                    "created_at": "2026-01-02T03:04:05.000Z",
+                    "finished_at": null
+                },
+                {
+                    "type": "tool_result",
+                    "id": "call-1",
+                    "name": "search",
+                    "output": [
+                        {
+                            "type": "text",
+                            "text": "Found",
+                            "id": "result-text",
+                            "created_at": "2026-01-02T03:04:05.000Z",
+                            "finished_at": null
+                        },
+                        {
+                            "type": "data",
+                            "id": "image-1",
+                            "source": {
+                                "type": "base64",
+                                "data": "aW1hZ2U=",
+                                "media_type": "image/png"
+                            },
+                            "name": null,
+                            "created_at": "2026-01-02T03:04:05.000Z",
+                            "finished_at": null
+                        }
+                    ],
+                    "state": "running",
+                    "metadata": {},
+                    "created_at": "2026-01-02T03:04:05.000Z",
+                    "finished_at": null
+                }
+            ],
+            "role": "assistant",
+            "id": "msg-assistant",
+            "metadata": {},
+            "created_at": "2026-01-02T03:04:05.000Z",
+            "usage": null,
+            "finished_at": null,
+            "finished_reason": null,
+            "structured_output": null,
+            "error": null
+        }
+    ],
+    "multi_messages": [
+        {
+            "name": "system",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Coordinate.",
+                    "id": "multi-system-text",
+                    "created_at": "2026-01-02T03:04:05.000Z",
+                    "finished_at": null
+                }
+            ],
+            "role": "system",
+            "id": "multi-system",
+            "metadata": {},
+            "created_at": "2026-01-02T03:04:05.000Z",
+            "usage": null,
+            "finished_at": null,
+            "finished_reason": null,
+            "structured_output": null,
+            "error": null
+        },
+        {
+            "name": "alice",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Question",
+                    "id": "multi-alice-text",
+                    "created_at": "2026-01-02T03:04:05.000Z",
+                    "finished_at": null
+                }
+            ],
+            "role": "user",
+            "id": "multi-alice",
+            "metadata": {},
+            "created_at": "2026-01-02T03:04:05.000Z",
+            "usage": null,
+            "finished_at": null,
+            "finished_reason": null,
+            "structured_output": null,
+            "error": null
+        },
+        {
+            "name": "bob",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Reply",
+                    "id": "multi-bob-text",
+                    "created_at": "2026-01-02T03:04:05.000Z",
+                    "finished_at": null
+                }
+            ],
+            "role": "assistant",
+            "id": "multi-bob",
+            "metadata": {},
+            "created_at": "2026-01-02T03:04:05.000Z",
+            "usage": null,
+            "finished_at": null,
+            "finished_reason": null,
+            "structured_output": null,
+            "error": null
+        }
+    ],
+    "outputs": {
+        "openai_chat": [
+            {
+                "role": "system",
+                "name": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Follow instructions."
+                    }
+                ]
+            },
+            {
+                "role": "assistant",
+                "name": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Answer"
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Continue now"
+                    }
+                ]
+            },
+            {
+                "role": "assistant",
+                "name": "assistant",
+                "content": null,
+                "tool_calls": [
+                    {
+                        "id": "call-1",
+                        "type": "function",
+                        "function": {
+                            "name": "search",
+                            "arguments": "{\"query\":\"agent\"}"
+                        }
+                    }
+                ]
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "call-1",
+                "content": "Found\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [Dbfsff927JsARVy9mTSBn8].</system-reminder>",
+                "name": "search"
+            },
+            {
+                "role": "user",
+                "name": "system-reminder",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "<system-reminder>The multimodal data and their identifiers are listed as follows:"
+                    },
+                    {
+                        "type": "text",
+                        "text": "- Dbfsff927JsARVy9mTSBn8 (image file): "
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": "data:image/png;base64,aW1hZ2U="
+                        }
+                    },
+                    {
+                        "type": "text",
+                        "text": "</system-reminder>"
+                    }
+                ]
+            }
+        ],
+        "openai_multi": [
+            {
+                "role": "system",
+                "content": "Coordinate."
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "# Conversation History\nThe content between <history></history> tags contains your conversation history\n<history>\nalice: Question\nbob: Reply\n</history>"
+                    }
+                ]
+            }
+        ],
+        "anthropic_chat": [
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Follow instructions."
+                    }
+                ]
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "thinking",
+                        "thinking": "Reasoning",
+                        "signature": "signed"
+                    },
+                    {
+                        "type": "text",
+                        "text": "Answer"
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Continue now"
+                    }
+                ]
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_use",
+                        "id": "call-1",
+                        "name": "search",
+                        "input": {
+                            "query": "agent"
+                        }
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "tool_result",
+                        "tool_use_id": "call-1",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Found"
+                            },
+                            {
+                                "type": "image",
+                                "source": {
+                                    "type": "base64",
+                                    "media_type": "image/png",
+                                    "data": "aW1hZ2U="
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "anthropic_multi": [
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Coordinate."
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "# Conversation History\nThe content between <history></history> tags contains your conversation history\n<history>\nalice: Question\nbob: Reply\n</history>"
+                    }
+                ]
+            }
+        ],
+        "gemini_chat": [
+            {
+                "role": "user",
+                "parts": [
+                    {
+                        "text": "Follow instructions."
+                    }
+                ]
+            },
+            {
+                "role": "model",
+                "parts": [
+                    {
+                        "thought": true,
+                        "text": "Reasoning"
+                    },
+                    {
+                        "text": "Answer"
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "parts": [
+                    {
+                        "text": "Continue now"
+                    }
+                ]
+            },
+            {
+                "role": "model",
+                "parts": [
+                    {
+                        "function_call": {
+                            "id": "call-1",
+                            "name": "search",
+                            "args": {
+                                "query": "agent"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "parts": [
+                    {
+                        "function_response": {
+                            "id": "call-1",
+                            "name": "search",
+                            "response": {
+                                "output": "Found\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [SXsLbrmkAGf4huJENmxrip].</system-reminder>"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "parts": [
+                    {
+                        "text": "<system-reminder>The multimodal data and their identifiers are listed as follows:"
+                    },
+                    {
+                        "text": "- SXsLbrmkAGf4huJENmxrip (image file): "
+                    },
+                    {
+                        "inline_data": {
+                            "data": "aW1hZ2U=",
+                            "mime_type": "image/png"
+                        }
+                    },
+                    {
+                        "text": "</system-reminder>"
+                    }
+                ]
+            }
+        ],
+        "gemini_multi": [
+            {
+                "role": "user",
+                "parts": [
+                    {
+                        "text": "Coordinate."
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "parts": [
+                    {
+                        "text": "# Conversation History\nThe content between <history></history> tags contains your conversation history\n<history>\nalice: Question\nbob: Reply\n</history>"
+                    }
+                ]
+            }
+        ],
+        "moonshot_chat": [
+            {
+                "role": "system",
+                "name": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Follow instructions."
+                    }
+                ]
+            },
+            {
+                "role": "assistant",
+                "name": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Answer"
+                    }
+                ],
+                "reasoning_content": "Reasoning"
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Continue now"
+                    }
+                ]
+            },
+            {
+                "role": "assistant",
+                "name": "assistant",
+                "content": null,
+                "reasoning_content": "",
+                "tool_calls": [
+                    {
+                        "id": "call-1",
+                        "type": "function",
+                        "function": {
+                            "name": "search",
+                            "arguments": "{\"query\":\"agent\"}"
+                        }
+                    }
+                ]
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "call-1",
+                "content": "Found\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [aGDgz7X7AQUFigicDptioy].</system-reminder>",
+                "name": "search"
+            },
+            {
+                "role": "user",
+                "name": "system-reminder",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "<system-reminder>The multimodal data and their identifiers are listed as follows:"
+                    },
+                    {
+                        "type": "text",
+                        "text": "- aGDgz7X7AQUFigicDptioy (image file): "
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": "data:image/png;base64,aW1hZ2U="
+                        }
+                    },
+                    {
+                        "type": "text",
+                        "text": "</system-reminder>"
+                    }
+                ]
+            }
+        ],
+        "moonshot_multi": [
+            {
+                "role": "system",
+                "content": "Coordinate."
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "# Conversation History\nThe content between <history></history> tags contains your conversation history\n<history>\nalice: Question\nbob: Reply\n</history>"
+                    }
+                ]
+            }
+        ],
+        "ollama_chat": [
+            {
+                "role": "system",
+                "content": "Follow instructions."
+            },
+            {
+                "role": "assistant",
+                "content": "Answer"
+            },
+            {
+                "role": "user",
+                "content": "Continue now"
+            },
+            {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                    {
+                        "function": {
+                            "name": "search",
+                            "arguments": {
+                                "query": "agent"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "role": "tool",
+                "tool_name": "search",
+                "content": "Found\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [UrwgvNHAE4qSiAN8eMsRqx].</system-reminder>"
+            },
+            {
+                "role": "user",
+                "content": "<system-reminder>The multimodal data and their identifiers are listed as follows:\n- UrwgvNHAE4qSiAN8eMsRqx (image file): \n</system-reminder>",
+                "images": ["aW1hZ2U="]
+            }
+        ],
+        "ollama_multi": [
+            {
+                "role": "system",
+                "content": "Coordinate."
+            },
+            {
+                "role": "user",
+                "content": "# Conversation History\nThe content between <history></history> tags contains your conversation history\n<history>\nalice:\nQuestion\nbob:\nReply\n</history>"
+            }
+        ],
+        "dashscope_chat": [
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Follow instructions."
+                    }
+                ]
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Answer"
+                    }
+                ],
+                "reasoning_content": "Reasoning"
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Continue now"
+                    }
+                ]
+            },
+            {
+                "role": "assistant",
+                "content": null,
+                "tool_calls": [
+                    {
+                        "id": "call-1",
+                        "type": "function",
+                        "function": {
+                            "name": "search",
+                            "arguments": "{\"query\":\"agent\"}"
+                        }
+                    }
+                ]
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "call-1",
+                "content": "Found\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [AycH8PiUnZLnTnBP5utLGQ].</system-reminder>",
+                "name": "search"
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "<system-reminder>The multimodal data and their identifiers are listed as follows:"
+                    },
+                    {
+                        "type": "text",
+                        "text": "- AycH8PiUnZLnTnBP5utLGQ (image file): "
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": "data:image/png;base64,aW1hZ2U="
+                        }
+                    },
+                    {
+                        "type": "text",
+                        "text": "</system-reminder>"
+                    }
+                ]
+            }
+        ],
+        "dashscope_multi": [
+            {
+                "role": "system",
+                "content": "Coordinate."
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "# Conversation History\nThe content between <history></history> tags contains your conversation history\n<history>\nalice: Question\nbob: Reply\n</history>"
+                    }
+                ]
+            }
+        ],
+        "deepseek_chat": [
+            {
+                "role": "system",
+                "content": "Follow instructions."
+            },
+            {
+                "role": "assistant",
+                "content": "Answer",
+                "reasoning_content": "Reasoning"
+            },
+            {
+                "role": "user",
+                "content": "Continue now"
+            },
+            {
+                "role": "assistant",
+                "content": null,
+                "reasoning_content": "",
+                "tool_calls": [
+                    {
+                        "id": "call-1",
+                        "type": "function",
+                        "function": {
+                            "name": "search",
+                            "arguments": "{\"query\":\"agent\"}"
+                        }
+                    }
+                ]
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "call-1",
+                "content": "Found\n<system-reminder>A(n) image file is returned and saved locally at: <TEMP_FILE>.</system-reminder>",
+                "name": "search"
+            }
+        ],
+        "deepseek_multi": [
+            {
+                "role": "system",
+                "content": "Coordinate."
+            },
+            {
+                "role": "user",
+                "content": "# Conversation History\nThe content between <history></history> tags contains your conversation history\n<history>\nalice: Question\nbob: Reply\n</history>"
+            }
+        ],
+        "openai_response": [
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "input_text",
+                        "text": "Follow instructions."
+                    }
+                ]
+            },
+            {
+                "type": "reasoning",
+                "id": "reasoning-1",
+                "summary": [
+                    {
+                        "type": "summary_text",
+                        "text": "Reasoning"
+                    }
+                ],
+                "content": []
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "output_text",
+                        "text": "Answer"
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "input_text",
+                        "text": "Continue now"
+                    }
+                ]
+            },
+            {
+                "type": "function_call",
+                "call_id": "call-1",
+                "name": "search",
+                "arguments": "{\"query\":\"agent\"}"
+            },
+            {
+                "type": "function_call_output",
+                "call_id": "call-1",
+                "output": [
+                    {
+                        "type": "input_text",
+                        "text": "Found"
+                    },
+                    {
+                        "type": "input_image",
+                        "image_url": "data:image/png;base64,aW1hZ2U="
+                    }
+                ]
+            }
+        ],
+        "openai_response_multi": [
+            {
+                "role": "system",
+                "content": "Coordinate."
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "input_text",
+                        "text": "# Conversation History\nThe content between <history></history> tags contains your conversation history\n<history>\nalice: Question\nbob: Reply\n</history>"
+                    }
+                ]
+            }
+        ]
+    },
+    "python_commit": "0e972c43dcfdc100c28e8de9ba2e10374d4ac9c7"
+}

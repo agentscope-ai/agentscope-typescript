@@ -1,12 +1,47 @@
+/* eslint-disable jsdoc/require-description, jsdoc/require-returns */
+
+import { mkdtempSync, writeFileSync } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
+
+import { extension } from 'mime-types';
+import { minimatch } from 'minimatch';
+
 import { _generateId, _generateTimestamp } from '../_utils/common';
+import { TextBlock as createTextBlock } from '../message/block';
 import type { DataBlock, TextBlock } from '../message/block';
 import { createMsg } from '../message/message';
+import { getContentBlocks } from '../message/message';
 import type { Msg } from '../message/message';
+
+export interface FormatterOptions {
+    inputTypes?: string[];
+}
+
+export type MessageGroup = ['tool_sequence' | 'agent_message', Msg[]];
 
 /**
  * Base class for message formatters.
  */
 export abstract class FormatterBase {
+    /** MIME patterns accepted by this formatter. */
+    readonly inputTypes: string[];
+
+    /**
+     *
+     * @param options
+     */
+    constructor(options: FormatterOptions = {}) {
+        this.inputTypes = options.inputTypes ?? ['text/plain'];
+    }
+
+    /** Media patterns accepted in addition to text and thinking blocks. */
+    get supportedInputMediaTypes(): string[] {
+        return this.inputTypes.filter(type => {
+            return type !== 'text/plain' && type !== 'application/x-thinking';
+        });
+    }
+
     /**
      * Format the input message objects into the required format by the API.
      *
@@ -15,6 +50,112 @@ export abstract class FormatterBase {
      * @returns A promise that resolves to an array of formatted message objects.
      */
     abstract format({ msgs }: { msgs: Array<Msg> }): Promise<Record<string, unknown>[]>;
+
+    /**
+     * Validate the formatter input before provider-specific conversion.
+     * @param msgs
+     */
+    static assertListOfMsgs(msgs: Msg[]): void {
+        if (!Array.isArray(msgs)) throw new TypeError('Input must be a list of Msg objects.');
+        for (const msg of msgs) {
+            if (!isMsg(msg)) {
+                throw new TypeError(`Expected Msg object, got ${typeof msg} instead.`);
+            }
+        }
+    }
+
+    /**
+     * Convert a Python-compatible tool result and promote supported media.
+     * @param output
+     */
+    convertToolResultToString(
+        output: string | (TextBlock | DataBlock)[]
+    ): [string, (TextBlock | DataBlock)[]] {
+        if (typeof output === 'string') return [output, []];
+
+        const textualOutput: string[] = [];
+        let multimodalData: (TextBlock | DataBlock)[] = [];
+        for (const block of output) {
+            if (block.type === 'text') {
+                textualOutput.push(block.text);
+                continue;
+            }
+
+            const mainType = block.source.media_type.split('/')[0];
+            const supported = this.supportedInputMediaTypes.some(pattern => {
+                return minimatch(block.source.media_type, pattern);
+            });
+            if (supported) {
+                textualOutput.push(
+                    `<system-reminder>A(n) ${mainType} file is returned and will be ` +
+                        `presented to you with the identifier [${block.id}].</system-reminder>`
+                );
+                multimodalData.push(
+                    createTextBlock({ text: `- ${block.id} (${mainType} file): ` }),
+                    block
+                );
+            } else {
+                textualOutput.push(this.convertUnsupportedDataBlockToString(block));
+            }
+        }
+
+        if (multimodalData.length > 0) {
+            multimodalData = [
+                createTextBlock({
+                    text: '<system-reminder>The multimodal data and their identifiers are listed as follows:',
+                }),
+                ...multimodalData,
+                createTextBlock({ text: '</system-reminder>' }),
+            ];
+        }
+        return [textualOutput.join('\n'), multimodalData];
+    }
+
+    /**
+     * Group consecutive tool traffic separately from ordinary agent messages.
+     * @param msgs
+     */
+    protected async *groupMessages(msgs: Msg[]): AsyncGenerator<MessageGroup> {
+        let groupType: MessageGroup[0] | null = null;
+        let group: Msg[] = [];
+        for (const msg of msgs) {
+            const isToolSequence = getContentBlocks(msg).some(block => {
+                return block.type === 'tool_call' || block.type === 'tool_result';
+            });
+            const nextType = isToolSequence ? 'tool_sequence' : 'agent_message';
+            if (groupType === null || groupType === nextType) {
+                groupType = nextType;
+                group.push(msg);
+            } else {
+                yield [groupType, group];
+                groupType = nextType;
+                group = [msg];
+            }
+        }
+        if (groupType !== null) yield [groupType, group];
+    }
+
+    /**
+     *
+     * @param block
+     */
+    protected convertUnsupportedDataBlockToString(block: DataBlock): string {
+        const mainType = block.source.media_type.split('/')[0];
+        if (block.source.type === 'url') {
+            return (
+                `<system-reminder>A(n) ${mainType} file is returned and can be accessed ` +
+                `at the URL: ${block.source.url}.</system-reminder>`
+            );
+        }
+        const suffix = extension(block.source.media_type);
+        const directory = mkdtempSync(join(tmpdir(), 'agentscope-'));
+        const path = join(directory, `tool-result${suffix ? `.${suffix}` : ''}`);
+        writeFileSync(path, Buffer.from(block.source.data, 'base64'));
+        return (
+            `<system-reminder>A(n) ${mainType} file is returned and saved locally at: ` +
+            `${path}.</system-reminder>`
+        );
+    }
 
     /**
      * Convert the tool output to string format for the LLM APIs that only accept text input. If
@@ -138,4 +279,19 @@ export abstract class FormatterBase {
             promotedMsg: createMsg({ name: 'user', content: promotedBlocks, role: 'user' }),
         };
     }
+}
+
+/**
+ *
+ * @param value
+ */
+function isMsg(value: unknown): value is Msg {
+    if (typeof value !== 'object' || value === null) return false;
+    const candidate = value as Partial<Msg>;
+    return (
+        typeof candidate.id === 'string' &&
+        typeof candidate.name === 'string' &&
+        typeof candidate.role === 'string' &&
+        Array.isArray(candidate.content)
+    );
 }

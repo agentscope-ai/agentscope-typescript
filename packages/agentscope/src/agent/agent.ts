@@ -259,7 +259,7 @@ export class Agent {
      * @param blocks
      * @param usage
      */
-    protected _saveToContext(blocks: ContentBlock[], usage?: ChatUsage): void {
+    protected _saveToContext(blocks: ContentBlock[], usage?: ChatUsage | null): void {
         const msgUsage: Msg['usage'] = usage
             ? {
                   input_tokens: usage.inputTokens,

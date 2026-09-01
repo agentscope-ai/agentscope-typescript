@@ -1,7 +1,7 @@
 import { Agent } from './agent';
 import { AgentEvent, EventType, UserConfirmResultEvent } from '../event';
-import { ContentBlock, Msg } from '../message';
-import { ChatModelBase, ChatResponse } from '../model';
+import { Msg } from '../message';
+import { ChatModelBase, ChatResponse, ChatResponseBlock } from '../model';
 import { ChatModelRequestOptions } from '../model/base';
 import { Bash, Edit, Glob, Grep, Read, Toolkit, Write } from '../tool';
 import { ToolChoice, ToolSchema } from '../type';
@@ -17,7 +17,7 @@ class MockChatModel extends ChatModelBase {
     _formatToolSchemas(_tools: ToolSchema[]): unknown[] {
         throw new Error('Method not implemented.');
     }
-    public mockContent: ContentBlock[];
+    public mockContent: ChatResponseBlock[];
     /**
      * Initialize a new instance of the MockChatModel class.
      */
@@ -37,12 +37,12 @@ class MockChatModel extends ChatModelBase {
         _modelName: string,
         _options: ChatModelRequestOptions<unknown>
     ): Promise<ChatResponse> {
-        return {
-            type: 'chat',
+        return new ChatResponse({
             id: 'mock-id',
             createdAt: new Date().toISOString(),
             content: [...this.mockContent],
-        } as ChatResponse;
+            isLast: true,
+        });
     }
 
     /**

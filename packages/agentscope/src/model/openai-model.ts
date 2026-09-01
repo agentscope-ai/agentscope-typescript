@@ -132,21 +132,20 @@ export class OpenAIChatModel extends ChatModelBase {
 
         // handling usage
         const usage = response.usage
-            ? {
-                  type: 'chat_usage',
+            ? new ChatUsage({
                   inputTokens: response.usage.prompt_tokens,
                   outputTokens: response.usage.completion_tokens,
                   time: (Date.now() - startTime) / 1000,
-              }
-            : undefined;
+              })
+            : null;
 
-        return {
-            type: 'chat',
+        return new ChatResponse({
             id: response.id,
             createdAt: new Date(response.created * 1000).toISOString(),
             content: blocks,
             usage,
-        } as ChatResponse;
+            isLast: true,
+        });
     }
 
     /**
@@ -256,25 +255,24 @@ export class OpenAIChatModel extends ChatModelBase {
                 // Create a delta ChatResponse object
                 const deltaBlocks = this._accDataToBlocks(deltaText, deltaToolCalls);
 
-                yield {
-                    type: 'chat',
+                yield new ChatResponse({
                     id: responseId || _generateId(),
                     createdAt: createdTimestamp
                         ? new Date(createdTimestamp * 1000).toISOString()
                         : _generateTimestamp(),
                     content: deltaBlocks,
                     usage: lastUsage,
-                } as ChatResponse;
+                    isLast: false,
+                });
             }
 
             // Handle usage information (typically in the last chunk)
             if (chunk.usage) {
-                lastUsage = {
-                    type: 'chat_usage',
+                lastUsage = new ChatUsage({
                     inputTokens: chunk.usage.prompt_tokens || 0,
                     outputTokens: chunk.usage.completion_tokens || 0,
                     time: (Date.now() - startTime) / 1000,
-                };
+                });
             }
         }
 
@@ -292,15 +290,15 @@ export class OpenAIChatModel extends ChatModelBase {
         });
 
         const blocks = this._accDataToBlocks(accText, finalToolCalls);
-        return {
-            type: 'chat',
+        return new ChatResponse({
             id: responseId || _generateId(),
             createdAt: createdTimestamp
                 ? new Date(createdTimestamp * 1000).toISOString()
                 : _generateTimestamp(),
             content: blocks,
             usage: lastUsage,
-        } as ChatResponse;
+            isLast: true,
+        });
     }
 
     /**

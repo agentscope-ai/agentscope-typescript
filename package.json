@@ -6,6 +6,7 @@
     "scripts": {
         "build:agentscope": "pnpm --filter @agentscope-ai/agentscope build",
         "build:desktop": "cd apps/desktop && pnpm build",
+        "cards:generate": "node scripts/parity/generate-model-cards.mjs",
         "dev:agentscope": "pnpm --filter @agentscope-ai/agentscope dev",
         "dev:desktop": "cd apps/desktop && pnpm dev",
         "parity:check": "node scripts/parity/check-manifest.mjs",
@@ -40,6 +41,7 @@
         "husky": "^9.1.7",
         "lint-staged": "^16.2.7",
         "prettier": "^3.7.4",
-        "typescript": "^5.5.3"
+        "typescript": "^5.5.3",
+        "yaml": "^2.8.1"
     }
 }

@@ -2165,99 +2165,275 @@
             "sha256": "f3aadfed7a8b39bb4be5f0376b98b9ffe48fad092049a60ef64fbc68455b08f0",
             "module": "formatter",
             "typescriptTarget": "packages/agentscope/src/formatter",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/formatter_anthropic_test.py",
+                "tests/formatter_dashscope_test.py",
+                "tests/formatter_deepseek_test.py",
+                "tests/formatter_gemini_test.py",
+                "tests/formatter_moonshot_test.py",
+                "tests/formatter_ollama_test.py",
+                "tests/formatter_openai_chat_test.py",
+                "tests/formatter_openai_response_test.py",
+                "tests/formatter_openai_response_tool_result_test.py",
+                "tests/formatter_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/formatter/dashscope-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/openai-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/xai-formatter.test.ts",
+                "packages/agentscope/test/parity/formatter.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/formatter/_anthropic_formatter.py",
             "sha256": "f75b17c2de7475177a272c3923c774f882de314cd4ef67b65eecc8ad662a4db1",
             "module": "formatter",
             "typescriptTarget": "packages/agentscope/src/formatter",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/formatter_anthropic_test.py",
+                "tests/formatter_dashscope_test.py",
+                "tests/formatter_deepseek_test.py",
+                "tests/formatter_gemini_test.py",
+                "tests/formatter_moonshot_test.py",
+                "tests/formatter_ollama_test.py",
+                "tests/formatter_openai_chat_test.py",
+                "tests/formatter_openai_response_test.py",
+                "tests/formatter_openai_response_tool_result_test.py",
+                "tests/formatter_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/formatter/dashscope-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/openai-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/xai-formatter.test.ts",
+                "packages/agentscope/test/parity/formatter.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/formatter/_dashscope_formatter.py",
             "sha256": "5a924531f06c22fd7dbbc30d0302c33c1a1c10cb68aa6a87cfb0cdecadad2210",
             "module": "formatter",
             "typescriptTarget": "packages/agentscope/src/formatter",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/formatter_anthropic_test.py",
+                "tests/formatter_dashscope_test.py",
+                "tests/formatter_deepseek_test.py",
+                "tests/formatter_gemini_test.py",
+                "tests/formatter_moonshot_test.py",
+                "tests/formatter_ollama_test.py",
+                "tests/formatter_openai_chat_test.py",
+                "tests/formatter_openai_response_test.py",
+                "tests/formatter_openai_response_tool_result_test.py",
+                "tests/formatter_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/formatter/dashscope-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/openai-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/xai-formatter.test.ts",
+                "packages/agentscope/test/parity/formatter.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/formatter/_deepseek_formatter.py",
             "sha256": "1fd6ae76f6c7ec3436629e51c306bbf9cb6951ddec9c2660e3acd014e0b0d82a",
             "module": "formatter",
             "typescriptTarget": "packages/agentscope/src/formatter",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/formatter_anthropic_test.py",
+                "tests/formatter_dashscope_test.py",
+                "tests/formatter_deepseek_test.py",
+                "tests/formatter_gemini_test.py",
+                "tests/formatter_moonshot_test.py",
+                "tests/formatter_ollama_test.py",
+                "tests/formatter_openai_chat_test.py",
+                "tests/formatter_openai_response_test.py",
+                "tests/formatter_openai_response_tool_result_test.py",
+                "tests/formatter_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/formatter/dashscope-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/openai-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/xai-formatter.test.ts",
+                "packages/agentscope/test/parity/formatter.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/formatter/_formatter_base.py",
             "sha256": "08f204bff43ffca518cae88423a794f295dcbeca0e3c4090aa8b24407559521b",
             "module": "formatter",
             "typescriptTarget": "packages/agentscope/src/formatter",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/formatter_anthropic_test.py",
+                "tests/formatter_dashscope_test.py",
+                "tests/formatter_deepseek_test.py",
+                "tests/formatter_gemini_test.py",
+                "tests/formatter_moonshot_test.py",
+                "tests/formatter_ollama_test.py",
+                "tests/formatter_openai_chat_test.py",
+                "tests/formatter_openai_response_test.py",
+                "tests/formatter_openai_response_tool_result_test.py",
+                "tests/formatter_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/formatter/dashscope-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/openai-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/xai-formatter.test.ts",
+                "packages/agentscope/test/parity/formatter.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/formatter/_gemini_formatter.py",
             "sha256": "4edc11d2dc28f7b5e4e5564ba9dfe183edeef122219381c2e7aadbf6e72f7667",
             "module": "formatter",
             "typescriptTarget": "packages/agentscope/src/formatter",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/formatter_anthropic_test.py",
+                "tests/formatter_dashscope_test.py",
+                "tests/formatter_deepseek_test.py",
+                "tests/formatter_gemini_test.py",
+                "tests/formatter_moonshot_test.py",
+                "tests/formatter_ollama_test.py",
+                "tests/formatter_openai_chat_test.py",
+                "tests/formatter_openai_response_test.py",
+                "tests/formatter_openai_response_tool_result_test.py",
+                "tests/formatter_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/formatter/dashscope-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/openai-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/xai-formatter.test.ts",
+                "packages/agentscope/test/parity/formatter.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/formatter/_moonshot_formatter.py",
             "sha256": "79c2969e27820621c0dd0a070582f33b43d2a8e19de86bb9df2eee78a9e05198",
             "module": "formatter",
             "typescriptTarget": "packages/agentscope/src/formatter",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/formatter_anthropic_test.py",
+                "tests/formatter_dashscope_test.py",
+                "tests/formatter_deepseek_test.py",
+                "tests/formatter_gemini_test.py",
+                "tests/formatter_moonshot_test.py",
+                "tests/formatter_ollama_test.py",
+                "tests/formatter_openai_chat_test.py",
+                "tests/formatter_openai_response_test.py",
+                "tests/formatter_openai_response_tool_result_test.py",
+                "tests/formatter_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/formatter/dashscope-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/openai-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/xai-formatter.test.ts",
+                "packages/agentscope/test/parity/formatter.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/formatter/_ollama_formatter.py",
             "sha256": "3aa0b6967726d064ad8b2bbf0541509b5250244a5280ad788b89f75cd489d783",
             "module": "formatter",
             "typescriptTarget": "packages/agentscope/src/formatter",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/formatter_anthropic_test.py",
+                "tests/formatter_dashscope_test.py",
+                "tests/formatter_deepseek_test.py",
+                "tests/formatter_gemini_test.py",
+                "tests/formatter_moonshot_test.py",
+                "tests/formatter_ollama_test.py",
+                "tests/formatter_openai_chat_test.py",
+                "tests/formatter_openai_response_test.py",
+                "tests/formatter_openai_response_tool_result_test.py",
+                "tests/formatter_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/formatter/dashscope-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/openai-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/xai-formatter.test.ts",
+                "packages/agentscope/test/parity/formatter.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/formatter/_openai_formatter.py",
             "sha256": "959163bf8aee648c2b8bdf1562a1b5c2f93d78b96b7a3aef190695e729980143",
             "module": "formatter",
             "typescriptTarget": "packages/agentscope/src/formatter",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/formatter_anthropic_test.py",
+                "tests/formatter_dashscope_test.py",
+                "tests/formatter_deepseek_test.py",
+                "tests/formatter_gemini_test.py",
+                "tests/formatter_moonshot_test.py",
+                "tests/formatter_ollama_test.py",
+                "tests/formatter_openai_chat_test.py",
+                "tests/formatter_openai_response_test.py",
+                "tests/formatter_openai_response_tool_result_test.py",
+                "tests/formatter_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/formatter/dashscope-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/openai-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/xai-formatter.test.ts",
+                "packages/agentscope/test/parity/formatter.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/formatter/_openai_response_formatter.py",
             "sha256": "586e2c9a917b72454171d63c47b50d1f7ea5c720c7125418af7fc5599845442e",
             "module": "formatter",
             "typescriptTarget": "packages/agentscope/src/formatter",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/formatter_anthropic_test.py",
+                "tests/formatter_dashscope_test.py",
+                "tests/formatter_deepseek_test.py",
+                "tests/formatter_gemini_test.py",
+                "tests/formatter_moonshot_test.py",
+                "tests/formatter_ollama_test.py",
+                "tests/formatter_openai_chat_test.py",
+                "tests/formatter_openai_response_test.py",
+                "tests/formatter_openai_response_tool_result_test.py",
+                "tests/formatter_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/formatter/dashscope-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/openai-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/xai-formatter.test.ts",
+                "packages/agentscope/test/parity/formatter.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/formatter/_xai_formatter.py",
             "sha256": "f87addddd3c272d3e3df0d06b8cdc20104b5ea278e7fd6124425140c20061ebb",
             "module": "formatter",
             "typescriptTarget": "packages/agentscope/src/formatter",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/formatter_anthropic_test.py",
+                "tests/formatter_dashscope_test.py",
+                "tests/formatter_deepseek_test.py",
+                "tests/formatter_gemini_test.py",
+                "tests/formatter_moonshot_test.py",
+                "tests/formatter_ollama_test.py",
+                "tests/formatter_openai_chat_test.py",
+                "tests/formatter_openai_response_test.py",
+                "tests/formatter_openai_response_tool_result_test.py",
+                "tests/formatter_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/formatter/dashscope-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/openai-chat-formatter.test.ts",
+                "packages/agentscope/src/formatter/xai-formatter.test.ts",
+                "packages/agentscope/test/parity/formatter.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/mcp/__init__.py",
