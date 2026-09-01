@@ -139,3 +139,26 @@ export {
     DaytonaWorkspaceOptions,
     DaytonaWorkspace,
 } from './daytona';
+export {
+    K8sClientDriver,
+    K8sContainerStatus,
+    K8sExecOutput,
+    K8sExecRequest,
+    K8sObjectMetadata,
+    K8sPersistentVolumeClaim,
+    K8sPod,
+    K8sPodCondition,
+    createK8sClient,
+} from './k8s-driver';
+export {
+    DEFAULT_K8S_GATEWAY_PORT,
+    DEFAULT_K8S_IMAGE,
+    K8S_GATEWAY_HOME,
+    K8S_POD_WORKDIR,
+    K8S_SYSTEM_DEPS,
+    K8sBackendOptions,
+    K8sBackend,
+    K8sWorkspaceOptions,
+    K8sWorkspace,
+    k8sSafeName,
+} from './k8s';

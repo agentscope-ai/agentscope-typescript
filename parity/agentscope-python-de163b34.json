@@ -5744,36 +5744,48 @@
             "sha256": "f3defea55338d1d4b1997d25355c17a7f93f4221565f7379a1077a7a5fb3b57a",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_k8s_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/k8s-driver.test.ts",
+                "packages/agentscope/src/workspace/k8s.live.test.ts",
+                "packages/agentscope/src/workspace/k8s.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_k8s/_constants.py",
             "sha256": "e49f279db0ee48bdaafc092e6ee25441a17390c31dfc91c8e54107af2481ce13",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_k8s_test.py"],
+            "typescriptTests": ["packages/agentscope/src/workspace/k8s.parity.test.ts"]
         },
         {
             "path": "src/agentscope/workspace/_k8s/_k8s_backend.py",
             "sha256": "a5e0981611cfc7d0ecf3e0418cad79643b94d6589472f68a385f9add5b85a734",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_k8s_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/k8s-driver.test.ts",
+                "packages/agentscope/src/workspace/k8s.live.test.ts",
+                "packages/agentscope/src/workspace/k8s.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_k8s/_k8s_workspace.py",
             "sha256": "cfe16d68ba6e45ee42f65042cb4179ea5755e4345943bde0b1065cb9f68faf62",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_k8s_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/k8s-driver.test.ts",
+                "packages/agentscope/src/workspace/k8s.live.test.ts",
+                "packages/agentscope/src/workspace/k8s.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_local_workspace.py",
