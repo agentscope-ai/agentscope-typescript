@@ -20,6 +20,11 @@
             "import": "./dist/access/index.mjs",
             "require": "./dist/access/index.js"
         },
+        "./hub": {
+            "types": "./dist/hub/index.d.ts",
+            "import": "./dist/hub/index.mjs",
+            "require": "./dist/hub/index.js"
+        },
         "./message-bus": {
             "types": "./dist/message-bus/index.d.ts",
             "import": "./dist/message-bus/index.mjs",
@@ -71,6 +76,7 @@
         "@agentscope-ai/agentscope": "workspace:^0.0.15",
         "@cfworker/json-schema": "^4.1.1",
         "cron-parser": "^5.5.0",
+        "gray-matter": "^4.0.3",
         "mime-types": "^3.0.2",
         "zod": "^4.3.6"
     },

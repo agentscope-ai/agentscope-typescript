@@ -3,6 +3,7 @@ import { defineConfig } from 'tsup';
 export default defineConfig({
     entry: {
         'access/index': 'src/access/index.ts',
+        'hub/index': 'src/hub/index.ts',
         index: 'src/index.ts',
         'manager/index': 'src/manager/index.ts',
         'middleware/index': 'src/middleware/index.ts',

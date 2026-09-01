@@ -1466,99 +1466,114 @@
             "sha256": "bd24a7b5d3e1a41428351a3ab0329a5d85ea4ac61e769f8183642192024be3e3",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/hub",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/hub_card_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/hub-card.parity.test.ts"]
         },
         {
             "path": "src/agentscope/app/hub/_base.py",
             "sha256": "0f7d32860b72fcb152c9dd6d362c729684957a92d9cb67e83b95702d813b01f9",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/hub",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/hub_card_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/hub-card.parity.test.ts"]
         },
         {
             "path": "src/agentscope/app/hub/_error.py",
             "sha256": "46b9921caf22aff32df03659b52c3487d56894bb2318a94c5f0c44772db5631c",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/hub",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/hub_github_test.py", "tests/hub_claw_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/hub-network.test.ts"]
         },
         {
             "path": "src/agentscope/app/hub/_mcp/__init__.py",
             "sha256": "1602c30f3caaf55690361c920c04c7f2ef95332a5e5479b808d49aa4629d7916",
             "module": "app",
-            "typescriptTarget": "packages/agentscope-service/src/hub/-mcp",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope-service/src/hub/mcp",
+            "status": "verified",
+            "pythonTests": ["tests/hub_github_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/hub-github.parity.test.ts"]
         },
         {
             "path": "src/agentscope/app/hub/_mcp/_base.py",
             "sha256": "516ee88dbb537bad4f5f580af749f3ad5b08b01e6a818783cd419740060a334d",
             "module": "app",
-            "typescriptTarget": "packages/agentscope-service/src/hub/-mcp",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope-service/src/hub/mcp",
+            "status": "verified",
+            "pythonTests": ["tests/hub_github_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/hub-github.parity.test.ts"]
         },
         {
             "path": "src/agentscope/app/hub/_mcp/_card.py",
             "sha256": "9cd788c8231c1cc2dc1e47e4a1070dfc1b93ace4e72a049e98528e30403c518b",
             "module": "app",
-            "typescriptTarget": "packages/agentscope-service/src/hub/-mcp",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope-service/src/hub/mcp",
+            "status": "verified",
+            "pythonTests": ["tests/hub_card_test.py", "tests/hub_github_test.py"],
+            "typescriptTests": [
+                "packages/agentscope-service/test/hub-card.parity.test.ts",
+                "packages/agentscope-service/test/hub-github.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/hub/_mcp/_github_hub.py",
             "sha256": "f222e138178a4e3b418b0bee20184062b555a736eb745104e7134eefce13e419",
             "module": "app",
-            "typescriptTarget": "packages/agentscope-service/src/hub/-mcp",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope-service/src/hub/mcp",
+            "status": "verified",
+            "pythonTests": ["tests/hub_github_test.py"],
+            "typescriptTests": [
+                "packages/agentscope-service/test/hub-github.parity.test.ts",
+                "packages/agentscope-service/test/hub-network.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/hub/_skill/__init__.py",
             "sha256": "64fd336b0f5893346538e5ab7f8ee9388c8445dce7643e2830e372766ebd6ba9",
             "module": "app",
-            "typescriptTarget": "packages/agentscope-service/src/hub/-skill",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope-service/src/hub/skill",
+            "status": "verified",
+            "pythonTests": ["tests/hub_claw_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/hub-claw.parity.test.ts"]
         },
         {
             "path": "src/agentscope/app/hub/_skill/_base.py",
             "sha256": "2b7d28860a71029ad092099a51b6c4a6af4849d0bfcbe1fd2d17a3a643588928",
             "module": "app",
-            "typescriptTarget": "packages/agentscope-service/src/hub/-skill",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope-service/src/hub/skill",
+            "status": "verified",
+            "pythonTests": ["tests/hub_claw_test.py"],
+            "typescriptTests": [
+                "packages/agentscope-service/test/hub-claw.parity.test.ts",
+                "packages/agentscope-service/test/hub-network.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/hub/_skill/_card.py",
             "sha256": "6ca215b5a10896a00aa28415fd9b603a5ff47a8c8e21732768c1107c5b3d8061",
             "module": "app",
-            "typescriptTarget": "packages/agentscope-service/src/hub/-skill",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope-service/src/hub/skill",
+            "status": "verified",
+            "pythonTests": ["tests/hub_card_test.py", "tests/hub_claw_test.py"],
+            "typescriptTests": [
+                "packages/agentscope-service/test/hub-card.parity.test.ts",
+                "packages/agentscope-service/test/hub-claw.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/hub/_skill/_claw_hub.py",
             "sha256": "6d4dd8d9227774cd2023c54b29260724397b528653f029198f8b4ef18dd30621",
             "module": "app",
-            "typescriptTarget": "packages/agentscope-service/src/hub/-skill",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope-service/src/hub/skill",
+            "status": "verified",
+            "pythonTests": ["tests/hub_claw_test.py"],
+            "typescriptTests": [
+                "packages/agentscope-service/test/hub-claw.parity.test.ts",
+                "packages/agentscope-service/test/hub-network.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/message_bus/__init__.py",
