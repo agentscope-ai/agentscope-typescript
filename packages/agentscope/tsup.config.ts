@@ -18,6 +18,7 @@ export default defineConfig({
         'storage/index': 'src/storage/index.ts',
         'state/index': 'src/state/index.ts',
         'permission/index': 'src/permission/index.ts',
+        'skill/index': 'src/skill/index.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,

@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/require-jsdoc */
+
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -5,27 +7,58 @@ import { Validator } from '@cfworker/json-schema';
 import matter from 'gray-matter';
 import { z } from 'zod';
 
-import { _generateId, _generateTimestamp, _jsonLoadsWithRepair } from '../_utils';
+import {
+    _describeException,
+    _generateId,
+    _generateTimestamp,
+    _jsonLoadsWithRepair,
+} from '../_utils';
+import {
+    DeveloperOrientedException,
+    ToolGroupInactiveError,
+    ToolNotFoundError,
+} from '../exception';
+import { logger } from '../logger';
+import { MCPClient } from '../mcp/client';
 import { HTTPMCPClient } from '../mcp/http';
 import { StdioMCPClient } from '../mcp/stdio';
 import type { ToolCallBlock } from '../message/block';
+import { TextBlock } from '../message/block';
+import { LocalSkillLoader, Skill, SkillLoaderBase } from '../skill';
+import type { AgentState } from '../state';
 import type { ToolInputSchema, ToolSchema } from '../type';
+import { ToolBase } from './base';
 import type { Tool } from './base';
-import { createToolResponse, isToolResponse, ToolResponse } from './response';
+import { DEFAULT_META_TOOL_RESPONSE_TEMPLATE, ResetTools, SkillViewer } from './meta';
+import { createToolResponse, isToolResponse, ToolChunk, ToolResponse } from './response';
+import { ToolGroup, ToolGroupMCPClient } from './tool-group';
+import { RegisteredTool } from './types';
 
-interface RegisteredTool extends Tool {
+interface LegacyRegisteredTool extends Tool {
     type: 'function' | 'mcp';
     mcpName?: string;
 }
+
+export const DEFAULT_SKILL_INSTRUCTION = `<agent-skills>
+Skills are a collection of instructions, scripts, and resources to extend your capabilities.
+
+**IMPORTANT**: Skills are NOT tools, and you cannot call a skill directly. To use a skill, you MUST use the \`Skill\` tool to read the skill's full instructions, and then follow those instructions to use the tools and resources provided by the skill.
+
+# Available Skills:`;
 
 /**
  * The toolkit module in AgentScope, which is responsible for registering tool functions, MCP, and agent skills.
  * It also provides group-wise management of tools.
  */
 export class Toolkit {
-    tools: RegisteredTool[];
+    tools: LegacyRegisteredTool[];
     skills: string[];
     skillDirs: string[];
+    toolGroups: ToolGroup[];
+    builtinMetaTool: RegisteredTool;
+    builtinSkillViewer: RegisteredTool;
+    readonly metaToolResponseTemplate: string;
+    readonly skillInstructionTemplate: string;
 
     // The cache mapping from the skill name to its corresponding tool name in the toolkit.
     private _skillCache: { [name: string]: string };
@@ -37,14 +70,34 @@ export class Toolkit {
      * @param config.skills - An array of file paths pointing to individual skills.
      * @param config.skillDirs - An array of directory paths, where each directory can contain multiple skills in its subdirectories.
      * @param config.builtInSkillTool - A boolean flag indicating whether to include the built-in skill tool for reading SKILL.md files.
+     * @param config.skillsOrLoaders
+     * @param config.mcps
+     * @param config.toolGroups
+     * @param config.metaToolResponseTemplate
+     * @param config.skillInstructionTemplate
      */
     constructor(config?: {
-        tools?: Tool[];
+        tools?: Array<Tool | ToolBase>;
         skills?: string[];
         skillDirs?: string[];
         builtInSkillTool?: boolean;
+        skillsOrLoaders?: Array<string | Skill | SkillLoaderBase>;
+        mcps?: ToolGroupMCPClient[];
+        toolGroups?: ToolGroup[];
+        metaToolResponseTemplate?: string;
+        skillInstructionTemplate?: string;
     }) {
-        const { tools = [], skills = [], skillDirs = [], builtInSkillTool = true } = config || {};
+        const {
+            tools = [],
+            skills = [],
+            skillDirs = [],
+            builtInSkillTool = true,
+            skillsOrLoaders = [],
+            mcps = [],
+            toolGroups = [],
+            metaToolResponseTemplate = DEFAULT_META_TOOL_RESPONSE_TEMPLATE,
+            skillInstructionTemplate = DEFAULT_SKILL_INSTRUCTION,
+        } = config || {};
 
         this.tools = [];
 
@@ -65,17 +118,58 @@ Usage:
             });
         }
 
-        tools.map(tool => {
-            this.tools.push({
-                type: 'function',
-                ...tool,
+        tools
+            .filter((tool): tool is Tool => !(tool instanceof ToolBase))
+            .map(tool => {
+                this.tools.push({
+                    type: 'function',
+                    ...tool,
+                });
             });
-        });
+        tools
+            .filter((tool): tool is ToolBase => tool instanceof ToolBase)
+            .forEach(tool => this.tools.push(adaptToolBaseToLegacy(tool)));
 
         this.skills = skills;
         this.skillDirs = skillDirs;
 
         this._skillCache = {};
+
+        if (toolGroups.some(group => group.name === 'basic')) {
+            throw new Error(
+                "The 'basic' tool group is reserved for the default tool group. " +
+                    "Don't include 'basic' in the toolGroups argument."
+            );
+        }
+        this.toolGroups = [
+            new ToolGroup({
+                name: 'basic',
+                tools: tools.filter((tool): tool is ToolBase => tool instanceof ToolBase),
+                skillsOrLoaders: [
+                    ...skillsOrLoaders,
+                    ...skills.map(directory => new LocalSkillLoader({ directory })),
+                    ...skillDirs.map(
+                        directory => new LocalSkillLoader({ directory, scanSubdir: true })
+                    ),
+                ],
+                mcps,
+            }),
+            ...toolGroups,
+        ];
+        if (new Set(this.toolGroups.map(group => group.name)).size !== this.toolGroups.length) {
+            throw new Error('Tool groups must not contain duplicate tool groups.');
+        }
+        this.metaToolResponseTemplate = metaToolResponseTemplate;
+        this.skillInstructionTemplate = skillInstructionTemplate;
+        this.builtinMetaTool = new RegisteredTool({
+            tool: new ResetTools({
+                groups: this.toolGroups,
+                responseTemplate: metaToolResponseTemplate,
+            }),
+        });
+        this.builtinSkillViewer = new RegisteredTool({
+            tool: new SkillViewer(groups => this.getAvailableSkills(groups)),
+        });
     }
 
     /**
@@ -109,7 +203,7 @@ Usage:
         disabledTools = [],
         requireUserConfirm = false,
     }: {
-        client: HTTPMCPClient | StdioMCPClient;
+        client: HTTPMCPClient | StdioMCPClient | MCPClient;
         enabledTools?: string[];
         disabledTools?: string[];
         requireUserConfirm?: boolean;
@@ -120,17 +214,32 @@ Usage:
         tools
             .filter(
                 tool =>
-                    !(enabledTools && !enabledTools.includes(tool.name)) &&
-                    !disabledTools.includes(tool.name)
+                    !(
+                        enabledTools &&
+                        !enabledTools.includes(tool.name) &&
+                        !enabledTools.includes(tool.originalName)
+                    ) &&
+                    !disabledTools.includes(tool.name) &&
+                    !disabledTools.includes(tool.originalName)
             )
             .forEach(tool => {
                 this.tools.push({
                     type: 'mcp',
                     mcpName: client.name,
-                    ...tool,
+                    name: tool.originalName,
+                    description: tool.description,
+                    inputSchema: tool.inputSchema,
+                    call: async input => {
+                        const result = await tool.call(input);
+                        return new ToolResponse({
+                            content: result.content,
+                            state: result.state === 'error' ? 'error' : 'success',
+                            metadata: result.metadata,
+                        });
+                    },
                     requireUserConfirm,
                 });
-                appendTools.push(tool.name);
+                appendTools.push(tool.originalName);
             });
         console.log(`Registered tools from MCP client '${client.name}': ${appendTools.join(', ')}`);
         return this;
@@ -391,10 +500,239 @@ Usage:
             });
         }
 
-        return {
+        return new ToolResponse({
             ...finalRes,
             content: cleanedContent,
-        };
+        });
+    }
+
+    /**
+     * Get schemas for the basic and requested active groups.
+     * @param options Group filter.
+     * @param options.groups
+     * @returns Model-facing function schemas.
+     */
+    async getToolSchemas(options: { groups?: string[] } = {}): Promise<ToolSchema[]> {
+        return [...(await this.getAvailableTools(options.groups)).values()].map(tool =>
+            tool.getToolSchema()
+        );
+    }
+
+    /**
+     * Execute a ToolBase and yield incremental chunks followed by one final response.
+     * @param toolCall Parsed model tool-call block.
+     * @param state Current agent state for group and state injection.
+     */
+    async *callTool(
+        toolCall: ToolCallBlock,
+        state: AgentState
+    ): AsyncGenerator<ToolChunk | ToolResponse, void> {
+        const response = new ToolResponse({ id: toolCall.id });
+        const available = await this.getAvailableTools(state.toolContext.activatedGroups);
+        const registered = available.get(toolCall.name);
+        if (!registered) {
+            const all = await this.getAvailableTools(this.toolGroups.map(group => group.name));
+            const known = all.get(toolCall.name);
+            const result = known
+                ? new ToolChunk({
+                      content: [
+                          TextBlock({
+                              text:
+                                  `ToolGroupInactiveError: The tool '${toolCall.name}' in group ` +
+                                  `'${known.group}' is currently inactive. You should first activate ` +
+                                  `the group by calling the '${this.builtinMetaTool.tool.name}' tool.`,
+                          }),
+                      ],
+                      state: 'error',
+                  })
+                : new ToolChunk({
+                      content: [
+                          TextBlock({
+                              text: `ToolNotFoundError: The tool named '${toolCall.name}' doesn't exist.`,
+                          }),
+                      ],
+                      state: 'error',
+                  });
+            yield result;
+            response.appendChunk(result);
+            yield response;
+            return;
+        }
+
+        try {
+            const input = _jsonLoadsWithRepair(toolCall.input) as Record<string, unknown>;
+            const tool = registered.tool as ToolBase;
+            if (tool.isStateInjected && !tool.isMcp && !tool.isExternalTool) {
+                input._agent_state = state;
+            }
+            const result = await tool.invoke(input);
+            if (result instanceof ToolChunk) {
+                yield result;
+                response.appendChunk(result);
+            } else {
+                for await (const chunk of result) {
+                    yield chunk;
+                    response.appendChunk(chunk);
+                }
+            }
+        } catch (error) {
+            if (error instanceof DeveloperOrientedException) throw error;
+            const chunk = new ToolChunk({
+                content: [
+                    TextBlock({ text: error instanceof Error ? error.message : String(error) }),
+                ],
+                state: 'error',
+            });
+            yield chunk;
+            response.appendChunk(chunk);
+        }
+        yield response;
+    }
+
+    /**
+     * Build instructions for every skill visible in active groups.
+     * @param options Optional active-group filter; omitted includes all groups.
+     * @param options.activatedGroups
+     * @returns The skill prompt, or null when no skill is available.
+     */
+    async getSkillInstructions(
+        options: { activatedGroups?: string[] } = {}
+    ): Promise<string | null> {
+        const groups = options.activatedGroups ?? this.toolGroups.map(group => group.name);
+        const skills = [...(await this.getAvailableSkills(groups)).values()];
+        if (skills.length === 0) return null;
+        return (
+            this.skillInstructionTemplate +
+            skills
+                .map(
+                    skill =>
+                        `\n<skill>\n<name>${skill.name}</name>\n` +
+                        `<description>${skill.description}</description>\n` +
+                        `<dir>${skill.dir}</dir>\n</skill>`
+                )
+                .join('') +
+            '\n</agent-skills>'
+        );
+    }
+
+    /**
+     * Resolve a currently active tool or throw an agent-oriented error.
+     * @param toolName Tool name.
+     * @param activatedGroups Active group names.
+     * @returns The available tool.
+     */
+    async checkToolAvailable(toolName: string, activatedGroups: string[]): Promise<ToolBase> {
+        const active = await this.getAvailableTools(activatedGroups);
+        const result = active.get(toolName);
+        if (result) return result.tool as ToolBase;
+        const all = await this.getAvailableTools(this.toolGroups.map(group => group.name));
+        const known = all.get(toolName);
+        if (known) {
+            throw new ToolGroupInactiveError(
+                `ToolGroupInactiveError: The tool '${toolName}' in group '${known.group}' ` +
+                    `is currently inactive. You should first activate the group by calling ` +
+                    `the '${this.builtinMetaTool.tool.name}' tool.`
+            );
+        }
+        throw new ToolNotFoundError(
+            `ToolNotFoundError: The tool named '${toolName}' doesn't exist.`
+        );
+    }
+
+    /**
+     * Get a tool regardless of group activation.
+     * @param name Tool name.
+     * @returns The tool, or null when absent.
+     */
+    async getTool(name: string): Promise<ToolBase | null> {
+        const all = await this.getAvailableTools(this.toolGroups.map(group => group.name));
+        return (all.get(name)?.tool as ToolBase | undefined) ?? null;
+    }
+
+    /** Clear all new-style groups. */
+    clear(): void {
+        this.toolGroups.splice(0);
+    }
+
+    /**
+     * Add or replace tools in one group.
+     * @param tool Tool or tools to add.
+     * @param groupName Target group.
+     */
+    async addTool(tool: ToolBase | ToolBase[], groupName = 'basic'): Promise<void> {
+        const group = this.toolGroups.find(candidate => candidate.name === groupName);
+        if (!group) {
+            throw new Error(
+                `Cannot find group '${groupName}' in toolkit, only ` +
+                    `${JSON.stringify(this.toolGroups.map(candidate => candidate.name))} are available.`
+            );
+        }
+        for (const value of Array.isArray(tool) ? tool : [tool]) {
+            const index = group.tools.findIndex(existing => existing.name === value.name);
+            if (index === -1) group.tools.push(value);
+            else group.tools.splice(index, 1, value);
+        }
+    }
+
+    /**
+     * Remove tools with matching names from every group.
+     * @param toolName Name or names to remove.
+     */
+    async removeTool(toolName: string | string[]): Promise<void> {
+        const names = new Set(Array.isArray(toolName) ? toolName : [toolName]);
+        for (const group of this.toolGroups) {
+            group.tools = group.tools.filter(tool => !names.has(tool.name));
+        }
+    }
+
+    /**
+     * Collect skills in basic and requested groups with last-write-wins names.
+     * @param groups
+     */
+    private async getAvailableSkills(groups?: string[]): Promise<Map<string, Skill>> {
+        const filter = new Set(['basic', ...(groups ?? [])]);
+        const result = new Map<string, Skill>();
+        for (const group of this.toolGroups) {
+            if (!filter.has(group.name)) continue;
+            for (const skill of await group.listSkills()) result.set(skill.name, skill);
+        }
+        return result;
+    }
+
+    /**
+     * Collect tools in basic and requested groups, including conditional built-ins.
+     * @param groups
+     */
+    private async getAvailableTools(groups?: string[]): Promise<Map<string, RegisteredTool>> {
+        const result = new Map<string, RegisteredTool>();
+        if ((await this.getAvailableSkills(groups)).size > 0) {
+            result.set(this.builtinSkillViewer.tool.name, this.builtinSkillViewer);
+        }
+        if (this.toolGroups.length > 1) {
+            result.set(this.builtinMetaTool.tool.name, this.builtinMetaTool);
+        }
+        const filter = new Set(['basic', ...(groups ?? [])]);
+        for (const group of this.toolGroups) {
+            if (!filter.has(group.name)) continue;
+            const tools = [...group.tools];
+            for (const client of group.mcps) {
+                if (!client.listTools) continue;
+                try {
+                    tools.push(...(await client.listTools()));
+                } catch (error) {
+                    logger.warning(
+                        "Skipping MCP '%s' in group '%s': listing its tools failed with %s",
+                        client.name,
+                        group.name,
+                        _describeException(error)
+                    );
+                }
+            }
+            for (const tool of tools) {
+                result.set(tool.name, new RegisteredTool({ tool, group: group.name }));
+            }
+        }
+        return result;
     }
 
     /**
@@ -613,5 +951,38 @@ ${skillsXml}
     requireExternalExecution(toolName: string): boolean {
         const tool = this.tools.find(tool => tool.name === toolName);
         return tool ? !tool.call : false;
+    }
+}
+
+function adaptToolBaseToLegacy(tool: ToolBase): LegacyRegisteredTool {
+    return {
+        type: 'function',
+        name: tool.name,
+        description: tool.description,
+        inputSchema: tool.inputSchema,
+        requireUserConfirm: !tool.name.startsWith('Task'),
+        call: async input => {
+            const result = await tool.invoke(input);
+            if (result instanceof ToolChunk) {
+                return new ToolResponse({
+                    content: result.content,
+                    state: result.state === 'error' ? 'error' : 'success',
+                    metadata: result.metadata,
+                });
+            }
+            return adaptToolChunkStream(result);
+        },
+    };
+}
+
+async function* adaptToolChunkStream(
+    stream: AsyncGenerator<ToolChunk, void, void>
+): AsyncGenerator<ToolResponse, void, void> {
+    for await (const chunk of stream) {
+        yield new ToolResponse({
+            content: chunk.content,
+            state: chunk.state === 'error' ? 'error' : 'success',
+            metadata: chunk.metadata,
+        });
     }
 }

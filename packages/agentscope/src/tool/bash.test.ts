@@ -1,174 +1,175 @@
-import { Bash } from './bash';
+/* eslint-disable jsdoc/require-jsdoc */
+
+import * as os from 'os';
+import * as path from 'path';
+
+import { PermissionBehavior, PermissionMode, createPermissionContext } from '../permission';
+import { BackendBase, ExecResult } from './backend';
+import { Bash, BashTool } from './bash';
+import type { ToolChunk } from './response';
+
+class ScriptedBackend extends BackendBase {
+    override readonly osName: 'posix' | 'nt';
+    calls: Array<{ command: string[]; options?: { cwd?: string; timeout?: number } }> = [];
+    results: ExecResult[] = [];
+
+    constructor(osName: 'posix' | 'nt' = 'posix') {
+        super();
+        this.osName = osName;
+    }
+
+    async execShell(
+        command: string[],
+        options?: { cwd?: string; timeout?: number }
+    ): Promise<ExecResult> {
+        this.calls.push({ command, options });
+        return this.results.shift() ?? new ExecResult({ exitCode: 0 });
+    }
+
+    async readFile(): Promise<Buffer> {
+        return Buffer.alloc(0);
+    }
+
+    async writeFile(): Promise<void> {}
+
+    override async getCwd(): Promise<string> {
+        return '/workspace';
+    }
+
+    override async expandUser(filePath: string): Promise<string> {
+        return filePath === '~' ? '/home/user' : filePath.replace(/^~\//, '/home/user/');
+    }
+}
+
+async function one(tool: BashTool, input: Record<string, unknown>): Promise<ToolChunk> {
+    const stream = await tool.call(input);
+    const chunks: ToolChunk[] = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    return chunks[0];
+}
 
 describe('Bash', () => {
-    test('Normal command execution', async () => {
-        const bash = Bash();
-        // Use cross-platform compatible command
-        const command = process.platform === 'win32' ? 'echo Hello World' : 'echo "Hello World"';
-        const result = await bash.call({ command });
-
-        expect(result.state).toBe('success');
-        expect(result.content).toHaveLength(1);
-        expect(result.content[0].type).toBe('text');
-        expect((result.content[0] as { type: 'text'; text: string }).text).toContain('Hello World');
-    });
-
-    test('Command with description parameter', async () => {
-        const bash = Bash();
-        const command = process.platform === 'win32' ? 'echo Test' : 'echo "Test"';
-        const result = await bash.call({
-            command,
-            description: 'Test command with description',
+    test('executes with the backend-native shell, cwd, and timeout', async () => {
+        const backend = new ScriptedBackend();
+        backend.results.push(new ExecResult({ exitCode: 0, stdout: Buffer.from('ok\r\n') }));
+        const result = await one(Bash({ cwd: '/workspace', backend }), {
+            command: 'echo ok',
+            timeout: 700000,
+        });
+        expect(result).toMatchObject({ state: 'running' });
+        expect(result.content[0]).toMatchObject({ text: 'ok\n' });
+        expect(backend.calls[0]).toEqual({
+            command: ['/bin/sh', '-c', 'echo ok'],
+            options: { cwd: '/workspace', timeout: 600 },
         });
 
-        expect(result.state).toBe('success');
-        expect(result.content).toHaveLength(1);
-        expect((result.content[0] as { type: 'text'; text: string }).text).toContain('Test');
+        const windows = new ScriptedBackend('nt');
+        await one(Bash({ backend: windows }), { command: 'echo ok' });
+        expect(windows.calls[0].command).toEqual(['cmd', '/c', 'echo ok']);
     });
 
-    test('Error command - non-existent command', async () => {
-        const bash = Bash();
-        const result = await bash.call({
-            command: 'nonexistentcommand123',
+    test('reports errors, timeouts, and truncates output', async () => {
+        const failedBackend = new ScriptedBackend();
+        failedBackend.results.push(
+            new ExecResult({
+                exitCode: 2,
+                stdout: Buffer.from('partial'),
+                stderr: Buffer.from('bad'),
+            })
+        );
+        expect(
+            (await one(Bash({ backend: failedBackend }), { command: 'bad' })).content[0]
+        ).toMatchObject({
+            text: 'Command failed: bad\n\nStdout:\npartial\nStderr:\nbad',
         });
-
-        expect(result.state).toBe('error');
-        expect(result.content).toHaveLength(1);
-        expect(result.content[0].type).toBe('text');
-        const text = (result.content[0] as { type: 'text'; text: string }).text;
-        expect(text).toContain('Command failed');
-        expect(text).toContain('nonexistentcommand123');
+        const timeoutBackend = new ScriptedBackend();
+        timeoutBackend.results.push(
+            new ExecResult({ exitCode: -1, stderr: Buffer.from('timed out') })
+        );
+        expect(
+            (await one(Bash({ backend: timeoutBackend }), { command: 'sleep', timeout: 100 }))
+                .content[0]
+        ).toMatchObject({ text: 'Command timed out after 100ms: sleep' });
+        const largeBackend = new ScriptedBackend();
+        largeBackend.results.push(
+            new ExecResult({ exitCode: 0, stdout: Buffer.alloc(30001, 'x') })
+        );
+        const large = await one(Bash({ backend: largeBackend }), { command: 'large' });
+        expect(
+            large.content[0].type === 'text' &&
+                large.content[0].text.endsWith('... (output truncated)')
+        ).toBe(true);
     });
 
-    test('Error command - division by zero in bash', async () => {
-        const bash = Bash();
-        // In bash, division by zero causes an error
-        // On Windows cmd, this syntax doesn't work, so use a different failing command
-        const command = process.platform === 'win32' ? 'set /a 10/0' : 'echo $((10/0))';
-        const result = await bash.call({ command });
-
-        expect(result.state).toBe('error');
-        expect(result.content).toHaveLength(1);
-        const text = (result.content[0] as { type: 'text'; text: string }).text;
-        expect(text).toContain('Command failed');
-    });
-
-    test('Timeout command', async () => {
-        const bash = Bash();
-        // Use cross-platform sleep command
-        // On Windows, use ping as a delay mechanism (more reliable than timeout in non-interactive mode)
-        const command = process.platform === 'win32' ? 'ping 127.0.0.1 -n 6 > nul' : 'sleep 5';
-        const result = await bash.call({
-            command,
-            timeout: 1000, // 1 second timeout
+    test('auto-allows read-only commands and asks for injection or danger', async () => {
+        const tool = Bash();
+        const context = createPermissionContext();
+        expect((await tool.checkPermissions({ command: 'git status' }, context)).behavior).toBe(
+            PermissionBehavior.ALLOW
+        );
+        expect(await tool.checkPermissions({ command: 'ls $(rm -rf /)' }, context)).toMatchObject({
+            behavior: PermissionBehavior.ASK,
+            bypass_immune: true,
         });
-
-        expect(result.state).toBe('error');
-        expect(result.content).toHaveLength(1);
-        const text = (result.content[0] as { type: 'text'; text: string }).text;
-        expect(text).toContain('Command failed');
-    }, 10000); // Increase Jest timeout for this test
-
-    test('Command with custom timeout that succeeds', async () => {
-        const bash = Bash();
-        // On Windows, use ping as a delay (ping waits ~1 second per count)
-        const command = process.platform === 'win32' ? 'ping 127.0.0.1 -n 2 > nul' : 'sleep 1';
-        const result = await bash.call({
-            command,
-            timeout: 3000, // 3 second timeout
+        expect(await tool.checkPermissions({ command: 'chmod 777 file' }, context)).toMatchObject({
+            behavior: PermissionBehavior.ASK,
+            bypass_immune: true,
         });
-
-        expect(result.state).toBe('success');
-    }, 10000);
-
-    test('Output truncation - exceeds 30000 characters', async () => {
-        const bash = Bash();
-        // Generate output longer than 30000 characters
-        const command =
-            process.platform === 'win32'
-                ? 'for /L %i in (1,1,10000) do @echo This is line %i with some extra text'
-                : 'for i in {1..10000}; do echo "This is line $i with some extra text"; done';
-        const result = await bash.call({ command });
-
-        expect(result.state).toBe('success');
-        expect(result.content).toHaveLength(1);
-        const text = (result.content[0] as { type: 'text'; text: string }).text;
-        expect(text).toContain('[Output truncated - exceeded 30000 characters]');
-        expect(text.length).toBeLessThanOrEqual(30100); // Allow some buffer for truncation message
-    }, 10000);
-
-    test('Command with stderr output', async () => {
-        const bash = Bash();
-        // Use a command that writes to stderr - cross-platform
-        const command =
-            process.platform === 'win32'
-                ? 'dir C:\\nonexistent_directory_12345'
-                : 'ls /nonexistent_directory_12345';
-        const result = await bash.call({ command });
-
-        expect(result.state).toBe('error');
-        expect(result.content).toHaveLength(1);
-        const text = (result.content[0] as { type: 'text'; text: string }).text;
-        expect(text).toContain('Command failed');
     });
 
-    test('Command with both stdout and stderr', async () => {
-        const bash = Bash();
-        // Command that produces both stdout and stderr
-        const command =
-            process.platform === 'win32'
-                ? 'echo stdout message && dir C:\\nonexistent_directory_12345'
-                : 'echo "stdout message" && ls /nonexistent_directory_12345';
-        const result = await bash.call({ command });
-
-        expect(result.state).toBe('error');
-        expect(result.content).toHaveLength(1);
-        const text = (result.content[0] as { type: 'text'; text: string }).text;
-        expect(text).toContain('Command failed');
-        expect(text).toContain('stdout message');
+    test('protects dangerous paths and destructive removal targets', async () => {
+        const tool = Bash({ backend: new ScriptedBackend() });
+        const context = createPermissionContext();
+        expect((await tool.checkPermissions({ command: 'rm .env' }, context)).behavior).toBe(
+            PermissionBehavior.ASK
+        );
+        for (const command of ['rm /', 'rm -rf /usr', 'rmdir ~', 'rm *']) {
+            expect(await tool.checkPermissions({ command }, context)).toMatchObject({
+                behavior: PermissionBehavior.ASK,
+                bypass_immune: true,
+            });
+        }
+        expect(
+            (await tool.checkPermissions({ command: 'rm /workspace/file' }, context)).behavior
+        ).toBe(PermissionBehavior.PASSTHROUGH);
     });
 
-    test('Maximum timeout enforcement', async () => {
-        const bash = Bash();
-        // Try to set timeout beyond maximum (600000ms)
-        const command = process.platform === 'win32' ? 'echo test' : 'echo "test"';
-        const result = await bash.call({
-            command,
-            timeout: 700000, // 700 seconds, should be capped at 600000
-        });
-
-        // Should still succeed because the command is fast
-        expect(result.state).toBe('success');
+    test('auto-allows accepted edits only when every target is in scope', async () => {
+        const context = createPermissionContext(PermissionMode.ACCEPT_EDITS);
+        const directory = path.join(os.tmpdir(), 'agentscope-working');
+        context.working_directories[directory] = { path: directory, source: 'test' };
+        const tool = Bash();
+        expect(
+            (await tool.checkPermissions({ command: `cp ${directory}/a ${directory}/b` }, context))
+                .behavior
+        ).toBe(PermissionBehavior.ALLOW);
+        expect(
+            (await tool.checkPermissions({ command: `cp /etc/hosts ${directory}/b` }, context))
+                .behavior
+        ).toBe(PermissionBehavior.PASSTHROUGH);
     });
 
-    test('Command with special characters', async () => {
-        const bash = Bash();
-        // Windows cmd has different special character handling
-        const command =
-            process.platform === 'win32'
-                ? 'echo Special chars: %USERPROFILE%'
-                : 'echo "Special chars: $HOME | & ; < > ( ) { }"';
-        const result = await bash.call({ command });
-
-        expect(result.state).toBe('success');
-        expect(result.content).toHaveLength(1);
-        const text = (result.content[0] as { type: 'text'; text: string }).text;
-        expect(text).toContain('Special chars');
-    });
-
-    test('Multi-line output', async () => {
-        const bash = Bash();
-        const command =
-            process.platform === 'win32'
-                ? 'echo Line 1 && echo Line 2 && echo Line 3'
-                : 'echo "Line 1" && echo "Line 2" && echo "Line 3"';
-        const result = await bash.call({ command });
-
-        expect(result.state).toBe('success');
-        expect(result.content).toHaveLength(1);
-        const text = (result.content[0] as { type: 'text'; text: string }).text;
-        expect(text).toContain('Line 1');
-        expect(text).toContain('Line 2');
-        expect(text).toContain('Line 3');
+    test('matches wildcard rules and generates compound suggestions', async () => {
+        const tool = Bash();
+        expect(await tool.matchRule('git *', { command: 'git status' })).toBe(true);
+        expect(await tool.matchRule('git *', { command: 'git' })).toBe(true);
+        expect(await tool.matchRule('git:*', { command: 'github' })).toBe(false);
+        expect(await tool.matchRule('file\\*.txt', { command: 'file*.txt' })).toBe(true);
+        expect(await tool.generateSuggestions({ command: 'git add . && git commit -m x' })).toEqual(
+            [
+                {
+                    tool_name: 'Bash',
+                    rule_content: 'git add:*',
+                    behavior: PermissionBehavior.ALLOW,
+                    source: 'suggested',
+                },
+                {
+                    tool_name: 'Bash',
+                    rule_content: 'git commit:*',
+                    behavior: PermissionBehavior.ALLOW,
+                    source: 'suggested',
+                },
+            ]
+        );
     });
 });

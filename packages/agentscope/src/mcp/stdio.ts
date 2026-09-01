@@ -3,6 +3,7 @@ import {
     StdioClientTransport,
     StdioServerParameters,
 } from '@modelcontextprotocol/sdk/client/stdio.js';
+import type { RequestOptions } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { ListToolsRequest, ListToolsResultSchema, Tool } from '@modelcontextprotocol/sdk/types.js';
 
 import { MCPTool } from './base';
@@ -15,6 +16,7 @@ export class StdioMCPClient {
     private stdioServerParameters: StdioServerParameters;
     private transport?: StdioClientTransport;
     private client?: Client;
+    private requestOptions?: RequestOptions;
 
     /**
      * Initialize the StdioMCPClient with the given Stdio parameters.
@@ -27,8 +29,11 @@ export class StdioMCPClient {
         ...rest
     }: {
         name: string;
+        requestOptions?: RequestOptions;
     } & StdioServerParameters) {
         this.name = name;
+        this.requestOptions = rest.requestOptions;
+        delete rest.requestOptions;
         this.stdioServerParameters = rest;
     }
 
@@ -60,11 +65,11 @@ export class StdioMCPClient {
     }
 
     /**
-     * List all tools available on the MCP server.
+     * List raw tool descriptors available on the MCP server.
      *
-     * @returns An array of MCPTool instances representing the tools available on the server.
+     * @returns Raw MCP tool descriptors.
      */
-    async listTools(): Promise<MCPTool[]> {
+    async listRawTools(): Promise<Tool[]> {
         if (!this.client) {
             throw new Error(
                 `Client not initialized, call 'connect()' method first for the MCP client named '${this.name}'`
@@ -76,18 +81,32 @@ export class StdioMCPClient {
             params: {},
         };
 
-        const toolsResult = await this.client.request(toolsRequest, ListToolsResultSchema);
+        const toolsResult = await this.client.request(
+            toolsRequest,
+            ListToolsResultSchema,
+            this.requestOptions
+        );
         if (toolsResult.tools === undefined) {
             return [];
         }
 
-        return toolsResult.tools.map((tool: Tool) => {
+        return toolsResult.tools;
+    }
+
+    /**
+     * List all tools available on the MCP server.
+     *
+     * @returns An array of MCPTool instances representing the tools available on the server.
+     */
+    async listTools(): Promise<MCPTool[]> {
+        const tools = await this.listRawTools();
+        return tools.map((tool: Tool) => {
             return new MCPTool({
-                name: tool.name,
-                description: tool.description || '',
-                inputSchema: tool.inputSchema,
+                mcpName: this.name,
+                tool,
                 getClient: async () => this.client!,
                 releaseClient: async () => {},
+                requestOptions: this.requestOptions,
             });
         });
     }
@@ -106,7 +125,7 @@ export class StdioMCPClient {
         }
 
         const tools = await this.listTools();
-        const targetTool = tools.find(tool => tool.name === name);
+        const targetTool = tools.find(tool => tool.name === name || tool.originalName === name);
 
         if (!targetTool) {
             throw new Error(

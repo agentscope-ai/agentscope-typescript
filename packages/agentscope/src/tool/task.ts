@@ -1,372 +1,228 @@
+/* eslint-disable jsdoc/require-jsdoc */
+
 import { z } from 'zod';
 
-import { createToolResponse, ToolResponse } from './response';
-import { _generateId, _generateTimestamp } from '../_utils/common';
-import type { Task } from '../state';
+import { DeveloperOrientedException } from '../exception';
+import { TextBlock } from '../message';
+import type { PermissionDecision } from '../permission';
+import { PermissionBehavior, createPermissionDecision } from '../permission';
+import { AgentState, createTask } from '../state';
+import { ToolBase } from './base';
+import { ToolChunk } from './response';
 
-export type { Task, TaskContext } from '../state';
+abstract class TaskToolBase extends ToolBase {
+    readonly isConcurrencySafe = true;
+    readonly isReadOnly = false;
+    override isStateInjected = true;
 
-/** Task state — mirrors Python's ``Literal["pending", "in_progress", "completed"]``. */
-export type TaskState = Task['state'];
-
-// Module-level storage
-const taskStore = new Map<string, Task>();
-
-/**
- * Generate the next sequential task ID based on existing tasks.
- * @returns A unique task ID as a string (e.g. "1", "2", "3").
- */
-function generateId(): string {
-    let maxNumeric = 0;
-    for (const [id] of taskStore) {
-        const n = Number(id);
-        if (!isNaN(n) && n > maxNumeric) maxNumeric = n;
+    async checkPermissions(): Promise<PermissionDecision> {
+        return createPermissionDecision({
+            behavior: PermissionBehavior.ALLOW,
+            message: `${this.name} is always allowed to be called.`,
+        });
     }
-    return String(maxNumeric + 1);
+
+    protected state(input: Record<string, unknown>): AgentState {
+        if (!(input._agent_state instanceof AgentState)) {
+            throw new DeveloperOrientedException(
+                `Error: ${this.name} requires AgentState to be provided, got ${String(input._agent_state)} instead.`
+            );
+        }
+        return input._agent_state;
+    }
 }
 
-/**
- * Reset task store for testing purposes.
- * @internal
- */
-export function _resetTaskStore(): void {
-    taskStore.clear();
-}
+/** Create one task in the current AgentState. */
+export class TaskCreateTool extends TaskToolBase {
+    readonly name = 'TaskCreate';
+    readonly description = 'Create a structured task in the current agent session.';
+    readonly inputSchema = z.object({
+        subject: z.string(),
+        description: z.string(),
+        metadata: z.record(z.string(), z.unknown()).nullable().optional(),
+    });
 
-/**
- * Tool for creating tasks.
- * @returns A Tool object for creating tasks.
- */
-export function TaskCreate() {
-    return {
-        name: 'TaskCreate',
-        description: `Use this tool to create a structured task list for your current coding session. This helps you track progress, organize complex tasks, and demonstrate thoroughness to the user.
-It also helps the user understand the progress of the task and overall progress of their requests.
-
-## When to Use This Tool
-
-Use this tool proactively in these scenarios:
-
-- Complex multi-step tasks - When a task requires 3 or more distinct steps or actions
-- Non-trivial and complex tasks - Tasks that require careful planning or multiple operations
-- User explicitly requests todo list - When the user directly asks you to use the todo list
-- User provides multiple tasks - When users provide a list of things to be done (numbered or comma-separated)
-
-All tasks are created with state 'pending'.`,
-        inputSchema: z.object({
-            subject: z
-                .string()
-                .describe(
-                    'A brief, actionable title in imperative form (e.g., "Fix authentication bug in login flow")'
-                ),
-            description: z
-                .string()
-                .describe(
-                    'Detailed description of what needs to be done, including context and acceptance criteria'
-                ),
-            metadata: z
-                .record(z.string(), z.unknown())
-                .optional()
-                .describe('Arbitrary metadata to attach to the task'),
-        }),
-        requireUserConfirm: false,
-
-        call({
-            subject,
-            description,
-            metadata,
-        }: {
-            subject: string;
-            description: string;
-            metadata?: Record<string, unknown>;
-        }): ToolResponse {
-            const id = generateId();
-
-            const task: Task = {
+    async call(input: Record<string, unknown>): Promise<ToolChunk> {
+        const parsed = this.inputSchema.parse(input);
+        const state = this.state(input);
+        let maximum = 0;
+        for (const task of state.tasksContext.tasks) {
+            const numeric = Number(task.id);
+            if (Number.isInteger(numeric)) maximum = Math.max(maximum, numeric);
+        }
+        const id = String(maximum + 1);
+        state.tasksContext.tasks.push(
+            createTask({
                 id,
-                subject,
-                description,
-                state: 'pending',
-                metadata: metadata ?? {},
-                owner: null,
-                blocks: [],
-                blocked_by: [],
-                created_at: _generateTimestamp(),
-            };
-
-            taskStore.set(id, task);
-
-            return createToolResponse({
-                content: [
-                    {
-                        id: _generateId(),
-                        created_at: _generateTimestamp(),
-                        type: 'text',
-                        text: `Task ${id} created successfully: ${subject}`,
-                    },
-                ],
-                state: 'success',
-            });
-        },
-    };
+                subject: parsed.subject,
+                description: parsed.description,
+                metadata: parsed.metadata ?? {},
+            })
+        );
+        return chunk(`Task (id=${id}) created successfully: ${parsed.subject}`);
+    }
 }
 
-/**
- * Tool for updating tasks.
- * @returns A Tool object for updating tasks.
- */
-export function TaskUpdate() {
-    return {
-        name: 'TaskUpdate',
-        description: `Use this tool to update a task in the task list.
+/** Retrieve one task from the current AgentState. */
+export class TaskGetTool extends TaskToolBase {
+    readonly name = 'TaskGet';
+    readonly description = 'Retrieve a task by its ID from the task list.';
+    readonly inputSchema = z.object({ task_id: z.string() });
 
-## When to Use This Tool
-
-**Mark tasks as resolved:**
-- When you have completed the work described in a task
-- When a task is no longer needed or has been superseded
-- IMPORTANT: Always mark your assigned tasks as resolved when you finish them
-
-**Delete tasks:**
-- When a task is no longer relevant or was created in error
-- Setting status to 'deleted' permanently removes the task
-
-**Update task details:**
-- When requirements change or become clearer
-- When establishing dependencies between tasks`,
-        inputSchema: z.object({
-            taskId: z.string().describe('The ID of the task to update'),
-            status: z
-                .enum(['pending', 'in_progress', 'completed', 'deleted'])
-                .optional()
-                .describe('New status for the task'),
-            subject: z.string().optional().describe('New subject for the task'),
-            description: z.string().optional().describe('New description for the task'),
-            owner: z.string().optional().describe('New owner for the task'),
-            metadata: z
-                .record(z.string(), z.unknown())
-                .optional()
-                .describe('Metadata keys to merge into the task. Set a key to null to delete it.'),
-            addBlocks: z.array(z.string()).optional().describe('Task IDs that this task blocks'),
-            addBlockedBy: z.array(z.string()).optional().describe('Task IDs that block this task'),
-        }),
-        requireUserConfirm: false,
-
-        call({
-            taskId,
-            status,
-            subject,
-            description,
-            owner,
-            metadata,
-            addBlocks,
-            addBlockedBy,
-        }: {
-            taskId: string;
-            status?: 'pending' | 'in_progress' | 'completed' | 'deleted';
-            subject?: string;
-            description?: string;
-            owner?: string;
-            metadata?: Record<string, unknown>;
-            addBlocks?: string[];
-            addBlockedBy?: string[];
-        }): ToolResponse {
-            const task = taskStore.get(taskId);
-            if (!task) {
-                throw new Error(`Task not found: ${taskId}`);
-            }
-
-            // Validate dependencies exist
-            if (addBlocks) {
-                for (const depId of addBlocks) {
-                    if (!taskStore.has(depId)) {
-                        throw new Error(`Cannot add dependency: task ${depId} does not exist`);
-                    }
-                }
-            }
-            if (addBlockedBy) {
-                for (const depId of addBlockedBy) {
-                    if (!taskStore.has(depId)) {
-                        throw new Error(`Cannot add dependency: task ${depId} does not exist`);
-                    }
-                }
-            }
-
-            // Update fields
-            if (subject !== undefined) task.subject = subject;
-            if (description !== undefined) task.description = description;
-            if (owner !== undefined) task.owner = owner;
-
-            // Merge metadata
-            if (metadata !== undefined) {
-                for (const [key, value] of Object.entries(metadata)) {
-                    if (value === null) {
-                        delete task.metadata[key];
-                    } else {
-                        task.metadata[key] = value;
-                    }
-                }
-            }
-
-            // Add dependencies with deduplication
-            if (addBlocks) {
-                task.blocks = [...new Set([...task.blocks, ...addBlocks])];
-            }
-            if (addBlockedBy) {
-                task.blocked_by = [...new Set([...task.blocked_by, ...addBlockedBy])];
-            }
-
-            // Handle status change
-            if (status !== undefined) {
-                if (status === 'deleted') {
-                    taskStore.delete(taskId);
-                    return createToolResponse({
-                        content: [
-                            {
-                                id: _generateId(),
-                                created_at: _generateTimestamp(),
-                                type: 'text',
-                                text: `Task ${taskId} deleted successfully`,
-                            },
-                        ],
-                        state: 'success',
-                    });
-                }
-                task.state = status;
-            }
-
-            return createToolResponse({
-                content: [
-                    {
-                        id: _generateId(),
-                        created_at: _generateTimestamp(),
-                        type: 'text',
-                        text: `Task ${taskId} updated successfully`,
-                    },
-                ],
-                state: 'success',
-            });
-        },
-    };
+    async call(input: Record<string, unknown>): Promise<ToolChunk> {
+        const parsed = this.inputSchema.parse(input);
+        const task = this.state(input).tasksContext.tasks.find(
+            value => value.id === parsed.task_id
+        );
+        if (!task) return chunk('Task not found', 'error');
+        const lines = [
+            `Task (id=${task.id}): ${task.subject}`,
+            `Status: ${task.state}`,
+            `Description: ${task.description}`,
+        ];
+        if (task.owner) lines.push(`Owner: ${task.owner}`);
+        if (task.blocked_by.length) {
+            lines.push(`Blocked by: ${task.blocked_by.map(id => `#${id}`).join(', ')}`);
+        }
+        if (task.blocks.length) lines.push(`Blocks: ${task.blocks.map(id => `#${id}`).join(', ')}`);
+        if (Object.keys(task.metadata).length)
+            lines.push(`Metadata: ${JSON.stringify(task.metadata)}`);
+        return chunk(lines.join('\n'));
+    }
 }
 
-/**
- * Tool for retrieving a single task.
- * @returns A Tool object for retrieving a task by ID.
- */
-export function TaskGet() {
-    return {
-        name: 'TaskGet',
-        description: `Use this tool to retrieve a task by its ID from the task list.
+/** List all tasks from the current AgentState. */
+export class TaskListTool extends TaskToolBase {
+    readonly name = 'TaskList';
+    readonly description = 'List all tasks in the current agent session.';
+    readonly inputSchema = z.object({});
 
-## When to Use This Tool
-
-- When you need the full description and context before starting work on a task
-- To understand task dependencies (what it blocks, what blocks it)
-- After being assigned a task, to get complete requirements`,
-        inputSchema: z.object({
-            taskId: z.string().describe('The ID of the task to retrieve'),
-        }),
-        requireUserConfirm: false,
-
-        call({ taskId }: { taskId: string }): ToolResponse {
-            const task = taskStore.get(taskId);
-            if (!task) {
-                throw new Error(`Task not found: ${taskId}`);
-            }
-
-            let text = `Task ${task.id}: ${task.subject}\n`;
-            text += `State: ${task.state}\n`;
-            text += `Description: ${task.description}\n`;
-
-            if (task.owner) {
-                text += `Owner: ${task.owner}\n`;
-            }
-            if (task.blocks.length > 0) {
-                text += `Blocks: ${task.blocks.join(', ')}\n`;
-            }
-            if (task.blocked_by.length > 0) {
-                text += `Blocked By: ${task.blocked_by.join(', ')}\n`;
-            }
-            if (task.metadata && Object.keys(task.metadata).length > 0) {
-                text += `Metadata: ${JSON.stringify(task.metadata, null, 2)}\n`;
-            }
-            text += `Created: ${task.created_at}`;
-
-            return createToolResponse({
-                content: [
-                    {
-                        id: _generateId(),
-                        created_at: _generateTimestamp(),
-                        type: 'text',
-                        text,
-                    },
-                ],
-                state: 'success',
-            });
-        },
-    };
+    async call(input: Record<string, unknown>): Promise<ToolChunk> {
+        const tasks = this.state(input).tasksContext.tasks;
+        if (!tasks.length) return chunk('No tasks available.');
+        return chunk(
+            tasks
+                .map(task => {
+                    const owner = task.owner ? `(${task.owner})` : '';
+                    const blocked = task.blocked_by.length
+                        ? `[blocked by ${task.blocked_by.join(', ')}]`
+                        : '';
+                    return `${task.id} [${task.state}] ${task.subject}${owner}${blocked}`;
+                })
+                .join('\n')
+        );
+    }
 }
 
-/**
- * Tool for listing all active tasks.
- * @returns A Tool object for listing all active tasks.
- */
-export function TaskList() {
-    return {
-        name: 'TaskList',
-        description: `Use this tool to list all tasks in the task list.
+/** Update task fields, relationships, status, or deletion. */
+export class TaskUpdateTool extends TaskToolBase {
+    readonly name = 'TaskUpdate';
+    readonly description = 'Update a task in the current agent session.';
+    readonly inputSchema = z.object({
+        task_id: z.string(),
+        subject: z.string().nullable().optional(),
+        description: z.string().nullable().optional(),
+        add_blocks: z.array(z.string()).nullable().optional(),
+        status: z.enum(['pending', 'in_progress', 'completed', 'deleted']).nullable().optional(),
+        add_blocked_by: z.array(z.string()).nullable().optional(),
+        owner: z.string().nullable().optional(),
+        metadata: z.record(z.string(), z.unknown()).nullable().optional(),
+    });
 
-## When to Use This Tool
-
-- To see what tasks are available to work on (status: 'pending', no owner, not blocked)
-- To check overall progress on the project
-- To find tasks that are blocked and need dependencies resolved
-- After completing a task, to check for newly unblocked work or claim the next available task`,
-        inputSchema: z.object({}),
-        requireUserConfirm: false,
-
-        call(): ToolResponse {
-            const activeTasks = Array.from(taskStore.values())
-                .filter(task => task.state === 'pending' || task.state === 'in_progress')
-                .sort((a, b) => Number(a.id) - Number(b.id));
-
-            if (activeTasks.length === 0) {
-                return createToolResponse({
-                    content: [
-                        {
-                            id: _generateId(),
-                            created_at: _generateTimestamp(),
-                            type: 'text',
-                            text: 'No tasks available.',
-                        },
-                    ],
-                    state: 'success',
-                });
+    async call(input: Record<string, unknown>): Promise<ToolChunk> {
+        const parsed = this.inputSchema.parse(input);
+        const state = this.state(input);
+        const index = state.tasksContext.tasks.findIndex(task => task.id === parsed.task_id);
+        if (index === -1) {
+            return chunk(
+                `TaskNotFoundError: The task (id=${parsed.task_id}) does not exist.`,
+                'error'
+            );
+        }
+        const task = state.tasksContext.tasks[index];
+        const updated: string[] = [];
+        if (parsed.subject) {
+            task.subject = parsed.subject;
+            updated.push('subject');
+        }
+        if (parsed.description !== undefined && parsed.description !== null) {
+            task.description = parsed.description;
+            updated.push('description');
+        }
+        const ids = new Set(state.tasksContext.tasks.map(value => value.id));
+        const addRelation = (blocker: string, blocked: string): void => {
+            const blockerTask = state.tasksContext.tasks.find(value => value.id === blocker);
+            const blockedTask = state.tasksContext.tasks.find(value => value.id === blocked);
+            if (blockerTask && !blockerTask.blocks.includes(blocked))
+                blockerTask.blocks.push(blocked);
+            if (blockedTask && !blockedTask.blocked_by.includes(blocker)) {
+                blockedTask.blocked_by.push(blocker);
             }
+        };
+        const blocks = (parsed.add_blocks ?? []).filter(
+            id => ids.has(id) && !task.blocks.includes(id)
+        );
+        if (blocks.length) {
+            updated.push('add_blocks');
+            blocks.forEach(id => addRelation(task.id, id));
+        }
+        const blockedBy = (parsed.add_blocked_by ?? []).filter(
+            id => ids.has(id) && !task.blocked_by.includes(id)
+        );
+        if (blockedBy.length) {
+            updated.push('add_blocked_by');
+            blockedBy.forEach(id => addRelation(id, task.id));
+        }
+        if (parsed.status === 'deleted') {
+            state.tasksContext.tasks.splice(index, 1);
+            for (const value of state.tasksContext.tasks) {
+                value.blocks = value.blocks.filter(id => id !== parsed.task_id);
+                value.blocked_by = value.blocked_by.filter(id => id !== parsed.task_id);
+            }
+            return chunk(`Task (id=${parsed.task_id}) has been deleted.`);
+        }
+        if (parsed.status) {
+            task.state = parsed.status;
+            updated.push('status');
+        }
+        if (parsed.owner !== undefined) {
+            task.owner = parsed.owner;
+            updated.push('owner');
+        }
+        if (parsed.metadata && Object.keys(parsed.metadata).length) {
+            updated.push('metadata');
+            for (const [key, value] of Object.entries(parsed.metadata)) {
+                if (value === null) delete task.metadata[key];
+                else task.metadata[key] = value;
+            }
+        }
+        let message = updated.length
+            ? `Update task (id=${parsed.task_id}) ${updated.join(', ')}.`
+            : `No updates were made to the task (id=${parsed.task_id}). Make sure you provided at least one field to update and the values are correct.`;
+        if (task.state === 'completed') {
+            message +=
+                '\n\nTask completed. Call TaskList now to find your next available task or see if your work unblocked others.';
+        }
+        return chunk(message);
+    }
+}
 
-            const lines = activeTasks.map(task => {
-                let line = `${task.id} [${task.state}] ${task.subject}`;
-                if (task.owner) {
-                    line += `(${task.owner})`;
-                }
-                if (task.blocked_by.length > 0) {
-                    line += `[blocked by ${task.blocked_by.join(', ')}]`;
-                }
-                return line;
-            });
+export function TaskCreate(): TaskCreateTool {
+    return new TaskCreateTool();
+}
+export function TaskGet(): TaskGetTool {
+    return new TaskGetTool();
+}
+export function TaskList(): TaskListTool {
+    return new TaskListTool();
+}
+export function TaskUpdate(): TaskUpdateTool {
+    return new TaskUpdateTool();
+}
 
-            return createToolResponse({
-                content: [
-                    {
-                        id: _generateId(),
-                        created_at: _generateTimestamp(),
-                        type: 'text',
-                        text: lines.join('\n'),
-                    },
-                ],
-                state: 'success',
-            });
-        },
-    };
+/** Legacy no-op: task storage now correctly belongs to AgentState. */
+export function _resetTaskStore(): void {}
+
+function chunk(text: string, state: 'running' | 'error' = 'running'): ToolChunk {
+    return new ToolChunk({ content: [TextBlock({ text })], state });
 }

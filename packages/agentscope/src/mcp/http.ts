@@ -94,11 +94,11 @@ export class HTTPMCPClient {
     }
 
     /**
-     * List all tools available on the MCP server.
+     * List raw tool descriptors available on the MCP server.
      *
-     * @returns An array of MCPTool instances representing the tools available on the server.
+     * @returns Raw MCP tool descriptors.
      */
-    async listTools(): Promise<MCPTool[]> {
+    async listRawTools(): Promise<Tool[]> {
         let listClient: Client;
 
         if (this.stateful) {
@@ -123,32 +123,41 @@ export class HTTPMCPClient {
                 return [];
             }
 
-            return toolsResult.tools.map((tool: Tool) => {
-                if (this.stateful) {
-                    return new MCPTool({
-                        name: tool.name,
-                        description: tool.description || '',
-                        inputSchema: tool.inputSchema,
-                        getClient: async () => this.client!,
-                        releaseClient: async () => {},
-                    });
-                } else {
-                    return new MCPTool({
-                        name: tool.name,
-                        description: tool.description || '',
-                        inputSchema: tool.inputSchema,
-                        getClient: () => this._createClient(),
-                        releaseClient: async (c: Client) => {
-                            await c.close();
-                        },
-                    });
-                }
-            });
+            return toolsResult.tools;
         } finally {
             if (!this.stateful) {
                 await listClient.close();
             }
         }
+    }
+
+    /**
+     * List all tools available on the MCP server.
+     *
+     * @returns An array of MCPTool instances representing the tools available on the server.
+     */
+    async listTools(): Promise<MCPTool[]> {
+        const tools = await this.listRawTools();
+        return tools.map((tool: Tool) => {
+            if (this.stateful) {
+                return new MCPTool({
+                    mcpName: this.name,
+                    tool,
+                    getClient: async () => this.client!,
+                    releaseClient: async () => {},
+                    requestOptions: this.requestOptions,
+                });
+            }
+            return new MCPTool({
+                mcpName: this.name,
+                tool,
+                getClient: () => this._createClient(),
+                releaseClient: async (client: Client) => {
+                    await client.close();
+                },
+                requestOptions: this.requestOptions,
+            });
+        });
     }
 
     /**
@@ -211,7 +220,7 @@ export class HTTPMCPClient {
         }
 
         const tools = await this.listTools();
-        const targetTool = tools.find(tool => tool.name === name);
+        const targetTool = tools.find(tool => tool.name === name || tool.originalName === name);
 
         if (!targetTool) {
             throw new Error(

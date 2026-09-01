@@ -1,77 +1,119 @@
-import * as fs from 'fs';
+import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
 
-import { Tool } from './base';
-import { Read } from './read';
-import { ToolResponse } from './response';
+import { PDFDocument } from 'pdf-lib';
+
+import { PermissionBehavior } from '../permission';
+import { AgentState } from '../state';
+import { Read, ReadTool } from './read';
+import { ToolChunk } from './response';
 
 describe('Read', () => {
-    let tmpDir: string;
-    let read: Tool;
+    let temporaryDirectory: string;
+    let read: ReadTool;
 
-    beforeEach(() => {
+    beforeEach(async () => {
         read = Read();
-        tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'read-test-'));
+        temporaryDirectory = await fs.mkdtemp(path.join(os.tmpdir(), 'read-test-'));
     });
 
-    afterEach(() => {
-        fs.rmSync(tmpDir, { recursive: true, force: true });
+    afterEach(async () => {
+        await fs.rm(temporaryDirectory, { recursive: true, force: true });
     });
 
-    const getTextFromResponse = (response: ToolResponse): string => {
-        const textBlock = response.content.find(block => block.type === 'text');
-        return textBlock && 'text' in textBlock ? textBlock.text : '';
+    const getText = (response: ToolChunk): string => {
+        const block = response.content.find(value => value.type === 'text');
+        return block?.type === 'text' ? block.text : '';
     };
 
-    it('reads a file with line numbers', () => {
-        const filePath = path.join(tmpDir, 'test.txt');
-        fs.writeFileSync(filePath, 'line1\nline2\nline3');
-        const response = read.call!({ file_path: filePath }) as ToolResponse;
-        const result = getTextFromResponse(response);
-        expect(result).toContain('1\tline1');
-        expect(result).toContain('2\tline2');
-        expect(result).toContain('3\tline3');
+    test('reads text with line numbers, normalized newlines, offset, and limit', async () => {
+        const filePath = path.join(temporaryDirectory, 'test.txt');
+        await fs.writeFile(filePath, 'a\r\nb\rc\nd');
+        const response = await read.call({ file_path: filePath, offset: 2, limit: 2 });
+        expect(response.state).toBe('running');
+        expect(getText(response)).toBe('     2\tb\n     3\tc');
     });
 
-    it('respects offset and limit', () => {
-        const filePath = path.join(tmpDir, 'test.txt');
-        fs.writeFileSync(filePath, 'a\nb\nc\nd\ne');
-        const response = read.call!({ file_path: filePath, offset: 2, limit: 2 }) as ToolResponse;
-        const result = getTextFromResponse(response);
-        expect(result).toContain('2\tb');
-        expect(result).toContain('3\tc');
-        expect(result).not.toContain('1\ta');
-        expect(result).not.toContain('4\td');
-    });
-
-    it('throws on relative path', () => {
-        expect(() => read.call!({ file_path: 'relative.txt' })).toThrow('absolute path');
-    });
-
-    it('throws on non-existent file', () => {
-        expect(() => read.call!({ file_path: path.join(tmpDir, 'nope.txt') })).toThrow(
-            'File not found'
+    test('returns Python-compatible input errors', async () => {
+        expect(getText(await read.call({ file_path: 'relative.txt' }))).toBe(
+            'Error: file_path must be an absolute path, got: relative.txt'
+        );
+        const missing = path.join(temporaryDirectory, 'missing.txt');
+        expect(getText(await read.call({ file_path: missing }))).toBe(
+            `Error: File does not exist: ${missing}`
+        );
+        expect(getText(await read.call({ file_path: temporaryDirectory }))).toBe(
+            `Error: Path is a directory, not a file: ${temporaryDirectory}`
         );
     });
 
-    it('throws on directory', () => {
-        expect(() => read.call!({ file_path: tmpDir })).toThrow('directory');
+    test('returns empty text and truncates long lines', async () => {
+        const empty = path.join(temporaryDirectory, 'empty.txt');
+        await fs.writeFile(empty, '');
+        expect(getText(await read.call({ file_path: empty }))).toBe('');
+        const long = path.join(temporaryDirectory, 'long.txt');
+        await fs.writeFile(long, 'x'.repeat(2100));
+        expect(getText(await read.call({ file_path: long })).endsWith('[truncated]')).toBe(true);
     });
 
-    it('returns warning for empty file', () => {
-        const filePath = path.join(tmpDir, 'empty.txt');
-        fs.writeFileSync(filePath, '');
-        const response = read.call!({ file_path: filePath }) as ToolResponse;
-        const result = getTextFromResponse(response);
-        expect(result).toBe('');
+    test('reads supported images as base64 data and rejects unsupported images', async () => {
+        const image = path.join(temporaryDirectory, 'image.png');
+        await fs.writeFile(image, Buffer.from([1, 2, 3]));
+        expect((await read.call({ file_path: image })).content[0]).toMatchObject({
+            type: 'data',
+            name: 'image.png',
+            source: { type: 'base64', data: 'AQID', media_type: 'image/png' },
+        });
+        const unsupported = Read({ modelInputTypes: [] });
+        expect(getText(await unsupported.call({ file_path: image }))).toContain(
+            'Unsupported image type image/png'
+        );
     });
 
-    it('truncates lines longer than 2000 characters', () => {
-        const filePath = path.join(tmpDir, 'long.txt');
-        fs.writeFileSync(filePath, 'x'.repeat(2100));
-        const response = read.call!({ file_path: filePath }) as ToolResponse;
-        const result = getTextFromResponse(response);
-        expect(result).toContain('[truncated]');
+    test('returns native PDF data and enforces page limits', async () => {
+        const pdfPath = path.join(temporaryDirectory, 'document.pdf');
+        const document = await PDFDocument.create();
+        for (let index = 0; index < 11; index += 1) document.addPage();
+        await fs.writeFile(pdfPath, await document.save());
+
+        const nativeReader = Read({ modelInputTypes: ['application/pdf'] });
+        expect(getText(await nativeReader.call({ file_path: pdfPath }))).toContain(
+            'must provide the pages parameter'
+        );
+        const selected = await nativeReader.call({ file_path: pdfPath, pages: '2-3' });
+        expect(selected.content[0]).toMatchObject({
+            type: 'data',
+            source: { media_type: 'application/pdf' },
+        });
+        const selectedDocument = await PDFDocument.load(
+            Buffer.from(
+                selected.content[0].type === 'data' && selected.content[0].source.type === 'base64'
+                    ? selected.content[0].source.data
+                    : '',
+                'base64'
+            )
+        );
+        expect(selectedDocument.getPageCount()).toBe(2);
+    });
+
+    test('uses state cache and exposes permission hooks', async () => {
+        const filePath = path.join(temporaryDirectory, 'cached.txt');
+        await fs.writeFile(filePath, 'cached');
+        const state = new AgentState();
+        await read.call({ file_path: filePath, _agent_state: state });
+        expect(state.toolContext.readFileCache).toHaveLength(1);
+        expect((await read.checkPermissions()).behavior).toBe(PermissionBehavior.PASSTHROUGH);
+        expect(await read.matchRule(`${temporaryDirectory}/**`, { file_path: filePath })).toBe(
+            true
+        );
+        expect(await read.generateSuggestions({ file_path: filePath })).toEqual([
+            {
+                tool_name: 'Read',
+                rule_content: `${temporaryDirectory}/**`,
+                behavior: PermissionBehavior.ALLOW,
+                source: 'suggested',
+            },
+        ]);
     });
 });

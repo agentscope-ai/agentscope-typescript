@@ -1,256 +1,180 @@
-import * as fs from 'fs';
-import * as path from 'path';
+/* eslint-disable jsdoc/require-jsdoc */
 
+import { minimatch } from 'minimatch';
 import { z } from 'zod';
 
-type OutputMode = 'content' | 'files_with_matches' | 'count';
+import { TextBlock } from '../message';
+import type { PermissionDecision, PermissionRule } from '../permission';
+import { PermissionBehavior, createPermissionDecision } from '../permission';
+import type { BackendBase } from './backend';
+import { LocalBackend } from './backend';
+import { ToolBase } from './base';
+import type { ToolMiddlewareBase } from './base';
+import { ToolChunk } from './response';
 
-const TYPE_EXTENSIONS: Record<string, string[]> = {
-    js: ['.js', '.mjs', '.cjs'],
-    ts: ['.ts', '.mts', '.cts'],
-    tsx: ['.tsx'],
-    jsx: ['.jsx'],
-    py: ['.py'],
-    rust: ['.rs'],
-    go: ['.go'],
-    java: ['.java'],
-    cpp: ['.cpp', '.cc', '.cxx', '.h', '.hpp'],
-    c: ['.c', '.h'],
-    css: ['.css'],
-    html: ['.html', '.htm'],
-    json: ['.json'],
-    md: ['.md', '.markdown'],
-    yaml: ['.yaml', '.yml'],
-    toml: ['.toml'],
-    sh: ['.sh', '.bash'],
-};
+const VCS_DIRECTORIES = ['.git', '.svn', '.hg', '.bzr', '.jj', '.sl'];
+const DEFAULT_HEAD_LIMIT = 250;
+
+export interface GrepToolOptions {
+    backend?: BackendBase;
+    middlewares?: ToolMiddlewareBase[];
+}
+
+/** Python-compatible ripgrep wrapper. */
+export class GrepTool extends ToolBase {
+    readonly name = 'Grep';
+    readonly description = `A powerful search tool built on ripgrep.
+
+- ALWAYS use Grep for search tasks. NEVER invoke grep or rg as a Bash command.
+- Supports full regex syntax, file glob/type filters, context, multiline mode, pagination, and three output modes.`;
+    readonly inputSchema = z.object({
+        pattern: z.string(),
+        path: z.string().optional(),
+        output_mode: z
+            .enum(['content', 'files_with_matches', 'count'])
+            .default('files_with_matches'),
+        glob: z.string().optional(),
+        type: z.string().optional(),
+        '-A': z.number().int().optional(),
+        '-B': z.number().int().optional(),
+        '-C': z.number().int().optional(),
+        context: z.number().int().optional(),
+        n: z.boolean().default(true),
+        i: z.boolean().default(false),
+        case_insensitive: z.boolean().default(false),
+        multiline: z.boolean().default(false),
+        head_limit: z.number().int().optional(),
+        offset: z.number().int().default(0),
+    });
+    readonly isReadOnly = true;
+    readonly isConcurrencySafe = true;
+    private readonly backend: BackendBase;
+
+    constructor(options: GrepToolOptions = {}) {
+        super(options);
+        this.backend = options.backend ?? new LocalBackend();
+    }
+
+    async checkPermissions(): Promise<PermissionDecision> {
+        return createPermissionDecision({
+            behavior: PermissionBehavior.PASSTHROUGH,
+            message: 'Grep search is read-only.',
+        });
+    }
+
+    override async matchRule(
+        ruleContent: string,
+        toolInput: Record<string, unknown>
+    ): Promise<boolean> {
+        const searchPath =
+            typeof toolInput.path === 'string' ? toolInput.path : await this.backend.getCwd();
+        return minimatch(searchPath, ruleContent, { dot: true });
+    }
+
+    override async generateSuggestions(
+        toolInput: Record<string, unknown>
+    ): Promise<PermissionRule[]> {
+        const cwd = await this.backend.getCwd();
+        const inputPath = typeof toolInput.path === 'string' ? toolInput.path : cwd;
+        const absolute = this.backend.absolutePath(inputPath, cwd);
+        return [
+            {
+                tool_name: this.name,
+                rule_content: `${absolute.replace(/[\\/]+$/, '')}/**`,
+                behavior: PermissionBehavior.ALLOW,
+                source: 'suggested',
+            },
+        ];
+    }
+
+    async call(input: Record<string, unknown>): Promise<ToolChunk> {
+        const parsed = this.inputSchema.parse(input);
+        if (parsed.head_limit !== undefined && parsed.head_limit < 0) {
+            return errorChunk('Error: head_limit must be non-negative.');
+        }
+        if (parsed.offset < 0) return errorChunk('Error: offset must be non-negative.');
+        const searchPath = parsed.path ?? (await this.backend.getCwd());
+        const args = ['--hidden'];
+        for (const directory of VCS_DIRECTORIES) args.push('--glob', `!${directory}`);
+        args.push('--max-columns', '500');
+        if (parsed.multiline) args.push('-U', '--multiline-dotall');
+        if (parsed.i || parsed.case_insensitive) args.push('-i');
+        if (parsed.output_mode === 'files_with_matches') args.push('-l');
+        else if (parsed.output_mode === 'count') args.push('-c');
+        if (parsed.n && parsed.output_mode === 'content') args.push('-n');
+        if (parsed.output_mode === 'content') {
+            if (parsed.context !== undefined) args.push('-C', String(parsed.context));
+            else if (parsed['-C'] !== undefined) args.push('-C', String(parsed['-C']));
+            else {
+                if (parsed['-B'] !== undefined) args.push('-B', String(parsed['-B']));
+                if (parsed['-A'] !== undefined) args.push('-A', String(parsed['-A']));
+            }
+        }
+        if (parsed.pattern.startsWith('-')) args.push('-e', parsed.pattern);
+        else args.push(parsed.pattern);
+        if (parsed.type) args.push('--type', parsed.type);
+        if (parsed.glob) {
+            for (const pattern of splitGlobPatterns(parsed.glob)) args.push('--glob', pattern);
+        }
+
+        const result = await this.backend.execShell(['rg', ...args, searchPath], { timeout: 30 });
+        if (result.exitCode === -1 && result.stderr.equals(Buffer.from('timed out'))) {
+            return errorChunk(
+                'Ripgrep search timed out after 30 seconds. Try searching a more specific path or pattern.'
+            );
+        }
+        if (![0, 1].includes(result.exitCode)) {
+            return errorChunk(
+                `ripgrep error (code ${result.exitCode}): ${result.stderr.toString('utf8').trim()}`
+            );
+        }
+        const results = result.stdout
+            .toString('utf8')
+            .split('\n')
+            .map(line => line.replace(/\r$/, ''))
+            .filter(Boolean);
+        if (results.length === 0) {
+            return new ToolChunk({
+                content: [TextBlock({ text: `No matches found for pattern: ${parsed.pattern}` })],
+                state: 'success',
+            });
+        }
+        const limit = parsed.head_limit === 0 ? null : (parsed.head_limit ?? DEFAULT_HEAD_LIMIT);
+        const sliced =
+            limit === null
+                ? results.slice(parsed.offset)
+                : results.slice(parsed.offset, parsed.offset + limit);
+        const truncated = limit !== null && results.length - parsed.offset > limit;
+        let suffix = '';
+        if (truncated) {
+            suffix = `\n\n[Showing results with pagination = limit: ${limit}`;
+            if (parsed.offset) suffix += `, offset: ${parsed.offset}`;
+            suffix += ']';
+        }
+        return new ToolChunk({
+            content: [TextBlock({ text: sliced.join('\n') + suffix })],
+            state: 'success',
+        });
+    }
+}
 
 /**
- * Tool for searching file contents using regular expressions.
- * Supports multiple output modes, file type filtering, and multiline matching.
- *
- * @returns A Tool object for performing regex searches across files, with a call method that executes the search and returns results based on the specified output mode.
+ * Preserve the existing TypeScript factory API while returning ToolBase.
+ * @param options
  */
-export function Grep() {
-    /**
-     * Collects all files under a base directory, optionally filtered by glob or type.
-     * @param baseDir - The base directory to search from.
-     * @param glob - Optional glob pattern to filter files by name.
-     * @param type - Optional file type key to filter by extension.
-     * @returns An array of matching file paths.
-     */
-    const collectFiles = (baseDir: string, glob?: string, type?: string): string[] => {
-        const results: string[] = [];
-        const extensions = type ? TYPE_EXTENSIONS[type] : undefined;
+export function Grep(options: GrepToolOptions = {}): GrepTool {
+    return new GrepTool(options);
+}
 
-        const walk = (dir: string): void => {
-            let entries: fs.Dirent[];
-            try {
-                entries = fs.readdirSync(dir, { withFileTypes: true });
-            } catch {
-                return;
-            }
+function splitGlobPatterns(value: string): string[] {
+    const result: string[] = [];
+    for (const raw of value.split(/\s+/).filter(Boolean)) {
+        if (raw.includes('{') && raw.includes('}')) result.push(raw);
+        else result.push(...raw.split(',').filter(Boolean));
+    }
+    return result;
+}
 
-            for (const entry of entries) {
-                if (entry.name.startsWith('.') || entry.name === 'node_modules') continue;
-
-                const fullPath = path.join(dir, entry.name);
-                if (entry.isDirectory()) {
-                    walk(fullPath);
-                } else if (entry.isFile()) {
-                    if (extensions) {
-                        const ext = path.extname(entry.name);
-                        if (extensions.includes(ext)) results.push(fullPath);
-                    } else if (glob) {
-                        if (matchGlob(glob, entry.name)) results.push(fullPath);
-                    } else {
-                        results.push(fullPath);
-                    }
-                }
-            }
-        };
-
-        if (fs.existsSync(baseDir) && fs.statSync(baseDir).isFile()) {
-            results.push(baseDir);
-        } else {
-            walk(baseDir);
-        }
-
-        return results;
-    };
-
-    /**
-     * Tests whether a filename matches a glob pattern.
-     * @param pattern - The glob pattern to match against.
-     * @param filename - The filename to test.
-     * @returns True if the filename matches the pattern, false otherwise.
-     */
-    const matchGlob = (pattern: string, filename: string): boolean => {
-        const braceMatch = pattern.match(/\*\.\\{(.+)\\}/);
-        if (braceMatch) {
-            const exts = braceMatch[1].split(',').map(e => `.${e.trim()}`);
-            return exts.includes(path.extname(filename));
-        }
-        const escaped = pattern
-            .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-            .replace(/\*/g, '.*')
-            .replace(/\?/g, '.');
-        return new RegExp(`^${escaped}$`).test(filename);
-    };
-
-    return {
-        name: 'Grep',
-        description: `A powerful search tool built on regular expressions.
-
-Usage:
-- ALWAYS use Grep for search tasks. NEVER invoke \`grep\` or \`rg\` as a Bash command. The Grep tool has been optimized for correct permissions and access.
-- Supports full regex syntax (e.g., "log.*Error", "function\\s+\\w+")
-- Filter files with glob parameter (e.g., "*.js", "**/*.tsx") or type parameter (e.g., "js", "py", "rust")
-- Output modes: "content" shows matching lines, "files_with_matches" shows only file paths (default), "count" shows match counts
-- Use Task tool for open-ended searches requiring multiple rounds
-- Pattern syntax: Uses ripgrep-style regex - literal braces need escaping (use \`interface\\{\\}\` to find \`interface{}\` in Go code)
-- Multiline matching: By default patterns match within single lines only. For cross-line patterns, use \`multiline: true\``,
-        inputSchema: z.object({
-            pattern: z
-                .string()
-                .describe('The regular expression pattern to search for in file contents'),
-            path: z
-                .string()
-                .optional()
-                .describe('File or directory to search in. Defaults to current working directory.'),
-            glob: z
-                .string()
-                .optional()
-                .describe('Glob pattern to filter files (e.g. "*.js", "*.{ts,tsx}")'),
-            type: z
-                .string()
-                .optional()
-                .describe(
-                    'File type to search (e.g., "js", "ts", "py"). More efficient than glob for standard file types.'
-                ),
-            output_mode: z
-                .enum(['content', 'files_with_matches', 'count'])
-                .optional()
-                .describe(
-                    'Output mode: "content" | "files_with_matches" | "count". Defaults to "files_with_matches".'
-                ),
-            multiline: z
-                .boolean()
-                .optional()
-                .describe(
-                    'Enable multiline mode where . matches newlines and patterns can span lines. Default: false.'
-                ),
-            case_insensitive: z
-                .boolean()
-                .optional()
-                .describe('Case insensitive search. Default: false.'),
-            context: z
-                .number()
-                .int()
-                .optional()
-                .describe(
-                    'Number of lines to show before and after each match. Requires output_mode: "content".'
-                ),
-            head_limit: z
-                .number()
-                .int()
-                .optional()
-                .describe('Limit output to first N lines/entries.'),
-        }),
-        requireUserConfirm: true,
-
-        /**
-         * Searches files for a regex pattern and returns results in the specified output mode.
-         *
-         * @param root0 - The parameters object
-         * @param root0.pattern - The regular expression pattern to search for
-         * @param root0.path - File or directory to search in; defaults to cwd
-         * @param root0.glob - Glob pattern to filter which files are searched
-         * @param root0.type - File type shorthand (e.g. "ts", "py") to filter files
-         * @param root0.output_mode - How to format results: "content", "files_with_matches", or "count"
-         * @param root0.multiline - Whether the pattern can span multiple lines
-         * @param root0.case_insensitive - Whether the search is case-insensitive
-         * @param root0.context - Number of surrounding lines to include with each match
-         * @param root0.head_limit - Maximum number of result entries to return
-         * @returns A newline-separated string of results, or a no-matches message
-         */
-        call({
-            pattern,
-            path: searchPath,
-            glob,
-            type,
-            output_mode = 'files_with_matches',
-            multiline = false,
-            case_insensitive = false,
-            context,
-            head_limit,
-        }: {
-            pattern: string;
-            path?: string;
-            glob?: string;
-            type?: string;
-            output_mode?: OutputMode;
-            multiline?: boolean;
-            case_insensitive?: boolean;
-            context?: number;
-            head_limit?: number;
-        }): string {
-            const baseDir = searchPath ? searchPath : process.cwd();
-
-            let flags = multiline ? 'gms' : 'gm';
-            if (case_insensitive) flags += 'i';
-
-            const regex = new RegExp(pattern, flags);
-            const files = collectFiles(baseDir, glob, type);
-
-            if (files.length === 0) {
-                return 'No files found to search.';
-            }
-
-            const results: string[] = [];
-
-            for (const file of files) {
-                try {
-                    const content = fs.readFileSync(file, 'utf-8');
-
-                    if (output_mode === 'files_with_matches') {
-                        if (regex.test(content)) {
-                            results.push(file);
-                        }
-                        regex.lastIndex = 0;
-                    } else if (output_mode === 'count') {
-                        const matches = content.match(regex);
-                        if (matches) {
-                            results.push(`${file}: ${matches.length}`);
-                        }
-                        regex.lastIndex = 0;
-                    } else if (output_mode === 'content') {
-                        const lines = content.split('\n');
-                        for (let i = 0; i < lines.length; i++) {
-                            const lineRegex = new RegExp(pattern, case_insensitive ? 'i' : '');
-                            if (lineRegex.test(lines[i])) {
-                                const start = context !== undefined ? Math.max(0, i - context) : i;
-                                const end =
-                                    context !== undefined
-                                        ? Math.min(lines.length - 1, i + context)
-                                        : i;
-                                for (let j = start; j <= end; j++) {
-                                    results.push(`${file}:${j + 1}:${lines[j]}`);
-                                }
-                            }
-                        }
-                    }
-                } catch {
-                    // skip unreadable files
-                }
-            }
-
-            if (results.length === 0) {
-                return `No matches found for pattern: ${pattern}`;
-            }
-
-            const output = head_limit !== undefined ? results.slice(0, head_limit) : results;
-            return output.join('\n');
-        },
-    };
+function errorChunk(message: string): ToolChunk {
+    return new ToolChunk({ content: [TextBlock({ text: message })], state: 'error' });
 }

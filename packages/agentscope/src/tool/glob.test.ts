@@ -1,63 +1,68 @@
-import * as fs from 'fs';
+import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
 
-import { Glob } from './glob';
+import { PermissionBehavior } from '../permission';
+import { Glob, GlobTool } from './glob';
+import type { ToolChunk } from './response';
 
 describe('Glob', () => {
-    let tmpDir: string;
-    let glob: ReturnType<typeof Glob>;
+    let directory: string;
+    let glob: GlobTool;
 
-    beforeEach(() => {
+    beforeEach(async () => {
         glob = Glob();
-        tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'glob-test-'));
-        fs.writeFileSync(path.join(tmpDir, 'a.ts'), '');
-        fs.writeFileSync(path.join(tmpDir, 'b.ts'), '');
-        fs.writeFileSync(path.join(tmpDir, 'c.js'), '');
-        fs.mkdirSync(path.join(tmpDir, 'src'));
-        fs.writeFileSync(path.join(tmpDir, 'src', 'd.ts'), '');
-        fs.writeFileSync(path.join(tmpDir, 'src', 'e.tsx'), '');
+        directory = await fs.mkdtemp(path.join(os.tmpdir(), 'glob-test-'));
+        await fs.mkdir(path.join(directory, 'subdir'));
+        await Promise.all([
+            fs.writeFile(path.join(directory, 'test1.py'), ''),
+            fs.writeFile(path.join(directory, 'test2.py'), ''),
+            fs.writeFile(path.join(directory, 'test.txt'), ''),
+            fs.writeFile(path.join(directory, 'subdir', 'test3.py'), ''),
+        ]);
     });
 
-    afterEach(() => {
-        fs.rmSync(tmpDir, { recursive: true, force: true });
+    afterEach(async () => {
+        await fs.rm(directory, { recursive: true, force: true });
     });
 
-    it('matches *.ts files in root', () => {
-        const result = glob.call!({ pattern: '*.ts', path: tmpDir });
-        expect(result).toContain('a.ts');
-        expect(result).toContain('b.ts');
-        expect(result).not.toContain('c.js');
-        expect(result).not.toContain('d.ts');
-    });
+    const text = (chunk: ToolChunk): string =>
+        chunk.content[0].type === 'text' ? chunk.content[0].text : '';
 
-    it('matches **/*.ts recursively', () => {
-        const result = glob.call!({ pattern: '**/*.ts', path: tmpDir });
-        expect(result).toContain('a.ts');
-        expect(result).toContain('b.ts');
-        expect(result).toContain('d.ts');
-        expect(result).not.toContain('c.js');
-    });
-
-    it('matches **/*.tsx recursively', () => {
-        const result = glob.call!({ pattern: '**/*.tsx', path: tmpDir });
-        expect(result).toContain('e.tsx');
-        expect(result).not.toContain('a.ts');
-    });
-
-    it('returns message when no files match', () => {
-        const result = glob.call!({ pattern: '*.py', path: tmpDir });
-        expect(result).toContain('No files found');
-    });
-
-    it('throws on non-existent directory', () => {
-        expect(() => glob.call!({ pattern: '*.ts', path: '/nonexistent/path' })).toThrow(
-            'Directory not found'
+    test('matches simple, recursive, and Windows-separator patterns', async () => {
+        const simple = text(await glob.call({ pattern: '*.py', path: directory }));
+        expect(simple).toContain('test1.py');
+        expect(simple).not.toContain('test3.py');
+        const recursive = text(await glob.call({ pattern: '**/*.py', path: directory }));
+        expect(recursive).toContain('test3.py');
+        expect(text(await glob.call({ pattern: 'subdir\\*.py', path: directory }))).toBe(
+            path.join(directory, 'subdir', 'test3.py')
         );
     });
 
-    it('uses cwd when path is not specified', () => {
-        const result = glob.call!({ pattern: '*.json' });
-        expect(typeof result).toBe('string');
+    test('reports no matches and absent directories', async () => {
+        expect(text(await glob.call({ pattern: '*.rs', path: directory }))).toContain(
+            'No files found'
+        );
+        const missing = path.join(directory, 'missing');
+        const result = await glob.call({ pattern: '*', path: missing });
+        expect(result.state).toBe('error');
+        expect(text(result)).toBe(`Directory not found: ${missing}`);
+    });
+
+    test('implements permission matching and suggestions', async () => {
+        expect((await glob.checkPermissions()).behavior).toBe(PermissionBehavior.PASSTHROUGH);
+        expect(await glob.matchRule(`${path.dirname(directory)}/**`, { path: directory })).toBe(
+            true
+        );
+        expect(await glob.matchRule('**/*.py', { pattern: 'src/**/*.py' })).toBe(true);
+        expect(await glob.generateSuggestions({ path: directory })).toEqual([
+            {
+                tool_name: 'Glob',
+                rule_content: `${directory}/**`,
+                behavior: PermissionBehavior.ALLOW,
+                source: 'suggested',
+            },
+        ]);
     });
 });

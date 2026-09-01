@@ -1,95 +1,212 @@
-import * as fs from 'fs';
-import * as path from 'path';
+/* eslint-disable jsdoc/require-jsdoc */
 
+import { createTwoFilesPatch } from 'diff';
 import { z } from 'zod';
 
-/**
- * Tool for performing exact string replacements in files.
- * Requires the file to have been read at least once before editing.
- *
- * @returns A Tool object with a call method that performs the edit operation based on the provided parameters, ensuring uniqueness of the old_string unless replace_all is true.
- */
-export function Edit() {
-    return {
-        name: 'Edit',
-        description: `Performs exact string replacements in files.
+import { TextBlock } from '../message';
+import type { PermissionContext, PermissionDecision, PermissionRule } from '../permission';
+import { PermissionBehavior, PermissionMode, createPermissionDecision } from '../permission';
+import type { AgentState } from '../state';
+import type { BackendBase } from './backend';
+import { LocalBackend, normalizeNewlines } from './backend';
+import { ToolBase } from './base';
+import type { ToolMiddlewareBase } from './base';
+import { ToolChunk } from './response';
+
+export interface EditToolOptions {
+    backend?: BackendBase;
+    dangerousFiles?: string[];
+    dangerousDirectories?: string[];
+    middlewares?: ToolMiddlewareBase[];
+}
+
+/** Python-compatible exact string replacement tool. */
+export class EditTool extends ToolBase {
+    readonly name = 'Edit';
+    readonly description = `Performs exact string replacements in files.
 
 Usage:
-- You must use your Read tool at least once in the conversation before editing. This tool will error if you attempt an edit without reading the file.
-- When editing text from Read tool output, ensure you preserve the exact indentation (tabs/spaces) as it appears AFTER the line number prefix. The line number prefix format is: spaces + line number + tab. Everything after that tab is the actual file content to match. Never include any part of the line number prefix in the old_string or new_string.
-- ALWAYS prefer editing existing files in the codebase. NEVER write new files unless explicitly required.
-- Only use emojis if the user explicitly requests it. Avoid adding emojis to files unless asked.
-- The edit will FAIL if \`old_string\` is not unique in the file. Either provide a larger string with more surrounding context to make it unique or use \`replace_all\` to change every instance of \`old_string\`.
-- Use \`replace_all\` for replacing and renaming strings across the file. This parameter is useful if you want to rename a variable for instance.`,
-        inputSchema: z.object({
-            file_path: z.string().describe('The absolute path to the file to modify'),
-            old_string: z.string().describe('The text to replace'),
-            new_string: z
-                .string()
-                .describe('The text to replace it with (must be different from old_string)'),
-            replace_all: z
-                .boolean()
-                .optional()
-                .default(false)
-                .describe('Replace all occurrences of old_string (default false)'),
-        }),
-        requireUserConfirm: true,
+- You must use your Read tool at least once in the conversation before editing.
+- Preserve exact indentation and never include the Read line-number prefix.
+- ALWAYS prefer editing existing files in the codebase.
+- The edit will FAIL if old_string is not unique unless replace_all is true.`;
+    readonly inputSchema = z.object({
+        file_path: z.string().describe('The absolute path to the file to edit.'),
+        old_string: z.string().describe('The exact string to replace.'),
+        new_string: z.string().describe('The replacement string.'),
+        replace_all: z.boolean().default(false),
+    });
+    readonly isReadOnly = false;
+    readonly isConcurrencySafe = false;
+    override isStateInjected = true;
+    private readonly backend: BackendBase;
 
-        /**
-         * Performs an exact string replacement in the specified file.
-         *
-         * @param root0 - The parameters object
-         * @param root0.file_path - Absolute path to the file to modify
-         * @param root0.old_string - The exact text to find and replace
-         * @param root0.new_string - The text to replace old_string with
-         * @param root0.replace_all - If true, replaces all occurrences; otherwise only the first
-         * @returns A success message indicating the file was updated
-         * @throws If the path is not absolute, file does not exist, strings are identical,
-         *         old_string is not found, or old_string is not unique and replace_all is false
-         */
-        call({
-            file_path,
-            old_string,
-            new_string,
-            replace_all = false,
-        }: {
-            file_path: string;
-            old_string: string;
-            new_string: string;
-            replace_all?: boolean;
-        }): string {
-            if (!path.isAbsolute(file_path)) {
-                throw new Error(`file_path must be an absolute path, got: ${file_path}`);
-            }
+    constructor(options: EditToolOptions = {}) {
+        super(options);
+        this.backend = options.backend ?? new LocalBackend();
+    }
 
-            if (!fs.existsSync(file_path)) {
-                throw new Error(`File not found: ${file_path}`);
-            }
+    async checkPermissions(
+        toolInput: Record<string, unknown>,
+        context: PermissionContext
+    ): Promise<PermissionDecision> {
+        const filePath = typeof toolInput.file_path === 'string' ? toolInput.file_path : '';
+        if (!filePath) {
+            return createPermissionDecision({
+                behavior: PermissionBehavior.PASSTHROUGH,
+                message: 'No file path provided',
+            });
+        }
+        if (this.isDangerousPath(filePath)) {
+            return createPermissionDecision({
+                behavior: PermissionBehavior.ASK,
+                message: `Permission required: Edit operation on sensitive file ${filePath}`,
+                decisionReason: 'Safety check: dangerous file or directory',
+                bypassImmune: true,
+            });
+        }
+        if (
+            [PermissionMode.ACCEPT_EDITS, PermissionMode.DONT_ASK].includes(context.mode) &&
+            this.pathInAllowedWorkingPath(filePath, context)
+        ) {
+            return createPermissionDecision({
+                behavior: PermissionBehavior.ALLOW,
+                message: `Permission granted for editing ${filePath} (in working directory)`,
+                decisionReason: 'File is in working directory and not a dangerous path',
+            });
+        }
+        return createPermissionDecision({
+            behavior: PermissionBehavior.PASSTHROUGH,
+            message: '',
+        });
+    }
 
-            if (old_string === new_string) {
-                throw new Error('old_string and new_string must be different');
-            }
+    override async matchRule(
+        ruleContent: string,
+        toolInput: Record<string, unknown>
+    ): Promise<boolean> {
+        const filePath = typeof toolInput.file_path === 'string' ? toolInput.file_path : '';
+        return filePath !== '' && globMatches(filePath, ruleContent);
+    }
 
-            const content = fs.readFileSync(file_path, 'utf-8');
-            const occurrences = content.split(old_string).length - 1;
+    override async generateSuggestions(
+        toolInput: Record<string, unknown>
+    ): Promise<PermissionRule[]> {
+        const filePath = typeof toolInput.file_path === 'string' ? toolInput.file_path : '';
+        if (!filePath) return [];
+        const parent = this.backend.dirname(filePath);
+        return [
+            {
+                tool_name: this.name,
+                rule_content: parent ? `${parent.replace(/[\\/]+$/, '')}/**` : '**',
+                behavior: PermissionBehavior.ALLOW,
+                source: 'suggested',
+            },
+        ];
+    }
 
-            if (occurrences === 0) {
-                throw new Error(`old_string not found in file: ${file_path}`);
-            }
+    async call(input: Record<string, unknown>): Promise<ToolChunk> {
+        const parsed = this.inputSchema.parse(input);
+        const filePath = parsed.file_path;
+        if (!this.backend.isAbsolute(filePath)) {
+            return errorChunk(`Error: file_path must be an absolute path, got: ${filePath}`);
+        }
+        if (!(await this.backend.fileExists(filePath))) {
+            return errorChunk(`Error: File not found: ${filePath}`);
+        }
+        if (parsed.old_string === parsed.new_string) {
+            return errorChunk(
+                'Error: old_string and new_string are identical. No changes to make.'
+            );
+        }
 
-            if (!replace_all && occurrences > 1) {
-                throw new Error(
-                    `old_string is not unique in the file (found ${occurrences} occurrences). ` +
-                        `Provide more surrounding context to make it unique, or use replace_all=true.`
+        const state = input._agent_state as AgentState | undefined;
+        let content: string;
+        if (state) {
+            const mtime = await this.backend.statMtime(filePath);
+            const cached = await state.toolContext.getCache({ filePath, mtime });
+            if (!cached) {
+                return errorChunk(
+                    'Error: To edit a file, you must first read it using the Read tool.'
                 );
             }
+            content = cached.lines.join('');
+        } else {
+            try {
+                content = normalizeNewlines(
+                    (await this.backend.readFile(filePath)).toString('utf8')
+                );
+            } catch (error) {
+                return errorChunk(`Error reading file: ${errorMessage(error)}`);
+            }
+        }
 
-            const newContent = replace_all
-                ? content.split(old_string).join(new_string)
-                : content.replace(old_string, new_string);
+        const occurrences = countOccurrences(content, parsed.old_string);
+        if (occurrences === 0) {
+            return errorChunk(`Error: old_string not found in ${filePath}`);
+        }
+        if (occurrences > 1 && !parsed.replace_all) {
+            return errorChunk(
+                `Error: old_string appears ${occurrences} times in ${filePath}. ` +
+                    'Set replace_all=true to replace all occurrences, or make old_string more specific.'
+            );
+        }
 
-            fs.writeFileSync(file_path, newContent, 'utf-8');
-            return `The file ${file_path} has been updated successfully.`;
-        },
-    };
+        const updated = parsed.replace_all
+            ? content.split(parsed.old_string).join(parsed.new_string)
+            : content.replace(parsed.old_string, parsed.new_string);
+        try {
+            await this.backend.writeFile(filePath, Buffer.from(updated, 'utf8'));
+        } catch (error) {
+            return errorChunk(`Error writing file: ${errorMessage(error)}`);
+        }
+        const replaced = parsed.replace_all ? occurrences : 1;
+        const replacementMessage = parsed.replace_all
+            ? `all ${occurrences} occurrences`
+            : '1 occurrence';
+        const diff = createTwoFilesPatch(
+            `a/${filePath}`,
+            `b/${filePath}`,
+            content,
+            updated,
+            '',
+            '',
+            { context: 3 }
+        ).replace(/^===================================================================\n/, '');
+        return new ToolChunk({
+            content: [
+                TextBlock({
+                    text: `Successfully replaced ${replacementMessage} in ${filePath}`,
+                }),
+            ],
+            metadata: { diff, file_path: filePath, occurrences: replaced },
+        });
+    }
+}
+
+/**
+ * Preserve the existing TypeScript factory API while returning ToolBase.
+ * @param options
+ */
+export function Edit(options: EditToolOptions = {}): EditTool {
+    return new EditTool(options);
+}
+
+function countOccurrences(value: string, needle: string): number {
+    if (needle === '') return value.length + 1;
+    return value.split(needle).length - 1;
+}
+
+function errorChunk(message: string): ToolChunk {
+    return new ToolChunk({ content: [TextBlock({ text: message })], state: 'error' });
+}
+
+function errorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+}
+
+function globMatches(value: string, pattern: string): boolean {
+    const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, '\\$&');
+    const regex = escaped.replace(/\*\*/g, '\0').replace(/\*/g, '[^/\\\\]*').replace(/\0/g, '.*');
+    return new RegExp(`^${regex}$`).test(value);
 }

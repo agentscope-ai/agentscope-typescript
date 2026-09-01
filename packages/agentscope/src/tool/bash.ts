@@ -1,168 +1,280 @@
-import { exec } from 'child_process';
-import { promisify } from 'util';
+/* eslint-disable jsdoc/require-jsdoc */
 
 import { z } from 'zod';
 
-import { createToolResponse, ToolResponse } from './response';
-import { _generateId, _generateTimestamp } from '../_utils/common';
+import { TextBlock } from '../message';
+import type { PermissionContext, PermissionDecision, PermissionRule } from '../permission';
+import { PermissionBehavior, PermissionMode, createPermissionDecision } from '../permission';
+import type { BackendBase } from './backend';
+import { LocalBackend, normalizeNewlines } from './backend';
+import { ToolBase } from './base';
+import type { ToolChunkStream, ToolMiddlewareBase } from './base';
+import { BashCommandParser } from './bash-parser';
+import { ToolChunk } from './response';
 
-const execAsync = promisify(exec);
+const FILESYSTEM_COMMANDS = new Set(['mkdir', 'touch', 'rm', 'rmdir', 'mv', 'cp', 'sed']);
 
-/**
- * Tool for executing bash commands in a shell environment.
- * Intended for terminal operations such as git, npm, and docker.
- * File operations should use the dedicated Read, Write, Edit, Glob, and Grep tools instead.
- *
- * @returns A Tool object for executing bash commands, with a call method that performs the execution and returns the output or error message.
- */
-export function Bash() {
-    return {
-        name: 'Bash',
-        description: `Executes a given bash command and returns its output.
+export interface BashToolOptions {
+    cwd?: string;
+    backend?: BackendBase;
+    dangerousFiles?: string[];
+    dangerousDirectories?: string[];
+    middlewares?: ToolMiddlewareBase[];
+}
 
-The working directory persists between commands, but shell state does not. The shell environment is initialized from the user's profile (bash or zsh).
+/** Python-compatible Bash execution and permission tool. */
+export class BashTool extends ToolBase {
+    readonly name = 'Bash';
+    readonly description = `Executes a bash command and returns its output.
 
-IMPORTANT: Avoid using this tool to run \`find\`, \`grep\`, \`cat\`, \`head\`, \`tail\`, \`sed\`, \`awk\`, or \`echo\` commands, unless explicitly instructed or after you have verified that a dedicated tool cannot accomplish your task. Instead, use the appropriate dedicated tool as this will provide a much better experience for the user:
+The working directory persists between commands, but shell state does not. Prefer Glob, Grep, Read, Edit, and Write for filesystem operations. The timeout defaults to 120000ms and is capped at 600000ms.`;
+    readonly inputSchema = z.object({
+        command: z.string(),
+        description: z.string().default(''),
+        timeout: z.number().int().min(0).default(120000),
+    });
+    readonly isReadOnly = false;
+    readonly isConcurrencySafe = false;
+    private readonly parser = new BashCommandParser();
+    private readonly backend: BackendBase;
+    private readonly cwd?: string;
 
- - File search: Use Glob (NOT find or ls)
- - Content search: Use Grep (NOT grep or rg)
- - Read files: Use Read (NOT cat/head/tail)
- - Edit files: Use Edit (NOT sed/awk)
- - Write files: Use Write (NOT echo >/cat <<EOF)
- - Communication: Output text directly (NOT echo/printf)
+    constructor(options: BashToolOptions = {}) {
+        super(options);
+        this.backend = options.backend ?? new LocalBackend();
+        this.cwd = options.cwd;
+    }
 
-While the Bash tool can do similar things, it's better to use the built-in tools as they provide a better user experience and make it easier to review tool calls and give permission.
+    override async checkReadOnly(toolInput: Record<string, unknown>): Promise<boolean> {
+        const command = typeof toolInput.command === 'string' ? toolInput.command : '';
+        if (!command || this.parser.checkInjectionRisk(command)) return false;
+        return this.parser.isReadOnlyCommand(command);
+    }
 
-# Instructions
- - If your command will create new directories or files, first use this tool to run \`ls\` to verify the parent directory exists and is the correct location.
- - Always quote file paths that contain spaces with double quotes in your command (e.g., cd "path with spaces/file.txt")
- - Try to maintain your current working directory throughout the session by using absolute paths and avoiding usage of \`cd\`. You may use \`cd\` if the User explicitly requests it.
- - You may specify an optional timeout in milliseconds (up to 600000ms / 10 minutes). By default, your command will timeout after 120000ms (2 minutes).
- - Write a clear, concise description of what your command does. For simple commands, keep it brief (5-10 words). For complex commands (piped commands, obscure flags, or anything hard to understand at a glance), include enough context so that the user can understand what your command will do.
- - When issuing multiple commands:
-  - If the commands are independent and can run in parallel, make multiple Bash tool calls in a single message. Example: if you need to run "git status" and "git diff", send a single message with two Bash tool calls in parallel.
-  - If the commands depend on each other and must run sequentially, use a single Bash call with '&&' to chain them together.
-  - Use ';' only when you need to run commands sequentially but don't care if earlier commands fail.
-  - DO NOT use newlines to separate commands (newlines are ok in quoted strings).
- - For git commands:
-  - Prefer to create a new commit rather than amending an existing commit.
-  - Before running destructive operations (e.g., git reset --hard, git push --force, git checkout --), consider whether there is a safer alternative that achieves the same goal. Only use destructive operations when they are truly the best approach.
-  - Never skip hooks (--no-verify) or bypass signing (--no-gpg-sign, -c commit.gpgsign=false) unless the user has explicitly asked for it. If a hook fails, investigate and fix the underlying issue.
- - Avoid unnecessary \`sleep\` commands:
-  - Do not sleep between commands that can run immediately — just run them.
-  - Do not retry failing commands in a sleep loop — diagnose the root cause or consider an alternative approach.
-  - If you must sleep, keep the duration short (1-5 seconds) to avoid blocking the user.`,
-        inputSchema: z.object({
-            command: z.string().describe('The bash command to execute'),
-            description: z
-                .string()
-                .optional()
-                .describe(
-                    'Clear, concise description of what this command does. For simple commands, keep it brief (5-10 words). For complex commands, include enough context.'
-                ),
-            timeout: z
-                .number()
-                .int()
-                .min(0)
-                .max(600000)
-                .optional()
-                .describe('Optional timeout in milliseconds (default: 120000, max: 600000)'),
-        }),
-        requireUserConfirm: true,
-
-        /**
-         * Executes a bash command and returns its output.
-         *
-         * @param root0 - The parameters object
-         * @param root0.command - The bash command to execute
-         * @param root0.description - Optional description of what the command does
-         * @param root0.timeout - Optional timeout in milliseconds (default: 120000, max: 600000)
-         * @returns The stdout of the command, or an error message if the command fails
-         */
-        async call({
-            command,
-            description: _description,
-            timeout = 120000,
-        }: {
-            command: string;
-            description?: string;
-            timeout?: number;
-        }): Promise<ToolResponse> {
-            try {
-                const maxTimeout = 600000;
-                const effectiveTimeout = Math.min(timeout, maxTimeout);
-
-                // Determine the appropriate shell based on platform
-                let shell: string;
-                if (process.platform === 'win32') {
-                    // On Windows, use cmd.exe or PowerShell
-                    shell = process.env.COMSPEC || 'cmd.exe';
-                } else {
-                    // On Unix-like systems, use the user's shell or default to bash
-                    shell = process.env.SHELL || '/bin/bash';
-                }
-
-                const { stdout } = await execAsync(command, {
-                    encoding: 'utf-8',
-                    timeout: effectiveTimeout,
-                    maxBuffer: 30000 * 1024,
-                    shell,
-                });
-
-                // Normalize line endings to LF for cross-platform consistency
-                const normalizedOutput = stdout.replace(/\r\n/g, '\n');
-
-                const maxOutputLength = 30000;
-                if (normalizedOutput.length > maxOutputLength) {
-                    return createToolResponse({
-                        content: [
-                            {
-                                id: _generateId(),
-                                created_at: _generateTimestamp(),
-                                type: 'text',
-                                text:
-                                    normalizedOutput.substring(0, maxOutputLength) +
-                                    '\n\n[Output truncated - exceeded 30000 characters]',
-                            },
-                        ],
-                        state: 'success',
-                    });
-                }
-
-                return createToolResponse({
-                    content: [
-                        {
-                            id: _generateId(),
-                            created_at: _generateTimestamp(),
-                            type: 'text',
-                            text: normalizedOutput,
-                        },
-                    ],
-                    state: 'success',
-                });
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } catch (error: any) {
-                const errorMessage = error.message || 'Unknown error';
-                const stderr = error.stderr?.toString().replace(/\r\n/g, '\n') || '';
-                const stdout = error.stdout?.toString().replace(/\r\n/g, '\n') || '';
-
-                let result = `Command failed: ${command}\n`;
-                if (stdout) result += `\nStdout:\n${stdout}`;
-                if (stderr) result += `\nStderr:\n${stderr}`;
-                if (errorMessage && !stderr) result += `\nError: ${errorMessage}`;
-
-                return createToolResponse({
-                    content: [
-                        {
-                            id: _generateId(),
-                            created_at: _generateTimestamp(),
-                            type: 'text',
-                            text: result,
-                        },
-                    ],
-                    state: 'error',
+    async checkPermissions(
+        toolInput: Record<string, unknown>,
+        context: PermissionContext
+    ): Promise<PermissionDecision> {
+        const command = typeof toolInput.command === 'string' ? toolInput.command : '';
+        if (!command) {
+            return createPermissionDecision({
+                behavior: PermissionBehavior.PASSTHROUGH,
+                message: 'Empty command',
+            });
+        }
+        const injection = this.parser.checkInjectionRisk(command);
+        if (injection) {
+            return createPermissionDecision({
+                behavior: PermissionBehavior.ASK,
+                message: `Permission required: ${injection}`,
+                decisionReason:
+                    'Safety check: command contains dynamic expansion that cannot be statically analyzed',
+                bypassImmune: true,
+            });
+        }
+        if (this.parser.isReadOnlyCommand(command)) {
+            return createPermissionDecision({
+                behavior: PermissionBehavior.ALLOW,
+                message: 'Permission granted for read-only command',
+                decisionReason: 'Read-only command is allowed',
+            });
+        }
+        const dangerousCommand = this.parser.checkDangerousCommand(command);
+        if (dangerousCommand) {
+            return createPermissionDecision({
+                behavior: PermissionBehavior.ASK,
+                message: `Permission required: Command contains dangerous pattern: ${dangerousCommand}`,
+                decisionReason: 'Safety check: dangerous command pattern detected',
+                bypassImmune: true,
+            });
+        }
+        const sedError = this.parser.checkSedConstraints(command, this.dangerousFiles);
+        if (sedError) {
+            return createPermissionDecision({
+                behavior: PermissionBehavior.ASK,
+                message: `Permission required: ${sedError}`,
+                decisionReason: 'Safety check: sed in-place modification of dangerous file',
+                bypassImmune: true,
+            });
+        }
+        const dangerousPaths = this.parser
+            .extractFilePaths(command)
+            .map(([, filePath]) => filePath)
+            .filter(filePath => this.isDangerousPath(filePath));
+        if (dangerousPaths.length) {
+            return createPermissionDecision({
+                behavior: PermissionBehavior.ASK,
+                message: `Permission required: Bash command operates on sensitive paths: ${dangerousPaths.join(', ')}`,
+                decisionReason: 'Safety check: dangerous file or directory in bash command',
+                bypassImmune: true,
+            });
+        }
+        const dangerousRemoval = await this.checkDangerousRemovalPath(command);
+        if (dangerousRemoval) {
+            return createPermissionDecision({
+                behavior: PermissionBehavior.ASK,
+                message:
+                    `Dangerous removal operation detected: '${dangerousRemoval}'\n\n` +
+                    'This command would remove a critical system directory. This requires explicit approval and cannot be auto-allowed by permission rules.',
+                decisionReason: 'Safety check: dangerous removal of critical system path',
+                bypassImmune: true,
+            });
+        }
+        if ([PermissionMode.ACCEPT_EDITS, PermissionMode.DONT_ASK].includes(context.mode)) {
+            const baseCommand = command.trim().split(/\s+/, 1)[0];
+            const targets = this.parser.extractFilePaths(command).map(([, filePath]) => filePath);
+            if (
+                FILESYSTEM_COMMANDS.has(baseCommand) &&
+                targets.length > 0 &&
+                targets.every(filePath => this.pathInAllowedWorkingPath(filePath, context))
+            ) {
+                return createPermissionDecision({
+                    behavior: PermissionBehavior.ALLOW,
+                    message:
+                        `Permission granted for '${baseCommand}' command ` +
+                        '(filesystem command, all targets in working directory)',
+                    decisionReason:
+                        `Filesystem command '${baseCommand}' is auto-allowed because ` +
+                        'all target paths are within a working directory',
                 });
             }
-        },
-    };
+        }
+        return createPermissionDecision({
+            behavior: PermissionBehavior.PASSTHROUGH,
+            message: `Execute bash command: ${command}`,
+        });
+    }
+
+    override async matchRule(
+        ruleContent: string,
+        toolInput: Record<string, unknown>
+    ): Promise<boolean> {
+        const command = typeof toolInput.command === 'string' ? toolInput.command : '';
+        if (ruleContent.endsWith(':*')) {
+            const prefix = ruleContent.slice(0, -2).trim();
+            return command === prefix || command.startsWith(`${prefix} `);
+        }
+        if (!hasUnescapedWildcard(ruleContent)) {
+            const literal = ruleContent
+                .replace(/\\\\/g, '\0')
+                .replace(/\\\*/g, '*')
+                .replace(/\0/g, '\\');
+            return command.includes(literal);
+        }
+        let pattern = ruleContent.replace(/\\\\/g, '\0B').replace(/\\\*/g, '\0S');
+        pattern = escapeRegexExceptAsterisk(pattern).replace(/\*/g, '.*');
+        pattern = pattern.replace(/\0S/g, '\\*').replace(/\0B/g, '\\\\');
+        if (pattern.endsWith('.*')) {
+            const base = pattern.slice(0, -2).trimEnd();
+            if (new RegExp(`^${base}$`).test(command)) return true;
+        }
+        try {
+            return new RegExp(`^${pattern}$`).test(command);
+        } catch {
+            return command.includes(ruleContent.replace(/\*/g, ''));
+        }
+    }
+
+    override async generateSuggestions(
+        toolInput: Record<string, unknown>
+    ): Promise<PermissionRule[]> {
+        const command = typeof toolInput.command === 'string' ? toolInput.command : '';
+        return this.parser.extractCommandPrefixes(command, 5).map(prefix => ({
+            tool_name: this.name,
+            rule_content: `${prefix}:*`,
+            behavior: PermissionBehavior.ALLOW,
+            source: 'suggested',
+        }));
+    }
+
+    async call(input: Record<string, unknown>): Promise<ToolChunkStream> {
+        const parsed = this.inputSchema.parse(input);
+        return this.execute(parsed.command, Math.min(parsed.timeout, 600000));
+    }
+
+    private async *execute(command: string, timeout: number): ToolChunkStream {
+        try {
+            const shell = this.backend.osName === 'nt' ? ['cmd', '/c'] : ['/bin/sh', '-c'];
+            const result = await this.backend.execShell([...shell, command], {
+                cwd: this.cwd,
+                timeout: timeout / 1000,
+            });
+            const stdout = normalizeNewlines(result.stdout.toString('utf8'));
+            const stderr = normalizeNewlines(result.stderr.toString('utf8'));
+            if (result.exitCode === -1 && result.stderr.equals(Buffer.from('timed out'))) {
+                yield errorChunk(`Command timed out after ${timeout}ms: ${command}`);
+                return;
+            }
+            if (!result.ok()) {
+                let output = `Command failed: ${command}\n`;
+                if (stdout) output += `\nStdout:\n${stdout}`;
+                if (stderr) output += `\nStderr:\n${stderr}`;
+                yield errorChunk(truncate(output));
+                return;
+            }
+            yield new ToolChunk({
+                content: [
+                    TextBlock({
+                        text: truncate(stdout + (stdout && stderr ? '\n' : '') + stderr),
+                    }),
+                ],
+            });
+        } catch (error) {
+            yield errorChunk(
+                `Command failed: ${command}\nError: ${error instanceof Error ? error.message : String(error)}`
+            );
+        }
+    }
+
+    private async checkDangerousRemovalPath(command: string): Promise<string | null> {
+        for (const subcommand of this.parser.splitCompoundCommand(command)) {
+            const tokens = subcommand.trim().split(/\s+/);
+            if (!['rm', 'rmdir'].includes(tokens[0])) continue;
+            for (const token of tokens.slice(1)) {
+                if (token.startsWith('-')) continue;
+                const filePath = token.replace(/^['"]|['"]$/g, '');
+                if (await this.isDangerousRemovalPath(filePath)) return filePath;
+            }
+        }
+        return null;
+    }
+
+    private async isDangerousRemovalPath(filePath: string): Promise<boolean> {
+        if (['*', './*', '/'].includes(filePath)) return true;
+        if (filePath.endsWith('/*') || filePath.endsWith('\\*')) return true;
+        const expanded = await this.backend.expandUser(filePath);
+        const absolute = this.backend.absolutePath(expanded, await this.backend.getCwd());
+        if (absolute === (await this.backend.expandUser('~'))) return true;
+        const parent = this.backend.dirname(absolute);
+        if (absolute === parent) return true;
+        return this.backend.dirname(parent) === parent;
+    }
+}
+
+/**
+ * Preserve the existing TypeScript factory API while returning ToolBase.
+ * @param options
+ */
+export function Bash(options: BashToolOptions = {}): BashTool {
+    return new BashTool(options);
+}
+
+function truncate(value: string): string {
+    return value.length > 30000 ? `${value.slice(0, 30000)}\n... (output truncated)` : value;
+}
+
+function errorChunk(message: string): ToolChunk {
+    return new ToolChunk({ content: [TextBlock({ text: message })], state: 'error' });
+}
+
+function hasUnescapedWildcard(value: string): boolean {
+    for (let index = 0; index < value.length; index += 1) {
+        if (value[index] === '\\') index += 1;
+        else if (value[index] === '*') return true;
+    }
+    return false;
+}
+
+function escapeRegexExceptAsterisk(value: string): string {
+    return value.replace(/[.^$+?{}[\]|()]/g, '\\$&');
 }

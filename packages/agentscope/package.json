@@ -83,6 +83,11 @@
             "types": "./dist/permission/index.d.ts",
             "import": "./dist/permission/index.mjs",
             "require": "./dist/permission/index.js"
+        },
+        "./skill": {
+            "types": "./dist/skill/index.d.ts",
+            "import": "./dist/skill/index.mjs",
+            "require": "./dist/skill/index.js"
         }
     },
     "scripts": {
@@ -119,11 +124,15 @@
     "dependencies": {
         "@cfworker/json-schema": "^4.1.1",
         "@modelcontextprotocol/sdk": "^1.27.1",
+        "diff": "^9.0.0",
         "gray-matter": "^4.0.3",
         "jsonrepair": "^3.13.1",
         "mime-types": "^3.0.2",
+        "minimatch": "^10.2.6",
         "ollama": "^0.6.3",
         "openai": "^6.16.0",
+        "pdf-lib": "^1.17.1",
+        "pdfjs-dist": "^6.3.289",
         "string-format": "^2.0.0",
         "uuid": "^11.1.0",
         "zod": "^4.3.6",

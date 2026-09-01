@@ -2264,27 +2264,54 @@
             "sha256": "7b3c2c9bf70e7cbb0b1a278ec033ef0b076c2cd7348bba61157545a589f8e2b5",
             "module": "mcp",
             "typescriptTarget": "packages/agentscope/src/mcp",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/mcp_client_reconnect_test.py",
+                "tests/mcp_sse_client_test.py",
+                "tests/mcp_streamable_http_client_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/mcp/base.test.ts",
+                "packages/agentscope/src/mcp/client.test.ts",
+                "packages/agentscope/src/mcp/http.test.ts",
+                "packages/agentscope/src/mcp/stdio.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/mcp/_config.py",
             "sha256": "6811c8987796f73e42850fa9897c927d8ec721be86d97efb9d891662f9a1f3b6",
             "module": "mcp",
             "typescriptTarget": "packages/agentscope/src/mcp",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/mcp_client_reconnect_test.py",
+                "tests/mcp_sse_client_test.py",
+                "tests/mcp_streamable_http_client_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/mcp/base.test.ts",
+                "packages/agentscope/src/mcp/client.test.ts",
+                "packages/agentscope/src/mcp/http.test.ts",
+                "packages/agentscope/src/mcp/stdio.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/mcp/_mcp_client.py",
             "sha256": "d9c0760b3412e9b9c8fac53e557e57961331e9c2b1f5f953df5598c03021fdaf",
             "module": "mcp",
             "typescriptTarget": "packages/agentscope/src/mcp",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/mcp_client_reconnect_test.py",
+                "tests/mcp_sse_client_test.py",
+                "tests/mcp_streamable_http_client_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/mcp/base.test.ts",
+                "packages/agentscope/src/mcp/client.test.ts",
+                "packages/agentscope/src/mcp/http.test.ts",
+                "packages/agentscope/src/mcp/stdio.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/message/__init__.py",
@@ -3092,27 +3119,36 @@
             "sha256": "1a2c036ac97543095d8da576a3116513797a36469525bcd8c18a19227cd941ec",
             "module": "skill",
             "typescriptTarget": "packages/agentscope/src/skill",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/skill_loader_test.py", "tests/toolkit_skill_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/skill/local-loader.test.ts",
+                "packages/agentscope/src/tool/toolkit.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/skill/_base.py",
             "sha256": "8db4eb6d8ac1fc1fcbc2f0abda0fba42f02564841edb68c58d59f63180e9225d",
             "module": "skill",
             "typescriptTarget": "packages/agentscope/src/skill",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/skill_loader_test.py", "tests/toolkit_skill_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/skill/local-loader.test.ts",
+                "packages/agentscope/src/tool/toolkit.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/skill/_local_loader.py",
             "sha256": "4f828d0f510068f9cb43bb28c4d994808b66a91fc1e67d9747355abfa216aaa9",
             "module": "skill",
             "typescriptTarget": "packages/agentscope/src/skill",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/skill_loader_test.py", "tests/toolkit_skill_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/skill/local-loader.test.ts",
+                "packages/agentscope/src/tool/toolkit.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/state/__init__.py",
@@ -3176,261 +3212,783 @@
             "sha256": "394000d6574402134df5d0ff83525301e58123ccd7cc4bc0264681f631844b8f",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_adapters.py",
             "sha256": "6f53f0a399ffc5e5709b4b360e70fa51cbb0134df8502db0ac3b21554ce99dcd",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_base.py",
             "sha256": "936a7a162b0407ecec68ef715163c9b13fcfa7612cd4fdd4537bb8f961217d43",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_builtin/__init__.py",
             "sha256": "4a0369a89fdeefea3f2ec7b1533ac3b78c619367700c772d9d17bbd9727ccc34",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_builtin/_backend.py",
             "sha256": "579081de3a400f022f07b14f3b9608ffec1cc61c3759cfcf270e4506a5a5bc88",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_builtin/_bash_parser.py",
             "sha256": "e9b7c622cf1b8cffc9ba419868f409b4ef2692f725a6cf13f2f6db9ffc2b955b",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_builtin/_bash.py",
             "sha256": "96407271b0523f35f89d0a2f4cb94465556cd72adcf3c903a6e010934e8d12d5",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_builtin/_edit.py",
             "sha256": "cb2031b8f6ea51e70794d16e0fb0507250314405516765c1f61a63b672b5c68d",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_builtin/_glob.py",
             "sha256": "65d7e9ff0f7f8b562a93e783eee766080c80d7344f45d4261a21ed9ee66fa1bf",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_builtin/_grep.py",
             "sha256": "124c9e2403089a97de698d69218533589233c4692ebf1e9baab1d754b665326f",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_builtin/_meta.py",
             "sha256": "4a3329a83c35569a86416764963da35ffdb68c14d1a09d32ef59be6966fdffa9",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_builtin/_powershell.py",
             "sha256": "3a2054ad4946c8956c9fa807e0a14eb5a8a0bda6eeee00ebcf835a4be9dabc8d",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_builtin/_read.py",
             "sha256": "f84845117645ea9e8e42128331883e4bcbe44e83d558d3227dfe55666a0797b7",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_builtin/_scripts/__init__.py",
             "sha256": "1610f0f0fe7a808c678bd486bdb4280535bce873e94d02ca03ca9e99f7a72f07",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_builtin/_scripts/_glob_helper.py",
             "sha256": "417060a6db71a48bbb11b3848e350a1f26c63af5fb5f41b0574257f93a897a28",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_builtin/_skill.py",
             "sha256": "66ad7aee59386a14a8f458b0753aae8153b79962be1474248a80f73e21f292e9",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_builtin/_write.py",
             "sha256": "257d6629df935fc61e34fab32b2fb9cd66616960aee063e0d98991dc1db23bc1",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_constants.py",
             "sha256": "4a562c4f9590c0b0b846d742666412bd77411594abf0b3aa7ef949b92378f452",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_response.py",
             "sha256": "a089d3c54b386fcafc159529c633c11fe145ae6171fe5a88ecdf9a94beb491b1",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_task/__init__.py",
             "sha256": "8109a25985e1143259e70a7a4462a4ca2f8c7f427547f487677755b310948af2",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_task/_create_task.py",
             "sha256": "f44b48b5e2251d7507b9bb4cd6e68312095753a41f552284858e19847a7f8a80",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_task/_get_task.py",
             "sha256": "eaa8c73e3deedf99d78f38285816646f432cc236c86100dde71a9115ec58fae5",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_task/_list_task.py",
             "sha256": "6c6521b98099b9101fb43b403799401e9fb22f13e6f4f68758f5d0b64e3c1337",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_task/_task_tool_base.py",
             "sha256": "42dc10cdade4ba9f9b24d2481207ba3954b0a6701ca0ca604d2aebb4cf06f172",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_task/_update_task.py",
             "sha256": "1135dc07b159d7374607050b74e08e4a25c831b14aa350972e9bcd8718f6bf7a",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_tool_group.py",
             "sha256": "62e647c3ecbfd80354eea7e4ead151b0094cc78b95b3cb0adf0cde830646b592",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_toolkit.py",
             "sha256": "6dae116e2cfb825020f72feb1dc0c7a6166509510923fdd41a50f42eafe3f4a3",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_types.py",
             "sha256": "47680ca83008221870d34f7d34be63a3c15515ce7f773433e36738e39ec64659",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/_utils.py",
             "sha256": "07cf203c1ced18ef372657cef3c0ae9df44763f73d3fa9023c4fbf8cc800dc6b",
             "module": "tool",
             "typescriptTarget": "packages/agentscope/src/tool",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/builtin_bash_test.py",
+                "tests/builtin_edit_test.py",
+                "tests/builtin_file_cache_backend_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/builtin_glob_test.py",
+                "tests/builtin_grep_test.py",
+                "tests/builtin_powershell_test.py",
+                "tests/builtin_read_test.py",
+                "tests/builtin_write_test.py",
+                "tests/permission_bash_parser_test.py",
+                "tests/task_tool_test.py",
+                "tests/tool_middleware_test.py",
+                "tests/toolkit_task_test.py",
+                "tests/toolkit_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tool",
+                "packages/agentscope/test/parity/tool-response.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tts/__init__.py",

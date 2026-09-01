@@ -1,166 +1,125 @@
-import * as fs from 'fs';
-import * as path from 'path';
+/* eslint-disable jsdoc/require-jsdoc */
 
+import { minimatch } from 'minimatch';
 import { z } from 'zod';
 
-/**
- * Tool for fast file pattern matching across a codebase.
- * Supports glob patterns and returns results sorted by modification time.
- *
- * @returns A Tool object with a call method that performs glob matching based on the provided pattern and path.
- */
-export function Glob() {
-    /**
-     * Matches files against a glob pattern starting from the given base directory.
-     * @param pattern - The glob pattern to match against.
-     * @param baseDir - The base directory to search from.
-     * @returns An array of matched file paths.
-     */
-    const globMatch = (pattern: string, baseDir: string): string[] => {
-        const results: string[] = [];
-        const parts = pattern.split('/');
-        matchParts(parts, 0, baseDir, results);
-        return results;
-    };
+import { TextBlock } from '../message';
+import type { PermissionDecision, PermissionRule } from '../permission';
+import { PermissionBehavior, createPermissionDecision } from '../permission';
+import type { BackendBase } from './backend';
+import { LocalBackend } from './backend';
+import { ToolBase } from './base';
+import type { ToolMiddlewareBase } from './base';
+import { ToolChunk } from './response';
 
-    /**
-     * Recursively matches path parts against directory entries.
-     * @param parts - The split glob pattern parts.
-     * @param partIndex - The current index in the parts array.
-     * @param currentDir - The current directory being traversed.
-     * @param results - The accumulator array for matched file paths.
-     */
-    const matchParts = (
-        parts: string[],
-        partIndex: number,
-        currentDir: string,
-        results: string[]
-    ): void => {
-        if (partIndex >= parts.length) return;
+export interface GlobToolOptions {
+    backend?: BackendBase;
+    middlewares?: ToolMiddlewareBase[];
+}
 
-        const part = parts[partIndex];
-        const isLast = partIndex === parts.length - 1;
+/** Python-compatible recursive file globber. */
+export class GlobTool extends ToolBase {
+    readonly name = 'Glob';
+    readonly description = `Fast file pattern matching tool that works with any codebase size.
 
-        if (part === '**') {
-            if (isLast) {
-                collectAll(currentDir, results);
-            } else {
-                matchParts(parts, partIndex + 1, currentDir, results);
-                try {
-                    const entries = fs.readdirSync(currentDir, { withFileTypes: true });
-                    for (const entry of entries) {
-                        if (entry.isDirectory()) {
-                            const subDir = path.join(currentDir, entry.name);
-                            matchParts(parts, partIndex, subDir, results);
-                        }
-                    }
-                } catch {
-                    // skip unreadable dirs
-                }
-            }
-        } else {
-            const regex = globPartToRegex(part);
-            try {
-                const entries = fs.readdirSync(currentDir, { withFileTypes: true });
-                for (const entry of entries) {
-                    if (regex.test(entry.name)) {
-                        const fullPath = path.join(currentDir, entry.name);
-                        if (isLast) {
-                            if (entry.isFile()) results.push(fullPath);
-                        } else if (entry.isDirectory()) {
-                            matchParts(parts, partIndex + 1, fullPath, results);
-                        }
-                    }
-                }
-            } catch {
-                // skip unreadable dirs
-            }
-        }
-    };
+Supports glob patterns like "**/*.js" or "src/**/*.ts" and returns matching file paths sorted by modification time (newest first).`;
+    readonly inputSchema = z.object({
+        pattern: z.string().describe('The glob pattern to match.'),
+        path: z.string().optional().describe('The base directory to search.'),
+    });
+    readonly isReadOnly = true;
+    readonly isConcurrencySafe = true;
+    private readonly backend: BackendBase;
 
-    /**
-     * Recursively collects all files under a directory.
-     * @param dir - The directory to collect files from.
-     * @param results - The accumulator array for collected file paths.
-     */
-    const collectAll = (dir: string, results: string[]): void => {
-        try {
-            const entries = fs.readdirSync(dir, { withFileTypes: true });
-            for (const entry of entries) {
-                const fullPath = path.join(dir, entry.name);
-                if (entry.isFile()) {
-                    results.push(fullPath);
-                } else if (entry.isDirectory()) {
-                    collectAll(fullPath, results);
-                }
-            }
-        } catch {
-            // skip unreadable dirs
-        }
-    };
+    constructor(options: GlobToolOptions = {}) {
+        super(options);
+        this.backend = options.backend ?? new LocalBackend();
+    }
 
-    /**
-     * Converts a single glob pattern part to a RegExp.
-     * @param part - The glob pattern part to convert.
-     * @returns A RegExp that matches the pattern part.
-     */
-    const globPartToRegex = (part: string): RegExp => {
-        const escaped = part
-            .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-            .replace(/\*/g, '.*')
-            .replace(/\?/g, '.');
-        return new RegExp(`^${escaped}$`);
-    };
+    async checkPermissions(): Promise<PermissionDecision> {
+        return createPermissionDecision({
+            behavior: PermissionBehavior.PASSTHROUGH,
+            message: 'Glob pattern matching is read-only.',
+        });
+    }
 
-    return {
-        name: 'Glob',
-        description: `Fast file pattern matching tool that works with any codebase size.
-- Supports glob patterns like "**/*.js" or "src/**/*.ts"
-- Returns matching file paths sorted by modification time
-- Use this tool when you need to find files by name patterns
-- When you are doing an open ended search that may require multiple rounds of globbing and grepping, use the Agent tool instead
-- You can call multiple tools in a single response. It is always better to speculatively perform multiple searches in parallel if they are potentially useful.`,
-        inputSchema: z.object({
-            pattern: z.string().describe('The glob pattern to match files against'),
-            path: z
-                .string()
-                .optional()
-                .describe(
-                    'The directory to search in. If not specified, the current working directory will be used. IMPORTANT: Omit this field to use the default directory. DO NOT enter "undefined" or "null" - simply omit it for the default behavior. Must be a valid directory path if provided.'
-                ),
-        }),
-        requireUserConfirm: true,
+    override async matchRule(
+        ruleContent: string,
+        toolInput: Record<string, unknown>
+    ): Promise<boolean> {
+        const searchPath = typeof toolInput.path === 'string' ? toolInput.path : '';
+        const pattern = typeof toolInput.pattern === 'string' ? toolInput.pattern : '';
+        return (
+            (searchPath !== '' && minimatch(searchPath, ruleContent, { dot: true })) ||
+            (pattern !== '' && minimatch(pattern, ruleContent, { dot: true }))
+        );
+    }
 
-        /**
-         * Finds files matching a glob pattern under the given directory.
-         *
-         * @param root0 - The parameters object
-         * @param root0.pattern - The glob pattern to match files against
-         * @param root0.path - The base directory to search in; defaults to cwd
-         * @returns A newline-separated list of matching file paths sorted by modification time,
-         *          or a no-matches message if nothing is found
-         * @throws If the base directory does not exist
-         */
-        call({ pattern, path: searchPath }: { pattern: string; path?: string }): string {
-            const baseDir = searchPath ? searchPath : process.cwd();
+    override async generateSuggestions(
+        toolInput: Record<string, unknown>
+    ): Promise<PermissionRule[]> {
+        const cwd = await this.backend.getCwd();
+        const inputPath = typeof toolInput.path === 'string' ? toolInput.path : cwd;
+        const absolute = this.backend.absolutePath(inputPath, cwd);
+        return [
+            {
+                tool_name: this.name,
+                rule_content: `${absolute.replace(/[\\/]+$/, '')}/**`,
+                behavior: PermissionBehavior.ALLOW,
+                source: 'suggested',
+            },
+        ];
+    }
 
-            if (!fs.existsSync(baseDir)) {
-                throw new Error(`Directory not found: ${baseDir}`);
-            }
-
-            const matches = globMatch(pattern, baseDir);
-
-            matches.sort((a, b) => {
-                const statA = fs.statSync(a);
-                const statB = fs.statSync(b);
-                return statB.mtimeMs - statA.mtimeMs;
+    async call(input: Record<string, unknown>): Promise<ToolChunk> {
+        const parsed = this.inputSchema.parse(input);
+        const baseDirectory = parsed.path ?? (await this.backend.getCwd());
+        if (!(await this.backend.isDirectory(baseDirectory))) {
+            return new ToolChunk({
+                content: [TextBlock({ text: `Directory not found: ${baseDirectory}` })],
+                state: 'error',
             });
+        }
+        const normalizedPattern = parsed.pattern.replace(/\\/g, '/');
+        const matches: Array<{ filePath: string; mtime: number }> = [];
+        await this.collect(baseDirectory, '', normalizedPattern, matches);
+        matches.sort((left, right) => right.mtime - left.mtime);
+        return new ToolChunk({
+            content: [
+                TextBlock({
+                    text:
+                        matches.length === 0
+                            ? `No files found matching pattern: ${parsed.pattern}`
+                            : matches.map(match => match.filePath).join('\n'),
+                }),
+            ],
+        });
+    }
 
-            if (matches.length === 0) {
-                return `No files found matching pattern: ${pattern}`;
+    private async collect(
+        directory: string,
+        relativeDirectory: string,
+        pattern: string,
+        matches: Array<{ filePath: string; mtime: number }>
+    ): Promise<void> {
+        for (const entry of await this.backend.scanDirectory(directory)) {
+            const filePath = this.backend.joinPath(directory, entry.name);
+            const relativePath = relativeDirectory
+                ? `${relativeDirectory}/${entry.name}`
+                : entry.name;
+            if (entry.isDir) {
+                await this.collect(filePath, relativePath, pattern, matches);
+            } else if (minimatch(relativePath, pattern, { dot: true })) {
+                matches.push({ filePath, mtime: entry.mtime ?? 0 });
             }
+        }
+    }
+}
 
-            return matches.join('\n');
-        },
-    };
+/**
+ * Preserve the existing TypeScript factory API while returning ToolBase.
+ * @param options
+ */
+export function Glob(options: GlobToolOptions = {}): GlobTool {
+    return new GlobTool(options);
 }

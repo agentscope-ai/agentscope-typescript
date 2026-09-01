@@ -1,120 +1,120 @@
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { CallToolRequest, CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
-import z from 'zod';
+/* eslint-disable jsdoc/require-jsdoc */
 
-import { _generateId, _generateTimestamp } from '../_utils/common';
-import type { Tool } from '../tool/base';
-import { createToolResponse } from '../tool/response';
-import type { ToolResponse } from '../tool/response';
+import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import type { RequestOptions } from '@modelcontextprotocol/sdk/shared/protocol.js';
+import { CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
+import type { Tool as MCPToolDefinition } from '@modelcontextprotocol/sdk/types.js';
+
+import { Base64Source, DataBlock, TextBlock, URLSource } from '../message';
+import type { PermissionDecision } from '../permission';
+import { PermissionBehavior, createPermissionDecision } from '../permission';
+import { ToolBase } from '../tool/base';
+import { ToolChunk } from '../tool/response';
 import type { ToolInputSchema } from '../type';
 
-/**
- * Type definition for getting a client instance
- */
 type GetClient = () => Promise<Client>;
-
-/**
- * Type definition for releasing a client instance
- */
 type ReleaseClient = (client: Client) => Promise<void>;
 
-/**
- * MCPTool class that wraps an MCP tool and provides a callable interface
- */
-export class MCPTool implements Tool {
-    name: string;
-    description: string;
-    inputSchema: z.ZodObject | ToolInputSchema;
-    requireUserConfirm = false;
-    call: (input: Record<string, unknown>) => Promise<ToolResponse>;
+export interface MCPToolOptions {
+    mcpName: string;
+    tool: MCPToolDefinition;
+    getClient: GetClient;
+    releaseClient: ReleaseClient;
+    requestOptions?: RequestOptions;
+}
 
-    private getClient: GetClient;
-    private releaseClient: ReleaseClient;
+/** Convert one MCP server tool to AgentScope's ToolBase contract. */
+export class MCPTool extends ToolBase {
+    readonly name: string;
+    readonly originalName: string;
+    readonly description: string;
+    readonly inputSchema: ToolInputSchema;
+    readonly isConcurrencySafe = false;
+    readonly isReadOnly: boolean;
+    override isMcp = true;
+    override mcpName: string;
+    private readonly getClient: GetClient;
+    private readonly releaseClient: ReleaseClient;
+    private readonly requestOptions?: RequestOptions;
 
-    /**
-     * Initialize an MCPTool instance
-     * @param root0
-     * @param root0.name
-     * @param root0.description
-     * @param root0.inputSchema
-     * @param root0.getClient
-     * @param root0.releaseClient
-     */
-    constructor({
-        name,
-        description,
-        inputSchema,
-        getClient,
-        releaseClient,
-    }: {
-        name: string;
-        description: string;
-        inputSchema: z.ZodObject | ToolInputSchema;
-        getClient: GetClient;
-        releaseClient: ReleaseClient;
-    }) {
-        this.name = name;
-        this.description = description;
-        this.inputSchema = inputSchema;
-        this.getClient = getClient;
-        this.releaseClient = releaseClient;
-        this.call = this._call.bind(this);
+    constructor(options: MCPToolOptions) {
+        super();
+        this.originalName = options.tool.name;
+        const sanitized = options.tool.name.replace(/[^a-zA-Z0-9_-]/g, 'x');
+        this.name = `mcp__${options.mcpName}__${sanitized}`;
+        this.mcpName = options.mcpName;
+        this.description = options.tool.description ?? '';
+        const schema = options.tool.inputSchema as ToolInputSchema;
+        this.inputSchema = {
+            ...schema,
+            type: schema.type ?? 'object',
+            properties: schema.properties ?? {},
+            required: schema.required ?? [],
+        };
+        this.isReadOnly = options.tool.annotations?.readOnlyHint ?? false;
+        this.getClient = options.getClient;
+        this.releaseClient = options.releaseClient;
+        this.requestOptions = options.requestOptions;
     }
 
-    /**
-     * Call the MCP tool with the specified input arguments. This method sends a request to the MCP server to execute
-     * the tool and returns the result as a ToolResponse.
-     *
-     * @param arguments
-     * @param input
-     * @returns A ToolResponse object containing the result of the tool execution, or an error message if the call fails.
-     */
-    async _call(input: Record<string, unknown>) {
+    async checkPermissions(): Promise<PermissionDecision> {
+        return createPermissionDecision({
+            behavior: this.isReadOnly ? PermissionBehavior.ALLOW : PermissionBehavior.ASK,
+            message: this.isReadOnly
+                ? 'This is a read-only MCP tool. Allowing execution.'
+                : 'MCP tools must be explicitly allowed by the user.',
+        });
+    }
+
+    async call(input: Record<string, unknown>): Promise<ToolChunk> {
         const client = await this.getClient();
         try {
-            const request: CallToolRequest = {
-                method: 'tools/call',
-                params: {
-                    name: this.name,
-                    arguments: input,
+            const result = await client.request(
+                {
+                    method: 'tools/call',
+                    params: { name: this.originalName, arguments: input },
                 },
-            };
-            const result = await client.request(request, CallToolResultSchema);
-
-            const content: ToolResponse['content'] = [];
-            result.content.forEach(item => {
-                if (item.type === 'text') {
-                    content.push({
-                        type: 'text',
-                        text: item.text,
-                        id: _generateId(),
-                        created_at: _generateTimestamp(),
-                    });
-                } else if (item.type === 'image' || item.type === 'audio') {
-                    content.push({
-                        id: _generateId(),
-                        type: 'data',
-                        source: { type: 'base64', media_type: item.mimeType, data: item.data },
-                        created_at: _generateTimestamp(),
-                    });
-                } else {
-                    console.warn(
-                        `Unsupported content type '${item.type}' in tool result, skipping...`
+                CallToolResultSchema,
+                this.requestOptions
+            );
+            const content: Array<ReturnType<typeof TextBlock> | ReturnType<typeof DataBlock>> = [];
+            for (const item of result.content) {
+                if (item.type === 'text') content.push(TextBlock({ text: item.text }));
+                else if (item.type === 'image' || item.type === 'audio') {
+                    content.push(
+                        DataBlock({
+                            source: Base64Source({ data: item.data, media_type: item.mimeType }),
+                        })
+                    );
+                } else if (item.type === 'resource') {
+                    if ('text' in item.resource) {
+                        content.push(TextBlock({ text: JSON.stringify(item.resource, null, 2) }));
+                    } else {
+                        content.push(
+                            DataBlock({
+                                source: Base64Source({
+                                    data: item.resource.blob,
+                                    media_type:
+                                        item.resource.mimeType ?? 'application/octet-stream',
+                                }),
+                            })
+                        );
+                    }
+                } else if (item.type === 'resource_link') {
+                    content.push(
+                        DataBlock({
+                            source: URLSource({
+                                url: item.uri,
+                                media_type: item.mimeType ?? 'application/octet-stream',
+                            }),
+                            name: item.name,
+                        })
                     );
                 }
-            });
-            return createToolResponse({ content, state: 'success' });
-        } catch (error) {
-            return createToolResponse({
-                content: [
-                    {
-                        id: _generateId(),
-                        type: 'text',
-                        text: `Error calling tool '${this.name}': ${error}`,
-                        created_at: _generateTimestamp(),
-                    },
-                ],
-                state: 'error',
+            }
+            return new ToolChunk({
+                content,
+                state: result.isError ? 'error' : 'running',
             });
         } finally {
             await this.releaseClient(client);
