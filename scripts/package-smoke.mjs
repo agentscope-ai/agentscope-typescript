@@ -12,6 +12,7 @@ const packageSpecifiers = Object.keys(packageJson.exports).map(subpath => {
     return `${packageJson.name}${subpath.slice(1)}`;
 });
 const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), 'agentscope-package-smoke-'));
+const npmExecutable = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
 /**
  * Run an npm command in the isolated package consumer directory.
@@ -20,7 +21,7 @@ const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), 'agentscope-package-s
  * @returns {string} Standard output.
  */
 function runNpm(arguments_) {
-    return execFileSync('npm', arguments_, {
+    return execFileSync(npmExecutable, arguments_, {
         cwd: temporaryRoot,
         encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'inherit'],
