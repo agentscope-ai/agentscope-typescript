@@ -93,6 +93,16 @@
             "types": "./dist/credential/index.d.ts",
             "import": "./dist/credential/index.mjs",
             "require": "./dist/credential/index.js"
+        },
+        "./embedding": {
+            "types": "./dist/embedding/index.d.ts",
+            "import": "./dist/embedding/index.mjs",
+            "require": "./dist/embedding/index.js"
+        },
+        "./tts": {
+            "types": "./dist/tts/index.d.ts",
+            "import": "./dist/tts/index.mjs",
+            "require": "./dist/tts/index.js"
         }
     },
     "scripts": {
@@ -109,6 +119,7 @@
         "@types/mime-types": "^3.0.1",
         "@types/node": "^22.19.15",
         "@types/uuid": "^10.0.0",
+        "@types/ws": "^8.18.1",
         "@typescript-eslint/eslint-plugin": "^8.49.0",
         "@typescript-eslint/parser": "^8.49.0",
         "eslint": "^9.39.1",
@@ -140,6 +151,7 @@
         "pdfjs-dist": "^6.3.289",
         "string-format": "^2.0.0",
         "uuid": "^11.1.0",
+        "ws": "^8.18.3",
         "zod": "^4.3.6",
         "zod-to-json-schema": "^3.25.1"
     }

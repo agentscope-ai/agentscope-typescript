@@ -1,9 +1,14 @@
 /* eslint-disable jsdoc/require-jsdoc */
 
 import { _generateId } from '../_utils/common';
+import type { EmbeddingModelBase } from '../embedding/base';
+import { embeddingModelOrder } from '../embedding/card-order';
 import type { ChatModelBase } from '../model/base';
+import { createModelCard } from '../model/card';
 import type { AnyModelCard, EmbeddingModelCard, ModelCard, TTSModelCard } from '../model/card';
-import { listModelCards } from '../model/card-registry';
+import { listModelCards, listRawModelCards } from '../model/card-registry';
+import type { TTSModelBase } from '../tts/base';
+import { ttsModelOrder, ttsParameterSchema } from '../tts/schemas';
 
 export interface CredentialOptions {
     id?: string;
@@ -12,8 +17,12 @@ export interface CredentialOptions {
 
 export type CredentialSchema = Record<string, unknown>;
 export type ChatModelClass = abstract new (...args: never[]) => ChatModelBase;
+export type EmbeddingModelClass = abstract new (...args: never[]) => EmbeddingModelBase;
+export type TTSModelClass = abstract new (...args: never[]) => TTSModelBase;
 
 let chatModelResolver: ((provider: string) => Promise<ChatModelClass>) | null = null;
+let embeddingModelResolver: ((provider: string) => Promise<EmbeddingModelClass>) | null = null;
+let ttsModelResolver: ((provider: string) => Promise<TTSModelClass[]>) | null = null;
 
 /** Shared credential identity and model-card discovery behavior. */
 export abstract class CredentialBase {
@@ -38,17 +47,47 @@ export abstract class CredentialBase {
         return chatModelResolver(this.chatProvider);
     }
 
+    getEmbeddingModelClass(): Promise<EmbeddingModelClass | null> {
+        if (this.embeddingProvider === null) return Promise.resolve(null);
+        if (!embeddingModelResolver) {
+            throw new Error('Embedding model registry is not initialized.');
+        }
+        return embeddingModelResolver(this.embeddingProvider);
+    }
+
     listTTSModels(): TTSModelCard[] {
         if (this.ttsProvider === null) return [];
-        return listModelCards({ kind: 'tts', provider: this.ttsProvider }) as TTSModelCard[];
+        return listRawModelCards({ kind: 'tts', provider: this.ttsProvider })
+            .map(record => {
+                return createModelCard(
+                    record,
+                    ttsParameterSchema(record.provider, String(record.config.name))
+                ) as TTSModelCard;
+            })
+            .sort(
+                (left, right) =>
+                    ttsModelOrder(this.ttsProvider as string, left.name) -
+                    ttsModelOrder(this.ttsProvider as string, right.name)
+            );
+    }
+
+    getTTSModelClasses(): Promise<TTSModelClass[]> {
+        if (this.ttsProvider === null) return Promise.resolve([]);
+        if (!ttsModelResolver) throw new Error('TTS model registry is not initialized.');
+        return ttsModelResolver(this.ttsProvider);
     }
 
     listEmbeddingModels(): EmbeddingModelCard[] {
         if (this.embeddingProvider === null) return [];
-        return listModelCards({
+        const cards = listModelCards({
             kind: 'embedding',
             provider: this.embeddingProvider,
         }) as EmbeddingModelCard[];
+        return cards.sort(
+            (left, right) =>
+                embeddingModelOrder(this.embeddingProvider as string, left.name) -
+                embeddingModelOrder(this.embeddingProvider as string, right.name)
+        );
     }
 
     abstract toJSON(): Record<string, unknown>;
@@ -58,6 +97,18 @@ export function registerChatModelResolver(
     resolver: (provider: string) => Promise<ChatModelClass>
 ): void {
     chatModelResolver = resolver;
+}
+
+export function registerEmbeddingModelResolver(
+    resolver: (provider: string) => Promise<EmbeddingModelClass>
+): void {
+    embeddingModelResolver = resolver;
+}
+
+export function registerTTSModelResolver(
+    resolver: (provider: string) => Promise<TTSModelClass[]>
+): void {
+    ttsModelResolver = resolver;
 }
 
 export interface CredentialClass<T extends CredentialBase = CredentialBase> {

@@ -27,19 +27,33 @@ const manifestPath = path.resolve(
 );
 const status = readOptions('--status')[0];
 const sourcePaths = readOptions('--source');
+const contractDataPaths = readOptions('--contract-data');
 const pythonTests = readOptions('--python-test');
 const typescriptTests = readOptions('--typescript-test');
 
-if (!status || sourcePaths.length === 0) {
-    throw new Error('Both --status and at least one --source are required.');
+if (!status || sourcePaths.length + contractDataPaths.length === 0) {
+    throw new Error(
+        'A status and at least one --source or --contract-data path are required.'
+    );
 }
 
 const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 const sourceByPath = new Map(manifest.sourceFiles.map(entry => [entry.path, entry]));
+const contractDataByPath = new Map(
+    manifest.contractDataFiles.map(entry => [entry.path, entry])
+);
 
 for (const sourcePath of sourcePaths) {
     const entry = sourceByPath.get(sourcePath);
     if (!entry) throw new Error(`Manifest source entry not found: ${sourcePath}.`);
+    updateParityEntry(entry, status, pythonTests, typescriptTests);
+}
+
+for (const contractDataPath of contractDataPaths) {
+    const entry = contractDataByPath.get(contractDataPath);
+    if (!entry) {
+        throw new Error(`Manifest contract-data entry not found: ${contractDataPath}.`);
+    }
     updateParityEntry(entry, status, pythonTests, typescriptTests);
 }
 
@@ -52,4 +66,6 @@ const manifestContent = await format(JSON.stringify(manifest), {
     parser: 'json',
 });
 await writeFile(manifestPath, manifestContent, 'utf8');
-process.stdout.write(`Updated ${sourcePaths.length} source entries to ${status}.\n`);
+process.stdout.write(
+    `Updated ${sourcePaths.length} source and ${contractDataPaths.length} contract-data entries to ${status}.\n`
+);

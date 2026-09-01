@@ -20,6 +20,8 @@ export default defineConfig({
         'permission/index': 'src/permission/index.ts',
         'skill/index': 'src/skill/index.ts',
         'credential/index': 'src/credential/index.ts',
+        'embedding/index': 'src/embedding/index.ts',
+        'tts/index': 'src/tts/index.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,

@@ -1848,243 +1848,486 @@
             "sha256": "5ac05dc808bd380194336c6115625d59d357d1d52abaf7a6ca6f01170a3031aa",
             "module": "credential",
             "typescriptTarget": "packages/agentscope/src/credential",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": [
+                "packages/agentscope/src/credential/factory.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/credential/_anthropic.py",
             "sha256": "ab9d13afbd87a34ff3d09f777f9b13a5ef17fbf2744530276627ab4ad6a3d6a0",
             "module": "credential",
             "typescriptTarget": "packages/agentscope/src/credential",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": [
+                "packages/agentscope/src/credential/factory.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/credential/_base.py",
             "sha256": "6d8ab896eb13ef837c6dc602af8ee8790817a04f1b62c04ff210aa6e17b3d5b5",
             "module": "credential",
             "typescriptTarget": "packages/agentscope/src/credential",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": [
+                "packages/agentscope/src/credential/factory.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/credential/_dashscope.py",
             "sha256": "8558744f015b5fb9c945b79d320c27cce5a00e620b59661391003768daf12ce9",
             "module": "credential",
             "typescriptTarget": "packages/agentscope/src/credential",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": [
+                "packages/agentscope/src/credential/factory.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/credential/_deepseek.py",
             "sha256": "ebbce76b8bd134e95ce6c810c992d3629cc8c252b8fa2c00dbf4346b89e52ddd",
             "module": "credential",
             "typescriptTarget": "packages/agentscope/src/credential",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": [
+                "packages/agentscope/src/credential/factory.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/credential/_factory.py",
             "sha256": "d31dd13cfb5ed636b37ffc36b215525f70bbd2fe0521170adae20f40b95be85e",
             "module": "credential",
             "typescriptTarget": "packages/agentscope/src/credential",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": [
+                "packages/agentscope/src/credential/factory.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/credential/_gemini.py",
             "sha256": "b5ac1b5578ec8121ecec3fa0f0c6b40812a748355b7fd44fd8049b9de2a603c1",
             "module": "credential",
             "typescriptTarget": "packages/agentscope/src/credential",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": [
+                "packages/agentscope/src/credential/factory.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/credential/_kimi.py",
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "module": "credential",
             "typescriptTarget": "packages/agentscope/src/credential",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": [
+                "packages/agentscope/src/credential/factory.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/credential/_moonshot.py",
             "sha256": "ae5ba41e54ff049fa8469c37f605b6b15c383052595b8a628ac86c9c30abdf5b",
             "module": "credential",
             "typescriptTarget": "packages/agentscope/src/credential",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": [
+                "packages/agentscope/src/credential/factory.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/credential/_ollama.py",
             "sha256": "97b4f7143e86c1b2a00df44de42468bb0968ba8555a5e0fa2ca7937a282548bb",
             "module": "credential",
             "typescriptTarget": "packages/agentscope/src/credential",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": [
+                "packages/agentscope/src/credential/factory.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/credential/_openai.py",
             "sha256": "98c373b954b3c33cbaa2c4b8f6d94ddb2635c35159d8c4e4701aee7c9e246e0b",
             "module": "credential",
             "typescriptTarget": "packages/agentscope/src/credential",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": [
+                "packages/agentscope/src/credential/factory.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/credential/_xai.py",
             "sha256": "4ae266c49fd84bf384ef7e66b96b3f398e3e97dcd59eb264bda5c1f1a51edf67",
             "module": "credential",
             "typescriptTarget": "packages/agentscope/src/credential",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": [
+                "packages/agentscope/src/credential/factory.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/embedding/__init__.py",
             "sha256": "0a42bdbf36009ea2a372dda8df87ed3de06d5b99bb05d0d7ee2aeb75644caea0",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/embedding_dashscope_test.py",
+                "tests/embedding_gemini_test.py",
+                "tests/embedding_ollama_test.py",
+                "tests/embedding_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/embedding/base.test.ts",
+                "packages/agentscope/src/embedding/cache.test.ts",
+                "packages/agentscope/src/embedding/dashscope.test.ts",
+                "packages/agentscope/src/embedding/gemini.test.ts",
+                "packages/agentscope/src/embedding/ollama.test.ts",
+                "packages/agentscope/src/embedding/openai.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/embedding/_cache_base.py",
             "sha256": "415fc3f50d516edb6cd41a68ac9568985c1a2f21ba9eccbd1b184b40dc61e256",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/embedding_dashscope_test.py",
+                "tests/embedding_gemini_test.py",
+                "tests/embedding_ollama_test.py",
+                "tests/embedding_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/embedding/base.test.ts",
+                "packages/agentscope/src/embedding/cache.test.ts",
+                "packages/agentscope/src/embedding/dashscope.test.ts",
+                "packages/agentscope/src/embedding/gemini.test.ts",
+                "packages/agentscope/src/embedding/ollama.test.ts",
+                "packages/agentscope/src/embedding/openai.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/embedding/_dashscope/__init__.py",
             "sha256": "b68c51e70d21604a8adb5ced06e4e901b2e069162d379a71fdd1f603e00c8a5d",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/embedding_dashscope_test.py",
+                "tests/embedding_gemini_test.py",
+                "tests/embedding_ollama_test.py",
+                "tests/embedding_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/embedding/base.test.ts",
+                "packages/agentscope/src/embedding/cache.test.ts",
+                "packages/agentscope/src/embedding/dashscope.test.ts",
+                "packages/agentscope/src/embedding/gemini.test.ts",
+                "packages/agentscope/src/embedding/ollama.test.ts",
+                "packages/agentscope/src/embedding/openai.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/embedding/_dashscope/_model.py",
             "sha256": "6dbfd98e6053e00cca17c1d7a802ff78bad7eb66e55d8d98172b6f55dd22b697",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/embedding_dashscope_test.py",
+                "tests/embedding_gemini_test.py",
+                "tests/embedding_ollama_test.py",
+                "tests/embedding_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/embedding/base.test.ts",
+                "packages/agentscope/src/embedding/cache.test.ts",
+                "packages/agentscope/src/embedding/dashscope.test.ts",
+                "packages/agentscope/src/embedding/gemini.test.ts",
+                "packages/agentscope/src/embedding/ollama.test.ts",
+                "packages/agentscope/src/embedding/openai.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/embedding/_embedding_base.py",
             "sha256": "bca7deea15727dd197faadc9104af5ddd791b35f248e6e7327fe5f6ec1e2efac",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/embedding_dashscope_test.py",
+                "tests/embedding_gemini_test.py",
+                "tests/embedding_ollama_test.py",
+                "tests/embedding_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/embedding/base.test.ts",
+                "packages/agentscope/src/embedding/cache.test.ts",
+                "packages/agentscope/src/embedding/dashscope.test.ts",
+                "packages/agentscope/src/embedding/gemini.test.ts",
+                "packages/agentscope/src/embedding/ollama.test.ts",
+                "packages/agentscope/src/embedding/openai.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/embedding/_embedding_model_card.py",
             "sha256": "53a12d18ef5d49279729ada67d97e11973f84aabcb6161d517caf268faa5f1e2",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/embedding_dashscope_test.py",
+                "tests/embedding_gemini_test.py",
+                "tests/embedding_ollama_test.py",
+                "tests/embedding_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/embedding/base.test.ts",
+                "packages/agentscope/src/embedding/cache.test.ts",
+                "packages/agentscope/src/embedding/dashscope.test.ts",
+                "packages/agentscope/src/embedding/gemini.test.ts",
+                "packages/agentscope/src/embedding/ollama.test.ts",
+                "packages/agentscope/src/embedding/openai.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/embedding/_embedding_response.py",
             "sha256": "9da12a95ec27e89e54cad7817b0c249c7e87959553a3649184def5e0984e9365",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/embedding_dashscope_test.py",
+                "tests/embedding_gemini_test.py",
+                "tests/embedding_ollama_test.py",
+                "tests/embedding_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/embedding/base.test.ts",
+                "packages/agentscope/src/embedding/cache.test.ts",
+                "packages/agentscope/src/embedding/dashscope.test.ts",
+                "packages/agentscope/src/embedding/gemini.test.ts",
+                "packages/agentscope/src/embedding/ollama.test.ts",
+                "packages/agentscope/src/embedding/openai.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/embedding/_embedding_usage.py",
             "sha256": "675ab9c8f5ee191f01a41ef2531727faf3df9913fb82a9c69818ec4860b67f5c",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/embedding_dashscope_test.py",
+                "tests/embedding_gemini_test.py",
+                "tests/embedding_ollama_test.py",
+                "tests/embedding_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/embedding/base.test.ts",
+                "packages/agentscope/src/embedding/cache.test.ts",
+                "packages/agentscope/src/embedding/dashscope.test.ts",
+                "packages/agentscope/src/embedding/gemini.test.ts",
+                "packages/agentscope/src/embedding/ollama.test.ts",
+                "packages/agentscope/src/embedding/openai.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/embedding/_file_cache.py",
             "sha256": "d8c6698aeadc560aa409322ad94ffc6749ff0f423567cee8c176342be16a7ef9",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/embedding_dashscope_test.py",
+                "tests/embedding_gemini_test.py",
+                "tests/embedding_ollama_test.py",
+                "tests/embedding_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/embedding/base.test.ts",
+                "packages/agentscope/src/embedding/cache.test.ts",
+                "packages/agentscope/src/embedding/dashscope.test.ts",
+                "packages/agentscope/src/embedding/gemini.test.ts",
+                "packages/agentscope/src/embedding/ollama.test.ts",
+                "packages/agentscope/src/embedding/openai.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/embedding/_gemini/__init__.py",
             "sha256": "7e84c1e27e3bee156d16f682c1dcf4bbda65337d808cfd66dbe6abd02258e6f7",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/embedding_dashscope_test.py",
+                "tests/embedding_gemini_test.py",
+                "tests/embedding_ollama_test.py",
+                "tests/embedding_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/embedding/base.test.ts",
+                "packages/agentscope/src/embedding/cache.test.ts",
+                "packages/agentscope/src/embedding/dashscope.test.ts",
+                "packages/agentscope/src/embedding/gemini.test.ts",
+                "packages/agentscope/src/embedding/ollama.test.ts",
+                "packages/agentscope/src/embedding/openai.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/embedding/_gemini/_model.py",
             "sha256": "85d2c2c38ff465c3ceff40d7845a23f2a47d6caccffadfd2e5dc81d71f3d2733",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/embedding_dashscope_test.py",
+                "tests/embedding_gemini_test.py",
+                "tests/embedding_ollama_test.py",
+                "tests/embedding_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/embedding/base.test.ts",
+                "packages/agentscope/src/embedding/cache.test.ts",
+                "packages/agentscope/src/embedding/dashscope.test.ts",
+                "packages/agentscope/src/embedding/gemini.test.ts",
+                "packages/agentscope/src/embedding/ollama.test.ts",
+                "packages/agentscope/src/embedding/openai.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/embedding/_ollama/__init__.py",
             "sha256": "c15d80c808ed2f66b860e0e55268350f164ba96d30f9734840a6e28188ddaaaa",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/embedding_dashscope_test.py",
+                "tests/embedding_gemini_test.py",
+                "tests/embedding_ollama_test.py",
+                "tests/embedding_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/embedding/base.test.ts",
+                "packages/agentscope/src/embedding/cache.test.ts",
+                "packages/agentscope/src/embedding/dashscope.test.ts",
+                "packages/agentscope/src/embedding/gemini.test.ts",
+                "packages/agentscope/src/embedding/ollama.test.ts",
+                "packages/agentscope/src/embedding/openai.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/embedding/_ollama/_model.py",
             "sha256": "af976e40b4f82076b077a66f25aa89c0532dd3d79900adf56d142fa3c77cde65",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/embedding_dashscope_test.py",
+                "tests/embedding_gemini_test.py",
+                "tests/embedding_ollama_test.py",
+                "tests/embedding_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/embedding/base.test.ts",
+                "packages/agentscope/src/embedding/cache.test.ts",
+                "packages/agentscope/src/embedding/dashscope.test.ts",
+                "packages/agentscope/src/embedding/gemini.test.ts",
+                "packages/agentscope/src/embedding/ollama.test.ts",
+                "packages/agentscope/src/embedding/openai.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/embedding/_openai/__init__.py",
             "sha256": "34ab2f8ac004640a0f25e0e18f25a56cfbc7c5f109a76ada0ae41847bcd848ba",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/embedding_dashscope_test.py",
+                "tests/embedding_gemini_test.py",
+                "tests/embedding_ollama_test.py",
+                "tests/embedding_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/embedding/base.test.ts",
+                "packages/agentscope/src/embedding/cache.test.ts",
+                "packages/agentscope/src/embedding/dashscope.test.ts",
+                "packages/agentscope/src/embedding/gemini.test.ts",
+                "packages/agentscope/src/embedding/ollama.test.ts",
+                "packages/agentscope/src/embedding/openai.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/embedding/_openai/_model.py",
             "sha256": "9cb1d68042c294b232c9ad8792d07602b68df7d001a18fc5d53f5a7f7d0a950d",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/embedding_dashscope_test.py",
+                "tests/embedding_gemini_test.py",
+                "tests/embedding_ollama_test.py",
+                "tests/embedding_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/embedding/base.test.ts",
+                "packages/agentscope/src/embedding/cache.test.ts",
+                "packages/agentscope/src/embedding/dashscope.test.ts",
+                "packages/agentscope/src/embedding/gemini.test.ts",
+                "packages/agentscope/src/embedding/ollama.test.ts",
+                "packages/agentscope/src/embedding/openai.test.ts",
+                "packages/agentscope/test/parity/embedding-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/event/__init__.py",
@@ -4723,117 +4966,286 @@
             "sha256": "12ab96eb14a2e064f5be4fffdf2d459135aa5047647324ab1c84ffaad18d6cd3",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/tts_dashscope_test.py",
+                "tests/tts_gemini_test.py",
+                "tests/tts_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tts/base.test.ts",
+                "packages/agentscope/src/tts/dashscope-cosyvoice.test.ts",
+                "packages/agentscope/src/tts/dashscope-realtime.test.ts",
+                "packages/agentscope/src/tts/dashscope.test.ts",
+                "packages/agentscope/src/tts/gemini.test.ts",
+                "packages/agentscope/src/tts/openai.test.ts",
+                "packages/agentscope/src/tts/realtime-buffer.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tts/_dashscope/__init__.py",
             "sha256": "7e403f554100e09901bae417f2fd530c86bc4518e0f0038090b8b91775ae8c72",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/tts_dashscope_test.py",
+                "tests/tts_gemini_test.py",
+                "tests/tts_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tts/base.test.ts",
+                "packages/agentscope/src/tts/dashscope-cosyvoice.test.ts",
+                "packages/agentscope/src/tts/dashscope-realtime.test.ts",
+                "packages/agentscope/src/tts/dashscope.test.ts",
+                "packages/agentscope/src/tts/gemini.test.ts",
+                "packages/agentscope/src/tts/openai.test.ts",
+                "packages/agentscope/src/tts/realtime-buffer.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tts/_dashscope/_cosyvoice_model.py",
             "sha256": "1f23b171e828b4b133e2d4ed6d13d78124a0658aaff65085b7ff9a7911c29d16",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/tts_dashscope_test.py",
+                "tests/tts_gemini_test.py",
+                "tests/tts_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tts/base.test.ts",
+                "packages/agentscope/src/tts/dashscope-cosyvoice.test.ts",
+                "packages/agentscope/src/tts/dashscope-realtime.test.ts",
+                "packages/agentscope/src/tts/dashscope.test.ts",
+                "packages/agentscope/src/tts/gemini.test.ts",
+                "packages/agentscope/src/tts/openai.test.ts",
+                "packages/agentscope/src/tts/realtime-buffer.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tts/_dashscope/_cosyvoice_utils.py",
             "sha256": "ae6aafb6c32de1fd0ba6f10077d74155e489a04a8d473812658fb96e87ee07d0",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/tts_dashscope_test.py",
+                "tests/tts_gemini_test.py",
+                "tests/tts_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tts/base.test.ts",
+                "packages/agentscope/src/tts/dashscope-cosyvoice.test.ts",
+                "packages/agentscope/src/tts/dashscope-realtime.test.ts",
+                "packages/agentscope/src/tts/dashscope.test.ts",
+                "packages/agentscope/src/tts/gemini.test.ts",
+                "packages/agentscope/src/tts/openai.test.ts",
+                "packages/agentscope/src/tts/realtime-buffer.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tts/_dashscope/_model.py",
             "sha256": "f7906270c030bb2517f42cb54d54f805d00a11a3fe340a8a501da86d589cec2a",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/tts_dashscope_test.py",
+                "tests/tts_gemini_test.py",
+                "tests/tts_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tts/base.test.ts",
+                "packages/agentscope/src/tts/dashscope-cosyvoice.test.ts",
+                "packages/agentscope/src/tts/dashscope-realtime.test.ts",
+                "packages/agentscope/src/tts/dashscope.test.ts",
+                "packages/agentscope/src/tts/gemini.test.ts",
+                "packages/agentscope/src/tts/openai.test.ts",
+                "packages/agentscope/src/tts/realtime-buffer.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tts/_dashscope/_realtime_model.py",
             "sha256": "06384861223c8112c48f6241d11c6a90a50afe01130b2e20bb3e4cc406131ab8",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/tts_dashscope_test.py",
+                "tests/tts_gemini_test.py",
+                "tests/tts_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tts/base.test.ts",
+                "packages/agentscope/src/tts/dashscope-cosyvoice.test.ts",
+                "packages/agentscope/src/tts/dashscope-realtime.test.ts",
+                "packages/agentscope/src/tts/dashscope.test.ts",
+                "packages/agentscope/src/tts/gemini.test.ts",
+                "packages/agentscope/src/tts/openai.test.ts",
+                "packages/agentscope/src/tts/realtime-buffer.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tts/_gemini/__init__.py",
             "sha256": "cbc5390840bd8fa9173c3d72b562cd6541524ea6c5814a42b68f1a575c30a637",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/tts_dashscope_test.py",
+                "tests/tts_gemini_test.py",
+                "tests/tts_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tts/base.test.ts",
+                "packages/agentscope/src/tts/dashscope-cosyvoice.test.ts",
+                "packages/agentscope/src/tts/dashscope-realtime.test.ts",
+                "packages/agentscope/src/tts/dashscope.test.ts",
+                "packages/agentscope/src/tts/gemini.test.ts",
+                "packages/agentscope/src/tts/openai.test.ts",
+                "packages/agentscope/src/tts/realtime-buffer.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tts/_gemini/_model.py",
             "sha256": "0782bfcb0e667935e7f6aab30964e3d5a972a84eee459e7a860fbf7b66287f67",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/tts_dashscope_test.py",
+                "tests/tts_gemini_test.py",
+                "tests/tts_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tts/base.test.ts",
+                "packages/agentscope/src/tts/dashscope-cosyvoice.test.ts",
+                "packages/agentscope/src/tts/dashscope-realtime.test.ts",
+                "packages/agentscope/src/tts/dashscope.test.ts",
+                "packages/agentscope/src/tts/gemini.test.ts",
+                "packages/agentscope/src/tts/openai.test.ts",
+                "packages/agentscope/src/tts/realtime-buffer.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tts/_openai/__init__.py",
             "sha256": "306e645f53482114d3fd29a3181b4e36b9a7877b98c5de17076cddd2c94fff68",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/tts_dashscope_test.py",
+                "tests/tts_gemini_test.py",
+                "tests/tts_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tts/base.test.ts",
+                "packages/agentscope/src/tts/dashscope-cosyvoice.test.ts",
+                "packages/agentscope/src/tts/dashscope-realtime.test.ts",
+                "packages/agentscope/src/tts/dashscope.test.ts",
+                "packages/agentscope/src/tts/gemini.test.ts",
+                "packages/agentscope/src/tts/openai.test.ts",
+                "packages/agentscope/src/tts/realtime-buffer.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tts/_openai/_model.py",
             "sha256": "292f8466f4c3a28f10b5830e030fb16cf07ef769d50e9683e896b5d1a097b7f9",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/tts_dashscope_test.py",
+                "tests/tts_gemini_test.py",
+                "tests/tts_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tts/base.test.ts",
+                "packages/agentscope/src/tts/dashscope-cosyvoice.test.ts",
+                "packages/agentscope/src/tts/dashscope-realtime.test.ts",
+                "packages/agentscope/src/tts/dashscope.test.ts",
+                "packages/agentscope/src/tts/gemini.test.ts",
+                "packages/agentscope/src/tts/openai.test.ts",
+                "packages/agentscope/src/tts/realtime-buffer.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tts/_tts_base.py",
             "sha256": "6d6409eb57b40c2d96eea989b8b5d4500178bd5a6daec3b48cad29855dd89870",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/tts_dashscope_test.py",
+                "tests/tts_gemini_test.py",
+                "tests/tts_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tts/base.test.ts",
+                "packages/agentscope/src/tts/dashscope-cosyvoice.test.ts",
+                "packages/agentscope/src/tts/dashscope-realtime.test.ts",
+                "packages/agentscope/src/tts/dashscope.test.ts",
+                "packages/agentscope/src/tts/gemini.test.ts",
+                "packages/agentscope/src/tts/openai.test.ts",
+                "packages/agentscope/src/tts/realtime-buffer.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tts/_tts_model_card.py",
             "sha256": "64d50883402b1046f2031679c7395f1954fa126f67cc79fa53f812787faa23fe",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/tts_dashscope_test.py",
+                "tests/tts_gemini_test.py",
+                "tests/tts_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tts/base.test.ts",
+                "packages/agentscope/src/tts/dashscope-cosyvoice.test.ts",
+                "packages/agentscope/src/tts/dashscope-realtime.test.ts",
+                "packages/agentscope/src/tts/dashscope.test.ts",
+                "packages/agentscope/src/tts/gemini.test.ts",
+                "packages/agentscope/src/tts/openai.test.ts",
+                "packages/agentscope/src/tts/realtime-buffer.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tts/_tts_response.py",
             "sha256": "89ca02eff87c09f8de95e7d372ad13f3cce37001191b2430d026db3c32587540",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/tts_dashscope_test.py",
+                "tests/tts_gemini_test.py",
+                "tests/tts_openai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/tts/base.test.ts",
+                "packages/agentscope/src/tts/dashscope-cosyvoice.test.ts",
+                "packages/agentscope/src/tts/dashscope-realtime.test.ts",
+                "packages/agentscope/src/tts/dashscope.test.ts",
+                "packages/agentscope/src/tts/gemini.test.ts",
+                "packages/agentscope/src/tts/openai.test.ts",
+                "packages/agentscope/src/tts/realtime-buffer.test.ts",
+                "packages/agentscope/test/parity/tts-model-cards.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/types/__init__.py",
@@ -5265,77 +5677,77 @@
             "sha256": "63971291af9ff8909d224f036d53029d1577c3e8a38684ec70941920f9f7a44b",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/embedding/_dashscope/_models/qwen2.5-vl-embedding.yaml",
             "sha256": "66dc582f7eadceeadb86c887d84c531ca0a4649a263c1a45c0908a4f31ccb2e5",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/embedding/_dashscope/_models/qwen3-vl-embedding.yaml",
             "sha256": "a13392232106b0420507e764e076241759b1cc30138936cf9e421bed7cb40b21",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/embedding/_dashscope/_models/text-embedding-v3.yaml",
             "sha256": "73fd9dfc6b1b650fc5b0d7264e063bfde4b76e961fddd58f06e204c208a23d8d",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/embedding/_dashscope/_models/text-embedding-v4.yaml",
             "sha256": "bf3d5338e9fa0a7a573558e4b6ccf3ddc5cc04bc344e1751ba03ea20be1e5e27",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/embedding/_dashscope/_models/tongyi-embedding-vision-flash.yaml",
             "sha256": "3644dcb26798b0eb2d3a2d39d21db084d969969a4a571f76351b8f035706fa6b",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/embedding/_dashscope/_models/tongyi-embedding-vision-plus.yaml",
             "sha256": "123d42c0f19b2b6d8839bec9f81386edfb907fc2aff9d6a9c1edefbad169c272",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/embedding/_gemini/_models/gemini-embedding-001.yaml",
             "sha256": "d4560b2afe088cf6e1df9ae6196b6d3b1ea904dba94744a433dc10312367651b",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/embedding/_gemini/_models/gemini-embedding-2.yaml",
             "sha256": "139c0505244584cce5d04f1dc91c442249bb42114bcc62253593ca656f7c805f",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/embedding/_openai/_models/text-embedding-3-large.yaml",
             "sha256": "9347231542b50cbd2a336e4d90d7e7dfb563fa72a37770f52ebf207880700181",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/embedding/_openai/_models/text-embedding-3-small.yaml",
             "sha256": "1dc140faddfff1dde6474e2ea2d353d49eedfc01198fe006e92ccac05f8a117a",
             "module": "embedding",
             "typescriptTarget": "packages/agentscope/src/embedding",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_anthropic/_models/claude-fable-5.yaml",
@@ -5930,63 +6342,63 @@
             "sha256": "6a54a5c1c712dff31d63d274e843002f28ac5de3b518a6c5ec7ad1ebc2e682c9",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/tts/_dashscope/_cosyvoice_models/cosyvoice-v3-plus.yaml",
             "sha256": "5aaad05888c42807f80bb95bab17b044a80d4837b71ff65dc6401b3630e486fa",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/tts/_dashscope/_models/qwen3-tts-flash-realtime.yaml",
             "sha256": "0925bb9676998138b489eebfc4ae8009133e7ba5047a3093c1785ce3b3581f2c",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/tts/_dashscope/_models/qwen3-tts-flash.yaml",
             "sha256": "1a19821bde26e73a9d91faea7754acc1cb0d893d8688ef6a0feaa064954c3f78",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/tts/_gemini/_models/gemini-2.5-flash-preview-tts.yaml",
             "sha256": "b5ab14260aea44ded30b5f67b632fc512e05134c6b0922d1799a81932c0c2cc9",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/tts/_gemini/_models/gemini-2.5-pro-preview-tts.yaml",
             "sha256": "2e3a7656b3cff58463e6b82494d24514e68931f718759fdf8550a92636f342c9",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/tts/_openai/_models/gpt-4o-mini-tts.yaml",
             "sha256": "71d19e8b22318d5c21ffdfc06c70d00ebadb4dcd5fa43fcdbfcc8cfd17cf2cfd",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/tts/_openai/_models/tts-1-hd.yaml",
             "sha256": "8e2c0cdb1c60b3da2be5e81e4cb3daabb4d0095449ab2644999845623121dbf0",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/tts/_openai/_models/tts-1.yaml",
             "sha256": "b18cbba0f5e0ca314fdb223d911cf91016b9459839fe97678741668527007baf",
             "module": "tts",
             "typescriptTarget": "packages/agentscope/src/tts",
-            "status": "mapped"
+            "status": "verified"
         }
     ],
     "testFiles": [

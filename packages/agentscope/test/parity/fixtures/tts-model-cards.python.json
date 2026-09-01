@@ -1,0 +1,414 @@
+{
+    "python_commit": "de163b34b909edaba3c174190ad7e1a355e7849f",
+    "classes": {
+        "OpenAITTSModel": [
+            {
+                "type": "tts_model",
+                "name": "tts-1-hd",
+                "label": "TTS-1 HD",
+                "status": "active",
+                "deprecated_at": null,
+                "input_types": ["text/plain"],
+                "output_types": [
+                    "audio/mpeg",
+                    "audio/opus",
+                    "audio/aac",
+                    "audio/flac",
+                    "audio/wav",
+                    "audio/pcm"
+                ],
+                "realtime": false,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {
+                        "voice": {
+                            "default": "alloy",
+                            "description": "The voice to use for synthesis.",
+                            "title": "Voice",
+                            "type": "string",
+                            "enum": [
+                                "alloy",
+                                "ash",
+                                "ballad",
+                                "coral",
+                                "echo",
+                                "fable",
+                                "onyx",
+                                "nova",
+                                "sage",
+                                "shimmer",
+                                "verse"
+                            ]
+                        },
+                        "response_format": {
+                            "default": "mp3",
+                            "description": "The audio format of the synthesized speech.",
+                            "enum": ["mp3", "opus", "aac", "flac", "wav", "pcm"],
+                            "title": "Response Format",
+                            "type": "string"
+                        }
+                    },
+                    "required": []
+                },
+                "parameters_overrides": {
+                    "instructions": {
+                        "hidden": true
+                    }
+                }
+            },
+            {
+                "type": "tts_model",
+                "name": "gpt-4o-mini-tts",
+                "label": "GPT-4o Mini TTS",
+                "status": "active",
+                "deprecated_at": null,
+                "input_types": ["text/plain"],
+                "output_types": [
+                    "audio/mpeg",
+                    "audio/opus",
+                    "audio/aac",
+                    "audio/flac",
+                    "audio/wav",
+                    "audio/pcm"
+                ],
+                "realtime": false,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {
+                        "voice": {
+                            "default": "alloy",
+                            "description": "The voice to use for synthesis.",
+                            "title": "Voice",
+                            "type": "string",
+                            "enum": [
+                                "alloy",
+                                "ash",
+                                "ballad",
+                                "coral",
+                                "echo",
+                                "fable",
+                                "onyx",
+                                "nova",
+                                "sage",
+                                "shimmer",
+                                "verse"
+                            ]
+                        },
+                        "response_format": {
+                            "default": "mp3",
+                            "description": "The audio format of the synthesized speech.",
+                            "enum": ["mp3", "opus", "aac", "flac", "wav", "pcm"],
+                            "title": "Response Format",
+                            "type": "string"
+                        },
+                        "instructions": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "default": null,
+                            "description": "Additional instructions for controlling the voice (only supported by some models, e.g. gpt-4o-mini-tts).",
+                            "title": "Instructions"
+                        }
+                    },
+                    "required": []
+                },
+                "parameters_overrides": {}
+            },
+            {
+                "type": "tts_model",
+                "name": "tts-1",
+                "label": "TTS-1",
+                "status": "active",
+                "deprecated_at": null,
+                "input_types": ["text/plain"],
+                "output_types": [
+                    "audio/mpeg",
+                    "audio/opus",
+                    "audio/aac",
+                    "audio/flac",
+                    "audio/wav",
+                    "audio/pcm"
+                ],
+                "realtime": false,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {
+                        "voice": {
+                            "default": "alloy",
+                            "description": "The voice to use for synthesis.",
+                            "title": "Voice",
+                            "type": "string",
+                            "enum": [
+                                "alloy",
+                                "ash",
+                                "ballad",
+                                "coral",
+                                "echo",
+                                "fable",
+                                "onyx",
+                                "nova",
+                                "sage",
+                                "shimmer",
+                                "verse"
+                            ]
+                        },
+                        "response_format": {
+                            "default": "mp3",
+                            "description": "The audio format of the synthesized speech.",
+                            "enum": ["mp3", "opus", "aac", "flac", "wav", "pcm"],
+                            "title": "Response Format",
+                            "type": "string"
+                        }
+                    },
+                    "required": []
+                },
+                "parameters_overrides": {
+                    "instructions": {
+                        "hidden": true
+                    }
+                }
+            }
+        ],
+        "GeminiTTSModel": [
+            {
+                "type": "tts_model",
+                "name": "gemini-2.5-pro-preview-tts",
+                "label": "Gemini 2.5 Pro Preview TTS",
+                "status": "active",
+                "deprecated_at": null,
+                "input_types": ["text/plain"],
+                "output_types": ["audio/wav"],
+                "realtime": false,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {
+                        "voice": {
+                            "default": "Zephyr",
+                            "description": "The voice to use for synthesis.",
+                            "title": "Voice",
+                            "type": "string",
+                            "enum": [
+                                "Zephyr",
+                                "Puck",
+                                "Charon",
+                                "Kore",
+                                "Fenrir",
+                                "Leda",
+                                "Orus",
+                                "Aoede",
+                                "Callirrhoe",
+                                "Autonoe",
+                                "Enceladus",
+                                "Iapetus",
+                                "Umbriel",
+                                "Algieba",
+                                "Despina",
+                                "Erinome",
+                                "Algenib",
+                                "Rasalgethi",
+                                "Laomedeia",
+                                "Achernar",
+                                "Alnilam",
+                                "Schedar",
+                                "Gacrux",
+                                "Pulcherrima",
+                                "Achird",
+                                "Zubenelgenubi",
+                                "Vindemiatrix",
+                                "Sadachbia",
+                                "Sadaltager",
+                                "Sulafat"
+                            ]
+                        }
+                    },
+                    "required": []
+                },
+                "parameters_overrides": {}
+            },
+            {
+                "type": "tts_model",
+                "name": "gemini-2.5-flash-preview-tts",
+                "label": "Gemini 2.5 Flash Preview TTS",
+                "status": "active",
+                "deprecated_at": null,
+                "input_types": ["text/plain"],
+                "output_types": ["audio/wav"],
+                "realtime": false,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {
+                        "voice": {
+                            "default": "Zephyr",
+                            "description": "The voice to use for synthesis.",
+                            "title": "Voice",
+                            "type": "string",
+                            "enum": [
+                                "Zephyr",
+                                "Puck",
+                                "Charon",
+                                "Kore",
+                                "Fenrir",
+                                "Leda",
+                                "Orus",
+                                "Aoede",
+                                "Callirrhoe",
+                                "Autonoe",
+                                "Enceladus",
+                                "Iapetus",
+                                "Umbriel",
+                                "Algieba",
+                                "Despina",
+                                "Erinome",
+                                "Algenib",
+                                "Rasalgethi",
+                                "Laomedeia",
+                                "Achernar",
+                                "Alnilam",
+                                "Schedar",
+                                "Gacrux",
+                                "Pulcherrima",
+                                "Achird",
+                                "Zubenelgenubi",
+                                "Vindemiatrix",
+                                "Sadachbia",
+                                "Sadaltager",
+                                "Sulafat"
+                            ]
+                        }
+                    },
+                    "required": []
+                },
+                "parameters_overrides": {}
+            }
+        ],
+        "DashScopeTTSModel": [
+            {
+                "type": "tts_model",
+                "name": "qwen3-tts-flash",
+                "label": "Qwen3-TTS-Flash",
+                "status": "active",
+                "deprecated_at": null,
+                "input_types": ["text/plain"],
+                "output_types": ["audio/wav"],
+                "realtime": false,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {
+                        "voice": {
+                            "default": "Cherry",
+                            "description": "The voice to use for synthesis.",
+                            "title": "Voice",
+                            "type": "string",
+                            "enum": ["Cherry", "Serena", "Ethan", "Chelsie"]
+                        }
+                    },
+                    "required": []
+                },
+                "parameters_overrides": {}
+            }
+        ],
+        "DashScopeRealtimeTTSModel": [
+            {
+                "type": "tts_model",
+                "name": "qwen3-tts-flash-realtime",
+                "label": "Qwen3-TTS-Flash-Realtime",
+                "status": "active",
+                "deprecated_at": null,
+                "input_types": ["text/plain"],
+                "output_types": ["audio/wav"],
+                "realtime": true,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {
+                        "voice": {
+                            "default": "Cherry",
+                            "description": "The voice to use for synthesis.",
+                            "title": "Voice",
+                            "type": "string",
+                            "enum": ["Cherry", "Serena", "Ethan", "Chelsie"]
+                        }
+                    },
+                    "required": []
+                },
+                "parameters_overrides": {}
+            }
+        ],
+        "DashScopeCosyVoiceTTSModel": [
+            {
+                "type": "tts_model",
+                "name": "cosyvoice-v3-flash",
+                "label": "CosyVoice-v3-Flash",
+                "status": "active",
+                "deprecated_at": null,
+                "input_types": ["text/plain"],
+                "output_types": ["audio/wav"],
+                "realtime": false,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {
+                        "voice": {
+                            "default": "longanyang",
+                            "description": "The voice to use for synthesis.",
+                            "title": "Voice",
+                            "type": "string",
+                            "enum": [
+                                "longanyang",
+                                "longanhuan",
+                                "longhuhu_v3",
+                                "longyingmu_v3",
+                                "longxiaochun_v3",
+                                "longxiaoxia_v3",
+                                "longlaotie_v3",
+                                "longshuo_v3",
+                                "longshu_v3"
+                            ]
+                        },
+                        "realtime": {
+                            "default": false,
+                            "description": "Whether to enable streaming input mode.",
+                            "title": "Realtime",
+                            "type": "boolean"
+                        }
+                    },
+                    "required": []
+                },
+                "parameters_overrides": {}
+            },
+            {
+                "type": "tts_model",
+                "name": "cosyvoice-v3-plus",
+                "label": "CosyVoice-v3-Plus",
+                "status": "active",
+                "deprecated_at": null,
+                "input_types": ["text/plain"],
+                "output_types": ["audio/wav"],
+                "realtime": false,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {
+                        "voice": {
+                            "default": "longanyang",
+                            "description": "The voice to use for synthesis.",
+                            "title": "Voice",
+                            "type": "string",
+                            "enum": ["longanyang", "longanhuan"]
+                        },
+                        "realtime": {
+                            "default": false,
+                            "description": "Whether to enable streaming input mode.",
+                            "title": "Realtime",
+                            "type": "boolean"
+                        }
+                    },
+                    "required": []
+                },
+                "parameters_overrides": {}
+            }
+        ]
+    }
+}

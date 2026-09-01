@@ -1,0 +1,241 @@
+{
+    "python_commit": "de163b34b909edaba3c174190ad7e1a355e7849f",
+    "classes": {
+        "OpenAIEmbeddingModel": [
+            {
+                "type": "embedding_model",
+                "name": "text-embedding-3-small",
+                "label": "Text Embedding 3 Small",
+                "status": "active",
+                "input_types": ["text/plain"],
+                "output_types": ["application/x-embedding"],
+                "dimensions": 1536,
+                "supported_dimensions": [1536, 1024, 768, 512, 256],
+                "context_size": 8191,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                },
+                "parameter_overrides": {}
+            },
+            {
+                "type": "embedding_model",
+                "name": "text-embedding-3-large",
+                "label": "Text Embedding 3 Large",
+                "status": "active",
+                "input_types": ["text/plain"],
+                "output_types": ["application/x-embedding"],
+                "dimensions": 3072,
+                "supported_dimensions": [3072, 1536, 1024, 768, 512, 256],
+                "context_size": 8191,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                },
+                "parameter_overrides": {}
+            }
+        ],
+        "OllamaEmbeddingModel": [],
+        "GeminiEmbeddingModel": [
+            {
+                "type": "embedding_model",
+                "name": "gemini-embedding-2",
+                "label": "Gemini Embedding 2",
+                "status": "active",
+                "input_types": [
+                    "text/plain",
+                    "image/png",
+                    "image/jpeg",
+                    "video/mp4",
+                    "audio/mpeg",
+                    "audio/wav",
+                    "application/pdf"
+                ],
+                "output_types": ["application/x-embedding"],
+                "dimensions": 3072,
+                "supported_dimensions": [3072, 1536, 768],
+                "context_size": 8192,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                },
+                "parameter_overrides": {}
+            },
+            {
+                "type": "embedding_model",
+                "name": "gemini-embedding-001",
+                "label": "Gemini Embedding 001",
+                "status": "active",
+                "input_types": ["text/plain"],
+                "output_types": ["application/x-embedding"],
+                "dimensions": 3072,
+                "supported_dimensions": [3072, 1536, 768, 512, 256, 128],
+                "context_size": 2048,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                },
+                "parameter_overrides": {}
+            }
+        ],
+        "DashScopeEmbeddingModel": [
+            {
+                "type": "embedding_model",
+                "name": "multimodal-embedding-v1",
+                "label": "Multimodal Embedding v1",
+                "status": "active",
+                "input_types": ["text/plain", "image/jpeg", "image/png", "image/bmp"],
+                "output_types": ["application/x-embedding"],
+                "dimensions": 1024,
+                "supported_dimensions": null,
+                "context_size": 512,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                },
+                "parameter_overrides": {}
+            },
+            {
+                "type": "embedding_model",
+                "name": "tongyi-embedding-vision-flash",
+                "label": "Tongyi Embedding Vision Flash",
+                "status": "active",
+                "input_types": [
+                    "text/plain",
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "image/bmp",
+                    "image/tiff",
+                    "video/mp4",
+                    "video/mpeg"
+                ],
+                "output_types": ["application/x-embedding"],
+                "dimensions": 768,
+                "supported_dimensions": [768, 512, 256, 128, 64],
+                "context_size": 1024,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                },
+                "parameter_overrides": {}
+            },
+            {
+                "type": "embedding_model",
+                "name": "qwen2.5-vl-embedding",
+                "label": "Qwen2.5 VL Embedding",
+                "status": "active",
+                "input_types": [
+                    "text/plain",
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "image/bmp",
+                    "image/tiff",
+                    "video/mp4"
+                ],
+                "output_types": ["application/x-embedding"],
+                "dimensions": 1024,
+                "supported_dimensions": [2048, 1024, 768, 512],
+                "context_size": 32000,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                },
+                "parameter_overrides": {}
+            },
+            {
+                "type": "embedding_model",
+                "name": "qwen3-vl-embedding",
+                "label": "Qwen3 VL Embedding",
+                "status": "active",
+                "input_types": [
+                    "text/plain",
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "image/bmp",
+                    "image/tiff",
+                    "video/mp4"
+                ],
+                "output_types": ["application/x-embedding"],
+                "dimensions": 2560,
+                "supported_dimensions": [2560, 2048, 1536, 1024, 768, 512, 256],
+                "context_size": 32000,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                },
+                "parameter_overrides": {}
+            },
+            {
+                "type": "embedding_model",
+                "name": "text-embedding-v4",
+                "label": "Text Embedding v4",
+                "status": "active",
+                "input_types": ["text/plain"],
+                "output_types": ["application/x-embedding"],
+                "dimensions": 1024,
+                "supported_dimensions": [2048, 1536, 1024, 768, 512, 256, 128, 64],
+                "context_size": 8192,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                },
+                "parameter_overrides": {}
+            },
+            {
+                "type": "embedding_model",
+                "name": "tongyi-embedding-vision-plus",
+                "label": "Tongyi Embedding Vision Plus",
+                "status": "active",
+                "input_types": [
+                    "text/plain",
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "image/bmp",
+                    "image/tiff",
+                    "video/mp4",
+                    "video/mpeg"
+                ],
+                "output_types": ["application/x-embedding"],
+                "dimensions": 1152,
+                "supported_dimensions": [1152, 1024, 512, 256, 128, 64],
+                "context_size": 1024,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                },
+                "parameter_overrides": {}
+            },
+            {
+                "type": "embedding_model",
+                "name": "text-embedding-v3",
+                "label": "Text Embedding v3",
+                "status": "active",
+                "input_types": ["text/plain"],
+                "output_types": ["application/x-embedding"],
+                "dimensions": 1024,
+                "supported_dimensions": [1024, 768, 512, 256, 128, 64],
+                "context_size": 8192,
+                "parameter_schema": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                },
+                "parameter_overrides": {}
+            }
+        ]
+    }
+}

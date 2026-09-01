@@ -36,3 +36,27 @@ export function _buildStreamingWavHeader(
 
     return header;
 }
+
+/**
+ * Wrap raw PCM bytes in a self-contained WAV file.
+ * @param pcm Raw PCM audio.
+ * @param sampleRate PCM sample rate.
+ * @param channels Number of audio channels.
+ * @param bitsPerSample Bits in each PCM sample.
+ * @returns A complete WAV byte sequence.
+ */
+export function _buildWav(
+    pcm: Uint8Array,
+    sampleRate = 24_000,
+    channels = 1,
+    bitsPerSample = 16
+): Uint8Array {
+    const result = new Uint8Array(44 + pcm.byteLength);
+    const header = _buildStreamingWavHeader(sampleRate, channels, bitsPerSample);
+    result.set(header);
+    const view = new DataView(result.buffer);
+    view.setUint32(4, 36 + pcm.byteLength, true);
+    view.setUint32(40, pcm.byteLength, true);
+    result.set(pcm, 44);
+    return result;
+}

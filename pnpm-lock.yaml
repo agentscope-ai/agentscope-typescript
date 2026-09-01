@@ -271,7 +271,7 @@ importers:
                 version: 0.6.3
             openai:
                 specifier: ^6.16.0
-                version: 6.27.0(zod@4.3.6)
+                version: 6.27.0(ws@8.21.3)(zod@4.3.6)
             pdf-lib:
                 specifier: ^1.17.1
                 version: 1.17.1
@@ -284,6 +284,9 @@ importers:
             uuid:
                 specifier: ^11.1.0
                 version: 11.1.0
+            ws:
+                specifier: ^8.18.3
+                version: 8.21.3
             zod:
                 specifier: ^4.3.6
                 version: 4.3.6
@@ -309,6 +312,9 @@ importers:
             '@types/uuid':
                 specifier: ^10.0.0
                 version: 10.0.0
+            '@types/ws':
+                specifier: ^8.18.1
+                version: 8.18.1
             '@typescript-eslint/eslint-plugin':
                 specifier: ^8.49.0
                 version: 8.56.1(@typescript-eslint/parser@8.56.1(eslint@9.39.3(jiti@2.6.1)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3))(eslint@9.39.3(jiti@2.6.1)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)
@@ -4202,6 +4208,12 @@ packages:
         resolution:
             {
                 integrity: sha512-ATELeWMFwj8eQiH0KmvsCl1V2lu/qx/CjOBmv4ADSZS5u8r4reMyjCXtxG7khqyiwH3IOMNdrON/Ugn94OUcRA==,
+            }
+
+    '@types/ws@8.18.1':
+        resolution:
+            {
+                integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==,
             }
 
     '@types/yargs-parser@21.0.3':
@@ -11837,6 +11849,21 @@ packages:
             }
         engines: { node: ^14.17.0 || ^16.13.0 || >=18.0.0 }
 
+    ws@8.21.3:
+        resolution:
+            {
+                integrity: sha512-201TZ/kPWxoPr/OKWjquZR1SWKXcvxdH+e1xrx89b3YbmzLMFCLfnaG1HFIgWzJOEWZ7MvpK++odZufgYR50Rw==,
+            }
+        engines: { node: '>=10.0.0' }
+        peerDependencies:
+            bufferutil: ^4.0.1
+            utf-8-validate: '>=5.0.2'
+        peerDependenciesMeta:
+            bufferutil:
+                optional: true
+            utf-8-validate:
+                optional: true
+
     xmlbuilder@15.1.1:
         resolution:
             {
@@ -14869,6 +14896,10 @@ snapshots:
         optional: true
 
     '@types/web-animations-js@2.2.16': {}
+
+    '@types/ws@8.18.1':
+        dependencies:
+            '@types/node': 22.19.15
 
     '@types/yargs-parser@21.0.3': {}
 
@@ -18641,8 +18672,9 @@ snapshots:
         dependencies:
             mimic-function: 5.0.1
 
-    openai@6.27.0(zod@4.3.6):
+    openai@6.27.0(ws@8.21.3)(zod@4.3.6):
         optionalDependencies:
+            ws: 8.21.3
             zod: 4.3.6
 
     optionator@0.9.4:
@@ -20349,6 +20381,8 @@ snapshots:
         dependencies:
             imurmurhash: 0.1.4
             signal-exit: 4.1.0
+
+    ws@8.21.3: {}
 
     xmlbuilder@15.1.1: {}
 

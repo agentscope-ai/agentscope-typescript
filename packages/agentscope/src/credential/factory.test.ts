@@ -11,7 +11,9 @@ import {
     OllamaCredential,
     OpenAICredential,
 } from './providers';
+import { GeminiEmbeddingModel } from '../embedding/gemini';
 import { GeminiChatModel } from '../model/gemini-model';
+import { GeminiTTSModel } from '../tts/gemini';
 
 describe('CredentialFactory', () => {
     test('matches every Python credential JSON schema', () => {
@@ -63,6 +65,33 @@ describe('CredentialFactory', () => {
     test('resolves the Python-compatible chat model class lazily', async () => {
         const credential = new GeminiCredential({ apiKey: 'secret' });
         expect(await credential.getChatModelClass()).toBe(GeminiChatModel);
+    });
+
+    test('resolves the Python-compatible embedding model class lazily', async () => {
+        const credential = new GeminiCredential({ apiKey: 'secret' });
+        expect(await credential.getEmbeddingModelClass()).toBe(GeminiEmbeddingModel);
+        class UnsupportedCredential extends CredentialBase {
+            readonly type = 'unsupported';
+            readonly chatProvider = 'unsupported';
+
+            constructor() {
+                super();
+            }
+
+            toJSON(): Record<string, unknown> {
+                return { type: this.type };
+            }
+        }
+        expect(await new UnsupportedCredential().getEmbeddingModelClass()).toBeNull();
+    });
+
+    test('resolves Python-compatible TTS model classes lazily', async () => {
+        const credential = new GeminiCredential({ apiKey: 'secret' });
+        expect(await credential.getTTSModelClasses()).toEqual([GeminiTTSModel]);
+        expect(credential.listTTSModels()[0].parameterSchema).toHaveProperty(
+            'properties.voice.enum'
+        );
+        expect(await new OllamaCredential().getTTSModelClasses()).toEqual([]);
     });
 
     test('validates discriminators and required API keys', () => {
