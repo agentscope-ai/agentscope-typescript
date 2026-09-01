@@ -26,6 +26,11 @@
             "types": "./dist/storage/index.d.ts",
             "import": "./dist/storage/index.mjs",
             "require": "./dist/storage/index.js"
+        },
+        "./workspace-manager": {
+            "types": "./dist/workspace-manager/index.d.ts",
+            "import": "./dist/workspace-manager/index.mjs",
+            "require": "./dist/workspace-manager/index.js"
         }
     },
     "scripts": {

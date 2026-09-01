@@ -6,6 +6,7 @@ export default defineConfig({
         index: 'src/index.ts',
         'message-bus/index': 'src/message-bus/index.ts',
         'storage/index': 'src/storage/index.ts',
+        'workspace-manager/index': 'src/workspace-manager/index.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,
