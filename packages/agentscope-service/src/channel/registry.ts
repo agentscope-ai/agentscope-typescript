@@ -12,7 +12,8 @@ export class ChannelTypeSchema {
         readonly iconUrl: string,
         readonly credentialsSchema: Record<string, unknown>,
         readonly configSchema: Record<string, unknown>,
-        readonly platformBotIdField: string
+        readonly platformBotIdField: string,
+        readonly supportsCredentialBinding: boolean
     ) {}
 
     toJSON(): Record<string, unknown> {
@@ -24,6 +25,7 @@ export class ChannelTypeSchema {
             credentials_schema: this.credentialsSchema,
             config_schema: this.configSchema,
             platform_bot_id_field: this.platformBotIdField,
+            supports_credential_binding: this.supportsCredentialBinding,
         };
     }
 }
@@ -88,7 +90,8 @@ export class ChannelTypeRegistry {
             Channel.iconUrl ?? '',
             credentialsSchema,
             configSchema,
-            Channel.platformBotIdField
+            Channel.platformBotIdField,
+            Channel.credentialBinding !== null && Channel.credentialBinding !== undefined
         );
     }
 

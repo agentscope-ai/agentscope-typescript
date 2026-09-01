@@ -200,6 +200,7 @@ describe('channel type registry', () => {
             channel_type: 'fake',
             display_name: 'Fake',
             platform_bot_id_field: 'bot_id',
+            supports_credential_binding: false,
             credentials_schema: { type: 'object' },
         });
         expect(() => registry.createChannel('fake', 'c', {}, {})).toThrow();

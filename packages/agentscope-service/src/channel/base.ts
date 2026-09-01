@@ -15,6 +15,7 @@ import type { WorkspaceBase } from '@agentscope-ai/agentscope/workspace';
 import { z } from 'zod';
 
 import type { BusPayload } from '../message-bus';
+import type { CredentialBindingConstructor } from './credential-binding';
 
 export const LIVENESS_TTL_SECONDS = 30;
 export const NO_TEXT_REPLY = '(Agent returned no text content)';
@@ -219,6 +220,7 @@ export interface ChannelConstructor {
     readonly iconUrl?: string;
     readonly credentialsSchema: z.ZodType<Record<string, unknown>>;
     readonly configSchema: z.ZodType<Record<string, unknown>>;
+    readonly credentialBinding?: CredentialBindingConstructor | null;
 }
 
 /** Base contract shared by every platform channel. */
@@ -230,6 +232,7 @@ export abstract class ChannelBase {
     static readonly iconUrl: string = '';
     static readonly credentialsSchema: z.ZodType<Record<string, unknown>> = z.object({});
     static readonly configSchema: z.ZodType<Record<string, unknown>> = z.object({});
+    static readonly credentialBinding: CredentialBindingConstructor | null = null;
 
     readonly capabilities = new ChannelCapability();
     readonly status = new ChannelStatus();

@@ -54,6 +54,13 @@ export abstract class MessageBus {
         value: string,
         options?: { ttlSeconds?: number }
     ): Promise<void>;
+    abstract registrySetIf(
+        namespace: string,
+        field: string,
+        value: string,
+        options: { expected: string; ttlSeconds?: number }
+    ): Promise<boolean>;
+    abstract registryPop(namespace: string, field: string): Promise<string | null>;
     abstract registryDelete(namespace: string, field: string): Promise<void>;
     abstract registryExists(namespace: string, field: string): Promise<boolean>;
     abstract registryGetAll(namespace: string): Promise<Record<string, string>>;

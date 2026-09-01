@@ -227,6 +227,27 @@ export class InMemoryMessageBus extends MessageBus {
         this.refreshExpiry(this.registryExpiries, namespace, options.ttlSeconds);
     }
 
+    async registrySetIf(
+        namespace: string,
+        field: string,
+        value: string,
+        options: { expected: string; ttlSeconds?: number }
+    ): Promise<boolean> {
+        this.purgeExpired(this.registries, this.registryExpiries, namespace);
+        if (this.registries.get(namespace)?.get(field) !== options.expected) return false;
+        this.registries.get(namespace)!.set(field, value);
+        this.refreshExpiry(this.registryExpiries, namespace, options.ttlSeconds);
+        return true;
+    }
+
+    async registryPop(namespace: string, field: string): Promise<string | null> {
+        this.purgeExpired(this.registries, this.registryExpiries, namespace);
+        const registry = this.registries.get(namespace);
+        const value = registry?.get(field) ?? null;
+        registry?.delete(field);
+        return value;
+    }
+
     async registryDelete(namespace: string, field: string): Promise<void> {
         this.purgeExpired(this.registries, this.registryExpiries, namespace);
         this.registries.get(namespace)?.delete(field);

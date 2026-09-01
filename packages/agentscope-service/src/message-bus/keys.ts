@@ -8,6 +8,8 @@ export const MessageBusKeys = {
     INBOX_LOCK_TTL_SECS: 30,
     INBOX_CONSUMER_FIELD: 'running',
     BG_TASKS_TTL_SECS: 86_400,
+    CREDENTIAL_BINDING_FIELD: 'record',
+    CREDENTIAL_BINDING_CLAIM_TTL_SECS: 300,
 
     projectionNamespace: (targetSessionId: string) =>
         `agentscope:session:projection:${targetSessionId}`,
@@ -28,6 +30,7 @@ export const MessageBusKeys = {
     indexTasksSignal: () => 'agentscope:index:tasks:wake',
     scheduleLifecycle: () => 'agentscope:schedule:lifecycle',
     channelLifecycle: () => 'agentscope:channel:lifecycle',
+    channelCredentialBinding: (bindingId: string) => `agentscope:channel:binding:${bindingId}`,
     channelLiveness: (channelId: string) => `agentscope:channel:liveness:${channelId}`,
     channelMediaBuffer: (channelId: string, chatId: string, userId: string) =>
         `agentscope:channel:media:${channelId}:${chatId}:${userId}`,

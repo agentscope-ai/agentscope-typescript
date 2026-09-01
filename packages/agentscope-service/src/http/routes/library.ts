@@ -20,6 +20,7 @@ import {
     CreateChannelRequestSchema,
     HubPageQuerySchema,
     InstallMCPRequestSchema,
+    StartCredentialBindingRequestSchema,
     UpdateChannelRequestSchema,
     UpdateMCPRequestSchema,
 } from '../schemas';
@@ -52,17 +53,66 @@ function registerChannelRoutes(router: AgentScopeHTTPRouter): void {
             typeof CreateChannelRequestSchema
         >;
         try {
+            const credentials = body.credential_binding_id
+                ? await context.app.services.credentialBinding.claim(
+                      context.userId(),
+                      body.credential_binding_id,
+                      body.channel_type
+                  )
+                : body.credentials;
             const record = await context.app.services.channel.create({
                 userId: context.userId(),
                 channelType: body.channel_type,
                 name: body.name,
-                credentials: body.credentials,
+                credentials,
                 platformConfig: body.platform_config,
                 routing: body.routing,
                 session: body.session,
                 enabled: body.enabled,
             });
             return jsonResponse(channelView(context, record), 201);
+        } catch (error) {
+            throw routeError(error, 400);
+        }
+    });
+    router.post('/channels/bindings', async context => {
+        const body = (await context.json(StartCredentialBindingRequestSchema)) as z.output<
+            typeof StartCredentialBindingRequestSchema
+        >;
+        try {
+            return jsonResponse(
+                (
+                    await context.app.services.credentialBinding.start(
+                        context.userId(),
+                        body.channel_type
+                    )
+                ).toJSON()
+            );
+        } catch (error) {
+            throw routeError(error, 400);
+        }
+    });
+    router.get('/channels/bindings/{binding_id}', async context => {
+        try {
+            return jsonResponse(
+                (
+                    await context.app.services.credentialBinding.poll(
+                        context.userId(),
+                        context.params.binding_id
+                    )
+                ).toJSON()
+            );
+        } catch (error) {
+            throw routeError(error, 400);
+        }
+    });
+    router.post('/channels/bindings/{binding_id}/cancel', async context => {
+        try {
+            await context.app.services.credentialBinding.cancel(
+                context.userId(),
+                context.params.binding_id
+            );
+            return jsonResponse({ status: 'cancelled' });
         } catch (error) {
             throw routeError(error, 400);
         }

@@ -34,6 +34,7 @@ import {
     buildFeishuToast,
     parseFeishuAction,
 } from './card-templates';
+import { FeishuCredentialBinding } from './credential-binding';
 import {
     OfficialFeishuDriver,
     type FeishuCardActionEvent,
@@ -98,6 +99,7 @@ export class FeishuChannel extends ChannelBase {
     static readonly platformBotIdField = 'app_id';
     static readonly credentialsSchema = FeishuCredentialsSchema;
     static readonly configSchema = FeishuConfigSchema;
+    static readonly credentialBinding = FeishuCredentialBinding;
 
     readonly channelId: string;
     readonly status = new ChannelStatus();

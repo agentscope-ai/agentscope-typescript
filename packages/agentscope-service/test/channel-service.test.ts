@@ -108,19 +108,25 @@ describe('Python channel cluster status parity', () => {
         bus: InMemoryMessageBus,
         nodeId: string,
         state: string,
-        reportedAt: number
+        reportedAt: number,
+        channelId = 'chan-1'
     ) {
         await bus.registrySet(
-            MessageBusKeys.channelLiveness('chan-1'),
+            MessageBusKeys.channelLiveness(channelId),
             nodeId,
             JSON.stringify(new ChannelHeartbeat(new ChannelStatus(state), reportedAt)),
             { ttlSeconds: LIVENESS_TTL_SECONDS }
         );
     }
 
-    test('no heartbeat reads as stopped', async () => {
+    test('enabled channels without a heartbeat are connecting', async () => {
         const { service } = serviceFixture();
-        await expect(service.getStatus('chan-1', 100)).resolves.toMatchObject({
+        const record = await service.create(createInput());
+        await expect(service.getStatus(record.id, 100)).resolves.toMatchObject({
+            state: 'connecting',
+        });
+        await service.setEnabled(record.id, false);
+        await expect(service.getStatus(record.id, 100)).resolves.toMatchObject({
             state: 'stopped',
         });
     });
@@ -142,11 +148,12 @@ describe('Python channel cluster status parity', () => {
         });
     });
 
-    test('only stale reports read as stopped', async () => {
+    test('only stale reports fall back to the enabled flag', async () => {
         const { bus, service } = serviceFixture();
-        await beat(bus, 'worker-old', 'connected', 100 - LIVENESS_TTL_SECONDS - 1);
-        await expect(service.getStatus('chan-1', 100)).resolves.toMatchObject({
-            state: 'stopped',
+        const record = await service.create(createInput());
+        await beat(bus, 'worker-old', 'connected', 100 - LIVENESS_TTL_SECONDS - 1, record.id);
+        await expect(service.getStatus(record.id, 100)).resolves.toMatchObject({
+            state: 'connecting',
         });
     });
 

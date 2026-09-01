@@ -24,4 +24,28 @@ describe('InMemoryMessageBus TTL', () => {
         expect(await bus.isLocked('lock')).toBe(false);
         await bus.close();
     });
+
+    test('refreshes registry expiry only after a successful compare-and-set', async () => {
+        const bus = await new InMemoryMessageBus().open();
+        await bus.registrySet('loser', 'field', 'v1', { ttlSeconds: 0.01 });
+        await expect(
+            bus.registrySetIf('loser', 'field', 'v2', {
+                expected: 'stale',
+                ttlSeconds: 10,
+            })
+        ).resolves.toBe(false);
+        await new Promise(resolve => setTimeout(resolve, 20));
+        await expect(bus.registryGet('loser', 'field')).resolves.toBeNull();
+
+        await bus.registrySet('winner', 'field', 'v1', { ttlSeconds: 0.01 });
+        await expect(
+            bus.registrySetIf('winner', 'field', 'v2', {
+                expected: 'v1',
+                ttlSeconds: 10,
+            })
+        ).resolves.toBe(true);
+        await new Promise(resolve => setTimeout(resolve, 20));
+        await expect(bus.registryGet('winner', 'field')).resolves.toBe('v2');
+        await bus.close();
+    });
 });

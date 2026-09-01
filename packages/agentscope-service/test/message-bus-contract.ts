@@ -176,6 +176,20 @@ export function runMessageBusContract(name: string, factory: MessageBusContractF
             expect(await bus.registryGetAll('registry')).toEqual({});
         });
 
+        test('conditionally updates and atomically consumes registry fields', async () => {
+            await bus.registrySet('registry', 'field', 'v1');
+            await expect(
+                bus.registrySetIf('registry', 'field', 'v2', { expected: 'stale' })
+            ).resolves.toBe(false);
+            await expect(bus.registryGet('registry', 'field')).resolves.toBe('v1');
+            await expect(
+                bus.registrySetIf('registry', 'field', 'v2', { expected: 'v1' })
+            ).resolves.toBe(true);
+            await expect(bus.registryPop('registry', 'field')).resolves.toBe('v2');
+            await expect(bus.registryPop('registry', 'field')).resolves.toBeNull();
+            await expect(bus.registryGet('registry', 'field')).resolves.toBeNull();
+        });
+
         test('runs session helpers through lock, replay log, and purge', async () => {
             await expect(
                 bus.sessionRun('session-1', async () => {

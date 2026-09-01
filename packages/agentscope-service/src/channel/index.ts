@@ -1,5 +1,6 @@
 export * from './base';
 export * from './clients';
+export * from './credential-binding';
 export * from './decision';
 export * from './dingtalk';
 export * from './discord';

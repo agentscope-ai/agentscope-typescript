@@ -25,6 +25,7 @@ import { LocalBlobStore, type BlobStoreBase, type KnowledgeBaseManagerBase } fro
 import {
     ChatService,
     ChannelService,
+    CredentialBindingService,
     IndexSweeper,
     IndexTaskConsumer,
     IndexWorker,
@@ -52,6 +53,7 @@ export interface AgentScopeServices {
     workspace: WorkspaceService;
     knowledgeBase: KnowledgeBaseService | null;
     channel: ChannelService;
+    credentialBinding: CredentialBindingService;
 }
 
 /** Framework-independent AgentScope service composition root. */
@@ -236,6 +238,10 @@ export class AgentScopeServiceApp {
                 this.messageBus,
                 this.channelTypeRegistry
             );
+            const credentialBinding = new CredentialBindingService(
+                this.messageBus,
+                this.channelTypeRegistry
+            );
             let knowledgeBase: KnowledgeBaseService | null = null;
 
             if (
@@ -297,6 +303,7 @@ export class AgentScopeServiceApp {
                 workspace,
                 knowledgeBase,
                 channel,
+                credentialBinding,
             };
             this.stack = stack;
             return this;

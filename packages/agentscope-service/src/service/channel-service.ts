@@ -119,7 +119,9 @@ export class ChannelService {
             if (heartbeat.status.state === 'connected') return heartbeat.status;
             if (!best || best.state === 'stopped') best = heartbeat.status;
         }
-        return best ?? new ChannelStatus('stopped');
+        if (best) return best;
+        const record = await this.storage.getChannel(channelId);
+        return new ChannelStatus(record?.enabled ? 'connecting' : 'stopped');
     }
 
     async listSeenChatIds(channelId: string): Promise<string[]> {

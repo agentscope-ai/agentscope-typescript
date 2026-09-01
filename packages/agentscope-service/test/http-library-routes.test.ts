@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/require-description, jsdoc/require-returns */
+/* eslint-disable jsdoc/require-description, jsdoc/require-jsdoc, jsdoc/require-returns */
 
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -7,7 +7,14 @@ import { join } from 'node:path';
 import { z } from 'zod';
 
 import { createApp, type AgentScopeServiceApp } from '../src/app';
-import { ChannelBase, type ChannelEmitter, type ChannelEvent } from '../src/channel';
+import {
+    BindingState,
+    BindingStep,
+    ChannelBase,
+    CredentialBindingBase,
+    type ChannelEmitter,
+    type ChannelEvent,
+} from '../src/channel';
 import { AgentScopeHTTPRouter, registerFoundationRoutes, registerLibraryRoutes } from '../src/http';
 import {
     MCPCard,
@@ -26,6 +33,21 @@ import { LocalWorkspaceManager } from '../src/workspace-manager';
 /**
  *
  */
+class FakeCredentialBinding extends CredentialBindingBase {
+    async begin(): Promise<BindingStep> {
+        return new BindingStep({
+            state: BindingState.AUTHORIZED,
+            verificationUrl: 'https://example.test/qr',
+            credentials: { bot_id: 'bound-bot', secret: 'bound-secret' },
+            retryAfterSeconds: 0,
+        });
+    }
+
+    async advance(): Promise<BindingStep> {
+        throw new Error('Authorized bindings are terminal.');
+    }
+}
+
 class FakeChannel extends ChannelBase {
     static override readonly channelType = 'fake';
     static override readonly displayName = 'Fake';
@@ -35,6 +57,7 @@ class FakeChannel extends ChannelBase {
         secret: z.string(),
     });
     static override readonly configSchema = z.object({ region: z.string().default('global') });
+    static override readonly credentialBinding = FakeCredentialBinding;
     readonly channelId: string;
 
     /**
@@ -196,6 +219,7 @@ describe('channel, hub, MCP, and skill HTTP routes', () => {
                 channel_type: 'fake',
                 display_name: 'Fake',
                 platform_bot_id_field: 'bot_id',
+                supports_credential_binding: true,
             }),
         ]);
         const created = await call('/channels/', {
@@ -213,7 +237,7 @@ describe('channel, hub, MCP, and skill HTTP routes', () => {
         expect(body).not.toHaveProperty('credentials');
         expect(body).toMatchObject({ channel_type: 'fake', platform_bot_id: 'bot-1' });
         expect(await (await call(`/channels/${body.id}/status`, { headers })).json()).toEqual({
-            state: 'stopped',
+            state: 'connecting',
             last_error: '',
         });
         expect(await (await call(`/channels/${body.id}/chat_ids`, { headers })).json()).toEqual({
@@ -232,6 +256,54 @@ describe('channel, hub, MCP, and skill HTTP routes', () => {
         expect((await call(`/channels/${body.id}`, { method: 'DELETE', headers })).status).toBe(
             204
         );
+    });
+
+    test('binds credentials without exposing secrets and consumes them on create', async () => {
+        const started = await call('/channels/bindings', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ channel_type: 'fake' }),
+        });
+        expect(started.status).toBe(200);
+        const binding = (await started.json()) as { binding_id: string };
+        expect(binding).toEqual({
+            binding_id: expect.any(String),
+            state: 'authorized',
+            verification_url: 'https://example.test/qr',
+            error: '',
+            retry_after_secs: 0,
+        });
+        expect(
+            await (await call(`/channels/bindings/${binding.binding_id}`, { headers })).json()
+        ).toEqual(binding);
+
+        const created = await call('/channels/', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+                channel_type: 'fake',
+                credential_binding_id: binding.binding_id,
+                routing: { bindings: [{ match_value: '*', agent_id: agentId }] },
+                session: { chat_model_config: {} },
+            }),
+        });
+        expect(created.status).toBe(201);
+        expect(await created.json()).toMatchObject({ platform_bot_id: 'bound-bot' });
+        expect(
+            (
+                await call(`/channels/bindings/${binding.binding_id}`, {
+                    headers,
+                })
+            ).status
+        ).toBe(404);
+        expect(
+            (
+                await call(`/channels/bindings/${binding.binding_id}/cancel`, {
+                    method: 'POST',
+                    headers,
+                })
+            ).status
+        ).toBe(200);
     });
 
     test('browses, installs, updates, and removes MCPs without echoing secrets', async () => {

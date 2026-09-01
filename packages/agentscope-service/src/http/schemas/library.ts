@@ -6,11 +6,16 @@ import { RoutingConfigSchema, SessionSettingsSchema } from '../../storage';
 export const CreateChannelRequestSchema = z.object({
     channel_type: z.string(),
     name: z.string().nullable().default(null),
-    credentials: JsonObjectSchema,
+    credentials: JsonObjectSchema.default({}),
+    credential_binding_id: z.string().nullable().default(null),
     platform_config: JsonObjectSchema.default({}),
     routing: RoutingConfigSchema,
     session: SessionSettingsSchema,
     enabled: z.boolean().default(true),
+});
+
+export const StartCredentialBindingRequestSchema = z.object({
+    channel_type: z.string(),
 });
 
 export const UpdateChannelRequestSchema = z.object({

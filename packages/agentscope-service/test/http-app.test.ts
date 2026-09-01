@@ -17,6 +17,7 @@ GET /agent/
 GET /agent/schema
 GET /agent/schema/v2
 GET /channels/
+GET /channels/bindings/{binding_id}
 GET /channels/types
 GET /channels/{channel_id}
 GET /channels/{channel_id}/chat_ids
@@ -66,6 +67,8 @@ PATCH /schedule/{schedule_id}
 PATCH /sessions/{session_id}
 POST /agent/
 POST /channels/
+POST /channels/bindings
+POST /channels/bindings/{binding_id}/cancel
 POST /channels/{channel_id}/disable
 POST /channels/{channel_id}/enable
 POST /chat/
@@ -98,7 +101,7 @@ describe('complete HTTP application', () => {
             .map(route => `${route.method} ${route.path}`)
             .sort();
         expect(actual).toEqual(PYTHON_ROUTE_CONTRACT);
-        expect(new Set(actual).size).toBe(83);
+        expect(new Set(actual).size).toBe(86);
     });
 
     test('accepts optional AG-UI and custom response middleware', () => {
@@ -106,6 +109,6 @@ describe('complete HTTP application', () => {
             aguiProtocol: true,
             middleware: [async (_request, next) => next()],
         });
-        expect(router.listRoutes()).toHaveLength(83);
+        expect(router.listRoutes()).toHaveLength(86);
     });
 });

@@ -101,6 +101,19 @@ if redis.call('GET', KEYS[1]) ~= ARGV[1] then return 0 end
 return redis.call('EXPIRE', KEYS[1], ARGV[2])
 `;
 
+const REGISTRY_SET_IF_SCRIPT = `
+if redis.call('HGET', KEYS[1], ARGV[1]) ~= ARGV[3] then return 0 end
+redis.call('HSET', KEYS[1], ARGV[1], ARGV[2])
+if tonumber(ARGV[4]) > 0 then redis.call('EXPIRE', KEYS[1], ARGV[4]) end
+return 1
+`;
+
+const REGISTRY_POP_SCRIPT = `
+local value = redis.call('HGET', KEYS[1], ARGV[1])
+if value then redis.call('HDEL', KEYS[1], ARGV[1]) end
+return value
+`;
+
 export interface RedisMessageBusOptions {
     url?: string;
     client?: NodeRedisBusClientLike;
@@ -319,6 +332,27 @@ export class RedisMessageBus extends MessageBus {
         if (options.ttlSeconds !== undefined) {
             await this.requireClient().expire(namespace, options.ttlSeconds);
         }
+    }
+
+    async registrySetIf(
+        namespace: string,
+        field: string,
+        value: string,
+        options: { expected: string; ttlSeconds?: number }
+    ): Promise<boolean> {
+        const written = await this.requireClient().eval(REGISTRY_SET_IF_SCRIPT, {
+            keys: [namespace],
+            arguments: [field, value, options.expected, String(options.ttlSeconds ?? 0)],
+        });
+        return Boolean(written);
+    }
+
+    async registryPop(namespace: string, field: string): Promise<string | null> {
+        const value = await this.requireClient().eval(REGISTRY_POP_SCRIPT, {
+            keys: [namespace],
+            arguments: [field],
+        });
+        return value === null ? null : String(value);
     }
 
     async registryDelete(namespace: string, field: string): Promise<void> {
