@@ -1,6 +1,8 @@
 import {
     AgentRecordSchema,
     ChannelRecordSchema,
+    defaultContextConfigData,
+    defaultReActConfigData,
     KnowledgeBaseRecordSchema,
     KnowledgeDocumentRecordSchema,
 } from '../src/storage';
@@ -25,8 +27,8 @@ describe('service record schemas', () => {
                 id: expect.any(String),
                 name: 'Friday',
                 system_prompt: "You're a helpful assistant.",
-                context_config: {},
-                react_config: {},
+                context_config: defaultContextConfigData(),
+                react_config: defaultReActConfigData(),
                 invite_config: { invitable: false, invite_description: null },
             },
         });

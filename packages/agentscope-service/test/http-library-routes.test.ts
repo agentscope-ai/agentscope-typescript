@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/require-description, jsdoc/require-returns */
+
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -253,10 +255,23 @@ describe('channel, hub, MCP, and skill HTTP routes', () => {
         });
         expect(installed.status).toBe(201);
         const view = (await installed.json()) as { id: string };
-        expect(JSON.stringify(view)).not.toContain('secret');
-        expect(await (await call('/mcp', { headers })).json()).toEqual([
-            expect.objectContaining({ id: view.id, name: 'echo', hub_id: 'fake', enabled: true }),
-        ]);
+        const expectedMCP = {
+            id: view.id,
+            name: 'echo',
+            is_stateful: false,
+            enabled: true,
+            display_name: 'Echo',
+            description: 'Echo server',
+            tags: [],
+            author: null,
+            icon_url: null,
+            url: null,
+            hub_id: 'fake',
+            card_id: 'echo',
+            version: null,
+        };
+        expect(view).toEqual(expectedMCP);
+        expect(await (await call('/mcp', { headers })).json()).toEqual([expectedMCP]);
         const updated = await call(`/mcp/${view.id}`, {
             method: 'PATCH',
             headers,
@@ -273,10 +288,21 @@ describe('channel, hub, MCP, and skill HTTP routes', () => {
         });
         expect(installed.status).toBe(201);
         const view = (await installed.json()) as { id: string };
-        expect(view).toMatchObject({ name: 'music', card_id: 'owner/music' });
-        expect(await (await call('/skill', { headers })).json()).toEqual([
-            expect.not.objectContaining({ markdown: expect.anything() }),
-        ]);
+        expect(view).toEqual({
+            id: view.id,
+            name: 'music',
+            enabled: true,
+            display_name: 'Music',
+            description: '',
+            tags: [],
+            author: null,
+            icon_url: null,
+            url: null,
+            hub_id: 'skills',
+            card_id: 'owner/music',
+            version: null,
+        });
+        expect(await (await call('/skill', { headers })).json()).toEqual([view]);
         expect(await (await call(`/skill/${view.id}`, { headers })).json()).toMatchObject({
             markdown: '# Music',
         });

@@ -5,6 +5,7 @@ export * from './bus-ops';
 export * from './channel';
 export * from './dependencies';
 export * from './hub';
+export * from './http';
 export * from './lifespan';
 export * from './message-bus';
 export * from './manager';

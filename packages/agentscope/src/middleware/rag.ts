@@ -88,6 +88,15 @@ export class RAGParameters {
 
     static modelJsonSchema(): Record<string, unknown> {
         return {
+            description:
+                'User-tunable knowledge-base search parameters of\n' +
+                ':class:`RAGMiddleware`.\n\n' +
+                'The fields here are exactly the keys the hosted service persists\n' +
+                'into ``SessionKnowledgeConfig.parameters`` and the keys\n' +
+                ':class:`RAGMiddleware` accepts as ``search_config``.  Every field\n' +
+                'is annotated with a ``title`` and ``description`` so the front-end\n' +
+                'can render them as labels and tooltips via\n' +
+                '``model_json_schema()``.',
             type: 'object',
             properties: {
                 mode: {
@@ -146,6 +155,7 @@ export class RAGParameters {
                         'instead of removing it right after the model call.',
                 },
             },
+            title: 'Parameters',
         };
     }
 

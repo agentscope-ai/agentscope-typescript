@@ -5,6 +5,7 @@ export default defineConfig({
         'access/index': 'src/access/index.ts',
         'channel/index': 'src/channel/index.ts',
         'hub/index': 'src/hub/index.ts',
+        'http/index': 'src/http/index.ts',
         index: 'src/index.ts',
         'manager/index': 'src/manager/index.ts',
         'middleware/index': 'src/middleware/index.ts',

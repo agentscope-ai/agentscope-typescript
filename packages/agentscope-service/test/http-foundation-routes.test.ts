@@ -1,3 +1,7 @@
+/* eslint-disable jsdoc/require-param, jsdoc/require-returns */
+
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -9,6 +13,28 @@ import { InMemoryStorage } from '../src/storage';
 import { LocalWorkspaceManager } from '../src/workspace-manager';
 
 const headers = { 'content-type': 'application/json', 'x-user-id': 'alice' };
+const schemaFixture = JSON.parse(
+    readFileSync(join(__dirname, 'parity/fixtures/http-agent-schemas.python.json'), 'utf8')
+) as {
+    sha256: Record<string, string>;
+};
+
+/** Serialize JSON with lexicographically sorted object keys. */
+function canonicalJSON(value: unknown): string {
+    if (Array.isArray(value)) return `[${value.map(canonicalJSON).join(',')}]`;
+    if (value && typeof value === 'object') {
+        return `{${Object.entries(value as Record<string, unknown>)
+            .sort(([left], [right]) => left.localeCompare(right))
+            .map(([key, item]) => `${JSON.stringify(key)}:${canonicalJSON(item)}`)
+            .join(',')}}`;
+    }
+    return JSON.stringify(value);
+}
+
+/** Hash one JSON value using the Python fixture's canonical encoding. */
+function schemaDigest(value: unknown): string {
+    return createHash('sha256').update(canonicalJSON(value)).digest('hex');
+}
 
 describe('foundation HTTP routes', () => {
     let directory: string;
@@ -56,11 +82,14 @@ describe('foundation HTTP routes', () => {
 
     test('serves schemas and complete agent CRUD with Python status codes', async () => {
         await app.open();
-        const schema = await call('/agent/schema/v2', { headers });
+        const legacy = (await (await call('/agent/schema')).json()) as Record<string, unknown>;
+        expect(schemaDigest(legacy.identity)).toBe(schemaFixture.sha256.legacyIdentity);
+        expect(schemaDigest(legacy.context_config)).toBe(schemaFixture.sha256.legacyContext);
+        expect(schemaDigest(legacy.react_config)).toBe(schemaFixture.sha256.legacyReact);
+        const schema = await call('/agent/schema/v2');
         expect(schema.status).toBe(200);
         const schemaBody = (await schema.json()) as { schema: { properties: object } };
-        expect(schemaBody.schema.properties).toHaveProperty('invite_config');
-        expect(schemaBody.schema.properties).not.toHaveProperty('id');
+        expect(schemaDigest(schemaBody.schema)).toBe(schemaFixture.sha256.agentSchemaV2);
 
         const created = await call('/agent/', {
             method: 'POST',
@@ -83,6 +112,15 @@ describe('foundation HTTP routes', () => {
         expect(await updated.json()).toMatchObject({
             id: agentId,
             editable: true,
+            data: { system_prompt: 'Updated' },
+        });
+        const ignoredNull = await call(`/agent/${agentId}`, {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify({ system_prompt: null }),
+        });
+        expect(ignoredNull.status).toBe(200);
+        expect(await ignoredNull.json()).toMatchObject({
             data: { system_prompt: 'Updated' },
         });
         expect((await call(`/agent/${agentId}`, { method: 'DELETE', headers })).status).toBe(204);
@@ -136,7 +174,7 @@ describe('foundation HTTP routes', () => {
 
     test('returns provider model catalogs and provider 404s', async () => {
         await app.open();
-        const chat = await call('/model/?provider=openai_credential', { headers });
+        const chat = await call('/model/?provider=openai_credential');
         expect(chat.status).toBe(200);
         expect((await chat.json()) as { total: number }).toMatchObject({ total: 13 });
         const embedding = await call('/embedding-model/?provider=openai_credential', { headers });

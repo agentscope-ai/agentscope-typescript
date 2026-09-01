@@ -48,6 +48,33 @@ try {
 Use persistent storage and a shared Redis message bus for multi-process deployments. In-memory
 adapters are intended for tests and single-process development.
 
+## Serve the Python-compatible HTTP API
+
+The `./http` entry point exposes the complete Web Standards router and a dependency-free Node.js
+adapter. `serveHTTP` opens the application before listening and closes it after the server stops.
+
+```typescript
+import { createApp } from '@agentscope-ai/agentscope-service';
+import { serveHTTP } from '@agentscope-ai/agentscope-service/http';
+
+const app = createApp({
+    storage: createStorage(),
+    messageBus: createMessageBus(),
+    workspaceManager: createWorkspaceManager(),
+});
+const server = await serveHTTP(app, {
+    host: '127.0.0.1',
+    port: 8000,
+});
+
+process.once('SIGTERM', () => void server.close());
+```
+
+Use `createHTTPRouter(app)` when an existing runtime owns the listener. Its `fetch(request)` method
+accepts a standard `Request` and returns a standard `Response`, so framework adapters do not enter
+the service or route layers. Pass `{ aguiProtocol: true }` to convert AgentScope SSE frames into
+AG-UI events while preserving non-SSE responses.
+
 ## Knowledge-base modes
 
 Passing a `knowledgeBaseManager` enables knowledge-base services. The runtime supplies a text

@@ -28,6 +28,7 @@ export const UpdateSessionRequestSchema = z.object({
     knowledge_config: SessionKnowledgeConfigSchema.nullable().optional(),
     permission_mode: z
         .enum(['default', 'accept_edits', 'explore', 'bypass', 'dont_ask'])
+        .nullable()
         .optional(),
 });
 
@@ -41,7 +42,7 @@ export const MessageQuerySchema = AgentQuerySchema.extend({
 export const ChatRequestSchema = z.object({
     agent_id: z.string(),
     session_id: z.string(),
-    input: z.unknown().nullable().default(null),
+    input: z.union([JsonObjectSchema, z.array(JsonObjectSchema), z.null()]),
 });
 
 export const CreateScheduleRequestSchema = z.object({
@@ -59,15 +60,14 @@ export const CreateScheduleRequestSchema = z.object({
 });
 
 export const UpdateScheduleRequestSchema = z.object({
-    name: z.string().optional(),
-    description: z.string().optional(),
-    cron_expression: z.string().optional(),
-    timezone: z.string().optional(),
-    enabled: z.boolean().optional(),
-    stateful: z.boolean().optional(),
+    name: z.string().nullable().optional(),
+    description: z.string().nullable().optional(),
+    cron_expression: z.string().nullable().optional(),
+    timezone: z.string().nullable().optional(),
+    enabled: z.boolean().nullable().optional(),
+    stateful: z.boolean().nullable().optional(),
     permission_mode: z
         .enum(['default', 'accept_edits', 'explore', 'bypass', 'dont_ask'])
+        .nullable()
         .optional(),
-    chat_model_config: ChatModelConfigSchema.optional(),
-    parameters: JsonObjectSchema.optional(),
 });

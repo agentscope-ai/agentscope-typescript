@@ -1,6 +1,11 @@
 import { z } from 'zod';
 
-import { AgentScopeHTTPRouter, emptyResponse, jsonResponse } from '../src/http';
+import {
+    AgentScopeHTTPRouter,
+    emptyResponse,
+    jsonResponse,
+    quoteHeaderFilename,
+} from '../src/http';
 
 const app = {} as ConstructorParameters<typeof AgentScopeHTTPRouter>[0];
 
@@ -19,6 +24,17 @@ describe('Web Standards HTTP router', () => {
             (await router.fetch(new Request('http://service/items/a', { method: 'POST' }))).status
         ).toBe(405);
         expect((await router.fetch(new Request('http://service/missing'))).status).toBe(404);
+        const missingQuery = await router.fetch(new Request('http://service/items/a'));
+        expect(await missingQuery.json()).toEqual({
+            detail: [
+                {
+                    type: 'missing',
+                    loc: ['query', 'limit'],
+                    msg: 'Field required',
+                    input: null,
+                },
+            ],
+        });
     });
 
     test('returns FastAPI-shaped header, JSON, and Zod validation failures', async () => {
@@ -64,5 +80,9 @@ describe('Web Standards HTTP router', () => {
         );
         expect(response.status).toBe(204);
         expect(seen).toEqual(['before', 'after']);
+    });
+
+    test('quotes content-disposition filenames like Python urllib', () => {
+        expect(quoteHeaderFilename("a b'c(1)!.txt")).toBe('a%20b%27c%281%29%21.txt');
     });
 });

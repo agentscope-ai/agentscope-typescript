@@ -24,6 +24,11 @@ describe('Agent core Python parity', () => {
                 })
         ).toThrow('reserveRatio');
         expect(() => new InjectionConfig({ template: 'missing' })).toThrow('runtime_state');
+        expect(new ContextConfig({ toolResultLimit: -1 }).toolResultLimit).toBe(-1);
+        expect(new ReActConfig({ maxIters: -1 }).maxIters).toBe(-1);
+        expect(new ContextConfig().compressionPrompt).toContain(
+            'The current time is {current_time}.\nThis summary may itself be summarized'
+        );
     });
 
     test('non-streaming reasoning emits a complete event lifecycle and usage', async () => {

@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/require-param, jsdoc/require-returns */
+
 /**
  * Serialize a Python-compatible JSON response.
  * @param value
@@ -51,4 +53,17 @@ export function iterableResponse(
         },
     });
     return new Response(body, init);
+}
+
+/** Encode a UTF-8 filename with Python urllib.parse.quote semantics. */
+export function quoteHeaderFilename(value: string): string {
+    return encodeURIComponent(value).replace(
+        /[!'()*]/g,
+        character => `%${character.charCodeAt(0).toString(16).toUpperCase()}`
+    );
+}
+
+/** Apply Starlette's UTF-8 charset behavior for textual streaming media. */
+export function streamingContentType(mediaType: string): string {
+    return mediaType.startsWith('text/') ? `${mediaType}; charset=utf-8` : mediaType;
 }

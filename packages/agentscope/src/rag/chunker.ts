@@ -13,6 +13,14 @@ export abstract class ChunkerBase<TParameters extends object = Record<string, ne
         this.parameters = parameters;
     }
 
+    /**
+     * JSON Schema used by service clients to render chunker parameters.
+     * @returns The parameter form schema.
+     */
+    get parameterSchema(): Record<string, unknown> {
+        return { properties: {}, title: 'Parameters', type: 'object' };
+    }
+
     abstract chunk(sections: Section[]): Promise<Chunk[]>;
 }
 
@@ -52,6 +60,30 @@ export class ApproxTokenChunker extends ChunkerBase<Required<ApproxTokenChunkerP
 
     get overlap(): number {
         return this.parameters.overlap;
+    }
+
+    override get parameterSchema(): Record<string, unknown> {
+        return {
+            description: 'The tunable parameters of the approximate-token chunker.',
+            properties: {
+                chunk_size: {
+                    default: 512,
+                    description: 'Maximum number of approximate tokens per chunk.',
+                    minimum: 1,
+                    title: 'Chunk Size',
+                    type: 'integer',
+                },
+                overlap: {
+                    default: 50,
+                    description: 'Number of approximate tokens shared between consecutive chunks.',
+                    minimum: 0,
+                    title: 'Overlap',
+                    type: 'integer',
+                },
+            },
+            title: 'Parameters',
+            type: 'object',
+        };
     }
 
     async chunk(sections: Section[]): Promise<Chunk[]> {

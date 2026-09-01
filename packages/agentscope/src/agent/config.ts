@@ -78,8 +78,22 @@ export class ContextConfig {
             '<system-hint>You have been working on the task described above but have not yet ' +
                 'completed it. Now write a continuation summary that will allow you to resume ' +
                 'work efficiently in a future context window where the conversation history ' +
-                'will be replaced with this summary. This summary may itself be summarized ' +
-                'again later, so make every reference self-contained.</system-hint>';
+                'will be replaced with this summary. Your summary should be structured, ' +
+                'concise, and actionable.\nThe current time is {current_time}.\nThis summary ' +
+                'may itself be summarized again later, and the conversation history it ' +
+                'refers to will be gone, so every reference must be self-contained — resolve ' +
+                'anything that depends on the vanished context into an absolute, ' +
+                "fully-qualified form:\n- Time: convert relative expressions ('today', " +
+                "'now', 'yesterday', 'tomorrow', 'recently') to absolute dates using the " +
+                'current time above; re-anchor them even if an earlier summary already wrote ' +
+                'them relatively.\n- Names & pointers: use file paths, symbol names, PR/issue ' +
+                'numbers, IDs, URLs, and exact commands/error strings verbatim instead of ' +
+                "'this file', 'the above', 'the second approach', 'the 5 failing tests'.\n" +
+                '- In-flight work: record everything still pending, especially tools ' +
+                'launched in the background whose results you are still waiting on — give ' +
+                "each one's id and a short note of what it is doing — and mark each item's " +
+                'owner (user request vs your own decision) and status (done / pending / ' +
+                'blocked).\n</system-hint>';
         this.summaryTemplate =
             options.summaryTemplate ??
             '<system-info>Here is a summary of your previous work\n' +
@@ -96,8 +110,8 @@ export class ContextConfig {
         if (!(this.reserveRatio > 0 && this.reserveRatio < 0.9)) {
             throw new Error('reserveRatio must be greater than 0 and less than 0.9.');
         }
-        if (!Number.isInteger(this.toolResultLimit) || this.toolResultLimit < 0) {
-            throw new Error('toolResultLimit must be a non-negative integer.');
+        if (!Number.isInteger(this.toolResultLimit)) {
+            throw new Error('toolResultLimit must be an integer.');
         }
         if (!Number.isInteger(this.maxImageNum) || this.maxImageNum < 0) {
             throw new Error('maxImageNum must be a non-negative integer.');
@@ -179,8 +193,8 @@ export class ReActConfig {
         this.interruptionMessage =
             options.interruptionMessage ?? 'I notice the interruption. How can I help you?';
         this.interruptionRaiseCancelledError = options.interruptionRaiseCancelledError ?? false;
-        if (!Number.isInteger(this.maxIters) || this.maxIters < 0) {
-            throw new Error('maxIters must be a non-negative integer.');
+        if (!Number.isInteger(this.maxIters)) {
+            throw new Error('maxIters must be an integer.');
         }
         if (
             !Number.isInteger(this.structuredOutputGraceIters) ||

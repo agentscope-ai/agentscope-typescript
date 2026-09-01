@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/require-description, jsdoc/require-returns */
+
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -124,6 +126,12 @@ describe('session, chat, schedule, and SSE routes', () => {
                 await call(`/sessions/${sessionId}/messages?agent_id=${agentId}`, { headers })
             ).json()
         ).toEqual({ messages: [], is_running: false, has_more: false });
+        const missingChatInput = await call('/chat/', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ agent_id: agentId, session_id: sessionId }),
+        });
+        expect(missingChatInput.status).toBe(422);
         expect(
             (
                 await call(`/sessions/${sessionId}?agent_id=${agentId}`, {
@@ -166,7 +174,7 @@ describe('session, chat, schedule, and SSE routes', () => {
             headers,
         });
         expect(response.status).toBe(200);
-        expect(response.headers.get('content-type')).toBe('text/event-stream');
+        expect(response.headers.get('content-type')).toBe('text/event-stream; charset=utf-8');
         expect(response.headers.get('cache-control')).toBe('no-cache');
         const reader = response.body!.getReader();
         const first = await reader.read();
@@ -218,6 +226,13 @@ describe('session, chat, schedule, and SSE routes', () => {
             body: JSON.stringify({ enabled: false }),
         });
         expect(await patched.json()).toMatchObject({ id: scheduleId, data: { enabled: false } });
+        const ignoredNull = await call(`/schedule/${scheduleId}`, {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify({ name: null }),
+        });
+        expect(ignoredNull.status).toBe(200);
+        expect(await ignoredNull.json()).toMatchObject({ data: { name: 'Daily' } });
         expect(await (await call(`/schedule/${scheduleId}/sessions`, { headers })).json()).toEqual({
             sessions: [],
             total: 0,

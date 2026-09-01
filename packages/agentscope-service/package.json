@@ -30,6 +30,11 @@
             "import": "./dist/hub/index.mjs",
             "require": "./dist/hub/index.js"
         },
+        "./http": {
+            "types": "./dist/http/index.d.ts",
+            "import": "./dist/http/index.mjs",
+            "require": "./dist/http/index.js"
+        },
         "./message-bus": {
             "types": "./dist/message-bus/index.d.ts",
             "import": "./dist/message-bus/index.mjs",

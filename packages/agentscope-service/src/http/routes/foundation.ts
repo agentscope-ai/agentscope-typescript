@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/require-description, jsdoc/require-returns */
+
 import { CredentialFactory, type CredentialClass } from '@agentscope-ai/agentscope/credential';
 import { z } from 'zod';
 
@@ -8,9 +10,11 @@ import { emptyResponse, jsonResponse } from '../response';
 import type { AgentScopeHTTPRouter } from '../router';
 import {
     agentDataJSONSchema,
+    contextConfigJSONSchema,
     CreateAgentRequestSchema,
     CreateCredentialRequestSchema,
     ProviderQuerySchema,
+    reactConfigJSONSchema,
     UpdateAgentRequestSchema,
     UpdateCredentialRequestSchema,
 } from '../schemas';
@@ -31,8 +35,7 @@ export function registerFoundationRoutes(router: AgentScopeHTTPRouter): void {
  * @param router
  */
 function registerAgentRoutes(router: AgentScopeHTTPRouter): void {
-    router.get('/agent/schema', context => {
-        context.userId();
+    router.get('/agent/schema', _context => {
         const full = agentDataJSONSchema();
         const properties = full.properties as Record<string, unknown>;
         return jsonResponse({
@@ -42,12 +45,11 @@ function registerAgentRoutes(router: AgentScopeHTTPRouter): void {
                 properties: { name: properties.name, system_prompt: properties.system_prompt },
                 required: ['name'],
             },
-            context_config: z.toJSONSchema(z.record(z.string(), z.unknown())),
-            react_config: z.toJSONSchema(z.record(z.string(), z.unknown())),
+            context_config: contextConfigJSONSchema(),
+            react_config: reactConfigJSONSchema(),
         });
     });
-    router.get('/agent/schema/v2', context => {
-        context.userId();
+    router.get('/agent/schema/v2', _context => {
         return jsonResponse({ schema: agentDataJSONSchema() });
     });
     router.get('/agent/', async context => {
@@ -78,7 +80,10 @@ function registerAgentRoutes(router: AgentScopeHTTPRouter): void {
             context.params.agent_id
         );
         const existing = raw as AgentRecord;
-        const data = AgentDataSchema.parse({ ...existing.data, ...body });
+        const updates = Object.fromEntries(
+            Object.entries(body).filter(([, value]) => value !== null)
+        );
+        const data = AgentDataSchema.parse({ ...existing.data, ...updates });
         const updated = AgentRecordSchema.parse({
             ...existing,
             data,
@@ -105,8 +110,7 @@ function registerAgentRoutes(router: AgentScopeHTTPRouter): void {
  * @param router
  */
 function registerCredentialRoutes(router: AgentScopeHTTPRouter): void {
-    router.get('/credential/schemas', context => {
-        context.userId();
+    router.get('/credential/schemas', _context => {
         const schemas = CredentialFactory.listSchemas();
         return jsonResponse({ schemas, total: schemas.length });
     });
@@ -176,7 +180,6 @@ function registerCredentialRoutes(router: AgentScopeHTTPRouter): void {
  */
 function registerModelRoutes(router: AgentScopeHTTPRouter): void {
     router.get('/model/', context => {
-        context.userId();
         const { provider } = context.query(ProviderQuerySchema) as z.output<
             typeof ProviderQuerySchema
         >;
@@ -185,7 +188,6 @@ function registerModelRoutes(router: AgentScopeHTTPRouter): void {
         return jsonResponse({ models, total: models.length });
     });
     router.get('/embedding-model/', context => {
-        context.userId();
         const { provider } = context.query(ProviderQuerySchema) as z.output<
             typeof ProviderQuerySchema
         >;
@@ -194,7 +196,6 @@ function registerModelRoutes(router: AgentScopeHTTPRouter): void {
         return jsonResponse({ models, total: models.length });
     });
     router.get('/tts-model/', context => {
-        context.userId();
         const { provider } = context.query(ProviderQuerySchema) as z.output<
             typeof ProviderQuerySchema
         >;
@@ -223,8 +224,8 @@ function registerHealthRoute(router: AgentScopeHTTPRouter): void {
             resource_access_service: runtime,
             chat_service: runtime,
             session_service: runtime,
-            mcp_hubs: 'disabled',
-            skill_hubs: 'disabled',
+            mcp_hubs: context.app.mcpHubs.size > 0 ? 'ok' : 'disabled',
+            skill_hubs: context.app.skillHubs.size > 0 ? 'ok' : 'disabled',
             knowledge_base: context.app.knowledgeBaseManager
                 ? ready && context.app.services.knowledgeBase
                     ? 'ok'

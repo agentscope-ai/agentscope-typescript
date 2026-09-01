@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/require-description, jsdoc/require-returns */
+
 import type { MCPClient } from '@agentscope-ai/agentscope/mcp';
 import { z } from 'zod';
 
@@ -39,7 +41,6 @@ export function registerLibraryRoutes(router: AgentScopeHTTPRouter): void {
  */
 function registerChannelRoutes(router: AgentScopeHTTPRouter): void {
     router.get('/channels/types', context => {
-        context.userId();
         return jsonResponse(context.app.channelTypeRegistry.listTypes().map(item => item.toJSON()));
     });
     router.get('/channels/', async context => {
@@ -150,11 +151,9 @@ function registerChannelRoutes(router: AgentScopeHTTPRouter): void {
  */
 function registerHubRoutes(router: AgentScopeHTTPRouter): void {
     router.get('/hub/mcp', context => {
-        context.userId();
         return jsonResponse(describeHubs(context.app.mcpHubs));
     });
     router.get('/hub/skill', context => {
-        context.userId();
         return jsonResponse(describeHubs(context.app.skillHubs));
     });
     router.get('/hub/mcp/{hub_id}/cards', async context => {
@@ -487,6 +486,8 @@ function mcpView(record: MCPRecord) {
     return {
         id: record.id,
         name: record.client.name,
+        is_stateful: record.client.is_stateful,
+        enabled: record.enabled,
         display_name: record.display_name,
         description: record.description,
         tags: record.tags,
@@ -496,9 +497,6 @@ function mcpView(record: MCPRecord) {
         hub_id: record.hub_id,
         card_id: record.card_id,
         version: record.version,
-        enabled: record.enabled,
-        created_at: record.created_at,
-        updated_at: record.updated_at,
     };
 }
 
@@ -507,6 +505,18 @@ function mcpView(record: MCPRecord) {
  * @param record
  */
 function skillView(record: SkillRecord) {
-    const { markdown: _markdown, user_id: _userId, ...view } = record;
-    return view;
+    return {
+        id: record.id,
+        name: record.name,
+        enabled: record.enabled,
+        display_name: record.display_name,
+        description: record.description,
+        tags: record.tags,
+        author: record.author,
+        icon_url: record.icon_url,
+        url: record.url,
+        hub_id: record.hub_id,
+        card_id: record.card_id,
+        version: record.version,
+    };
 }

@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/require-description, jsdoc/require-returns */
+
 import type { ZodType } from 'zod';
 import { ZodError } from 'zod';
 
@@ -15,6 +17,11 @@ export interface HTTPContext {
     userId(): string;
     query(schema: ZodType): unknown;
     json(schema: ZodType): Promise<unknown>;
+}
+
+export interface HTTPRouteInfo {
+    method: HTTPMethod;
+    path: string;
 }
 
 export type HTTPHandler = (context: HTTPContext) => Response | Promise<Response>;
@@ -97,6 +104,11 @@ export class AgentScopeHTTPRouter {
      */
     delete(path: string, handler: HTTPHandler): this {
         return this.route('DELETE', path, handler);
+    }
+
+    /** Return the registered public route contract in dispatch order. */
+    listRoutes(): HTTPRouteInfo[] {
+        return this.routes.map(route => ({ method: route.method, path: route.path }));
     }
 
     /**
@@ -198,7 +210,7 @@ class RequestContext implements HTTPContext {
             return schema.parse(values);
         } catch (error) {
             if (error instanceof ZodError) {
-                throw new HTTPError(422, validationDetail(error, 'query'));
+                throw new HTTPError(422, validationDetail(error, 'query', values));
             }
             throw error;
         }
@@ -221,7 +233,7 @@ class RequestContext implements HTTPContext {
             return schema.parse(value);
         } catch (error) {
             if (error instanceof ZodError) {
-                throw new HTTPError(422, validationDetail(error, 'body'));
+                throw new HTTPError(422, validationDetail(error, 'body', value));
             }
             throw error;
         }

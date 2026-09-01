@@ -1,3 +1,8 @@
+import {
+    ContextConfig,
+    DEFAULT_SUMMARY_SCHEMA,
+    ReActConfig,
+} from '@agentscope-ai/agentscope/agent';
 import { parseAgentState } from '@agentscope-ai/agentscope/state';
 import type { AgentStateWire } from '@agentscope-ai/agentscope/state';
 import { z } from 'zod';
@@ -5,6 +10,44 @@ import { z } from 'zod';
 const JsonObjectSchema = z.record(z.string(), z.unknown());
 const timestamp = () => new Date().toISOString();
 const identifier = () => crypto.randomUUID().replaceAll('-', '');
+
+/** Python-compatible serialized context configuration. */
+export const ContextConfigDataSchema = z.object({
+    trigger_ratio: z.number().gt(0).lte(0.9).default(0.8),
+    reserve_ratio: z.number().gt(0).lt(0.9).default(0.1),
+    compression_prompt: z.string().default(() => new ContextConfig().compressionPrompt),
+    summary_template: z.string().default(() => new ContextConfig().summaryTemplate),
+    summary_schema: JsonObjectSchema.default(() => structuredClone(DEFAULT_SUMMARY_SCHEMA)),
+    tool_result_limit: z.number().int().default(50000),
+    max_image_num: z.number().int().min(0).default(5),
+});
+export type ContextConfigData = z.output<typeof ContextConfigDataSchema>;
+
+/** Python-compatible serialized ReAct configuration. */
+export const ReActConfigDataSchema = z.object({
+    max_iters: z.number().int().default(50),
+    structured_output_grace_iters: z.number().int().gt(0).default(5),
+    stop_on_reject: z.boolean().default(false),
+    interruption_message: z.string().default(() => new ReActConfig().interruptionMessage),
+    interruption_raise_cancelled_error: z.boolean().default(false),
+});
+export type ReActConfigData = z.output<typeof ReActConfigDataSchema>;
+
+/**
+ * Build an isolated context configuration with every Python default.
+ * @returns A complete serialized context configuration.
+ */
+export function defaultContextConfigData(): ContextConfigData {
+    return ContextConfigDataSchema.parse({});
+}
+
+/**
+ * Build an isolated ReAct configuration with every Python default.
+ * @returns A complete serialized ReAct configuration.
+ */
+export function defaultReActConfigData(): ReActConfigData {
+    return ReActConfigDataSchema.parse({});
+}
 
 /** Fields shared by every persisted service record. */
 export interface RecordEnvelope {
@@ -41,8 +84,8 @@ export const AgentDataSchema = z.object({
     id: z.string().default(identifier),
     name: z.string(),
     system_prompt: z.string().default("You're a helpful assistant."),
-    context_config: JsonObjectSchema,
-    react_config: JsonObjectSchema,
+    context_config: ContextConfigDataSchema,
+    react_config: ReActConfigDataSchema,
     invite_config: InviteConfigSchema.default({
         invitable: false,
         invite_description: null,

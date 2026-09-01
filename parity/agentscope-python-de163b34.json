@@ -160,18 +160,26 @@
             "sha256": "3c702f893055935cf596310ce98dc02a685145d6c5cb3df8f9cb83f1db68e14c",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src",
-            "status": "implemented",
-            "pythonTests": ["tests/app_lifespan_dedicated_test.py"],
-            "typescriptTests": ["packages/agentscope-service/test/app-composition.test.ts"]
+            "status": "verified",
+            "pythonTests": ["tests/app_lifespan_dedicated_test.py", "tests/test_e2e_api.py"],
+            "typescriptTests": [
+                "packages/agentscope-service/test/app-composition.test.ts",
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_app.py",
             "sha256": "f5024c783fddb80e5b0903d88b8d3b1fe8e198bbc18525ecd5986ff46c0b578c",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src",
-            "status": "implemented",
-            "pythonTests": ["tests/app_lifespan_dedicated_test.py"],
-            "typescriptTests": ["packages/agentscope-service/test/app-composition.test.ts"]
+            "status": "verified",
+            "pythonTests": ["tests/app_lifespan_dedicated_test.py", "tests/test_e2e_api.py"],
+            "typescriptTests": [
+                "packages/agentscope-service/test/app-composition.test.ts",
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_bus_ops.py",
@@ -194,10 +202,12 @@
             "sha256": "21fe41b3dd24b812010da6909995124ade97cb18c2e355e78e7cd460067a3a7c",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src",
-            "status": "implemented",
-            "pythonTests": ["tests/app_lifespan_dedicated_test.py"],
+            "status": "verified",
+            "pythonTests": ["tests/app_lifespan_dedicated_test.py", "tests/test_e2e_api.py"],
             "typescriptTests": [
                 "packages/agentscope-service/test/app-composition.test.ts",
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
                 "packages/agentscope-service/test/index-worker-entry.test.ts"
             ]
         },
@@ -446,297 +456,957 @@
             "sha256": "81e0e6195a6934364667caacfd894018deb904af136ab121cd61e88d9b5d6597",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_agent.py",
             "sha256": "7c0306f85ea2b01e4d3d7d0c3f07d545f9f6b4592a244efa7c3a5464363461e4",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_channel.py",
             "sha256": "5f4dd12788545e13ee4f6ea5afac3984fea9582871cb5f2403fbeeae50aec13d",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_chat.py",
             "sha256": "615cdef8034b32b854e86382761fb4245b1dd3a4c12f64f9bd6c7240fc851b84",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_credential.py",
             "sha256": "46f7162eef621bbaff2fa5cc232f264a02887acf0d5c4eaa9385a028835a5b06",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_embedding_model.py",
             "sha256": "b11ae54c56e37e8a0569e8d32788c58090ef86ebe83a2954cd653c49b2e61449",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_health.py",
             "sha256": "b05e82fc7dfd6969fe6cad91e088357db90cc1886abdca1f300fd6f31f6f1304",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_hub.py",
             "sha256": "e1c4129bea4aa5862f37431bdb88251dce7bf742d0aca10c0dd184c132e16175",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_knowledge_base.py",
             "sha256": "6ae42e041ed41d35927318c36e411d8839fb2d51621361675d9258788fae9689",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_mcp.py",
             "sha256": "c56fe33d16cdd6f210931e63f90a096a80ebe8bf098e9d12d745be0329766bfa",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_model.py",
             "sha256": "421f3d7bb01340bc291e2c8fdc5822079ffc1ecf55ca502cfeffdb2509f6a6f2",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schedule.py",
             "sha256": "f5824ce0058e06f834f9a500cc92b9cd2face27a093e72ff7991fa7b4c811ec1",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/__init__.py",
             "sha256": "bc44de32cebd21abb7b6ceab0c2e7fe15db9966629b04aa2b5a5e98095466f4f",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_agent.py",
             "sha256": "5ae7593e937a17535cdcfa761d7d20d1abc7133eaf5f4dc531e17603c33f8f6d",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_channel.py",
             "sha256": "13c392f0d92fd73c853b687e940902190fe0911ac0c6f6af29f4e156ea778de6",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_chat.py",
             "sha256": "240077f53fa4c77b6d02381c5cf92f088e70a0f47ac7841ff8b76aeb63b64ab7",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_credential.py",
             "sha256": "89b3fb3f520631c49b0a3ac34a262d566b3a87e16566c3bed8c5a9b047e6ebd8",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_embedding_model.py",
             "sha256": "0ad24b2be66b0a687cf6d206224f14f33590ce8b8a36c56911b93059474b2e77",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_health.py",
             "sha256": "f10e1fd88d59877ec6f79ffa25778476fff7f26356507ebfb745201e732137aa",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_hub_mcp.py",
             "sha256": "29ac1559192e17070011c018d2ecc9d6a8df50c29666899eb1c7e84b1e2a58ff",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_hub_skill.py",
             "sha256": "a617737418b6fe57a30283f77f48d182546549f43a989135654131dbc1834b2b",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_hub.py",
             "sha256": "d41c2b085d411f6dfbe437f3b85997cbddba629836d6e65f337f8243d8b82f16",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_knowledge_base.py",
             "sha256": "69b807203382ecc687b60179e4cc65979ea71738229ce98c393fc1df7785f8af",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_mcp.py",
             "sha256": "c1f9aff4a336a354aff79beb448320c6309d4143d91297ce61536fa2129308c7",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_model.py",
             "sha256": "0425f9f0a12f8702a55f09206bd827a38bf4af0e1965002a78198fb683588e51",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_schedule.py",
             "sha256": "d6f5c457d80e8d712843fd235754ac349fa762b56ae91c361eecdc35a7f00b60",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_session.py",
             "sha256": "4d56488a8af70ec938457e4dac9039836430f86b2e29e21f4c675b862c217f9f",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_tts_model.py",
             "sha256": "ca94cf7910b9eb3c1f472ff326aebee8878450515508a1ec2c115beb2f032912",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_schema/_workspace.py",
             "sha256": "ab960392bfd2617db64962b81f02ca623315c4926c4e181c9081af72b2c31001",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router/schema",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_session.py",
             "sha256": "070f6e09f4cb65a21858df8e3e468996fd7ffb5c0fdf0c930a3105dfca222af8",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_skill.py",
             "sha256": "8f1c3d559d89cf9076376d9c9156b54a630d3a078e12ab9b1075dd3362e98251",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_tts_model.py",
             "sha256": "7313c82d5d25ae400c50c4795c95d91dd290f4ecf039e1274d23212fc430544b",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/_workspace.py",
             "sha256": "08fbad0cbbe39d4a3c9a0580ff778463b8a246206fed4fe0cc3be4d1d67a4d89",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/router",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agui_protocol_test.py",
+                "tests/health_router_test.py",
+                "tests/hub_router_test.py",
+                "tests/schedule_router_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/service_workspace_status_test.py",
+                "tests/session_config_patch_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-foundation-routes.test.ts",
+                "packages/agentscope-service/test/http-knowledge-base-routes.test.ts",
+                "packages/agentscope-service/test/http-library-routes.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts",
+                "packages/agentscope-service/test/http-router.test.ts",
+                "packages/agentscope-service/test/http-session-routes.test.ts",
+                "packages/agentscope-service/test/http-workspace-routes.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_service/__init__.py",
@@ -1543,9 +2213,13 @@
             "sha256": "611fce28b960a133321fb03f9c0feff01848b03e2f2e43c49a9c72879abbc8bb",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src",
-            "status": "implemented",
-            "pythonTests": ["tests/app_lifespan_dedicated_test.py"],
-            "typescriptTests": ["packages/agentscope-service/test/app-composition.test.ts"]
+            "status": "verified",
+            "pythonTests": ["tests/app_lifespan_dedicated_test.py", "tests/test_e2e_api.py"],
+            "typescriptTests": [
+                "packages/agentscope-service/test/app-composition.test.ts",
+                "packages/agentscope-service/test/http-app.test.ts",
+                "packages/agentscope-service/test/http-node.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/hub/__init__.py",

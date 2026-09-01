@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/require-description, jsdoc/require-returns */
+
 import { createEvent, EventType, parseAgentEvent } from '@agentscope-ai/agentscope/event';
 import { parseMsg } from '@agentscope-ai/agentscope/message';
 import { createPermissionContext, PermissionMode } from '@agentscope-ai/agentscope/permission';
@@ -156,7 +158,7 @@ function registerSessionCRUD(router: AgentScopeHTTPRouter): void {
         const { permission_mode: permissionMode, ...configBody } = body;
         const config = SessionConfigSchema.parse({ ...existing.config, ...configBody });
         let state = existing.state;
-        if (permissionMode !== undefined) {
+        if (permissionMode != null) {
             state = new AgentState({
                 ...existing.state,
                 permissionContext: createPermissionContext(permissionMode as PermissionMode),
@@ -301,9 +303,12 @@ function registerScheduleRoutes(router: AgentScopeHTTPRouter): void {
         const existing = await context.app.storage.getSchedule(userId, context.params.schedule_id);
         if (!existing)
             throw new HTTPError(404, `Schedule '${context.params.schedule_id}' not found.`);
+        const updates = Object.fromEntries(
+            Object.entries(body).filter(([, value]) => value !== null)
+        );
         const record = ScheduleRecordSchema.parse({
             ...existing,
-            data: { ...existing.data, ...body },
+            data: { ...existing.data, ...updates },
             updated_at: new Date().toISOString(),
         });
         validateSchedule(context, record);
@@ -509,7 +514,7 @@ async function streamSession(context: HTTPContext): Promise<Response> {
         events(),
         {
             headers: {
-                'content-type': 'text/event-stream',
+                'content-type': 'text/event-stream; charset=utf-8',
                 'cache-control': 'no-cache',
                 'x-accel-buffering': 'no',
             },
