@@ -184,6 +184,7 @@
         "@zilliz/milvus2-sdk-node": "^3.0.5",
         "dockerode": "^4.0.12",
         "e2b": "^2.46.1",
+        "mem0ai": "^3.1.7",
         "mongodb": "^7.6.0"
     }
 }

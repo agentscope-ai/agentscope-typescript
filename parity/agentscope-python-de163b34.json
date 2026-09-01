@@ -2905,45 +2905,75 @@
             "sha256": "c95ecb6525b9207a739764704b4bbbd05a11b49b20ad39401b4988348c9db8d3",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/mem0_agentscope_adapter_test.py",
+                "tests/mem0_middleware_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/middleware/mem0-adapter.parity.test.ts",
+                "packages/agentscope/src/middleware/mem0.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/middleware/_longterm_memory/_mem0/_agentscope_adapter.py",
             "sha256": "1313c337bfeb6ad19793af04032e4473eb2d4ef1ae8fac066e0696d640a9715d",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/mem0_agentscope_adapter_test.py",
+                "tests/mem0_middleware_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/middleware/mem0-adapter.parity.test.ts",
+                "packages/agentscope/src/middleware/mem0.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/middleware/_longterm_memory/_mem0/_middleware.py",
             "sha256": "28215eb51febd6519ade351e1fad5b38d88e0d08b0608fb5ee5abb62081a9bfe",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/mem0_agentscope_adapter_test.py",
+                "tests/mem0_middleware_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/middleware/mem0-adapter.parity.test.ts",
+                "packages/agentscope/src/middleware/mem0.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/middleware/_longterm_memory/_mem0/_tools.py",
             "sha256": "39723c64f5e69988895555133603a71d1e6d65ba41f64843467113f74a665ce6",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/mem0_agentscope_adapter_test.py",
+                "tests/mem0_middleware_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/middleware/mem0-adapter.parity.test.ts",
+                "packages/agentscope/src/middleware/mem0.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/middleware/_longterm_memory/_mem0/_utils.py",
             "sha256": "a4e8a2d61d22ae1c0d0698a9a712ec839844f9a79356e296ef266b09b752dac8",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/mem0_agentscope_adapter_test.py",
+                "tests/mem0_middleware_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/middleware/mem0-adapter.parity.test.ts",
+                "packages/agentscope/src/middleware/mem0.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/middleware/_longterm_memory/_reme/__init__.py",

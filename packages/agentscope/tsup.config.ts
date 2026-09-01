@@ -32,4 +32,5 @@ export default defineConfig({
     clean: true,
     outDir: 'dist',
     sourcemap: true,
+    external: ['mem0ai', 'mem0ai/oss'],
 });
