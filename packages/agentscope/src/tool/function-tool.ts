@@ -27,6 +27,7 @@ export interface FunctionToolOptions<
     isConcurrencySafe?: boolean;
     isReadOnly?: boolean;
     isStateInjected?: boolean;
+    permission?: PermissionDecision;
 }
 
 /** Adapt an idiomatic TypeScript function to the ToolBase protocol. */
@@ -40,6 +41,7 @@ export class FunctionTool<
     readonly isReadOnly: boolean;
     override isStateInjected: boolean;
     private readonly func: FunctionToolHandler<TInput>;
+    private readonly permission?: PermissionDecision;
 
     /**
      * Create a function adapter.
@@ -54,6 +56,7 @@ export class FunctionTool<
         this.isConcurrencySafe = options.isConcurrencySafe ?? true;
         this.isReadOnly = options.isReadOnly ?? false;
         this.isStateInjected = options.isStateInjected ?? false;
+        this.permission = options.permission;
     }
 
     /**
@@ -66,6 +69,7 @@ export class FunctionTool<
         _toolInput: Record<string, unknown>,
         _context: PermissionContext
     ): PermissionDecision {
+        if (this.permission) return this.permission;
         return createPermissionDecision({
             behavior: PermissionBehavior.ASK,
             message: 'Custom function tools must be explicitly allowed by the user.',

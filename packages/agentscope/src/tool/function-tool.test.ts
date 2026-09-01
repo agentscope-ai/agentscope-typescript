@@ -2,7 +2,11 @@
 import { z } from 'zod';
 
 import { TextBlock } from '../message';
-import { PermissionBehavior, createPermissionContext } from '../permission';
+import {
+    PermissionBehavior,
+    createPermissionContext,
+    createPermissionDecision,
+} from '../permission';
 import { FunctionTool } from './function-tool';
 import { ToolChunk } from './response';
 
@@ -69,5 +73,15 @@ describe('FunctionTool', () => {
             behavior: PermissionBehavior.ASK,
             message: 'Custom function tools must be explicitly allowed by the user.',
         });
+    });
+
+    test('honors an explicit permission decision', async () => {
+        const permission = createPermissionDecision({
+            behavior: PermissionBehavior.ALLOW,
+            message: 'setMode is always allowed.',
+        });
+        const tool = new FunctionTool({ func: () => 'ok', permission });
+
+        expect(await tool.checkPermissions({}, createPermissionContext())).toEqual(permission);
     });
 });

@@ -23,12 +23,39 @@ describe('Agent core Python parity', () => {
                     contextConfig: new ContextConfig({ triggerRatio: 0.5, reserveRatio: 0.5 }),
                 })
         ).toThrow('reserveRatio');
+        expect(
+            () =>
+                new Agent({
+                    name: 'a',
+                    systemPrompt: 'p',
+                    model: new QueueModel(),
+                    contextConfig: new ContextConfig({
+                        triggerRatio: 0.5,
+                        contextBufferRatio: 0.5,
+                    }),
+                })
+        ).toThrow('contextBufferRatio');
         expect(() => new InjectionConfig({ template: 'missing' })).toThrow('runtime_state');
         expect(new ContextConfig({ toolResultLimit: -1 }).toolResultLimit).toBe(-1);
         expect(new ReActConfig({ maxIters: -1 }).maxIters).toBe(-1);
         expect(new ContextConfig().compressionPrompt).toContain(
             'The current time is {current_time}.\nThis summary may itself be summarized'
         );
+    });
+
+    test('migrates the deprecated injection buffer to context config', () => {
+        const warning = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+        const agent = new Agent({
+            name: 'a',
+            systemPrompt: 'p',
+            model: new QueueModel(),
+            contextConfig: { contextBufferRatio: 0.1 },
+            injectionConfig: { contextBufferRatio: 0.3 },
+        });
+
+        expect(agent.contextConfig.contextBufferRatio).toBe(0.3);
+        expect(warning).toHaveBeenCalledWith(expect.stringContaining('deprecated'));
+        warning.mockRestore();
     });
 
     test('non-streaming reasoning emits a complete event lifecycle and usage', async () => {

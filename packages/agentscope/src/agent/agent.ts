@@ -47,12 +47,12 @@ import type {
 } from '../middleware/base';
 import { ChatResponse, FinishedReason } from '../model';
 import type { ChatModelBase, ChatUsage } from '../model';
-import { PermissionBehavior, PermissionEngine } from '../permission';
+import { createPermissionDecision, PermissionBehavior, PermissionEngine } from '../permission';
 import type { PermissionDecision, PermissionRule } from '../permission';
 import { AgentState, ReplyContext } from '../state';
 import type { StorageBase } from '../storage';
-import { Toolkit, ToolChoice, ToolResponse } from '../tool';
-import type { ToolBase, ToolChunk } from '../tool';
+import { FunctionTool, Toolkit, ToolChoice, ToolChunk, ToolResponse } from '../tool';
+import type { ToolBase } from '../tool';
 import { ReplyFinishedReason } from '../type';
 import type { ToolSchema } from '../type';
 
@@ -110,6 +110,8 @@ type NextAction =
 
 type ToolBatch = { type: 'sequential' | 'concurrent'; toolCalls: ToolCallBlock[] };
 
+const COMPRESSION_TOOL_NAME = 'CompressContext';
+
 /** Unified Python-compatible reasoning-acting agent. */
 export class Agent {
     readonly name: string;
@@ -132,6 +134,7 @@ export class Agent {
     private readonly modelCallMiddlewares: MiddlewareBase[];
     private readonly systemPromptMiddlewares: MiddlewareBase[];
     private readonly compressionMiddlewares: MiddlewareBase[];
+    private readonly compressionTool: FunctionTool;
     private receiveReplyEnd = false;
     private loaded = false;
 
@@ -151,8 +154,27 @@ export class Agent {
         this.reactConfig = asConfig(ReActConfig, options.reactConfig);
         if (options.maxIters !== undefined) this.reactConfig.maxIters = options.maxIters;
         this.injectionConfig = asConfig(InjectionConfig, options.injectionConfig);
+        if (this.injectionConfig.contextBufferRatio !== null) {
+            console.warn(
+                "The 'contextBufferRatio' of InjectionConfig is deprecated; " +
+                    'set it on ContextConfig instead.'
+            );
+            this.contextConfig.contextBufferRatio = this.injectionConfig.contextBufferRatio;
+        }
         this.validateConfigs();
         this.engine = new PermissionEngine(this.state.permissionContext);
+        this.compressionTool = new FunctionTool({
+            func: () => this.compressContextTool(),
+            name: COMPRESSION_TOOL_NAME,
+            description:
+                'Compress the older context into a continuation summary while preserving ' +
+                'the recent context needed for upcoming work.',
+            isConcurrencySafe: false,
+            permission: createPermissionDecision({
+                behavior: PermissionBehavior.ALLOW,
+                message: `${COMPRESSION_TOOL_NAME} is always allowed.`,
+            }),
+        });
         const middlewares = options.middlewares ?? [];
         this.replyMiddlewares = implemented(middlewares, 'onReply');
         this.reasoningMiddlewares = implemented(middlewares, 'onReasoning');
@@ -253,11 +275,43 @@ export class Agent {
             throw new Error('reserveRatio must be smaller than triggerRatio.');
         }
         if (
-            this.injectionConfig.injectRuntimeState &&
-            this.injectionConfig.contextBufferRatio >= this.contextConfig.triggerRatio
+            (this.injectionConfig.injectRuntimeState ||
+                this.contextConfig.compressionToolEnabled) &&
+            this.contextConfig.contextBufferRatio >= this.contextConfig.triggerRatio
         ) {
             throw new Error('contextBufferRatio must be smaller than triggerRatio.');
         }
+    }
+
+    private async compressContextTool(): Promise<ToolChunk> {
+        const contextConfig = new ContextConfig({
+            ...this.contextConfig,
+            triggerRatio: this.contextConfig.triggerRatio - this.contextConfig.contextBufferRatio,
+        });
+        const messageCount = this.state.context.length;
+        try {
+            await this.compressContext(contextConfig);
+        } catch (error) {
+            return new ToolChunk({
+                content: [
+                    TextBlock({
+                        text: `Context compression failed: ${errorMessage(error)}`,
+                    }),
+                ],
+                state: 'error',
+            });
+        }
+        return new ToolChunk({
+            content: [
+                TextBlock({
+                    text:
+                        this.state.context.length === messageCount
+                            ? 'The context is not long enough to compress, so it remains unchanged.'
+                            : 'Context compressed successfully.',
+                }),
+            ],
+            state: 'success',
+        });
     }
 
     private async *replyGenerator(input: ReplyHookInput): AgentStream {
@@ -1100,12 +1154,18 @@ export class Agent {
             const threshold = Math.floor(this.contextConfig.triggerRatio * this.model.contextSize);
             if (
                 tokens >
-                Math.max(0, this.contextConfig.triggerRatio - config.contextBufferRatio) *
+                (this.contextConfig.triggerRatio - this.contextConfig.contextBufferRatio) *
                     this.model.contextSize
             ) {
-                injections['context-length'] =
+                let hint =
                     `Your current context contains ${tokens} tokens. When reaching ${threshold} ` +
                     'tokens, your context will be compressed.';
+                if (this.contextConfig.compressionToolEnabled && taskStatus.inProgress === 0) {
+                    hint +=
+                        ' No task is in progress, so judge by yourself whether the context ' +
+                        `should be compressed now by calling \`${COMPRESSION_TOOL_NAME}\`.`;
+                }
+                injections['context-length'] = hint;
             }
         }
         const repeated = this.getRepeatedToolError();
@@ -1211,7 +1271,8 @@ export class Agent {
                 schema: this.compressionConfig?.summarySchema ?? config.summarySchema,
             });
             summary = interpolate(config.summaryTemplate, response.content);
-        } catch {
+        } catch (error) {
+            if (!config.compressionFallbackToTruncation) throw error;
             summary =
                 typeof this.state.summary === 'string' && this.state.summary
                     ? this.state.summary
@@ -1353,6 +1414,12 @@ export class Agent {
             messages.push(createMsg({ name: 'user', role: 'user', content: this.state.summary }));
         }
         messages.push(...this.state.context);
+        if (
+            this.contextConfig.compressionToolEnabled &&
+            (await this.toolkit.getTool(COMPRESSION_TOOL_NAME)) !== this.compressionTool
+        ) {
+            await this.toolkit.addTool(this.compressionTool);
+        }
         return {
             messages,
             tools: await this.toolkit.getToolSchemas({
@@ -1706,6 +1773,10 @@ function implemented(middlewares: MiddlewareBase[], hook: keyof MiddlewareBase):
 
 function asConfig<T>(constructor: new (options?: Partial<T>) => T, value?: T | Partial<T>): T {
     return value instanceof constructor ? value : new constructor(value);
+}
+
+function errorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
 }
 
 function clonePermissionInput(input: PermissionHookInput): PermissionHookInput {

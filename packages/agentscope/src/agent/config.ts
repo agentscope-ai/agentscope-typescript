@@ -64,19 +64,23 @@ export const DEFAULT_SUMMARY_SCHEMA: Record<string, unknown> = {
 export class ContextConfig {
     triggerRatio: number;
     reserveRatio: number;
+    contextBufferRatio: number;
     compressionPrompt: string;
     summaryTemplate: string;
     summarySchema: Record<string, unknown>;
     toolResultLimit: number;
+    compressionFallbackToTruncation: boolean;
+    compressionToolEnabled: boolean;
     maxImageNum: number;
 
     constructor(options: Partial<ContextConfig> = {}) {
         this.triggerRatio = options.triggerRatio ?? 0.8;
         this.reserveRatio = options.reserveRatio ?? 0.1;
+        this.contextBufferRatio = options.contextBufferRatio ?? 0.2;
         this.compressionPrompt =
             options.compressionPrompt ??
-            '<system-hint>You have been working on the task described above but have not yet ' +
-                'completed it. Now write a continuation summary that will allow you to resume ' +
+            '<system-hint>You have been working on the task described above. Now write a ' +
+                'continuation summary that will allow you to resume ' +
                 'work efficiently in a future context window where the conversation history ' +
                 'will be replaced with this summary. Your summary should be structured, ' +
                 'concise, and actionable.\nThe current time is {current_time}.\nThis summary ' +
@@ -103,12 +107,17 @@ export class ContextConfig {
                 '{context_to_preserve}</system-info>';
         this.summarySchema = options.summarySchema ?? structuredClone(DEFAULT_SUMMARY_SCHEMA);
         this.toolResultLimit = options.toolResultLimit ?? 50000;
+        this.compressionFallbackToTruncation = options.compressionFallbackToTruncation ?? true;
+        this.compressionToolEnabled = options.compressionToolEnabled ?? false;
         this.maxImageNum = options.maxImageNum ?? 5;
         if (!(this.triggerRatio > 0 && this.triggerRatio <= 0.9)) {
             throw new Error('triggerRatio must be greater than 0 and at most 0.9.');
         }
         if (!(this.reserveRatio > 0 && this.reserveRatio < 0.9)) {
             throw new Error('reserveRatio must be greater than 0 and less than 0.9.');
+        }
+        if (this.contextBufferRatio < 0 || this.contextBufferRatio > 1) {
+            throw new Error('contextBufferRatio must be between 0 and 1.');
         }
         if (!Number.isInteger(this.toolResultLimit)) {
             throw new Error('toolResultLimit must be an integer.');
@@ -125,7 +134,8 @@ export class InjectionConfig {
     timezone: string;
     timeFormat: string;
     timeInterval: number;
-    contextBufferRatio: number;
+    /** @deprecated Use ContextConfig.contextBufferRatio. */
+    contextBufferRatio: number | null;
     toolRetriesLimit: number;
     toolRetriesHint: string;
     template: string;
@@ -139,7 +149,7 @@ export class InjectionConfig {
         this.timezone = options.timezone ?? 'UTC';
         this.timeFormat = options.timeFormat ?? '%Y-%m-%dT%H:%M:%S';
         this.timeInterval = options.timeInterval ?? 0.5;
-        this.contextBufferRatio = options.contextBufferRatio ?? 0.2;
+        this.contextBufferRatio = options.contextBufferRatio ?? null;
         this.toolRetriesLimit = options.toolRetriesLimit ?? 3;
         this.toolRetriesHint =
             options.toolRetriesHint ??
@@ -162,7 +172,10 @@ export class InjectionConfig {
         this.extraFields = options.extraFields ?? {};
         this.emitHintEvent = options.emitHintEvent ?? true;
         if (this.timeInterval < 0) throw new Error('timeInterval must be non-negative.');
-        if (this.contextBufferRatio < 0 || this.contextBufferRatio > 1) {
+        if (
+            this.contextBufferRatio !== null &&
+            (this.contextBufferRatio < 0 || this.contextBufferRatio > 1)
+        ) {
             throw new Error('contextBufferRatio must be between 0 and 1.');
         }
         if (!Number.isInteger(this.toolRetriesLimit) || this.toolRetriesLimit < 3) {
