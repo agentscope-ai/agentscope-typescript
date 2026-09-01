@@ -58,6 +58,9 @@ jobs:
             - name: Run linter and formatter
               run: pnpm run format
 
+            - name: Verify formatting produced no changes
+              run: git diff --exit-code
+
     check-i18n:
         runs-on: ubuntu-latest
         steps:
@@ -102,6 +105,12 @@ jobs:
             - name: Build agentscope package
               run: pnpm run build:agentscope
 
+            - name: Type-check AgentScope service
+              run: pnpm --filter @agentscope-ai/agentscope-service typecheck
+
+            - name: Build AgentScope service package
+              run: pnpm run build:service
+
             - name: Test package installation
               run: pnpm run test:package
 
@@ -110,6 +119,9 @@ jobs:
 
             - name: Run unit tests
               run: pnpm run test:agentscope
+
+            - name: Run service unit tests
+              run: pnpm run test:service
 
             - name: Upload test coverage
               uses: actions/upload-artifact@v4

@@ -1,0 +1,104 @@
+---
+title: 'Agent Service runtime'
+description: 'Compose and operate the Node.js AgentScope service runtime'
+---
+
+`@agentscope-ai/agentscope-service` contains the Node-only storage, message bus, workspace,
+scheduler, team, chat, and knowledge-base runtime. It remains separate from the browser-friendly
+core package so applications only install database and infrastructure adapters when they need them.
+
+## Install
+
+```bash
+pnpm add @agentscope-ai/agentscope @agentscope-ai/agentscope-service
+```
+
+Node.js 20 or later is required.
+
+## Create a runtime
+
+`createApp` is a framework-independent composition root. `open()` starts resources in dependency
+order; `close()` stops dispatchers and then releases resources in reverse order. Startup failures
+also roll back resources that already opened.
+
+```typescript
+import { createApp } from '@agentscope-ai/agentscope-service';
+import { InMemoryMessageBus } from '@agentscope-ai/agentscope-service/message-bus';
+import { InMemoryStorage } from '@agentscope-ai/agentscope-service/storage';
+import { LocalWorkspaceManager } from '@agentscope-ai/agentscope-service/workspace-manager';
+
+const app = createApp({
+    storage: new InMemoryStorage(),
+    messageBus: new InMemoryMessageBus(),
+    workspaceManager: new LocalWorkspaceManager({
+        baseDirectory: './workspaces',
+    }),
+});
+
+await app.open();
+
+try {
+    // Mount your HTTP adapter or call app.services from an existing server.
+    const { chat, session, workspace } = app.services;
+} finally {
+    await app.close();
+}
+```
+
+Use persistent storage and a shared Redis message bus for multi-process deployments. In-memory
+adapters are intended for tests and single-process development.
+
+## Knowledge-base modes
+
+Passing a `knowledgeBaseManager` enables knowledge-base services. The runtime supplies a text
+parser, approximate-token chunker, and local blob store unless you provide explicit adapters.
+
+- `enableIndexWorker: true` runs the indexing consumer in the API process.
+- `enableIndexWorker: false` leaves indexing to a dedicated worker while the API process continues
+  to persist uploads, enqueue durable tasks, and run the recovery sweeper.
+
+Both processes must use the same storage, message bus, blob store, parser registry, chunker
+registry, and knowledge-base manager configuration.
+
+## Dedicated index worker
+
+Export a zero-argument bootstrap that returns `RunIndexWorkerOptions`:
+
+```typescript worker-bootstrap.ts
+import type { RunIndexWorkerOptions } from '@agentscope-ai/agentscope-service/rag';
+
+export function bootstrap(): RunIndexWorkerOptions {
+    return {
+        storage: createStorage(),
+        messageBus: createMessageBus(),
+        blobStore: createBlobStore(),
+        knowledgeBaseManager: createKnowledgeBaseManager(),
+        parsers: createParsers(),
+        chunkers: createChunkers(),
+    };
+}
+```
+
+Point the CLI at the compiled module and named export:
+
+```bash
+AGENTSCOPE_WORKER_BOOTSTRAP=./dist/worker-bootstrap.js:bootstrap \
+  agentscope-index-worker
+```
+
+The CLI handles `SIGINT` and `SIGTERM`, stops the consumer, waits for in-flight indexing work, and
+then closes all backends in reverse order. On Windows, cancellation uses the same Node process
+signal contract supported by the host environment.
+
+## AG-UI conversion
+
+`AGUIProtocolMiddleware` converts raw AgentScope event JSON or SSE `data:` frames to AG-UI events.
+It can also transform a Web `Response`, which keeps the protocol layer independent of a specific
+Node HTTP framework.
+
+```typescript
+import { AGUIProtocolMiddleware } from '@agentscope-ai/agentscope-service/middleware';
+
+const protocol = new AGUIProtocolMiddleware();
+const aguiResponse = await protocol.transformResponse(agentScopeSseResponse);
+```

@@ -32,16 +32,12 @@ const pythonTests = readOptions('--python-test');
 const typescriptTests = readOptions('--typescript-test');
 
 if (!status || sourcePaths.length + contractDataPaths.length === 0) {
-    throw new Error(
-        'A status and at least one --source or --contract-data path are required.'
-    );
+    throw new Error('A status and at least one --source or --contract-data path are required.');
 }
 
 const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 const sourceByPath = new Map(manifest.sourceFiles.map(entry => [entry.path, entry]));
-const contractDataByPath = new Map(
-    manifest.contractDataFiles.map(entry => [entry.path, entry])
-);
+const contractDataByPath = new Map(manifest.contractDataFiles.map(entry => [entry.path, entry]));
 
 for (const sourcePath of sourcePaths) {
     const entry = sourceByPath.get(sourcePath);

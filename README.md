@@ -15,7 +15,7 @@
     </a>
     <a href="https://pypi.org/project/agentscope/">
         <img
-            src="https://img.shields.io/badge/node-18.0.0+-blue?logo=node.js"
+            src="https://img.shields.io/badge/node-20.0.0+-blue?logo=node.js"
             alt="npm"
         />
     </a>
@@ -43,8 +43,8 @@ rather than constraining them with strict prompts and opinionated orchestrations
 
 ## Requirements
 
-- **Node.js**: 18.0.0 or higher (20.x recommended)
-- **Package Manager**: pnpm 8.0.0+ (recommended) or npm
+- **Node.js**: 20.0.0 or higher
+- **Package Manager**: pnpm 9.0.0+ (recommended) or npm
 
 ## Features
 
@@ -121,7 +121,8 @@ for await (const event of agent.replyStream({})) {
 This is a monorepo containing:
 
 - `packages/agentscope`: Core AgentScope library
-- `app/friday`: Example Electron application built with AgentScope
+- `packages/agentscope-service`: Node.js Agent Service runtime
+- `apps/desktop`: Electron desktop application built with AgentScope
 
 ## License
 

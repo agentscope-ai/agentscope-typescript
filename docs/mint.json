@@ -69,6 +69,10 @@
             ]
         },
         {
+            "group": "Agent Service",
+            "pages": ["service/runtime"]
+        },
+        {
             "group": "Examples",
             "pages": [
                 "core/examples/basic-usage",

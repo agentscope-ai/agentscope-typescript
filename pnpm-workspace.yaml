@@ -1,10 +1,10 @@
 packages:
-  - 'packages/*'
-  - 'apps/*'
+    - 'packages/*'
+    - 'apps/*'
 allowBuilds:
-  better-sqlite3: true
-  electron: true
-  electron-winstaller: true
-  esbuild: true
-  typeit: true
-  unrs-resolver: true
+    better-sqlite3: true
+    electron: true
+    electron-winstaller: true
+    esbuild: true
+    typeit: true
+    unrs-resolver: true
