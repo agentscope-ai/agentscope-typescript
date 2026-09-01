@@ -1,5 +1,9 @@
 export * from './access';
+export * from './app';
+export type { AgentScopeServiceAppOptions, ServiceLifecycleResource } from './app-types';
 export * from './bus-ops';
+export * from './dependencies';
+export * from './lifespan';
 export * from './message-bus';
 export * from './manager';
 export * from './middleware';

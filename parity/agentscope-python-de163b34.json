@@ -160,36 +160,46 @@
             "sha256": "3c702f893055935cf596310ce98dc02a685145d6c5cb3df8f9cb83f1db68e14c",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "implemented",
+            "pythonTests": ["tests/app_lifespan_dedicated_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/app-composition.test.ts"]
         },
         {
             "path": "src/agentscope/app/_app.py",
             "sha256": "f5024c783fddb80e5b0903d88b8d3b1fe8e198bbc18525ecd5986ff46c0b578c",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "implemented",
+            "pythonTests": ["tests/app_lifespan_dedicated_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/app-composition.test.ts"]
         },
         {
             "path": "src/agentscope/app/_bus_ops.py",
             "sha256": "e804ae14352e96cb7d2105344e1e8f44f0c194dd05c0ad0d4ea31e476fc17069",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/service_enqueue_index_task_test.py",
+                "tests/service_inbox_handoff_test.py",
+                "tests/service_message_bus_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/bus-ops-parity.test.ts",
+                "packages/agentscope-service/test/chat-service.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_lifespan.py",
             "sha256": "21fe41b3dd24b812010da6909995124ade97cb18c2e355e78e7cd460067a3a7c",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "implemented",
+            "pythonTests": ["tests/app_lifespan_dedicated_test.py"],
+            "typescriptTests": [
+                "packages/agentscope-service/test/app-composition.test.ts",
+                "packages/agentscope-service/test/index-worker-entry.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_manager/__init__.py",
@@ -1110,9 +1120,13 @@
             "sha256": "3f7d68e31100f61e8f94a5e7c3601c4ed9fff53edca8d22ce268013f174e964f",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/service_team_tools_test.py", "tests/service_toolkit_test.py"],
+            "typescriptTests": [
+                "packages/agentscope-service/test/app-composition.test.ts",
+                "packages/agentscope-service/test/team-tools.test.ts",
+                "packages/agentscope-service/test/toolkit-service.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/access/__init__.py",
@@ -1443,9 +1457,9 @@
             "sha256": "611fce28b960a133321fb03f9c0feff01848b03e2f2e43c49a9c72879abbc8bb",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "implemented",
+            "pythonTests": ["tests/app_lifespan_dedicated_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/app-composition.test.ts"]
         },
         {
             "path": "src/agentscope/app/hub/__init__.py",
@@ -1617,28 +1631,28 @@
             "path": "src/agentscope/app/middleware/_protocol/__init__.py",
             "sha256": "3b9d7f4579a5a3a8e2835dac642b5a564a130adbaa1ac8a1235990b7b6033fb3",
             "module": "app",
-            "typescriptTarget": "packages/agentscope-service/src/middleware/-protocol",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope-service/src/middleware/protocol",
+            "status": "verified",
+            "pythonTests": ["tests/agui_protocol_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/protocol-middleware.test.ts"]
         },
         {
             "path": "src/agentscope/app/middleware/_protocol/_agui.py",
             "sha256": "11e314155359d6ce6036d83c1cb2d77cad9e5238f22143dafe479c1cb3562f2f",
             "module": "app",
-            "typescriptTarget": "packages/agentscope-service/src/middleware/-protocol",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope-service/src/middleware/protocol",
+            "status": "verified",
+            "pythonTests": ["tests/agui_protocol_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/protocol-middleware.test.ts"]
         },
         {
             "path": "src/agentscope/app/middleware/_protocol/_base.py",
             "sha256": "512c0ae34d6f7b7ecae8a6f491988ef5bd81f357fdb82d5e3055a2b818e8370a",
             "module": "app",
-            "typescriptTarget": "packages/agentscope-service/src/middleware/-protocol",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope-service/src/middleware/protocol",
+            "status": "verified",
+            "pythonTests": ["tests/agui_protocol_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/protocol-middleware.test.ts"]
         },
         {
             "path": "src/agentscope/app/middleware/_state_change_middleware.py",
@@ -1777,18 +1791,18 @@
             "sha256": "82cdc36676e5bbb53990ded689141f31bcaf887e9b04f224bbe417b0cbeab65b",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/rag/index-worker",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/app_lifespan_dedicated_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/index-worker-entry.test.ts"]
         },
         {
             "path": "src/agentscope/app/rag/index_worker/__main__.py",
             "sha256": "1d671116698b7be02f04e74142aefe0bf4b36f6955f2c17ad2c569624a1c7214",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/rag/index-worker",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/app_lifespan_dedicated_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/index-worker-entry.test.ts"]
         },
         {
             "path": "src/agentscope/app/rag/knowledge_base_manager/__init__.py",

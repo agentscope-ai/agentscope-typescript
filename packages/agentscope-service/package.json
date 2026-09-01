@@ -6,6 +6,9 @@
     "files": [
         "dist"
     ],
+    "bin": {
+        "agentscope-index-worker": "./dist/rag/index-worker-cli.js"
+    },
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",

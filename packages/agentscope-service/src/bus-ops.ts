@@ -1,7 +1,36 @@
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns */
 
-import type { BusPayload, MessageBus } from './message-bus';
+import type { AgentEvent } from '@agentscope-ai/agentscope/event';
+import type { Msg } from '@agentscope-ai/agentscope/message';
+
+import type { BusPayload, MessageBus, RunTriggerKind } from './message-bus';
 import { MessageBusKeys } from './message-bus';
+
+/** Append a session event to its replay log and fan it out live. */
+export async function publishSessionEvent(
+    bus: MessageBus,
+    sessionId: string,
+    event: BusPayload
+): Promise<string> {
+    return bus.sessionPublishEvent(sessionId, event);
+}
+
+/** Enqueue a typed run trigger before signaling all dispatchers. */
+export async function enqueueRunTrigger(
+    bus: MessageBus,
+    options: {
+        userId: string;
+        sessionId: string;
+        agentId: string;
+        kind?: RunTriggerKind;
+        input?: AgentEvent | Msg | null;
+    }
+): Promise<void> {
+    await bus.enqueueInput(options.userId, options.sessionId, options.agentId, {
+        kind: options.kind ?? MessageBusKeys.WAKEUP_KIND_WAKE,
+        input: (options.input ?? null) as BusPayload | null,
+    });
+}
 
 /** Push an inbox payload and wake the session when no run is consuming it. */
 export async function deliverToInbox(

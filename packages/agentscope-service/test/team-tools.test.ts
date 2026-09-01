@@ -216,14 +216,20 @@ describe('team tools', () => {
         const leaderContext = new AgentState().permissionContext;
         leaderContext.mode = PermissionMode.BYPASS;
         leaderContext.working_directories['/leader'] = { path: '/leader', source: 'leader' };
+        leaderContext.allow_rules.Bash = [
+            {
+                tool_name: 'Bash',
+                rule_content: '^pwd$',
+                behavior: PermissionBehavior.ALLOW,
+                source: 'leader',
+            },
+        ];
         const merged = mergeLeaderPermissions(
             {
                 type: 'custom',
                 description: 'Custom.',
                 systemPromptTemplate: '{member_name}',
                 permissionContext: templateContext,
-                extendLeaderPermissionRules: true,
-                extendLeaderWorkingDirectories: true,
             },
             leaderContext
         );
@@ -232,6 +238,9 @@ describe('team tools', () => {
             working_directories: {
                 '/template': { source: 'template' },
                 '/leader': { source: 'leader' },
+            },
+            allow_rules: {
+                Bash: [{ rule_content: '^pwd$' }],
             },
         });
         expect(templateContext.mode).toBe('explore');

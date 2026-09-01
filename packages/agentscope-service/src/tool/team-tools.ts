@@ -393,14 +393,14 @@ export function mergeLeaderPermissions(
 ): PermissionContext {
     const merged = clonePermissionContext(template.permissionContext ?? createPermissionContext());
     if (!(template.overrideLeaderMode ?? false)) merged.mode = leader.mode;
-    if (template.extendLeaderWorkingDirectories ?? false) {
+    if (template.extendLeaderWorkingDirectories ?? true) {
         for (const [path, directory] of Object.entries(leader.working_directories)) {
             if (!(path in merged.working_directories)) {
                 merged.working_directories[path] = structuredClone(directory);
             }
         }
     }
-    if (template.extendLeaderPermissionRules ?? false) {
+    if (template.extendLeaderPermissionRules ?? true) {
         for (const key of ['allow_rules', 'deny_rules', 'ask_rules'] as const) {
             for (const [toolName, rules] of Object.entries(leader[key])) {
                 (merged[key][toolName] ??= []).push(...structuredClone(rules));
