@@ -157,6 +157,9 @@ export class InMemoryMessageBus extends MessageBus {
 
     async *subscribe(key: string, options: SubscribeOptions = {}): AsyncIterable<BusPayload> {
         const channel = new AsyncChannel<BusPayload>();
+        const abort = (): void => channel.close();
+        options.signal?.addEventListener('abort', abort, { once: true });
+        if (options.signal?.aborted) channel.close();
         const subscribers = this.subscribers.get(key) ?? new Set<AsyncChannel<BusPayload>>();
         subscribers.add(channel);
         this.subscribers.set(key, subscribers);
@@ -164,6 +167,7 @@ export class InMemoryMessageBus extends MessageBus {
             options.onReady?.();
             for await (const payload of channel) yield payload;
         } finally {
+            options.signal?.removeEventListener('abort', abort);
             subscribers.delete(channel);
             channel.close();
             if (subscribers.size === 0) this.subscribers.delete(key);

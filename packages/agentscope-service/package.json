@@ -22,6 +22,11 @@
             "import": "./dist/message-bus/index.mjs",
             "require": "./dist/message-bus/index.js"
         },
+        "./manager": {
+            "types": "./dist/manager/index.d.ts",
+            "import": "./dist/manager/index.mjs",
+            "require": "./dist/manager/index.js"
+        },
         "./storage": {
             "types": "./dist/storage/index.d.ts",
             "import": "./dist/storage/index.mjs",
@@ -41,6 +46,7 @@
     },
     "dependencies": {
         "@agentscope-ai/agentscope": "workspace:^0.0.15",
+        "cron-parser": "^5.5.0",
         "zod": "^4.3.6"
     },
     "optionalDependencies": {

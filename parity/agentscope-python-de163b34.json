@@ -196,108 +196,240 @@
             "sha256": "6d8d601b6c596cbe2ebc81624e39012e50073cb6be43f0efa44a447856ef1fdd",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/schedule_router_test.py",
+                "tests/service_agent_interrupt_test.py",
+                "tests/service_cancel_dispatcher_test.py",
+                "tests/service_scheduler_test.py",
+                "tests/service_toolkit_test.py",
+                "tests/service_wakeup_dispatcher_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/runtime-manager.test.ts",
+                "packages/agentscope-service/test/scheduler-manager.test.ts",
+                "packages/agentscope-service/test/wakeup-dispatcher.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_manager/_background_task_manager.py",
             "sha256": "c19963cb5bfff4771ab64be91ec9497cb3a1e6f2323fd536b9c07f39f4355bac",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/schedule_router_test.py",
+                "tests/service_agent_interrupt_test.py",
+                "tests/service_cancel_dispatcher_test.py",
+                "tests/service_scheduler_test.py",
+                "tests/service_toolkit_test.py",
+                "tests/service_wakeup_dispatcher_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/runtime-manager.test.ts",
+                "packages/agentscope-service/test/scheduler-manager.test.ts",
+                "packages/agentscope-service/test/wakeup-dispatcher.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_manager/_cancel_dispatcher.py",
             "sha256": "9e6f4d4c76c3e41b1471ffbf4f3c5fd2a596141e4b66e69ed0aa12cdc41e6ae4",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/schedule_router_test.py",
+                "tests/service_agent_interrupt_test.py",
+                "tests/service_cancel_dispatcher_test.py",
+                "tests/service_scheduler_test.py",
+                "tests/service_toolkit_test.py",
+                "tests/service_wakeup_dispatcher_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/runtime-manager.test.ts",
+                "packages/agentscope-service/test/scheduler-manager.test.ts",
+                "packages/agentscope-service/test/wakeup-dispatcher.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_manager/_chat_run_registry.py",
             "sha256": "c2d30d3a2b6b8428539eee55d80fcd52cb903831f48570f9ba002b78ceec409f",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/schedule_router_test.py",
+                "tests/service_agent_interrupt_test.py",
+                "tests/service_cancel_dispatcher_test.py",
+                "tests/service_scheduler_test.py",
+                "tests/service_toolkit_test.py",
+                "tests/service_wakeup_dispatcher_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/runtime-manager.test.ts",
+                "packages/agentscope-service/test/scheduler-manager.test.ts",
+                "packages/agentscope-service/test/wakeup-dispatcher.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_manager/_scheduler/__init__.py",
             "sha256": "b40b8de05274d4f61aa843fd233b835170f784001173075a9e1426e165764f6d",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-manager/-scheduler",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/schedule_router_test.py",
+                "tests/service_agent_interrupt_test.py",
+                "tests/service_cancel_dispatcher_test.py",
+                "tests/service_scheduler_test.py",
+                "tests/service_toolkit_test.py",
+                "tests/service_wakeup_dispatcher_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/runtime-manager.test.ts",
+                "packages/agentscope-service/test/scheduler-manager.test.ts",
+                "packages/agentscope-service/test/wakeup-dispatcher.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_manager/_scheduler/_scheduler_manager.py",
             "sha256": "4a3c1da3380033f316bda7b2e6f450b0000b7d37665231655c22080d95fe8281",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-manager/-scheduler",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/schedule_router_test.py",
+                "tests/service_agent_interrupt_test.py",
+                "tests/service_cancel_dispatcher_test.py",
+                "tests/service_scheduler_test.py",
+                "tests/service_toolkit_test.py",
+                "tests/service_wakeup_dispatcher_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/runtime-manager.test.ts",
+                "packages/agentscope-service/test/scheduler-manager.test.ts",
+                "packages/agentscope-service/test/wakeup-dispatcher.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_manager/_scheduler/_tools/__init__.py",
             "sha256": "cd15d62748129ec5bbe45aafdaff8c23dd72785a1188a5ad01d22bc6169d6277",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-manager/-scheduler/-tools",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/schedule_router_test.py",
+                "tests/service_agent_interrupt_test.py",
+                "tests/service_cancel_dispatcher_test.py",
+                "tests/service_scheduler_test.py",
+                "tests/service_toolkit_test.py",
+                "tests/service_wakeup_dispatcher_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/runtime-manager.test.ts",
+                "packages/agentscope-service/test/scheduler-manager.test.ts",
+                "packages/agentscope-service/test/wakeup-dispatcher.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_manager/_scheduler/_tools/_schedule_create.py",
             "sha256": "da3d8dce6af15bfa3f3315b063dd220548aa52a4276834c05f8737f40401e50c",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-manager/-scheduler/-tools",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/schedule_router_test.py",
+                "tests/service_agent_interrupt_test.py",
+                "tests/service_cancel_dispatcher_test.py",
+                "tests/service_scheduler_test.py",
+                "tests/service_toolkit_test.py",
+                "tests/service_wakeup_dispatcher_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/runtime-manager.test.ts",
+                "packages/agentscope-service/test/scheduler-manager.test.ts",
+                "packages/agentscope-service/test/wakeup-dispatcher.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_manager/_scheduler/_tools/_schedule_delete.py",
             "sha256": "d49fa266c3f01cd04ccd0f7c60609ffeebcc11d8027f1ad7f5a5cad5c1c35ff3",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-manager/-scheduler/-tools",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/schedule_router_test.py",
+                "tests/service_agent_interrupt_test.py",
+                "tests/service_cancel_dispatcher_test.py",
+                "tests/service_scheduler_test.py",
+                "tests/service_toolkit_test.py",
+                "tests/service_wakeup_dispatcher_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/runtime-manager.test.ts",
+                "packages/agentscope-service/test/scheduler-manager.test.ts",
+                "packages/agentscope-service/test/wakeup-dispatcher.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_manager/_scheduler/_tools/_schedule_list.py",
             "sha256": "6a83addbb4697d30bd09e151a89bab235923a0b8f570864c48ac4d31bebce625",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-manager/-scheduler/-tools",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/schedule_router_test.py",
+                "tests/service_agent_interrupt_test.py",
+                "tests/service_cancel_dispatcher_test.py",
+                "tests/service_scheduler_test.py",
+                "tests/service_toolkit_test.py",
+                "tests/service_wakeup_dispatcher_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/runtime-manager.test.ts",
+                "packages/agentscope-service/test/scheduler-manager.test.ts",
+                "packages/agentscope-service/test/wakeup-dispatcher.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_manager/_scheduler/_tools/_schedule_view.py",
             "sha256": "d40afc5fb2477023872847adeb6eb37ca2e5ba3c2f5278af2132f1b205a7db70",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-manager/-scheduler/-tools",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/schedule_router_test.py",
+                "tests/service_agent_interrupt_test.py",
+                "tests/service_cancel_dispatcher_test.py",
+                "tests/service_scheduler_test.py",
+                "tests/service_toolkit_test.py",
+                "tests/service_wakeup_dispatcher_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/runtime-manager.test.ts",
+                "packages/agentscope-service/test/scheduler-manager.test.ts",
+                "packages/agentscope-service/test/wakeup-dispatcher.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_manager/_wakeup_dispatcher.py",
             "sha256": "1ff38a9aa3a1cdfa68cf4d15f9ccd6c02adbb22c886a87d374f28717fa66130c",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/schedule_router_test.py",
+                "tests/service_agent_interrupt_test.py",
+                "tests/service_cancel_dispatcher_test.py",
+                "tests/service_scheduler_test.py",
+                "tests/service_toolkit_test.py",
+                "tests/service_wakeup_dispatcher_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/runtime-manager.test.ts",
+                "packages/agentscope-service/test/scheduler-manager.test.ts",
+                "packages/agentscope-service/test/wakeup-dispatcher.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_router/__init__.py",

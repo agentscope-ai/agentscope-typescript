@@ -248,6 +248,9 @@ importers:
             '@agentscope-ai/agentscope':
                 specifier: workspace:^0.0.15
                 version: link:../agentscope
+            cron-parser:
+                specifier: ^5.5.0
+                version: 5.5.0
             zod:
                 specifier: ^4.3.6
                 version: 4.3.6

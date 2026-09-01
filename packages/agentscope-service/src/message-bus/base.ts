@@ -13,6 +13,7 @@ export interface MessageBusLock {
 
 export interface SubscribeOptions {
     onReady?: () => void;
+    signal?: AbortSignal;
 }
 
 /** Generic live transport contract for queues, logs, broadcasts, locks, and registries. */
@@ -129,6 +130,19 @@ export abstract class MessageBus {
     async *sessionSubscribeCancel(options?: SubscribeOptions): AsyncIterable<string> {
         for await (const payload of this.subscribe(
             MessageBusKeys.sessionCancelChannel(),
+            options
+        )) {
+            if (typeof payload.session_id === 'string') yield payload.session_id;
+        }
+    }
+
+    async sessionPublishInterrupt(sessionId: string): Promise<void> {
+        await this.publish(MessageBusKeys.sessionInterruptChannel(), { session_id: sessionId });
+    }
+
+    async *sessionSubscribeInterrupt(options?: SubscribeOptions): AsyncIterable<string> {
+        for await (const payload of this.subscribe(
+            MessageBusKeys.sessionInterruptChannel(),
             options
         )) {
             if (typeof payload.session_id === 'string') yield payload.session_id;

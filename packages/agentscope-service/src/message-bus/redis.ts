@@ -235,6 +235,9 @@ export class RedisMessageBus extends MessageBus {
     async *subscribe(key: string, options: SubscribeOptions = {}): AsyncIterable<BusPayload> {
         const subscriber = this.requireClient().duplicate();
         const channel = new AsyncChannel<BusPayload>();
+        const abort = (): void => channel.close();
+        options.signal?.addEventListener('abort', abort, { once: true });
+        if (options.signal?.aborted) channel.close();
         this.subscriptions.add(channel);
         try {
             if (!subscriber.isOpen) await subscriber.connect();
@@ -244,6 +247,7 @@ export class RedisMessageBus extends MessageBus {
             options.onReady?.();
             for await (const payload of channel) yield payload;
         } finally {
+            options.signal?.removeEventListener('abort', abort);
             this.subscriptions.delete(channel);
             channel.close();
             if (subscriber.isOpen) {
