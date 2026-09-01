@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -79,12 +80,44 @@ async function verifyPythonCheckout(manifest, pythonRoot) {
     return errors;
 }
 
+/**
+ * Reject stale TypeScript targets and test references in strict manifests.
+ *
+ * @param {object} manifest Parsed manifest.
+ * @returns {string[]} Verification errors.
+ */
+function verifyTypescriptMappings(manifest) {
+    const errors = [];
+    const pythonTests = new Set(manifest.testFiles.map(entry => entry.path));
+    for (const entry of [...manifest.sourceFiles, ...manifest.contractDataFiles]) {
+        if (!existsSync(path.resolve(repositoryRoot, entry.typescriptTarget))) {
+            errors.push(
+                `TypeScript target does not exist for ${entry.path}: ${entry.typescriptTarget}.`
+            );
+        }
+        for (const pythonTest of entry.pythonTests ?? []) {
+            if (!pythonTests.has(pythonTest)) {
+                errors.push(`${entry.path} references unknown Python test ${pythonTest}.`);
+            }
+        }
+    }
+    for (const entry of [...manifest.sourceFiles, ...manifest.testFiles]) {
+        for (const typescriptTest of entry.typescriptTests ?? []) {
+            if (!existsSync(path.resolve(repositoryRoot, typescriptTest))) {
+                errors.push(`${entry.path} references missing TypeScript test ${typescriptTest}.`);
+            }
+        }
+    }
+    return errors;
+}
+
 const manifestPath = path.resolve(
-    readOption('--manifest') ?? path.join(repositoryRoot, 'parity/agentscope-python-de163b34.json')
+    readOption('--manifest') ?? path.join(repositoryRoot, 'parity/agentscope-python-61cdeae4.json')
 );
 const pythonRootOption = readOption('--python-root');
 const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 const errors = validateManifest(manifest);
+if (manifest.schemaVersion === 2) errors.push(...verifyTypescriptMappings(manifest));
 
 if (pythonRootOption) {
     errors.push(...(await verifyPythonCheckout(manifest, path.resolve(pythonRootOption))));

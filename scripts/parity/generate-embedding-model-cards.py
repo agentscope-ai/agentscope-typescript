@@ -9,7 +9,7 @@ from pathlib import Path
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 PYTHON_ROOT = REPOSITORY_ROOT.parent / "agentscope-python"
 PYTHON_SOURCE = PYTHON_ROOT / "src"
-EXPECTED_COMMIT = "de163b34b909edaba3c174190ad7e1a355e7849f"
+EXPECTED_COMMIT = "61cdeae4ffe63182f3343229aa6fbd868e30b0c5"
 OUTPUT = (
     REPOSITORY_ROOT
     / "packages"

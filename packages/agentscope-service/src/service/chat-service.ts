@@ -749,10 +749,13 @@ function normalizeContextConfig(
     return renameKnown(config, {
         trigger_ratio: 'triggerRatio',
         reserve_ratio: 'reserveRatio',
+        context_buffer_ratio: 'contextBufferRatio',
         compression_prompt: 'compressionPrompt',
         summary_template: 'summaryTemplate',
         summary_schema: 'summarySchema',
         tool_result_limit: 'toolResultLimit',
+        compression_fallback_to_truncation: 'compressionFallbackToTruncation',
+        compression_tool_enabled: 'compressionToolEnabled',
         max_image_num: 'maxImageNum',
     });
 }

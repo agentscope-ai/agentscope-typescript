@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -7,9 +8,11 @@ import { format, resolveConfig } from 'prettier';
 
 import {
     describeFiles,
+    contractTestMappings,
     hashFileSet,
     listTrackedFiles,
     sourceModule,
+    synchronizeTestMappings,
     testArea,
     typescriptTarget,
     validateManifest,
@@ -34,12 +37,16 @@ const pythonRoot = path.resolve(
     readOption('--python-root', path.join(repositoryRoot, '../agentscope-python'))
 );
 const outputPath = path.resolve(
-    readOption('--output', path.join(repositoryRoot, 'parity/agentscope-python-de163b34.json'))
+    readOption('--output', path.join(repositoryRoot, 'parity/agentscope-python-61cdeae4.json'))
+);
+const previousManifestPath = path.resolve(readOption('--previous-manifest', outputPath));
+const testMappingsPath = path.resolve(
+    readOption('--test-mappings', path.join(repositoryRoot, 'parity/test-mapping-overrides.json'))
 );
 
 let previousManifest;
 try {
-    previousManifest = JSON.parse(await readFile(outputPath, 'utf8'));
+    previousManifest = JSON.parse(await readFile(previousManifestPath, 'utf8'));
 } catch (error) {
     if (error?.code !== 'ENOENT') throw error;
 }
@@ -54,12 +61,28 @@ try {
  */
 function previousProgress(collection, filePath, sha256) {
     const entry = previousManifest?.[collection]?.find(candidate => candidate.path === filePath);
-    if (!entry || entry.sha256 !== sha256) return {};
+    if (!entry) return {};
     return {
-        status: entry.status,
+        ...(entry.sha256 === sha256 && entry.status ? { status: entry.status } : {}),
         ...(entry.pythonTests ? { pythonTests: entry.pythonTests } : {}),
         ...(entry.typescriptTests ? { typescriptTests: entry.typescriptTests } : {}),
     };
+}
+
+/**
+ * Keep generated targets honest even when Python nesting has no one-to-one TS directory.
+ *
+ * @param {string} target Proposed repository-relative path.
+ * @returns {string} Nearest existing implementation area.
+ */
+function existingTypescriptTarget(target) {
+    let candidate = target;
+    while (!existsSync(path.resolve(repositoryRoot, candidate))) {
+        const parent = path.posix.dirname(candidate);
+        if (parent === candidate || !candidate.startsWith('packages/')) break;
+        candidate = parent;
+    }
+    return candidate;
 }
 
 const pythonCommit = execFileSync('git', ['-C', pythonRoot, 'rev-parse', 'HEAD'], {
@@ -74,34 +97,42 @@ const testPaths = listTrackedFiles(pythonRoot, 'tests');
 const sourceFiles = await describeFiles(pythonRoot, sourcePaths);
 const contractDataFiles = await describeFiles(pythonRoot, contractDataPaths);
 const testFiles = await describeFiles(pythonRoot, testPaths);
+const testMappingOverrides = JSON.parse(await readFile(testMappingsPath, 'utf8'));
 
 const manifest = {
-    schemaVersion: 1,
+    schemaVersion: 2,
+    requireCompleteParity: false,
     pythonRepository: 'https://github.com/agentscope-ai/agentscope.git',
     pythonCommit,
     sourceFiles: sourceFiles.map(({ path: sourcePath, sha256 }) => ({
         path: sourcePath,
         sha256,
         module: sourceModule(sourcePath),
-        typescriptTarget: typescriptTarget(sourcePath),
+        typescriptTarget: existingTypescriptTarget(typescriptTarget(sourcePath)),
         status: 'mapped',
         pythonTests: [],
         typescriptTests: [],
         ...previousProgress('sourceFiles', sourcePath, sha256),
     })),
-    contractDataFiles: contractDataFiles.map(({ path: sourcePath, sha256 }) => ({
-        path: sourcePath,
-        sha256,
-        module: sourceModule(sourcePath),
-        typescriptTarget: typescriptTarget(sourcePath),
-        status: 'mapped',
-        ...previousProgress('contractDataFiles', sourcePath, sha256),
-    })),
+    contractDataFiles: contractDataFiles.map(({ path: sourcePath, sha256 }) => {
+        const module = sourceModule(sourcePath);
+        return {
+            path: sourcePath,
+            sha256,
+            module,
+            typescriptTarget: existingTypescriptTarget(typescriptTarget(sourcePath)),
+            status: 'mapped',
+            ...contractTestMappings(module),
+            ...previousProgress('contractDataFiles', sourcePath, sha256),
+        };
+    }),
     testFiles: testFiles.map(({ path: testPath, sha256 }) => ({
         path: testPath,
         sha256,
         area: testArea(testPath),
+        status: 'mapped',
         typescriptTests: [],
+        ...previousProgress('testFiles', testPath, sha256),
     })),
     summary: {
         sourceFiles: {
@@ -118,6 +149,8 @@ const manifest = {
         },
     },
 };
+
+synchronizeTestMappings(manifest, testMappingOverrides);
 
 const errors = validateManifest(manifest);
 if (errors.length > 0) {

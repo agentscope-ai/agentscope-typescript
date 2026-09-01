@@ -1,6 +1,6 @@
 /* eslint-disable jsdoc/require-jsdoc */
 
-import { Agent } from '@agentscope-ai/agentscope/agent';
+import { Agent, type AgentOptions } from '@agentscope-ai/agentscope/agent';
 import { EventType } from '@agentscope-ai/agentscope/event';
 import { AssistantMsg, TextBlock, ToolCallBlock, UserMsg } from '@agentscope-ai/agentscope/message';
 import {
@@ -45,6 +45,15 @@ class StaticModel extends ChatModelBase {
 
     _formatToolSchemas(_tools: ToolSchema[]): unknown[] {
         return [];
+    }
+}
+
+class CapturingAgent extends Agent {
+    static options: AgentOptions | null = null;
+
+    constructor(options: AgentOptions) {
+        super(options);
+        CapturingAgent.options = options;
     }
 }
 
@@ -132,6 +141,30 @@ async function fixture(
 }
 
 describe('ChatService', () => {
+    test('maps every persisted context-compression option into AgentOptions', async () => {
+        CapturingAgent.options = null;
+        const { storage, agent, service } = await fixture(undefined, {
+            chat: { agentClass: CapturingAgent },
+        });
+        agent.data.context_config = {
+            ...agent.data.context_config,
+            context_buffer_ratio: 0.3,
+            compression_fallback_to_truncation: false,
+            compression_tool_enabled: true,
+        };
+        await storage.upsertAgent('u', agent);
+
+        await service.run({ userId: 'u', sessionId: 'session', agentId: 'agent' });
+
+        const captured = CapturingAgent.options as AgentOptions | null;
+        expect(captured).not.toBeNull();
+        expect(captured!.contextConfig).toMatchObject({
+            contextBufferRatio: 0.3,
+            compressionFallbackToTruncation: false,
+            compressionToolEnabled: true,
+        });
+    });
+
     test('runs one locked turn, persists both messages and publishes the reply lifecycle', async () => {
         const { storage, bus, service } = await fixture();
         const input = UserMsg({ name: 'user', content: 'Hi' });

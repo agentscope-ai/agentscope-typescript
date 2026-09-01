@@ -96,6 +96,15 @@ export function contextConfigJSONSchema(title = 'ContextConfig'): Record<string,
                 title: 'Reserve Ratio',
                 type: 'number',
             },
+            context_buffer_ratio: {
+                default: contextDefaults.context_buffer_ratio,
+                description:
+                    "The buffer ahead of the 'trigger_ratio', within which the agent is told that a compression is near, and can compress by itself if the compression tool is enabled. It must be smaller than the 'trigger_ratio'.",
+                maximum: 1,
+                minimum: 0,
+                title: 'Context Buffer',
+                type: 'number',
+            },
             compression_prompt: {
                 default: contextDefaults.compression_prompt,
                 format: 'textarea',
@@ -114,6 +123,20 @@ export function contextConfigJSONSchema(title = 'ContextConfig'): Record<string,
                     'The maximum length of the tool results in tokens. If exceeded, the tool result will be truncated.',
                 title: 'Tool Result Limit',
                 type: 'integer',
+            },
+            compression_fallback_to_truncation: {
+                default: contextDefaults.compression_fallback_to_truncation,
+                description:
+                    'Whether to truncate the oldest context when the compression summary cannot be generated. Turning it off raises the error instead, keeping the context intact at the cost of exceeding the context length.',
+                title: 'Compression Fallback To Truncation',
+                type: 'boolean',
+            },
+            compression_tool_enabled: {
+                default: contextDefaults.compression_tool_enabled,
+                description:
+                    'Whether to expose a context compression tool to the agent. When runtime-state injection is enabled, the agent is prompted to use the tool between tasks as the context approaches the hard compression threshold.',
+                title: 'Compression Tool Enabled',
+                type: 'boolean',
             },
             max_image_num: {
                 default: contextDefaults.max_image_num,

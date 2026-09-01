@@ -8,6 +8,18 @@ import {
 } from '../src/storage';
 
 describe('service record schemas', () => {
+    test('serializes every current Python context default', () => {
+        expect(defaultContextConfigData()).toMatchObject({
+            trigger_ratio: 0.8,
+            reserve_ratio: 0.1,
+            context_buffer_ratio: 0.2,
+            tool_result_limit: 50000,
+            compression_fallback_to_truncation: true,
+            compression_tool_enabled: false,
+            max_image_num: 5,
+        });
+    });
+
     test('fills legacy agent defaults and validates invitation descriptions', () => {
         const record = AgentRecordSchema.parse({
             user_id: 'user-1',

@@ -100,6 +100,20 @@ export function typescriptTarget(sourcePath) {
     const firstPart = parts[0];
 
     if (firstPart === 'app') {
+        if (parts[1] === '_router') {
+            return parts[2] === '_schema'
+                ? `${SERVICE_ROOT}/http/schemas`
+                : `${SERVICE_ROOT}/http/routes`;
+        }
+        if (parts[1] === '_manager') {
+            return `${SERVICE_ROOT}/manager`;
+        }
+        if (parts[1] === '_service' && parts[2] === '_projectors') {
+            return `${SERVICE_ROOT}/service`;
+        }
+        if (parts[1] === 'channel' && parts[3] === '_tools') {
+            return `${SERVICE_ROOT}/channel/${parts[2].replace(/^_/, '').replaceAll('_', '-')}`;
+        }
         const appPath = parts
             .slice(1, -1)
             .map(segment => segment.replace(/^_/, '').replaceAll('_', '-'))
@@ -113,6 +127,10 @@ export function typescriptTarget(sourcePath) {
 
     if (firstPart === '_logging.py') {
         return `${CORE_ROOT}/logger`;
+    }
+
+    if (firstPart === '_utils') {
+        return `${CORE_ROOT}/_utils`;
     }
 
     if (firstPart === '_version.py') {
@@ -141,6 +159,60 @@ export function testArea(testPath) {
     const filename = path.posix.basename(testPath).replace(/\.py$/, '');
     const normalized = filename.replace(/^test_/, '').replace(/_test$/, '');
     return normalized.split('_')[0] || 'root';
+}
+
+/**
+ * Tests that load and validate each Python YAML model-card family.
+ *
+ * @param {string} module Python module containing the card.
+ * @returns {{ pythonTests: string[]; typescriptTests: string[] }} Bidirectional mappings.
+ */
+export function contractTestMappings(module) {
+    const commonTypescriptTests = ['packages/agentscope/src/model/card.test.ts'];
+    if (module === 'embedding') {
+        return {
+            pythonTests: [
+                'tests/embedding_dashscope_test.py',
+                'tests/embedding_gemini_test.py',
+                'tests/embedding_ollama_test.py',
+                'tests/embedding_openai_test.py',
+            ],
+            typescriptTests: [
+                ...commonTypescriptTests,
+                'packages/agentscope/test/parity/embedding-model-cards.golden.test.ts',
+            ],
+        };
+    }
+    if (module === 'tts') {
+        return {
+            pythonTests: [
+                'tests/tts_dashscope_test.py',
+                'tests/tts_gemini_test.py',
+                'tests/tts_middleware_test.py',
+                'tests/tts_openai_test.py',
+            ],
+            typescriptTests: [
+                ...commonTypescriptTests,
+                'packages/agentscope/test/parity/tts-model-cards.golden.test.ts',
+            ],
+        };
+    }
+    return {
+        pythonTests: [
+            'tests/model_anthropic_test.py',
+            'tests/model_base_test.py',
+            'tests/model_dashscope_test.py',
+            'tests/model_deepseek_test.py',
+            'tests/model_gemini_test.py',
+            'tests/model_moonshot_test.py',
+            'tests/model_ollama_test.py',
+            'tests/model_openai_chat_test.py',
+            'tests/model_openai_response_test.py',
+            'tests/model_response_test.py',
+            'tests/model_xai_test.py',
+        ],
+        typescriptTests: commonTypescriptTests,
+    };
 }
 
 /**
@@ -176,8 +248,8 @@ export function validateManifest(value) {
     }
 
     const manifest = value;
-    if (manifest.schemaVersion !== 1) {
-        errors.push('schemaVersion must be 1.');
+    if (![1, 2].includes(manifest.schemaVersion)) {
+        errors.push('schemaVersion must be 1 or 2.');
     }
     if (!/^[0-9a-f]{40}$/.test(manifest.pythonCommit ?? '')) {
         errors.push('pythonCommit must be a full Git SHA.');
@@ -226,6 +298,52 @@ export function validateManifest(value) {
         }
     }
 
+    if (manifest.schemaVersion === 2) {
+        if (typeof manifest.requireCompleteParity !== 'boolean') {
+            errors.push('requireCompleteParity must be a boolean for schemaVersion 2.');
+        }
+        for (const entry of Array.isArray(manifest.testFiles) ? manifest.testFiles : []) {
+            if (!ALLOWED_STATUSES.has(entry.status)) {
+                errors.push(`Invalid parity status ${entry.status} for ${entry.path}.`);
+            }
+            if (!Array.isArray(entry.typescriptTests)) {
+                errors.push(`Missing TypeScript tests for ${entry.path}.`);
+            }
+        }
+    }
+
+    if (manifest.requireCompleteParity === true) {
+        for (const entry of [
+            ...(Array.isArray(manifest.sourceFiles) ? manifest.sourceFiles : []),
+            ...(Array.isArray(manifest.contractDataFiles) ? manifest.contractDataFiles : []),
+            ...(Array.isArray(manifest.testFiles) ? manifest.testFiles : []),
+        ]) {
+            if (entry.status !== 'verified') {
+                errors.push(`Complete parity requires verified status for ${entry.path}.`);
+            }
+        }
+        for (const entry of Array.isArray(manifest.sourceFiles) ? manifest.sourceFiles : []) {
+            if (!Array.isArray(entry.typescriptTests) || entry.typescriptTests.length === 0) {
+                errors.push(`Complete parity requires TypeScript tests for ${entry.path}.`);
+            }
+        }
+        for (const entry of Array.isArray(manifest.contractDataFiles)
+            ? manifest.contractDataFiles
+            : []) {
+            if (!Array.isArray(entry.pythonTests) || entry.pythonTests.length === 0) {
+                errors.push(`Complete parity requires Python tests for ${entry.path}.`);
+            }
+            if (!Array.isArray(entry.typescriptTests) || entry.typescriptTests.length === 0) {
+                errors.push(`Complete parity requires TypeScript tests for ${entry.path}.`);
+            }
+        }
+        for (const entry of Array.isArray(manifest.testFiles) ? manifest.testFiles : []) {
+            if (!Array.isArray(entry.typescriptTests) || entry.typescriptTests.length === 0) {
+                errors.push(`Complete parity requires a TypeScript mapping for ${entry.path}.`);
+            }
+        }
+    }
+
     const summary = manifest.summary;
     if (!summary || typeof summary !== 'object') {
         errors.push('summary must be an object.');
@@ -248,6 +366,30 @@ export function validateManifest(value) {
     }
 
     return errors;
+}
+
+/**
+ * Rebuild every Python test's reverse mapping from source mappings and explicit overrides.
+ *
+ * @param {object} manifest Parity manifest.
+ * @param {Record<string, string[]>} overrides Mappings for helper or standalone tests.
+ */
+export function synchronizeTestMappings(manifest, overrides = {}) {
+    const mappings = new Map(
+        (manifest.testFiles ?? []).map(entry => [entry.path, new Set(overrides[entry.path] ?? [])])
+    );
+    for (const source of manifest.sourceFiles ?? []) {
+        for (const pythonTest of source.pythonTests ?? []) {
+            const mapped = mappings.get(pythonTest);
+            if (!mapped) continue;
+            for (const typescriptTest of source.typescriptTests ?? []) {
+                mapped.add(typescriptTest);
+            }
+        }
+    }
+    for (const test of manifest.testFiles ?? []) {
+        test.typescriptTests = [...(mappings.get(test.path) ?? [])].sort();
+    }
 }
 
 /**

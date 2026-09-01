@@ -1362,33 +1362,71 @@ export class Agent {
             typeof result.output === 'string'
                 ? [TextBlock({ text: result.output })]
                 : result.output;
-        const tokens = await this.model.countTokens({
-            messages: [AssistantMsg({ name: this.name, content: output })],
-        });
+        const countTokens = (blocks: Array<ReturnType<typeof TextBlock> | DataBlock>) =>
+            this.model.countTokens({
+                messages: [AssistantMsg({ name: this.name, content: blocks })],
+            });
+        const tokens = await countTokens(output);
         if (tokens <= this.contextConfig.toolResultLimit) return [result, null];
-        const ratio = Math.max(0, Math.min(1, this.contextConfig.toolResultLimit / tokens));
-        const textLength = output.reduce(
-            (sum, block) => sum + (block.type === 'text' ? block.text.length : 0),
-            0
-        );
-        let budget = Math.floor(textLength * ratio);
+
+        let boundaryIndex = 0;
+        for (let index = output.length - 1; index > 0; index -= 1) {
+            if ((await countTokens(output.slice(0, index))) < this.contextConfig.toolResultLimit) {
+                boundaryIndex = index;
+                break;
+            }
+        }
         const reserved: Array<ReturnType<typeof TextBlock> | DataBlock> = [];
         const offloaded: Array<ReturnType<typeof TextBlock> | DataBlock> = [];
-        for (const block of output) {
-            if (block.type !== 'text') {
-                (budget > 0 ? reserved : offloaded).push(structuredClone(block));
-                continue;
+        reserved.push(...output.slice(0, boundaryIndex).map(block => structuredClone(block)));
+        offloaded.push(...output.slice(boundaryIndex + 1).map(block => structuredClone(block)));
+
+        const boundary = output[boundaryIndex];
+        if (boundary.type === 'text') {
+            const currentTokens = await countTokens(reserved);
+            const tokensWithBoundary = await countTokens([...reserved, boundary]);
+            const tokenDelta = tokensWithBoundary - currentTokens;
+            const remaining = this.contextConfig.toolResultLimit - currentTokens;
+            const keep = Math.max(
+                0,
+                Math.min(
+                    boundary.text.length,
+                    tokenDelta <= 0
+                        ? remaining > 0
+                            ? boundary.text.length
+                            : 0
+                        : Math.floor((remaining / tokenDelta) * boundary.text.length)
+                )
+            );
+            const reservedText = boundary.text.slice(0, keep);
+            const offloadedText = boundary.text.slice(keep);
+            if (reservedText) {
+                const previous = reserved.at(-1);
+                if (previous?.type === 'text') previous.text += reservedText;
+                else reserved.push(TextBlock({ id: boundary.id, text: reservedText }));
             }
-            const keep = Math.min(budget, block.text.length);
-            if (keep) reserved.push(TextBlock({ id: block.id, text: block.text.slice(0, keep) }));
-            if (keep < block.text.length) {
-                offloaded.push(TextBlock({ id: block.id, text: block.text.slice(keep) }));
+            if (offloadedText) {
+                const next = offloaded[0];
+                if (next?.type === 'text') next.text = offloadedText + next.text;
+                else offloaded.unshift(TextBlock({ id: boundary.id, text: offloadedText }));
             }
-            budget -= keep;
+        } else {
+            offloaded.unshift(structuredClone(boundary));
         }
+        if (offloaded.length === 0) return [result, null];
         return [
-            ToolResultBlock({ ...result, output: reserved }),
-            offloaded.length ? ToolResultBlock({ ...result, output: offloaded }) : null,
+            ToolResultBlock({
+                id: result.id,
+                name: result.name,
+                output: reserved,
+                state: result.state,
+            }),
+            ToolResultBlock({
+                id: result.id,
+                name: result.name,
+                output: offloaded,
+                state: result.state,
+            }),
         ];
     }
 

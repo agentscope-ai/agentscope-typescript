@@ -15,10 +15,13 @@ const identifier = () => crypto.randomUUID().replaceAll('-', '');
 export const ContextConfigDataSchema = z.object({
     trigger_ratio: z.number().gt(0).lte(0.9).default(0.8),
     reserve_ratio: z.number().gt(0).lt(0.9).default(0.1),
+    context_buffer_ratio: z.number().min(0).max(1).default(0.2),
     compression_prompt: z.string().default(() => new ContextConfig().compressionPrompt),
     summary_template: z.string().default(() => new ContextConfig().summaryTemplate),
     summary_schema: JsonObjectSchema.default(() => structuredClone(DEFAULT_SUMMARY_SCHEMA)),
     tool_result_limit: z.number().int().default(50000),
+    compression_fallback_to_truncation: z.boolean().default(true),
+    compression_tool_enabled: z.boolean().default(false),
     max_image_num: z.number().int().min(0).default(5),
 });
 export type ContextConfigData = z.output<typeof ContextConfigDataSchema>;

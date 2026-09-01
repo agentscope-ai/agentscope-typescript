@@ -19,7 +19,7 @@ jobs:
               uses: actions/checkout@v4
               with:
                   repository: agentscope-ai/agentscope
-                  ref: de163b34b909edaba3c174190ad7e1a355e7849f
+                  ref: 61cdeae4ffe63182f3343229aa6fbd868e30b0c5
                   path: python-baseline
 
             - name: Setup Node.js

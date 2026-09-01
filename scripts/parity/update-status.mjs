@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 import { format, resolveConfig } from 'prettier';
 
-import { updateParityEntry, validateManifest } from './manifest-lib.mjs';
+import { synchronizeTestMappings, updateParityEntry, validateManifest } from './manifest-lib.mjs';
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, '../..');
@@ -23,21 +23,33 @@ function readOptions(name) {
 
 const manifestPath = path.resolve(
     readOptions('--manifest')[0] ??
-        path.join(repositoryRoot, 'parity/agentscope-python-de163b34.json')
+        path.join(repositoryRoot, 'parity/agentscope-python-61cdeae4.json')
 );
 const status = readOptions('--status')[0];
 const sourcePaths = readOptions('--source');
 const contractDataPaths = readOptions('--contract-data');
+const testPaths = readOptions('--test');
 const pythonTests = readOptions('--python-test');
 const typescriptTests = readOptions('--typescript-test');
+const allTests = process.argv.includes('--all-tests');
+const finalize = process.argv.includes('--finalize');
 
-if (!status || sourcePaths.length + contractDataPaths.length === 0) {
-    throw new Error('A status and at least one --source or --contract-data path are required.');
+if (
+    !status ||
+    (sourcePaths.length + contractDataPaths.length + testPaths.length === 0 && !allTests)
+) {
+    throw new Error(
+        'A status and at least one --source, --contract-data, --test, or --all-tests are required.'
+    );
 }
 
 const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+const testMappings = JSON.parse(
+    await readFile(path.join(repositoryRoot, 'parity/test-mapping-overrides.json'), 'utf8')
+);
 const sourceByPath = new Map(manifest.sourceFiles.map(entry => [entry.path, entry]));
 const contractDataByPath = new Map(manifest.contractDataFiles.map(entry => [entry.path, entry]));
+const testByPath = new Map(manifest.testFiles.map(entry => [entry.path, entry]));
 
 for (const sourcePath of sourcePaths) {
     const entry = sourceByPath.get(sourcePath);
@@ -53,6 +65,22 @@ for (const contractDataPath of contractDataPaths) {
     updateParityEntry(entry, status, pythonTests, typescriptTests);
 }
 
+synchronizeTestMappings(manifest, testMappings);
+
+for (const testPath of testPaths) {
+    const entry = testByPath.get(testPath);
+    if (!entry) throw new Error(`Manifest test entry not found: ${testPath}.`);
+    updateParityEntry(entry, status, [], typescriptTests);
+}
+
+if (allTests) {
+    for (const entry of manifest.testFiles) {
+        updateParityEntry(entry, status);
+    }
+}
+
+if (finalize) manifest.requireCompleteParity = true;
+
 const errors = validateManifest(manifest);
 if (errors.length > 0) throw new Error(`Updated manifest is invalid:\n${errors.join('\n')}`);
 
@@ -63,5 +91,6 @@ const manifestContent = await format(JSON.stringify(manifest), {
 });
 await writeFile(manifestPath, manifestContent, 'utf8');
 process.stdout.write(
-    `Updated ${sourcePaths.length} source and ${contractDataPaths.length} contract-data entries to ${status}.\n`
+    `Updated ${sourcePaths.length} source, ${contractDataPaths.length} contract-data, and ` +
+        `${allTests ? manifest.testFiles.length : testPaths.length} test entries to ${status}.\n`
 );

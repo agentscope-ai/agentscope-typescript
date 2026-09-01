@@ -1,0 +1,43 @@
+{
+    "tests/_daytona_live_utils.py": [
+        "packages/agentscope/src/workspace/daytona.live.test.ts",
+        "packages/agentscope/src/workspace/daytona.parity.test.ts"
+    ],
+    "tests/backend_local_test.py": [
+        "packages/agentscope/src/workspace/local.parity.test.ts",
+        "packages/agentscope/src/workspace/process-runner.test.ts"
+    ],
+    "tests/compress_context_test.py": [
+        "packages/agentscope/src/agent/context-compression-tool.parity.test.ts",
+        "packages/agentscope/src/agent/core.parity.test.ts",
+        "packages/agentscope/src/middleware/middleware.parity.test.ts"
+    ],
+    "tests/compress_tool_result_test.py": [
+        "packages/agentscope/src/agent/tool-result-compression.parity.test.ts"
+    ],
+    "tests/docker/k8s_workspace_test.Dockerfile": [
+        "packages/agentscope/src/workspace/k8s.live.test.ts",
+        "packages/agentscope/src/workspace/k8s.parity.test.ts"
+    ],
+    "tests/hitl_external_execution_test.py": [
+        "packages/agentscope/src/agent/hitl-structured.parity.test.ts"
+    ],
+    "tests/hitl_mixed_test.py": ["packages/agentscope/src/agent/hitl-structured.parity.test.ts"],
+    "tests/hitl_user_confirmation_test.py": [
+        "packages/agentscope/src/agent/hitl-structured.parity.test.ts",
+        "packages/agentscope/src/console/renderer.parity.test.ts"
+    ],
+    "tests/middleware_background_acting_test.py": [
+        "packages/agentscope/src/middleware/middleware.parity.test.ts"
+    ],
+    "tests/model_count_tokens_test.py": ["packages/agentscope/src/model/base.parity.test.ts"],
+    "tests/test_template.py": ["scripts/parity/manifest-lib.test.mjs"],
+    "tests/tool_lazy_annotations_test.py": [
+        "packages/agentscope/src/tool/function-tool.test.ts",
+        "packages/agentscope/src/tool/types.parity.test.ts"
+    ],
+    "tests/utils.py": [
+        "packages/agentscope/src/_utils/common.test.ts",
+        "packages/agentscope/test/parity/message-event.golden.test.ts"
+    ]
+}

@@ -19,7 +19,7 @@ const fixture = JSON.parse(
 
 describe('embedding model-card Python golden', () => {
     test('is pinned to the selected Python commit', () => {
-        expect(fixture.python_commit).toBe('de163b34b909edaba3c174190ad7e1a355e7849f');
+        expect(fixture.python_commit).toBe('61cdeae4ffe63182f3343229aa6fbd868e30b0c5');
     });
 
     test.each([
