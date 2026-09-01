@@ -22,6 +22,8 @@ export interface ReplyOptions {
     structuredSchema?: z.ZodObject | Record<string, unknown> | null;
     structuredModel?: z.ZodObject;
     yieldFinalMsg?: boolean;
+    /** Cancel the active model request and close the reply as interrupted. */
+    signal?: AbortSignal;
 }
 
 export interface ReasoningOptions {

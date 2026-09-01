@@ -25,6 +25,8 @@ export default defineConfig({
         'tts/index': 'src/tts/index.ts',
         'workspace/index': 'src/workspace/index.ts',
         'rag/index': 'src/rag/index.ts',
+        'pipeline/index': 'src/pipeline/index.ts',
+        'console/index': 'src/console/index.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,

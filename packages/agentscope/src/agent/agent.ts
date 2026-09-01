@@ -318,6 +318,7 @@ export class Agent {
             let finalMessage: Msg | null = null;
             let madeProgress = true;
             while (true) {
+                input.signal?.throwIfAborted();
                 const action = this.nextAction(finalMessage);
                 if (action.type === 'exit') {
                     if (!action.events) {
@@ -347,7 +348,7 @@ export class Agent {
                     await this.compressContext();
                     yield* this.injectRuntimeState();
                     let interrupted = false;
-                    for await (const item of this.reasoning(action.toolChoice)) {
+                    for await (const item of this.reasoning(action.toolChoice, input.signal)) {
                         if (isMsg(item)) {
                             finalMessage = item;
                             continue;
@@ -677,26 +678,30 @@ export class Agent {
         });
     }
 
-    private async *reasoning(toolChoice?: ToolChoice | null): AgentStream {
+    private async *reasoning(toolChoice?: ToolChoice | null, signal?: AbortSignal): AgentStream {
         const execute = (index: number, input: ReasoningHookInput): AgentStream => {
             if (index >= this.reasoningMiddlewares.length) {
-                return this.reasoningImpl(input.toolChoice);
+                return this.reasoningImpl(input.toolChoice, input.signal);
             }
             return this.reasoningMiddlewares[index].onReasoning(this, input, patch =>
                 execute(index + 1, { ...input, ...patch })
             );
         };
-        yield* execute(0, { toolChoice });
+        yield* execute(0, { toolChoice, ...(signal ? { signal } : {}) });
     }
 
-    private async *reasoningImpl(toolChoice?: ToolChoice | null): AgentStream {
+    private async *reasoningImpl(
+        toolChoice?: ToolChoice | null,
+        signal?: AbortSignal
+    ): AgentStream {
+        signal?.throwIfAborted();
         yield this.event({
             type: EventType.MODEL_CALL_START,
             reply_id: this.state.replyId,
             model_name: this.model.modelName,
         });
         const modelInput = await this.prepareModelInput();
-        const response = await this.callModel({ ...modelInput, toolChoice });
+        const response = await this.callModel({ ...modelInput, toolChoice, signal });
         const ids: StreamIds = { text: null, thinking: null, tools: [], data: [] };
         let completed: ChatResponse | null = null;
         if (isAsyncGenerator(response)) {
@@ -749,6 +754,7 @@ export class Agent {
         messages: Msg[];
         tools: ToolSchema[];
         toolChoice?: ToolChoice | null;
+        signal?: AbortSignal;
     }): Promise<ModelResult> {
         const models = [
             this.model,
@@ -767,6 +773,7 @@ export class Agent {
                                 messages: current.messages,
                                 tools: current.tools,
                                 toolChoice: current.toolChoice ?? undefined,
+                                ...(current.signal ? { signal: current.signal } : {}),
                             });
                         }
                         return this.modelCallMiddlewares[index].onModelCall(this, current, patch =>
@@ -778,6 +785,7 @@ export class Agent {
                         messages: input.messages,
                         tools: input.tools,
                         toolChoice: input.toolChoice,
+                        ...(input.signal ? { signal: input.signal } : {}),
                     });
                 } catch (error) {
                     lastError = error;
@@ -1659,6 +1667,7 @@ function normalizeReplyInput(options: ReplyOptions): ReplyHookInput {
     return {
         inputs: options.inputs ?? options.event ?? options.msgs ?? null,
         structuredSchema: options.structuredSchema ?? options.structuredModel ?? null,
+        ...(options.signal ? { signal: options.signal } : {}),
     };
 }
 

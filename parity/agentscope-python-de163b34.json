@@ -1861,27 +1861,27 @@
             "sha256": "bdcb2cf780fa44c12718c9bbbf664fad0f42d299f7e3a179083f53896215cb1b",
             "module": "console",
             "typescriptTarget": "packages/agentscope/src/console",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/console_renderer_test.py"],
+            "typescriptTests": ["packages/agentscope/src/console/renderer.parity.test.ts"]
         },
         {
             "path": "src/agentscope/console/_console.py",
             "sha256": "3dc76e44304ec82af05dfd359548fd2c799426ce5551bd20afb7cdadb81e09eb",
             "module": "console",
             "typescriptTarget": "packages/agentscope/src/console",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/console_renderer_test.py"],
+            "typescriptTests": ["packages/agentscope/src/console/renderer.parity.test.ts"]
         },
         {
             "path": "src/agentscope/console/_renderer.py",
             "sha256": "fbb5890d6e51b4e4182b4857dff74f80e3af9717478b1d5686d0ac9bb1490d63",
             "module": "console",
             "typescriptTarget": "packages/agentscope/src/console",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/console_renderer_test.py"],
+            "typescriptTests": ["packages/agentscope/src/console/renderer.parity.test.ts"]
         },
         {
             "path": "src/agentscope/credential/__init__.py",
@@ -3967,27 +3967,27 @@
             "sha256": "4158c734cac95b32341263160d703bc440de60cac3485e44e0e9c4b581ea7d7c",
             "module": "pipeline",
             "typescriptTarget": "packages/agentscope/src/pipeline",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/pipeline_goal_test.py"],
+            "typescriptTests": ["packages/agentscope/src/pipeline/goal.parity.test.ts"]
         },
         {
             "path": "src/agentscope/pipeline/_base.py",
             "sha256": "fb698a60099fe05eb83bbaeff73f7f4565fcb42fc6ce4f1f76cdbc2553e62b75",
             "module": "pipeline",
             "typescriptTarget": "packages/agentscope/src/pipeline",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/pipeline_goal_test.py"],
+            "typescriptTests": ["packages/agentscope/src/pipeline/goal.parity.test.ts"]
         },
         {
             "path": "src/agentscope/pipeline/_goal_pipeline.py",
             "sha256": "69c05617e38c43884b835838a18c070d1c9a376868f1e90433276f69ec19b405",
             "module": "pipeline",
             "typescriptTarget": "packages/agentscope/src/pipeline",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/pipeline_goal_test.py"],
+            "typescriptTests": ["packages/agentscope/src/pipeline/goal.parity.test.ts"]
         },
         {
             "path": "src/agentscope/py.typed",
@@ -7041,7 +7041,7 @@
             "path": "tests/console_renderer_test.py",
             "sha256": "eb99ca587d8033c33446fc34de7a7170140b1575fe7e923291cc980c4c868cf9",
             "area": "console",
-            "typescriptTests": []
+            "typescriptTests": ["packages/agentscope/src/console/renderer.parity.test.ts"]
         },
         {
             "path": "tests/docker/k8s_workspace_test.Dockerfile",
@@ -7377,7 +7377,7 @@
             "path": "tests/pipeline_goal_test.py",
             "sha256": "966f6179207bd7657abbf0db356b58e917a09b980846acfda97fba590c96715f",
             "area": "pipeline",
-            "typescriptTests": []
+            "typescriptTests": ["packages/agentscope/src/pipeline/goal.parity.test.ts"]
         },
         {
             "path": "tests/rag_chunker_approx_token_test.py",

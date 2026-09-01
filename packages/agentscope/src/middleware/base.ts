@@ -18,10 +18,12 @@ export type ModelResult = ChatResponse | AsyncGenerator<ChatResponse, ChatRespon
 export interface ReplyHookInput {
     inputs?: Msg | Msg[] | AgentEvent | null;
     structuredSchema?: Record<string, unknown> | import('zod').z.ZodObject | null;
+    signal?: AbortSignal;
 }
 
 export interface ReasoningHookInput {
     toolChoice?: ToolChoice | null;
+    signal?: AbortSignal;
 }
 
 export interface ActingHookInput {
@@ -39,6 +41,7 @@ export interface ModelCallHookInput {
     messages: Msg[];
     tools: import('../type').ToolSchema[];
     toolChoice?: ToolChoice | null;
+    signal?: AbortSignal;
 }
 
 export interface CompressContextHookInput {

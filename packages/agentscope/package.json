@@ -118,6 +118,16 @@
             "types": "./dist/rag/index.d.ts",
             "import": "./dist/rag/index.mjs",
             "require": "./dist/rag/index.js"
+        },
+        "./pipeline": {
+            "types": "./dist/pipeline/index.d.ts",
+            "import": "./dist/pipeline/index.mjs",
+            "require": "./dist/pipeline/index.js"
+        },
+        "./console": {
+            "types": "./dist/console/index.d.ts",
+            "import": "./dist/console/index.mjs",
+            "require": "./dist/console/index.js"
         }
     },
     "scripts": {
