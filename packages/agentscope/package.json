@@ -143,6 +143,7 @@
     "devDependencies": {
         "@commitlint/cli": "^20.2.0",
         "@commitlint/config-conventional": "^20.2.0",
+        "@modelcontextprotocol/server-filesystem": "2026.8.31",
         "@types/jest": "^30.0.0",
         "@types/mime-types": "^3.0.1",
         "@types/node": "^22.19.15",
