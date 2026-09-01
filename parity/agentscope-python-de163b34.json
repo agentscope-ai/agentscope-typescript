@@ -5510,63 +5510,112 @@
             "sha256": "d585bc666e347d8532e8a3f6250b2685af2b9628fee2ccbc1cb4c40304fa94ba",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_docker_test.py",
+                "tests/test_e2e_docker_mcp.py",
+                "tests/workspace_docker_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/docker.live.test.ts",
+                "packages/agentscope/src/workspace/docker.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_docker/_docker_backend.py",
             "sha256": "ecbf3e33b4a0ea18799503a999873c61de314f2f235bc54c0f04bcd5ee3590c4",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_docker_test.py",
+                "tests/test_e2e_docker_mcp.py",
+                "tests/workspace_docker_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/docker.live.test.ts",
+                "packages/agentscope/src/workspace/docker.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_docker/_docker_workspace.py",
             "sha256": "49194c0b43ba5dba028129d83faf8ed2f6916dbee0796f27adedeb8a8f347a26",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_docker_test.py",
+                "tests/test_e2e_docker_mcp.py",
+                "tests/workspace_docker_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/docker.live.test.ts",
+                "packages/agentscope/src/workspace/docker.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_docker/_make_dockerfile.py",
             "sha256": "5b051e9da88989081e4f52c4696064eaf77273a99a3c3a0d4104c3b8e89f9275",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_docker_test.py",
+                "tests/test_e2e_docker_mcp.py",
+                "tests/workspace_docker_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/docker.live.test.ts",
+                "packages/agentscope/src/workspace/docker.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_docker/Dockerfile.node_copy.template",
             "sha256": "bd1c6654e2df24a13fc4ad1c1fe3f2e94840a3e0d403aa08c9078cc0c7b07ea6",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_docker_test.py",
+                "tests/test_e2e_docker_mcp.py",
+                "tests/workspace_docker_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/docker.live.test.ts",
+                "packages/agentscope/src/workspace/docker.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_docker/Dockerfile.node_from.template",
             "sha256": "2cf4fe21f72228849e53c170c985e2da6d9548c0311512427a703a677801c5bf",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_docker_test.py",
+                "tests/test_e2e_docker_mcp.py",
+                "tests/workspace_docker_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/docker.live.test.ts",
+                "packages/agentscope/src/workspace/docker.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_docker/Dockerfile.template",
             "sha256": "d1179ad4bc4b905e7e273bd57a16e1643a16081cdb81d3e35065e8540541c10c",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_docker_test.py",
+                "tests/test_e2e_docker_mcp.py",
+                "tests/workspace_docker_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/docker.live.test.ts",
+                "packages/agentscope/src/workspace/docker.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_e2b/__init__.py",

@@ -48,3 +48,29 @@ export {
     BubblewrapWorkspace,
     terminateProcessTree,
 } from './bubblewrap';
+export {
+    DEFAULT_DOCKER_BASE_IMAGE,
+    DEFAULT_DOCKER_GATEWAY_PORT,
+    DOCKER_CONTAINER_WORKDIR,
+    DOCKER_GATEWAY_HOME,
+    DOCKER_IMAGE_REPOSITORY,
+    DockerBuildContext,
+    RenderDockerfileOptions,
+    computeDockerImageTag,
+    prepareDockerBuildContext,
+    renderDockerfile,
+} from './docker-build';
+export {
+    DockerBuildMessage,
+    DockerClientDriver,
+    DockerContainerConfig,
+    DockerContainerDriver,
+    DockerExecOutput,
+    createDockerClient,
+} from './docker-driver';
+export {
+    DockerBackendOptions,
+    DockerBackend,
+    DockerWorkspaceOptions,
+    DockerWorkspace,
+} from './docker';

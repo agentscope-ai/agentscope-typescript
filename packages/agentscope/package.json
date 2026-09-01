@@ -167,5 +167,8 @@
         "ws": "^8.18.3",
         "zod": "^4.3.6",
         "zod-to-json-schema": "^3.25.1"
+    },
+    "optionalDependencies": {
+        "dockerode": "^4.0.12"
     }
 }
