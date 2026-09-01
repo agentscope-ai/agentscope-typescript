@@ -169,6 +169,7 @@
         "zod-to-json-schema": "^3.25.1"
     },
     "optionalDependencies": {
+        "@daytona/sdk": "^0.207.0",
         "dockerode": "^4.0.12",
         "e2b": "^2.46.1"
     }

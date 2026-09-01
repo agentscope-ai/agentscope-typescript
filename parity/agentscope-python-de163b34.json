@@ -5502,36 +5502,47 @@
             "sha256": "b696ae03aee258be9891655431b5ac6be68ecd4879cbefbc453ae8a73bae8ecd",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/backend_daytona_test.py", "tests/workspace_daytona_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/daytona-driver.test.ts",
+                "packages/agentscope/src/workspace/daytona.live.test.ts",
+                "packages/agentscope/src/workspace/daytona.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_daytona/_constants.py",
             "sha256": "f174ebf8314328e71d7bebafd0ce0c222b241539a9e8b7beb7f6580a4565db4b",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_daytona_test.py"],
+            "typescriptTests": ["packages/agentscope/src/workspace/daytona.parity.test.ts"]
         },
         {
             "path": "src/agentscope/workspace/_daytona/_daytona_backend.py",
             "sha256": "7e3120ccce12cd8c000308ff5d0a331957d73285c0a986c275bb27e44bcb877f",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/backend_daytona_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/daytona-driver.test.ts",
+                "packages/agentscope/src/workspace/daytona.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_daytona/_daytona_workspace.py",
             "sha256": "af4428529dbfbbc7d468113da91e4153cc3101c0b73c2968046a10b546658b51",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_daytona_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/daytona-driver.test.ts",
+                "packages/agentscope/src/workspace/daytona.live.test.ts",
+                "packages/agentscope/src/workspace/daytona.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_docker/__init__.py",

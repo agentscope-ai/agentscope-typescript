@@ -118,3 +118,24 @@ export {
     E2BWorkspaceOptions,
     E2BWorkspace,
 } from './e2b';
+export {
+    DaytonaClientDriver,
+    DaytonaClientOptions,
+    DaytonaCommandOutput,
+    DaytonaCreateOptions,
+    DaytonaListOptions,
+    DaytonaSandboxDriver,
+    DaytonaSandboxState,
+    createDaytonaClient,
+} from './daytona-driver';
+export {
+    DAYTONA_GATEWAY_HOME_NAME,
+    DAYTONA_WORKSPACE_ID_METADATA_KEY,
+    DEFAULT_DAYTONA_GATEWAY_PORT,
+    DEFAULT_DAYTONA_SWEEP_INTERVAL,
+    DEFAULT_DAYTONA_TIMEOUT,
+    DaytonaBackendOptions,
+    DaytonaBackend,
+    DaytonaWorkspaceOptions,
+    DaytonaWorkspace,
+} from './daytona';
