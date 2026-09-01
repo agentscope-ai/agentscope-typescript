@@ -22,5 +22,5 @@ export default defineConfig({
     clean: true,
     outDir: 'dist',
     sourcemap: true,
-    external: ['better-sqlite3', 'redis'],
+    external: ['@larksuite/channel', 'better-sqlite3', 'discord.js', 'redis', 'ws'],
 });

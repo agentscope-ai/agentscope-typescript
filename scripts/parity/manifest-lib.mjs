@@ -100,7 +100,10 @@ export function typescriptTarget(sourcePath) {
     const firstPart = parts[0];
 
     if (firstPart === 'app') {
-        const appPath = parts.slice(1, -1).join('/').replaceAll('_', '-');
+        const appPath = parts
+            .slice(1, -1)
+            .map(segment => segment.replace(/^_/, '').replaceAll('_', '-'))
+            .join('/');
         return appPath ? `${SERVICE_ROOT}/${appPath}` : SERVICE_ROOT;
     }
 

@@ -88,13 +88,17 @@
     "optionalDependencies": {
         "@aws-sdk/client-s3": "^3.1121.0",
         "@aws-sdk/lib-storage": "^3.1121.0",
+        "@larksuite/channel": "0.6.0",
         "better-sqlite3": "^12.11.1",
-        "redis": "^5.12.1"
+        "discord.js": "14.26.0",
+        "redis": "^5.12.1",
+        "ws": "8.21.3"
     },
     "devDependencies": {
         "@types/jest": "^30.0.0",
         "@types/mime-types": "^3.0.1",
         "@types/node": "^22.19.15",
+        "@types/ws": "8.18.1",
         "jest": "^30.2.0",
         "ts-jest": "^29.4.6",
         "tsup": "^8.5.1",

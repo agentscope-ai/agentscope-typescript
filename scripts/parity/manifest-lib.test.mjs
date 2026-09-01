@@ -20,6 +20,10 @@ test('maps core and service source paths', () => {
         typescriptTarget('src/agentscope/app/message_bus/_base.py'),
         'packages/agentscope-service/src/message-bus'
     );
+    assert.equal(
+        typescriptTarget('src/agentscope/app/channel/_dingtalk/_tools/_send_message.py'),
+        'packages/agentscope-service/src/channel/dingtalk/tools'
+    );
     assert.equal(typescriptTarget('src/agentscope/_logging.py'), 'packages/agentscope/src/logger');
     assert.equal(sourceModule('src/agentscope/py.typed'), 'root');
     assert.equal(typescriptTarget('src/agentscope/py.typed'), 'packages/agentscope');
