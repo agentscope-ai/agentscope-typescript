@@ -12,6 +12,16 @@
             "import": "./dist/index.mjs",
             "require": "./dist/index.js"
         },
+        "./access": {
+            "types": "./dist/access/index.d.ts",
+            "import": "./dist/access/index.mjs",
+            "require": "./dist/access/index.js"
+        },
+        "./message-bus": {
+            "types": "./dist/message-bus/index.d.ts",
+            "import": "./dist/message-bus/index.mjs",
+            "require": "./dist/message-bus/index.js"
+        },
         "./storage": {
             "types": "./dist/storage/index.d.ts",
             "import": "./dist/storage/index.mjs",
