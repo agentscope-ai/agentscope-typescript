@@ -1,0 +1,47 @@
+{
+    "python_commit": "de163b34b909edaba3c174190ad7e1a355e7849f",
+    "rule": {
+        "tool_name": "Bash",
+        "rule_content": "git status:*",
+        "behavior": "allow",
+        "source": "python-fixture"
+    },
+    "context": {
+        "mode": "accept_edits",
+        "working_directories": {
+            "/workspace": {
+                "path": "/workspace",
+                "source": "session"
+            }
+        },
+        "allow_rules": {
+            "Bash": [
+                {
+                    "tool_name": "Bash",
+                    "rule_content": "git status:*",
+                    "behavior": "allow",
+                    "source": "python-fixture"
+                }
+            ]
+        },
+        "deny_rules": {},
+        "ask_rules": {}
+    },
+    "decision": {
+        "behavior": "ask",
+        "message": "Permission required for Bash",
+        "decision_reason": "Mode: accept_edits",
+        "updated_input": {
+            "command": "git status"
+        },
+        "suggested_rules": [
+            {
+                "tool_name": "Bash",
+                "rule_content": "git status:*",
+                "behavior": "allow",
+                "source": "python-fixture"
+            }
+        ],
+        "bypass_immune": true
+    }
+}

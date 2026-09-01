@@ -1,52 +1,11 @@
-/**
- * The mode of permission.
- *
- * Permission modes control how the system handles tool execution requests.
- * Different modes are suitable for different scenarios:
- *
- * - `DEFAULT`: Every operation asks for permission unless an allow rule
- *   matches, OR the tool's `checkPermissions` explicitly returns `ALLOW`
- *   for the invocation (currently only `Bash` auto-allows recognized
- *   read-only commands such as `ls`/`git status`). `Read`/`Glob`/`Grep`
- *   return `PASSTHROUGH` and fall through to the default `ASK` unless an
- *   allow rule matches.
- * - `ACCEPT_EDITS`: Auto-allow file writes / reads in working directories
- *   and filesystem bash commands (`mkdir`, `rm`, `mv`, `cp`, ...) when all
- *   target paths resolve inside a working directory. Other operations
- *   follow normal rules.
- * - `EXPLORE`: Read-only mode. Allows read-only tools (`Read`/`Grep`/
- *   `Glob`) and read-only bash commands (e.g. `ls`, `git status`); denies
- *   any modification tool / command. User-configured `DENY` or `ASK`
- *   rules take precedence over the read-only auto-allow.
- * - `BYPASS`: Skip all permission checks except explicit user-configured
- *   `DENY` / `ASK` rules and tool `DENY`. Safety `ASK`s from tools are
- *   NOT enforced. Use deny rules to protect specific paths.
- * - `DONT_ASK`: Convert every `ASK` (including safety `ASK`s and `ASK`-
- *   rule hits) to `DENY`. Safe-by-default for unattended execution.
- */
-export enum PermissionMode {
-    DEFAULT = 'default',
-    ACCEPT_EDITS = 'accept_edits',
-    EXPLORE = 'explore',
-    BYPASS = 'bypass',
-    DONT_ASK = 'dont_ask',
-}
+import { PermissionBehavior, PermissionMode } from './runtime';
 
-/**
- * The behavior of permission.
- *
- * - `ALLOW`: Allow the operation.
- * - `DENY`: Deny the operation.
- * - `ASK`: Ask the user for permission.
- * - `PASSTHROUGH`: Let the permission engine continue with rule matching
- *   (used by tools to defer decision to the engine).
- */
-export enum PermissionBehavior {
-    ALLOW = 'allow',
-    DENY = 'deny',
-    ASK = 'ask',
-    PASSTHROUGH = 'passthrough',
-}
+export {
+    PermissionBehavior,
+    PermissionMode,
+    CreatePermissionDecisionOptions,
+    createPermissionDecision,
+} from './runtime';
 
 /**
  * Permission rule for tool usage.
@@ -199,3 +158,14 @@ export interface PermissionDecision {
      */
     bypass_immune?: boolean;
 }
+
+export { MaybePromise, PermissionTool, PermissionEngine } from './engine';
+export {
+    PermissionRuleSchema,
+    AdditionalWorkingDirectorySchema,
+    PermissionContextSchema,
+    PermissionDecisionSchema,
+    parsePermissionRule,
+    parsePermissionContext,
+    parsePermissionDecision,
+} from './schema';

@@ -2789,54 +2789,78 @@
             "sha256": "3dc31ced74ccda31d0d2d6cd916253a6b4768fb12820899a02a77777f62d3ba1",
             "module": "permission",
             "typescriptTarget": "packages/agentscope/src/permission",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/permission_engine_test.py", "tests/permission_mode_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/permission/engine.test.ts",
+                "packages/agentscope/src/permission/schema.test.ts",
+                "packages/agentscope/test/parity/permission.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/permission/_context.py",
             "sha256": "7d1d09dfc6a5ef62a8a75a03d185ddbc1352b5c37b1f5eab73d31989d2ad1bba",
             "module": "permission",
             "typescriptTarget": "packages/agentscope/src/permission",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/permission_engine_test.py", "tests/permission_mode_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/permission/engine.test.ts",
+                "packages/agentscope/src/permission/schema.test.ts",
+                "packages/agentscope/test/parity/permission.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/permission/_decision.py",
             "sha256": "500de4ea9840ea35c64a701d3df657d2662d23976e573f9ccbb1e8e6d059bfce",
             "module": "permission",
             "typescriptTarget": "packages/agentscope/src/permission",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/permission_engine_test.py", "tests/permission_mode_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/permission/engine.test.ts",
+                "packages/agentscope/src/permission/schema.test.ts",
+                "packages/agentscope/test/parity/permission.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/permission/_engine.py",
             "sha256": "9142e0ecf173542a197562b802879e4e84491436ec3f17a691e11ebc9a0654c7",
             "module": "permission",
             "typescriptTarget": "packages/agentscope/src/permission",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/permission_engine_test.py", "tests/permission_mode_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/permission/engine.test.ts",
+                "packages/agentscope/src/permission/schema.test.ts",
+                "packages/agentscope/test/parity/permission.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/permission/_rule.py",
             "sha256": "e52409882d9464c54bfa4f9c56a94bdad2f0a9e32e315ac84b6e3ede35a58bd5",
             "module": "permission",
             "typescriptTarget": "packages/agentscope/src/permission",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/permission_engine_test.py", "tests/permission_mode_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/permission/engine.test.ts",
+                "packages/agentscope/src/permission/schema.test.ts",
+                "packages/agentscope/test/parity/permission.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/permission/_types.py",
             "sha256": "cdc9d544d600a1b375bd2942eb5ecd3b9b3df91bcf0909007711366cfa40ef3f",
             "module": "permission",
             "typescriptTarget": "packages/agentscope/src/permission",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/permission_engine_test.py", "tests/permission_mode_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/permission/engine.test.ts",
+                "packages/agentscope/src/permission/schema.test.ts",
+                "packages/agentscope/test/parity/permission.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/pipeline/__init__.py",
