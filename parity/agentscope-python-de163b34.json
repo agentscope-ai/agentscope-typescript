@@ -3957,45 +3957,65 @@
             "sha256": "b1b2dec84b8b483d7b65514d9b7149acec0b49be4d8e943e9bbb43a07ec627b8",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/rag_chunker_approx_token_test.py", "tests/rag_parser_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/chunker.parity.test.ts",
+                "packages/agentscope/src/rag/office-parser.parity.test.ts",
+                "packages/agentscope/src/rag/parser.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_chunker/__init__.py",
             "sha256": "003dfa3ad3ba866755b8078cabc92e3c36803c919f357d3847dbf9623d6771c5",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/rag_chunker_approx_token_test.py", "tests/rag_parser_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/chunker.parity.test.ts",
+                "packages/agentscope/src/rag/office-parser.parity.test.ts",
+                "packages/agentscope/src/rag/parser.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_chunker/_approx_token_chunker.py",
             "sha256": "4210bba827b99788021f31f7de4fe4d7e5037d543f59a7b2b59ea3e9cbe6afad",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/rag_chunker_approx_token_test.py", "tests/rag_parser_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/chunker.parity.test.ts",
+                "packages/agentscope/src/rag/office-parser.parity.test.ts",
+                "packages/agentscope/src/rag/parser.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_chunker/_base.py",
             "sha256": "8c4c7408b06363d4bbc61ee4d07c131bab4cc6b0ef8d7413d3a3ad660ac9ca37",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/rag_chunker_approx_token_test.py", "tests/rag_parser_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/chunker.parity.test.ts",
+                "packages/agentscope/src/rag/office-parser.parity.test.ts",
+                "packages/agentscope/src/rag/parser.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_document.py",
             "sha256": "b0d09fa77ead1ef9429fbe506db65c992581c3a862bfe00e574683bb33c8fd1f",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/rag_chunker_approx_token_test.py", "tests/rag_parser_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/chunker.parity.test.ts",
+                "packages/agentscope/src/rag/office-parser.parity.test.ts",
+                "packages/agentscope/src/rag/parser.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_knowledge.py",
@@ -4011,81 +4031,117 @@
             "sha256": "82264a7178d6ee464d794ace0646643a36054a76e1205bd070f8df3242699016",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/rag_chunker_approx_token_test.py", "tests/rag_parser_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/chunker.parity.test.ts",
+                "packages/agentscope/src/rag/office-parser.parity.test.ts",
+                "packages/agentscope/src/rag/parser.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_parser/_base.py",
             "sha256": "ca02c73e3cb611eec94eb244c2f9262c9b590eba053f6d5957c4d3df16372bd4",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/rag_chunker_approx_token_test.py", "tests/rag_parser_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/chunker.parity.test.ts",
+                "packages/agentscope/src/rag/office-parser.parity.test.ts",
+                "packages/agentscope/src/rag/parser.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_parser/_excel.py",
             "sha256": "66c18117106a0f110ca205a63bd488303d94ca6a636e6ff4b01261a14d517bdd",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/rag_chunker_approx_token_test.py", "tests/rag_parser_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/chunker.parity.test.ts",
+                "packages/agentscope/src/rag/office-parser.parity.test.ts",
+                "packages/agentscope/src/rag/parser.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_parser/_image.py",
             "sha256": "cbe5bf1138c81ca8990d10a345c1c003c8dd051244468d8cfd6442449f7048e4",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/rag_chunker_approx_token_test.py", "tests/rag_parser_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/chunker.parity.test.ts",
+                "packages/agentscope/src/rag/office-parser.parity.test.ts",
+                "packages/agentscope/src/rag/parser.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_parser/_pdf.py",
             "sha256": "3c9e51f99d039030fece7c7636caa99e1dd45504d07f6b3290d10dd97761ea18",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/rag_chunker_approx_token_test.py", "tests/rag_parser_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/chunker.parity.test.ts",
+                "packages/agentscope/src/rag/office-parser.parity.test.ts",
+                "packages/agentscope/src/rag/parser.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_parser/_ppt.py",
             "sha256": "4d7e41b9a44f267c942f1c9687b3a8fc6c258c441ea50ceb56c370cc8c1ab7aa",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/rag_chunker_approx_token_test.py", "tests/rag_parser_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/chunker.parity.test.ts",
+                "packages/agentscope/src/rag/office-parser.parity.test.ts",
+                "packages/agentscope/src/rag/parser.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_parser/_text.py",
             "sha256": "0a78e47eebcd21e8d0297aaeea01b24776a78b992b9dcbe4d42e51bd70b4a434",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/rag_chunker_approx_token_test.py", "tests/rag_parser_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/chunker.parity.test.ts",
+                "packages/agentscope/src/rag/office-parser.parity.test.ts",
+                "packages/agentscope/src/rag/parser.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_parser/_utils.py",
             "sha256": "c4d538f54d939a813d07ba47fbb9049e1d167fba40cb3b5bcb9f9753096d420d",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/rag_chunker_approx_token_test.py", "tests/rag_parser_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/chunker.parity.test.ts",
+                "packages/agentscope/src/rag/office-parser.parity.test.ts",
+                "packages/agentscope/src/rag/parser.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_parser/_word.py",
             "sha256": "4c5bf223586df81a34013122cb3363f4f2def1062514f7a00d293da9e9e66bc3",
             "module": "rag",
             "typescriptTarget": "packages/agentscope/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/rag_chunker_approx_token_test.py", "tests/rag_parser_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/rag/chunker.parity.test.ts",
+                "packages/agentscope/src/rag/office-parser.parity.test.ts",
+                "packages/agentscope/src/rag/parser.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/rag/_vdb/__init__.py",

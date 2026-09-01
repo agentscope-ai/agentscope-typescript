@@ -24,6 +24,7 @@ export default defineConfig({
         'embedding/index': 'src/embedding/index.ts',
         'tts/index': 'src/tts/index.ts',
         'workspace/index': 'src/workspace/index.ts',
+        'rag/index': 'src/rag/index.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,
