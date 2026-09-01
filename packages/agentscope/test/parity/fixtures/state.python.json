@@ -1,0 +1,83 @@
+{
+    "python_commit": "de163b34b909edaba3c174190ad7e1a355e7849f",
+    "task": {
+        "subject": "Implement state",
+        "description": "Align Python",
+        "metadata": { "priority": 1 },
+        "created_at": "2026-09-01T12:34:56.123456",
+        "state": "pending",
+        "id": "task-id",
+        "owner": "Friday",
+        "blocks": ["task-2"],
+        "blocked_by": ["task-0"]
+    },
+    "state": {
+        "session_id": "session-id",
+        "summary": "summary",
+        "context": [
+            {
+                "name": "Friday",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "hello",
+                        "id": "text-id",
+                        "created_at": "2026-09-01T12:34:56.123456",
+                        "finished_at": null
+                    }
+                ],
+                "role": "assistant",
+                "id": "reply-id",
+                "metadata": {},
+                "created_at": "2026-09-01T12:34:56.123456",
+                "usage": null,
+                "finished_at": null,
+                "finished_reason": null,
+                "structured_output": null,
+                "error": null
+            }
+        ],
+        "reply_context": {
+            "reply_id": "reply-id",
+            "cur_iter": 2,
+            "structured_schema": { "type": "object" },
+            "structured_output": { "answer": 42 }
+        },
+        "permission_context": {
+            "mode": "default",
+            "working_directories": {},
+            "allow_rules": {},
+            "deny_rules": {},
+            "ask_rules": {}
+        },
+        "tool_context": {
+            "max_cache_files": 3,
+            "max_cache_bytes": 12000.0,
+            "read_file_cache": [
+                {
+                    "lines": ["hello\n"],
+                    "updated_at": 1.5,
+                    "bytes": 0.005859375,
+                    "file_path": "/tmp/a"
+                }
+            ],
+            "activated_groups": ["filesystem"]
+        },
+        "tasks_context": {
+            "tasks": [
+                {
+                    "subject": "Implement state",
+                    "description": "Align Python",
+                    "metadata": { "priority": 1 },
+                    "created_at": "2026-09-01T12:34:56.123456",
+                    "state": "pending",
+                    "id": "task-id",
+                    "owner": "Friday",
+                    "blocks": ["task-2"],
+                    "blocked_by": ["task-0"]
+                }
+            ]
+        },
+        "middle_context": { "trace": "value" }
+    }
+}

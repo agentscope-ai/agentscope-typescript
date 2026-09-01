@@ -3095,27 +3095,57 @@
             "sha256": "81ef02f268e8cf9c0e1139a8343875dfeb0af6f3256565243218fc4d8c93cf81",
             "module": "state",
             "typescriptTarget": "packages/agentscope/src/state",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agent_injection_test.py",
+                "tests/agent_structured_output_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/task_tool_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/state/agent-state.test.ts",
+                "packages/agentscope/src/state/task.test.ts",
+                "packages/agentscope/src/state/tool-context.test.ts",
+                "packages/agentscope/test/parity/state.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/state/_state.py",
             "sha256": "9932e6447eb4c6152659400e2beef9929ba0e81e48c5b3a94b1f621bb2477e31",
             "module": "state",
             "typescriptTarget": "packages/agentscope/src/state",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agent_injection_test.py",
+                "tests/agent_structured_output_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/task_tool_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/state/agent-state.test.ts",
+                "packages/agentscope/src/state/task.test.ts",
+                "packages/agentscope/src/state/tool-context.test.ts",
+                "packages/agentscope/test/parity/state.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/state/_task.py",
             "sha256": "5f496458b085da159c7a30be45886667d674a4fb5334a04a2b9568ea1481ec8e",
             "module": "state",
             "typescriptTarget": "packages/agentscope/src/state",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agent_injection_test.py",
+                "tests/agent_structured_output_test.py",
+                "tests/builtin_file_cache_test.py",
+                "tests/task_tool_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/state/agent-state.test.ts",
+                "packages/agentscope/src/state/task.test.ts",
+                "packages/agentscope/src/state/tool-context.test.ts",
+                "packages/agentscope/test/parity/state.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/tool/__init__.py",
