@@ -134,7 +134,10 @@ jobs:
               run: pnpm run build:desktop
 
             - name: Rebuild SQLite native module for Node tests
-              run: npx --yes pnpm@9.15.9 rebuild better-sqlite3
+              run: >-
+                  npx --yes pnpm@9.15.9
+                  --filter @agentscope-ai/agentscope
+                  rebuild better-sqlite3
 
             - name: Run Desktop runtime tests
               run: pnpm --filter @agentscope-ai/desktop test
