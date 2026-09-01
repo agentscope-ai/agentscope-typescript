@@ -6,6 +6,8 @@ import type { ToolBase } from '@agentscope-ai/agentscope/tool';
 import type { WorkspaceBase } from '@agentscope-ai/agentscope/workspace';
 
 import type { ResourceAccessPolicyBase } from './access';
+import type { ChannelConstructor } from './channel';
+import type { MCPHubBase, SkillHubBase } from './hub';
 import type { MessageBus } from './message-bus';
 import type { BlobStoreBase, KnowledgeBaseManagerBase } from './rag';
 import type { ChannelClientsLike, EventProjector } from './service/chat-service';
@@ -51,6 +53,9 @@ export interface AgentScopeServiceAppOptions {
     resourceAccessPolicy?: ResourceAccessPolicyBase | null;
     extraProjectors?: EventProjector[];
     channelClients?: ChannelClientsLike | null;
+    channels?: ChannelConstructor[];
+    mcpHubs?: MCPHubBase[];
+    skillHubs?: SkillHubBase[];
     additionalResources?: ServiceLifecycleResource[];
     downloadSecret?: string | null;
     title?: string;

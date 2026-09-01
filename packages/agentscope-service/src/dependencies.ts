@@ -31,6 +31,10 @@ export const getDownloadSecret = (app: AgentScopeServiceApp) => app.downloadSecr
 export const getExtraAgentMiddlewares = (app: AgentScopeServiceApp) => app.extraAgentMiddlewares;
 export const getExtraAgentTools = (app: AgentScopeServiceApp) => app.extraAgentTools;
 export const getChannelClients = (app: AgentScopeServiceApp) => app.channelClients;
+export const getChannelTypeRegistry = (app: AgentScopeServiceApp) => app.channelTypeRegistry;
+export const getChannelService = (app: AgentScopeServiceApp) => app.services.channel;
+export const getMCPHubs = (app: AgentScopeServiceApp) => app.mcpHubs;
+export const getSkillHubs = (app: AgentScopeServiceApp) => app.skillHubs;
 export const getResourceAccessService = (app: AgentScopeServiceApp) => app.services.resourceAccess;
 export const getChatService = (app: AgentScopeServiceApp) => app.services.chat;
 export const getSessionService = (app: AgentScopeServiceApp) => app.services.session;

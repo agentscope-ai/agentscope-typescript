@@ -10,6 +10,8 @@ import { VERSION } from '@agentscope-ai/agentscope/version';
 
 import { DenyAllResourceAccessPolicy } from './access';
 import type { AgentScopeServiceAppOptions, SubAgentTemplate } from './app-types';
+import { ChannelClients, ChannelTypeRegistry } from './channel';
+import type { MCPHubBase, SkillHubBase } from './hub';
 import { AsyncLifecycleStack } from './lifespan';
 import {
     BackgroundTaskManager,
@@ -22,6 +24,7 @@ import type { MessageBus } from './message-bus';
 import { LocalBlobStore, type BlobStoreBase, type KnowledgeBaseManagerBase } from './rag';
 import {
     ChatService,
+    ChannelService,
     IndexSweeper,
     IndexTaskConsumer,
     IndexWorker,
@@ -48,6 +51,7 @@ export interface AgentScopeServices {
     session: SessionService;
     workspace: WorkspaceService;
     knowledgeBase: KnowledgeBaseService | null;
+    channel: ChannelService;
 }
 
 /** Framework-independent AgentScope service composition root. */
@@ -68,6 +72,9 @@ export class AgentScopeServiceApp {
     readonly extraAgentMiddlewares: AgentScopeServiceAppOptions['extraAgentMiddlewares'];
     readonly extraAgentTools: AgentScopeServiceAppOptions['extraAgentTools'];
     readonly channelClients: AgentScopeServiceAppOptions['channelClients'];
+    readonly channelTypeRegistry: ChannelTypeRegistry;
+    readonly mcpHubs: ReadonlyMap<string, MCPHubBase>;
+    readonly skillHubs: ReadonlyMap<string, SkillHubBase>;
 
     private readonly options: AgentScopeServiceAppOptions;
     private stack: AsyncLifecycleStack | null = null;
@@ -98,7 +105,12 @@ export class AgentScopeServiceApp {
         this.customSubagentTemplates = indexTemplates(options.customSubagentTemplates ?? []);
         this.extraAgentMiddlewares = options.extraAgentMiddlewares ?? null;
         this.extraAgentTools = options.extraAgentTools ?? null;
-        this.channelClients = options.channelClients ?? null;
+        this.channelTypeRegistry = new ChannelTypeRegistry(options.channels ?? []);
+        this.channelClients =
+            options.channelClients ??
+            new ChannelClients(this.storage, this.messageBus, this.channelTypeRegistry);
+        this.mcpHubs = indexHubs(options.mcpHubs ?? [], 'MCP');
+        this.skillHubs = indexHubs(options.skillHubs ?? [], 'skill');
         validateChunkers(this.knowledgeChunkers ?? []);
         for (const credential of options.extraCredentials ?? []) {
             CredentialFactory.registerCredential(credential);
@@ -166,6 +178,15 @@ export class AgentScopeServiceApp {
                 await resource.open?.();
                 stack.defer(async () => resource.close?.());
             }
+            for (const hub of [...this.mcpHubs.values(), ...this.skillHubs.values()]) {
+                await hub.open();
+                stack.defer(() => hub.close());
+            }
+            if (this.channelClients instanceof ChannelClients) {
+                const channelClients = this.channelClients;
+                await channelClients.open();
+                stack.defer(() => channelClients.close());
+            }
 
             const backgroundTasks = await new BackgroundTaskManager(this.messageBus).open();
             stack.defer(() => backgroundTasks.close());
@@ -209,6 +230,11 @@ export class AgentScopeServiceApp {
                 this.storage,
                 this.workspaceManager,
                 this.downloadSecret
+            );
+            const channel = new ChannelService(
+                this.storage,
+                this.messageBus,
+                this.channelTypeRegistry
             );
             let knowledgeBase: KnowledgeBaseService | null = null;
 
@@ -264,7 +290,14 @@ export class AgentScopeServiceApp {
                 wakeups,
                 cancellations,
             };
-            this.runtimeServices = { resourceAccess, chat, session, workspace, knowledgeBase };
+            this.runtimeServices = {
+                resourceAccess,
+                chat,
+                session,
+                workspace,
+                knowledgeBase,
+                channel,
+            };
             this.stack = stack;
             return this;
         } catch (error) {
@@ -281,6 +314,20 @@ export class AgentScopeServiceApp {
         this.runtimeServices = null;
         await stack?.close();
     }
+}
+
+function indexHubs<T extends MCPHubBase | SkillHubBase>(
+    hubs: T[],
+    kind: string
+): ReadonlyMap<string, T> {
+    const indexed = new Map<string, T>();
+    for (const hub of hubs) {
+        if (indexed.has(hub.hubId)) {
+            throw new Error(`Duplicate ${kind} hub id '${hub.hubId}'.`);
+        }
+        indexed.set(hub.hubId, hub);
+    }
+    return indexed;
 }
 
 export function createApp(options: AgentScopeServiceAppOptions): AgentScopeServiceApp {
