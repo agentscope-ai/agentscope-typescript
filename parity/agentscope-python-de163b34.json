@@ -1762,99 +1762,105 @@
             "sha256": "edcfb98ae1bed7a8bbb4436de9599a9ddb2954458475fba32b0eae4bba97c7ff",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/workspace-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/workspace_manager_local_test.py",
+                "tests/workspace_prewarm_test.py"
+            ],
+            "typescriptTests": ["packages/agentscope-service/test/workspace-manager.test.ts"]
         },
         {
             "path": "src/agentscope/app/workspace_manager/_applecontainer_workspace_manager.py",
             "sha256": "325ea59912e61c2d46e3a9642e08a85bfc2e91ea5e8b5c6195c8699cb5234765",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/workspace-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_manager_applecontainer_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/workspace-manager-remote.test.ts"]
         },
         {
             "path": "src/agentscope/app/workspace_manager/_base.py",
             "sha256": "261e00a36903e3d441b66dbe24c261a1d8b5263e5aa089b3676ddb206cddadf5",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/workspace-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/workspace_manager_local_test.py",
+                "tests/workspace_prewarm_test.py"
+            ],
+            "typescriptTests": ["packages/agentscope-service/test/workspace-manager.test.ts"]
         },
         {
             "path": "src/agentscope/app/workspace_manager/_bubblewrap_workspace_manager.py",
             "sha256": "f17c64e86c9b15bc2f1778c5eda42559ba58385ca9dbf5c8f4986d0d523336cc",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/workspace-manager",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": ["packages/agentscope-service/test/workspace-manager-remote.test.ts"]
         },
         {
             "path": "src/agentscope/app/workspace_manager/_daytona_workspace_manager.py",
             "sha256": "671e985086cee21c02df8a8e7f7073097add330f8031ae710da2d3c800e95890",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/workspace-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_manager_daytona_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/workspace-manager-remote.test.ts"]
         },
         {
             "path": "src/agentscope/app/workspace_manager/_docker_workspace_manager.py",
             "sha256": "70d05aa5bdd962ba9e00d987f0be17d6e58cbcb9eecf70551cedbbf409655d69",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/workspace-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_manager_docker_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/workspace-manager-remote.test.ts"]
         },
         {
             "path": "src/agentscope/app/workspace_manager/_e2b_workspace_manager.py",
             "sha256": "90a70a722721b2c8d12a4610eb8a69991e27905f243c37c16183b524725810a5",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/workspace-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_manager_e2b_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/workspace-manager-remote.test.ts"]
         },
         {
             "path": "src/agentscope/app/workspace_manager/_k8s_workspace_manager.py",
             "sha256": "c938c194232f98ac83f60fe600cc2ef9fd615de1ba16869261cdda402a567f73",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/workspace-manager",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": ["packages/agentscope-service/test/workspace-manager-remote.test.ts"]
         },
         {
             "path": "src/agentscope/app/workspace_manager/_local_workspace_manager.py",
             "sha256": "e68eb8a7cea4916e7e328442adcd9ac9b9a45d59aa57524dac8e4ba0b1c339a1",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/workspace-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_manager_local_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/workspace-manager.test.ts"]
         },
         {
             "path": "src/agentscope/app/workspace_manager/_opensandbox_workspace_manager.py",
             "sha256": "4c4b066e637d709b7ea2599764ff23378092ba0a94d81dd317edf09c1d6ca457",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/workspace-manager",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": ["packages/agentscope-service/test/workspace-manager-remote.test.ts"]
         },
         {
             "path": "src/agentscope/app/workspace_manager/_prewarm.py",
             "sha256": "e77be7bd4779997f06dcd6255d106be86be2db1b2cb867e3d9d977ad3acaa81b",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/workspace-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_prewarm_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/workspace-manager.test.ts"]
         },
         {
             "path": "src/agentscope/console/__init__.py",

@@ -24,6 +24,7 @@ export interface E2BSandboxDriver {
     writeFile(filePath: string, data: Uint8Array): Promise<void>;
     isRunning(): Promise<boolean>;
     pause(): Promise<boolean | void>;
+    kill(): Promise<void>;
 }
 
 export interface E2BApiOptions {
@@ -77,6 +78,7 @@ interface RawSandbox {
     };
     isRunning(): Promise<boolean>;
     pause(): Promise<boolean>;
+    kill(): Promise<void>;
 }
 
 interface RawPaginator {
@@ -199,6 +201,10 @@ class E2BSdkSandbox implements E2BSandboxDriver {
 
     async pause(): Promise<boolean> {
         return this.sandbox.pause();
+    }
+
+    async kill(): Promise<void> {
+        await this.sandbox.kill();
     }
 }
 

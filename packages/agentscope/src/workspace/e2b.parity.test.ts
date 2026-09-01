@@ -277,6 +277,32 @@ describe('E2BWorkspace Python parity', () => {
         expect(workspace.isAlive).toBe(false);
     });
 
+    test('permanently destroys an unclaimed sandbox without pausing it', async () => {
+        const client = new FakeClient();
+        const workspace = new TestE2BWorkspace({ client });
+        await workspace.initialize();
+
+        await workspace.destroy();
+
+        expect(client.created.killCalls).toBe(1);
+        expect(client.created.pauseCalls).toBe(0);
+        expect(workspace.sandboxId).toBeNull();
+        expect(workspace.isAlive).toBe(false);
+    });
+
+    test('retains the sandbox handle when permanent destruction fails', async () => {
+        const client = new FakeClient();
+        const workspace = new TestE2BWorkspace({ client });
+        await workspace.initialize();
+        client.created.killError = new Error('kill failed');
+
+        await expect(workspace.destroy()).rejects.toThrow('kill failed');
+
+        expect(workspace.sandboxId).toBe(client.created.sandboxId);
+        await workspace.close();
+        expect(client.created.pauseCalls).toBe(1);
+    });
+
     test('matches the five E2B bootstrap commands and quotes extra packages', () => {
         const workspace = new TestE2BWorkspace({
             extraPip: ['normal', 'unsafe; echo injected'],
@@ -357,6 +383,8 @@ class FakeSandbox implements E2BSandboxDriver {
     defaultRunning = true;
     runningCalls = 0;
     pauseCalls = 0;
+    killCalls = 0;
+    killError: Error | null = null;
     pauseError: Error | null = null;
     readError: Error | null = null;
 
@@ -391,5 +419,10 @@ class FakeSandbox implements E2BSandboxDriver {
         this.pauseCalls += 1;
         if (this.pauseError) throw this.pauseError;
         return true;
+    }
+
+    async kill(): Promise<void> {
+        this.killCalls += 1;
+        if (this.killError) throw this.killError;
     }
 }

@@ -49,9 +49,9 @@ export abstract class WorkspaceManagerBase<TWorkspace extends WorkspaceBase = Wo
     }
 
     async assignWorkspaceId(options: AssignWorkspaceOptions): Promise<string> {
-        if (this.isolation === 'per_user') return blake2b64(`user::${options.userId}`);
+        if (this.isolation === 'per_user') return blake2bHex(`user::${options.userId}`, 8);
         if (this.isolation === 'per_session') return this.mintWorkspaceId(options.signal);
-        if (!this.storage) return blake2b64(`${options.userId}::${options.agentId}`);
+        if (!this.storage) return blake2bHex(`${options.userId}::${options.agentId}`, 8);
 
         const key = `${options.userId}\0${options.agentId}`;
         const mutex = this.bindingLocks.get(key) ?? new AsyncMutex();
@@ -143,10 +143,19 @@ function blakeMix(
     values[b] = rotateRight(values[b] ^ values[c], 63n);
 }
 
-function blake2b64(input: string): string {
+/**
+ * Compute Python-compatible BLAKE2b output for filesystem and binding identifiers.
+ * @param input Input text.
+ * @param digestBytes Output size in bytes.
+ * @returns Lowercase hexadecimal digest.
+ */
+export function blake2bHex(input: string, digestBytes: number): string {
+    if (!Number.isInteger(digestBytes) || digestBytes < 1 || digestBytes > 64) {
+        throw new Error('digestBytes must be an integer between 1 and 64.');
+    }
     const bytes = new TextEncoder().encode(input);
     const state = [...BLAKE2B_IV];
-    state[0] ^= 0x01010008n;
+    state[0] ^= 0x01010000n ^ BigInt(digestBytes);
     const blockCount = Math.max(1, Math.ceil(bytes.length / 128));
     for (let blockIndex = 0; blockIndex < blockCount; blockIndex += 1) {
         const start = blockIndex * 128;
@@ -180,8 +189,8 @@ function blake2b64(input: string): string {
             state[index] = state[index] ^ values[index] ^ values[index + 8];
         }
     }
-    return Array.from({ length: 8 }, (_, index) =>
-        Number((state[0] >> BigInt(index * 8)) & 0xffn)
+    return Array.from({ length: digestBytes }, (_, index) =>
+        Number((state[Math.floor(index / 8)] >> BigInt((index % 8) * 8)) & 0xffn)
             .toString(16)
             .padStart(2, '0')
     ).join('');

@@ -146,6 +146,15 @@ export class E2BWorkspace extends SandboxedWorkspaceBase {
         return this.instructions.replaceAll('{workdir}', E2B_SANDBOX_WORKDIR);
     }
 
+    /** Permanently destroy an unclaimed sandbox instead of pausing it. */
+    async destroy(): Promise<void> {
+        const sandbox = this.sandbox;
+        if (sandbox) await sandbox.kill();
+        this.sandbox = null;
+        this.backend = null;
+        await this.close();
+    }
+
     protected async provisionBackend(): Promise<void> {
         const client = this.client ?? (await createE2BClient());
         this.client = client;
