@@ -2878,9 +2878,17 @@
             "sha256": "3ede5df548ce58264f6efe7d3ad65b15d0dde93965213af0413d5e9d0e7e6b53",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/middleware_filesystem_memory_test.py",
+                "tests/mem0_middleware_test.py",
+                "tests/reme_middleware_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/middleware/agentic-memory.parity.test.ts",
+                "packages/agentscope/src/middleware/mem0.parity.test.ts",
+                "packages/agentscope/src/middleware/reme.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/middleware/_longterm_memory/_agentic_memory/__init__.py",
@@ -2980,45 +2988,45 @@
             "sha256": "c835bc9d99c34b59bcfb874747f831460f6515b0cfd6803ca23abb659920983d",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/reme_middleware_test.py"],
+            "typescriptTests": ["packages/agentscope/src/middleware/reme.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_longterm_memory/_reme/_config.py",
             "sha256": "8a9e647fde27a15cb5bb06309e55304b30681ff61e92847d7cc20ce8424c04eb",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/reme_middleware_test.py"],
+            "typescriptTests": ["packages/agentscope/src/middleware/reme.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_longterm_memory/_reme/_middleware.py",
             "sha256": "551470db3036043988b755193a505c11d196cb534a949396631eabc4b204da98",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/reme_middleware_test.py"],
+            "typescriptTests": ["packages/agentscope/src/middleware/reme.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_longterm_memory/_reme/_tools.py",
             "sha256": "133ccc5157168d44ccddbe2dd2e6fd8d0d1b542792d0eba6bcf927bb5b087d76",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/reme_middleware_test.py"],
+            "typescriptTests": ["packages/agentscope/src/middleware/reme.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_longterm_memory/_reme/_utils.py",
             "sha256": "f63109f3955cf4c6dc777f3b0062e9a7a6d104fdc3407bb7be6bbcbc0d1aaf4a",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/reme_middleware_test.py"],
+            "typescriptTests": ["packages/agentscope/src/middleware/reme.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_rag.py",
@@ -7411,7 +7419,7 @@
             "path": "tests/reme_middleware_test.py",
             "sha256": "48425ad4c3832e7fa62ce2e1ae2d4dfcdbd350b2a05a72dd33ae64b95b13788b",
             "area": "reme",
-            "typescriptTests": []
+            "typescriptTests": ["packages/agentscope/src/middleware/reme.parity.test.ts"]
         },
         {
             "path": "tests/resource_access_policy_test.py",
