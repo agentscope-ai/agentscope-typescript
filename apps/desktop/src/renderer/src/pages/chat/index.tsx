@@ -94,6 +94,13 @@ export function ChatPage() {
         });
     }, [allSessions]);
 
+    useEffect(() => {
+        const currentSession = allSessions.find(session => session.id === currentSessionId);
+        if (currentSession) {
+            setSelectedAgentKey(currentSession.agentKey);
+        }
+    }, [allSessions, currentSessionId]);
+
     const { messages, sending, sendMessage, sendUserConfirm } = useMessages(currentSessionId);
 
     // Set titlebar content with sidebar toggle button
@@ -116,8 +123,6 @@ export function ChatPage() {
         // Clean up titlebar content on unmount
         return () => setTitlebarContent(null);
     }, [sidebarOpen, setTitlebarContent]);
-
-    useEffect(() => {}, [allSessions]);
 
     const handleRenameClick = (session: Session) => {
         setSelectedSessionId(session.id);
@@ -163,7 +168,7 @@ export function ChatPage() {
 
             // Create a new session if there is no current session
             if (!currentSessionId) {
-                const newSession = await createSession();
+                const newSession = await createSession(selectedAgentKey);
                 setCurrentSessionId(newSession.id);
                 await sendMessage(content, newSession.id, selectedAgentKey);
             } else {
@@ -173,12 +178,19 @@ export function ChatPage() {
         [currentSessionId, selectedAgentKey, createSession, sendMessage]
     );
 
-    const handleSessionClick = (sessionId: string) => {
-        setCurrentSessionId(sessionId);
+    const handleSessionClick = (session: Session) => {
+        setCurrentSessionId(session.id);
+        setSelectedAgentKey(session.agentKey);
     };
 
     const handleCreateSession = async () => {
-        const newSession = await createSession();
+        const newSession = await createSession(selectedAgentKey);
+        setCurrentSessionId(newSession.id);
+    };
+
+    const handleAgentChange = async (agentKey: string) => {
+        setSelectedAgentKey(agentKey);
+        const newSession = await createSession(agentKey);
         setCurrentSessionId(newSession.id);
     };
 
@@ -209,7 +221,7 @@ export function ChatPage() {
                                             }
                                             key={session.id}
                                             className="group flex w-full h-9 text-sm items-center px-3 rounded-sm justify-between"
-                                            onClick={() => handleSessionClick(session.id)}
+                                            onClick={() => handleSessionClick(session)}
                                         >
                                             <div className="flex items-center gap-2 truncate">
                                                 {session.pinned && (
@@ -291,7 +303,7 @@ export function ChatPage() {
             )}
             <div className="flex flex-col items-start h-full flex-1">
                 <div className="flex h-fit pt-4 pl-2 w-full">
-                    <Select value={selectedAgentKey} onValueChange={setSelectedAgentKey}>
+                    <Select value={selectedAgentKey} onValueChange={handleAgentChange}>
                         <SelectTrigger size="sm" className="border-none shadow-none">
                             <SelectValue placeholder="Pick agent">
                                 {selectedAgentKey && config?.agents?.[selectedAgentKey] && (

@@ -235,7 +235,7 @@ export class InMemoryStorage extends StorageBase {
                     ...current,
                     config: options.config,
                     state: options.state ?? current.state,
-                    updated_at: now(),
+                    updated_at: options.updatedAt ?? now(),
                 }) as SessionRecord;
                 this.sessions.set(record.id, record);
                 return cloneRecord(record);
@@ -252,6 +252,8 @@ export class InMemoryStorage extends StorageBase {
             source_chat_id: options.sourceChatId,
             source_chat_name: options.sourceChatName,
             source_channel_id: options.sourceChannelId,
+            created_at: options.createdAt,
+            updated_at: options.updatedAt,
         }) as SessionRecord;
         this.assertAvailableOwner(this.sessions.get(record.id), options.userId, 'session');
         this.sessions.set(record.id, record);

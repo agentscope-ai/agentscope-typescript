@@ -22,11 +22,11 @@ pnpm install
 ### Project Structure
 
 ```
-apps/friday/
+apps/desktop/
 ├── src/
 │   ├── main/           # Electron main process
-│   │   ├── agent/      # Agent management
-│   │   ├── services/   # Backend services
+│   │   ├── runtime/    # Shared Service composition adapter
+│   │   ├── services/   # Transport-only IPC and local document data
 │   │   └── index.ts    # Entry point
 │   ├── renderer/       # React frontend
 │   │   ├── components/ # UI components
@@ -54,7 +54,7 @@ pnpm build
 ### Run Tests
 
 ```bash
-pnpm test
+pnpm --filter @agentscope-ai/desktop test
 ```
 
 ## Contributing

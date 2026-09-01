@@ -8,6 +8,7 @@
     "scripts": {
         "format": "prettier --write .",
         "lint": "eslint --cache .",
+        "test": "jest --runInBand",
         "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
         "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
         "typecheck": "pnpm run typecheck:node && pnpm run typecheck:web",
@@ -22,6 +23,7 @@
     },
     "dependencies": {
         "@agentscope-ai/agentscope": "workspace:*",
+        "@agentscope-ai/agentscope-service": "workspace:*",
         "@electron-toolkit/preload": "^3.0.2",
         "@electron-toolkit/utils": "^4.0.0",
         "@milkdown/components": "^7.19.0",
@@ -70,6 +72,7 @@
         "@tailwindcss/typography": "^0.5.19",
         "@types/mime-types": "^3.0.1",
         "@types/node": "^22.19.11",
+        "@types/jest": "^30.0.0",
         "@types/node-cron": "^3.0.11",
         "@types/react": "^19.2.7",
         "@types/react-dom": "^19.2.3",
@@ -81,10 +84,12 @@
         "eslint-plugin-react": "^7.37.5",
         "eslint-plugin-react-hooks": "^7.0.1",
         "eslint-plugin-react-refresh": "^0.4.24",
+        "jest": "^30.2.0",
         "prettier": "^3.7.4",
         "react": "^19.2.1",
         "react-dom": "^19.2.1",
         "typescript": "^5.9.3",
+        "ts-jest": "^29.4.6",
         "vite": "^7.2.6"
     }
 }

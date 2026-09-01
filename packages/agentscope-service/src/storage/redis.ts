@@ -289,7 +289,7 @@ export class RedisStorage extends StorageBase {
                     ...current,
                     config: options.config,
                     state: options.state ?? current.state,
-                    updated_at: currentTimestamp(),
+                    updated_at: options.updatedAt ?? currentTimestamp(),
                 }) as SessionRecord;
                 await this.writeOwned('session', options.userId, updated, SessionRecordSchema);
                 return updated;
@@ -306,6 +306,8 @@ export class RedisStorage extends StorageBase {
             source_chat_id: options.sourceChatId,
             source_chat_name: options.sourceChatName,
             source_channel_id: options.sourceChannelId,
+            created_at: options.createdAt,
+            updated_at: options.updatedAt,
         }) as SessionRecord;
         await this.writeOwned('session', options.userId, record, SessionRecordSchema);
         return record;

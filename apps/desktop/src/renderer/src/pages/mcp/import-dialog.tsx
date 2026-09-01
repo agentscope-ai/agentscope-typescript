@@ -1,4 +1,4 @@
-import type { MCPServerConfig, MCPServerState } from '@shared/types/mcp';
+import type { MCPServerCreateConfig, MCPServerState } from '@shared/types/mcp';
 import { AlertCircleIcon, Loader2, Upload } from 'lucide-react';
 import { useState } from 'react';
 
@@ -17,7 +17,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from '@/i18n/useI18n';
 
 interface ImportDialogProps {
-    onImport: (config: Omit<MCPServerConfig, 'id' | 'createdAt'>) => Promise<MCPServerState>;
+    onImport: (config: MCPServerCreateConfig) => Promise<MCPServerState>;
 }
 
 /**

@@ -50,9 +50,9 @@ export function useChat() {
         }
     }, [loading, hasMore, offset, loadSessions]);
 
-    const createSession = useCallback(async (name?: string) => {
+    const createSession = useCallback(async (agentKey = 'friday', name?: string) => {
         try {
-            const newSession = await window.api.chat.createSession(name);
+            const newSession = await window.api.chat.createSession(agentKey, name);
             // Optimistic update: add new session to the top of the list
             setUnpinnedSessions(prev => [newSession, ...prev]);
             return newSession;

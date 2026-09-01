@@ -36,6 +36,8 @@ export interface UpsertSessionOptions {
     sourceChatId?: string | null;
     sourceChatName?: string | null;
     sourceChannelId?: string | null;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 /** Options for knowledge-document lease operations. */

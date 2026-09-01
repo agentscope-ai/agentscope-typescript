@@ -26,6 +26,10 @@ export interface StdioMCPServerConfig extends MCPServerConfigBase {
 }
 
 export type MCPServerConfig = SSEMCPServerConfig | HTTPMCPServerConfig | StdioMCPServerConfig;
+export type MCPServerCreateConfig =
+    | Omit<SSEMCPServerConfig, 'id' | 'createdAt'>
+    | Omit<HTTPMCPServerConfig, 'id' | 'createdAt'>
+    | Omit<StdioMCPServerConfig, 'id' | 'createdAt'>;
 
 export interface MCPServerState {
     config: MCPServerConfig;

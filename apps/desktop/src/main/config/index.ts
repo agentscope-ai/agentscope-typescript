@@ -68,15 +68,21 @@ export function setConfig(updates: Partial<Config>): Config {
  * Register IPC handlers for configuration management
  *
  * @param ipcMain - The Electron IPC main instance
+ * @param onChange - Optional callback after configuration persistence
  */
-export function registerConfigHandlers(ipcMain: IpcMain): void {
+export function registerConfigHandlers(
+    ipcMain: IpcMain,
+    onChange?: (config: Config) => Promise<void>
+): void {
     initConfig();
 
     ipcMain.handle('config:get', () => {
         return getConfig();
     });
 
-    ipcMain.handle('config:set', (_event, updates: Partial<Config>) => {
-        return setConfig(updates);
+    ipcMain.handle('config:set', async (_event, updates: Partial<Config>) => {
+        const config = setConfig(updates);
+        await onChange?.(config);
+        return config;
     });
 }

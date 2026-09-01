@@ -2,23 +2,16 @@ import { randomUUID } from 'crypto';
 import fs from 'fs';
 import path from 'path';
 
-import { AgentOptions } from '@agentscope-ai/agentscope/agent';
 import {
     UserConfirmResultEvent,
     ExternalExecutionResultEvent,
 } from '@agentscope-ai/agentscope/event';
 import type { Msg } from '@agentscope-ai/agentscope/message';
-import { LocalFileStorage } from '@agentscope-ai/agentscope/storage';
-import { Bash, Edit, Glob, Grep, Read, Toolkit, Write } from '@agentscope-ai/agentscope/tool';
-import { DocumentEdit, DocumentRead, DocumentWrite } from '@shared/tools/document';
 import type { Document } from '@shared/types/document';
 import type { IpcMain, WebContents } from 'electron';
 
-import { runAgent } from '../agent';
-import { getConfig } from '../config';
-import { readJSON, writeJSON, remove, readJSONL } from '../storage';
-import { skillGetAll } from './skillService';
-import { getModel } from './utils';
+import type { DesktopServiceRuntime } from '../runtime';
+import { readJSON, writeJSON, remove } from '../storage';
 import { PATHS } from '../storage/paths';
 
 /**
@@ -26,17 +19,21 @@ import { PATHS } from '../storage/paths';
  *
  * @param ipcMain - The Electron IPC main instance
  * @param webContents - The web contents for sending events
+ * @param runtime - Shared service runtime
  */
-export function registerDocumentHandlers(ipcMain: IpcMain, webContents: WebContents): void {
+export function registerDocumentHandlers(
+    ipcMain: IpcMain,
+    webContents: WebContents,
+    runtime: DesktopServiceRuntime
+): void {
     const service = new DocumentService();
-    const runningDocs = new Set<string>();
 
-    ipcMain.handle('document:isRunning', (_event, docId: string) => {
-        return runningDocs.has(docId);
+    ipcMain.handle('document:isRunning', async (_event, docId: string) => {
+        return runtime.isDocumentRunning(docId);
     });
 
-    ipcMain.handle('document:getMessages', (_event, docId: string) => {
-        return service.getMessages(docId);
+    ipcMain.handle('document:getMessages', async (_event, docId: string) => {
+        return runtime.getDocumentMessages(docId);
     });
 
     ipcMain.handle(
@@ -48,73 +45,9 @@ export function registerDocumentHandlers(ipcMain: IpcMain, webContents: WebConte
             msg?: Msg,
             event?: UserConfirmResultEvent | ExternalExecutionResultEvent
         ) => {
-            const config = getConfig();
-            const agentConfig = config.agents?.[agentKey];
-            if (!agentConfig) throw new Error(`Agent configuration not found: ${agentKey}`);
-
-            let modelConfig = config.models?.[agentConfig.modelKey];
-            if (!modelConfig && Object.keys(config.models || {}).length > 0) {
-                modelConfig = config.models[Object.keys(config.models)[0]];
-            }
-            if (!modelConfig) throw new Error('No model configured.');
-
-            const model = getModel(modelConfig);
-            const storage = new LocalFileStorage({
-                pathSegments: [PATHS.editorSessionDir(docId)],
-                offloadPathSegments: [PATHS.offloadDir(docId)],
-            });
-
-            const sysPrompt = `You are a helpful writing assistant named Friday. You're co-editing a Markdown document with the user named ${config.username}. Your target is to help the user write and edit the document collaboratively.
-
-# Important Notes:
-- The 'DocumentRead', 'DocumentWrite' and 'DocumentEdit' tools are used to read and edit the co-edited document, not the filesystem.
-- The user's modifications to the document will be wrapped in <user_modification></user_modification> tags.
-- The co-edited document is in Markdown format.
-`;
-
-            const skills = skillGetAll().map(skill => skill.dirPath);
-
-            const toolkit = new Toolkit({
-                tools: [
-                    DocumentRead(),
-                    DocumentWrite(),
-                    DocumentEdit(),
-                    Bash(),
-                    Glob(),
-                    Write(),
-                    Edit(),
-                    Read(),
-                    Glob(),
-                    Grep(),
-                ],
-                skills,
-            });
-
-            const agentOptions: AgentOptions = {
-                name: agentConfig.name,
-                sysPrompt,
-                model,
-                maxIters: agentConfig.maxIters,
-                compressionConfig: {
-                    enabled: true,
-                    triggerThreshold: agentConfig.compressionTrigger,
-                    keepRecent: agentConfig.compressionKeepRecent,
-                },
-                storage,
-                toolkit,
-            };
-
-            runningDocs.add(docId);
-            try {
-                await runAgent(
-                    agentOptions,
-                    event => webContents.send(`agent:event:document:${docId}`, event),
-                    msg,
-                    event
-                );
-            } finally {
-                runningDocs.delete(docId);
-            }
+            await runtime.sendDocumentMessage(docId, agentKey, msg ?? event ?? null, agentEvent =>
+                webContents.send(`agent:event:document:${docId}`, agentEvent)
+            );
         }
     );
 
@@ -134,8 +67,9 @@ export function registerDocumentHandlers(ipcMain: IpcMain, webContents: WebConte
         return service.pinDocument(id);
     });
 
-    ipcMain.handle('document:deleteDocument', (_event, id: string) => {
-        return service.deleteDocument(id);
+    ipcMain.handle('document:deleteDocument', async (_event, id: string) => {
+        await runtime.deleteDocumentSessions(id);
+        service.deleteDocument(id);
     });
 
     ipcMain.handle('document:getContent', (_event, id: string) => {
@@ -261,19 +195,6 @@ export class DocumentService {
 
         // Delete document directory (cascade delete)
         remove(PATHS.editorDir(id));
-    }
-
-    // ─── Agent ───────────────────────────────────────────────────────────────
-
-    /**
-     * Get messages for a document's agent session
-     * @param docId
-     * @returns Array of messages in the agent session for the document
-     */
-    getMessages(docId: string): Msg[] {
-        // TODO: should pass the agentKey here
-        const contextPath = path.join(PATHS.editorSession(docId, 'friday'));
-        return readJSONL<Msg>(contextPath);
     }
 
     // ─── Content ─────────────────────────────────────────────────────────────

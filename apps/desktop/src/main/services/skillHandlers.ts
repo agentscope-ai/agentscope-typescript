@@ -1,34 +1,22 @@
 import type { IpcMain } from 'electron';
 
-import {
-    skillGetAll,
-    skillSetActive,
-    skillRemove,
-    skillImport,
-    skillGetWatchDirs,
-    skillAddWatchDir,
-    skillRemoveWatchDir,
-} from './skillService';
+import type { DesktopServiceRuntime } from '../runtime';
 
 /**
- * Register IPC handlers for skill-related operations
- *
- * @param ipcMain - The Electron IPC main instance
+ * Register transport-only skill IPC handlers over shared loaders and records.
+ * @param ipcMain
+ * @param runtime
  */
-export function registerSkillHandlers(ipcMain: IpcMain): void {
-    ipcMain.handle('skill:getAll', () => skillGetAll());
-
-    ipcMain.handle('skill:setActive', (_e, name: string, isActive: boolean) =>
-        skillSetActive(name, isActive)
+export function registerSkillHandlers(ipcMain: IpcMain, runtime: DesktopServiceRuntime): void {
+    ipcMain.handle('skill:getAll', () => runtime.listSkills());
+    ipcMain.handle('skill:setActive', (_event, name: string, isActive: boolean) =>
+        runtime.setSkillActive(name, isActive)
     );
-
-    ipcMain.handle('skill:remove', (_e, name: string) => skillRemove(name));
-
-    ipcMain.handle('skill:import', (_e, srcPath: string) => skillImport(srcPath));
-
-    ipcMain.handle('skill:getWatchDirs', () => skillGetWatchDirs());
-
-    ipcMain.handle('skill:addWatchDir', (_e, path: string) => skillAddWatchDir(path));
-
-    ipcMain.handle('skill:removeWatchDir', (_e, id: string) => skillRemoveWatchDir(id));
+    ipcMain.handle('skill:remove', (_event, name: string) => runtime.removeSkill(name));
+    ipcMain.handle('skill:import', (_event, sourcePath: string) => runtime.importSkill(sourcePath));
+    ipcMain.handle('skill:getWatchDirs', () => runtime.getSkillWatchDirs());
+    ipcMain.handle('skill:addWatchDir', (_event, directory: string) =>
+        runtime.addSkillWatchDir(directory)
+    );
+    ipcMain.handle('skill:removeWatchDir', (_event, id: string) => runtime.removeSkillWatchDir(id));
 }

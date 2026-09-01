@@ -88,6 +88,7 @@
                 "friday/installation",
                 "friday/user-guide",
                 "friday/architecture",
+                "friday/service-runtime-migration",
                 "friday/development"
             ]
         },

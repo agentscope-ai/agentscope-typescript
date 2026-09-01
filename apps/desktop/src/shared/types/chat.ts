@@ -1,5 +1,6 @@
 export interface Session {
     id: string;
+    agentKey: string;
     name: string;
     pinned: boolean;
     createdAt: number;

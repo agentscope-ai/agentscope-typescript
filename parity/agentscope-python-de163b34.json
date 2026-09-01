@@ -8,48 +8,115 @@
             "sha256": "35f7f2cc6424dac7606dc1a247bc6fb7bcf1b8b2a208fccd9d3d5046980e7a54",
             "module": "root",
             "typescriptTarget": "packages/agentscope/src/index.ts",
-            "status": "implemented",
-            "pythonTests": [],
-            "typescriptTests": ["scripts/package-smoke.mjs"]
+            "status": "verified",
+            "pythonTests": [
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/_logging.py",
             "sha256": "5f37144dbecc7d166473e077375215fa3a476991b4c858ab6727ee19aec7380e",
             "module": "root",
             "typescriptTarget": "packages/agentscope/src/logger",
-            "status": "implemented",
-            "pythonTests": [],
-            "typescriptTests": ["packages/agentscope/src/logger/index.test.ts"]
+            "status": "verified",
+            "pythonTests": [
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/_utils/__init__.py",
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "module": "_utils",
             "typescriptTarget": "packages/agentscope/src/utils",
-            "status": "implemented",
-            "pythonTests": [],
-            "typescriptTests": ["packages/agentscope/src/_utils/audio.test.ts"]
+            "status": "verified",
+            "pythonTests": [
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/_utils/_audio.py",
             "sha256": "d98783891c95aa12e277ffcc9e18bcce5a662c9b4ab13bc515d4541a41816402",
             "module": "_utils",
             "typescriptTarget": "packages/agentscope/src/utils",
-            "status": "implemented",
-            "pythonTests": [],
-            "typescriptTests": ["packages/agentscope/src/_utils/audio.test.ts"]
+            "status": "verified",
+            "pythonTests": [
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/_utils/_common.py",
             "sha256": "5184d0bbded4525fdc8ca97456072ecfeb8a1b4b7e3aa961e22ee651f5e9fd80",
             "module": "_utils",
             "typescriptTarget": "packages/agentscope/src/utils",
-            "status": "implemented",
-            "pythonTests": ["tests/id_factory_test.py", "tests/model_gemini_test.py"],
+            "status": "verified",
+            "pythonTests": [
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
             "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
                 "packages/agentscope/src/_utils/common.test.ts",
                 "packages/agentscope/src/_utils/path.test.ts",
-                "packages/agentscope/src/message/factory.test.ts"
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/message/factory.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
             ]
         },
         {
@@ -57,18 +124,46 @@
             "sha256": "e3b4b22f8809bfa465f49c348ff0c5855b52fa077295630e9bf5d06263b3dda9",
             "module": "_utils",
             "typescriptTarget": "packages/agentscope/src/utils",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/_version.py",
             "sha256": "42db2c9b32c8aef9cd562ac06752e9dcd260493c5f5df637de10bcd0a84bda92",
             "module": "root",
             "typescriptTarget": "packages/agentscope/src/version.ts",
-            "status": "implemented",
-            "pythonTests": [],
-            "typescriptTests": ["packages/agentscope/src/version.test.ts"]
+            "status": "verified",
+            "pythonTests": [
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/agent/__init__.py",
@@ -1413,9 +1508,18 @@
             "sha256": "73685da0fac80b705cc9327e7cb06997ae3b99243fa5101b9352627779e041d1",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/service",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/service_inbox_middleware_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/app-middleware.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts",
+                "packages/agentscope-service/test/service-foundations.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/app/_service/_access.py",
@@ -1803,18 +1907,24 @@
             "sha256": "92b5804f6629d1ce754ca6860599a22f8885f73cc664d5635ed90f9a9828a8c3",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/access",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/resource_access_policy_test.py"],
+            "typescriptTests": [
+                "packages/agentscope-service/test/access-policy.test.ts",
+                "packages/agentscope-service/test/resource-access-service.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/access/_policy.py",
             "sha256": "f63506c7a4957d194e09e290e15505e1fe369fa14189eada35ab38e3c6012f71",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/access",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/resource_access_policy_test.py"],
+            "typescriptTests": [
+                "packages/agentscope-service/test/access-policy.test.ts",
+                "packages/agentscope-service/test/resource-access-service.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/channel/__init__.py",
@@ -2340,54 +2450,93 @@
             "sha256": "9302b96c964fafea9beecf88c0401e7e192d8348dac3b70d057e66e13137aaee",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/message-bus",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/in_memory_message_bus_test.py",
+                "tests/service_message_bus_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/bus-ops-parity.test.ts",
+                "packages/agentscope-service/test/memory-message-bus.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/message_bus/_base.py",
             "sha256": "cfa514b93f2a107108adc5b02fe3c684f9a29c6df412eff20fd718dddd0a0c9a",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/message-bus",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/in_memory_message_bus_test.py",
+                "tests/service_message_bus_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/bus-ops-parity.test.ts",
+                "packages/agentscope-service/test/memory-message-bus.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/message_bus/_in_memory_message_bus.py",
             "sha256": "676d8f6deee838338e121e692620bd501e8f8467d2d0947e28d0b335d5c93358",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/message-bus",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/in_memory_message_bus_test.py",
+                "tests/service_message_bus_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/bus-ops-parity.test.ts",
+                "packages/agentscope-service/test/memory-message-bus.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/message_bus/_keys.py",
             "sha256": "7f48c3fff0523817b55f1a909f1e72502c1537469fd7a88ff38c6739c7a308ec",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/message-bus",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/in_memory_message_bus_test.py",
+                "tests/service_message_bus_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/bus-ops-parity.test.ts",
+                "packages/agentscope-service/test/memory-message-bus.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/message_bus/_redis_message_bus.py",
             "sha256": "c441625b40b886f39c803ee5543da0af0de82b6d728de0e290345d6b07c900d9",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/message-bus",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/in_memory_message_bus_test.py",
+                "tests/service_message_bus_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/bus-ops-parity.test.ts",
+                "packages/agentscope-service/test/memory-message-bus.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/middleware/__init__.py",
             "sha256": "1d5003e5d018083affef054c42f67c7f319648ed3d6913fbbd5d34b67912116e",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/service_inbox_middleware_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/app-middleware.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts",
+                "packages/agentscope-service/test/service-foundations.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/app/middleware/_inbox_middleware.py",
@@ -2473,9 +2622,18 @@
             "sha256": "3bad39ce3a162a1168267a0bdca0cae28f4a8c2853b9ba11f5e90f32458ff000",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/rag",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/service_inbox_middleware_test.py",
+                "tests/service_knowledge_base_upload_test.py",
+                "tests/test_e2e_api.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/app-middleware.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts",
+                "packages/agentscope-service/test/service-foundations.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/app/rag/blob_store/__init__.py",
@@ -2689,243 +2847,486 @@
             "sha256": "208fb9221b65bdc23415f384228868ec1102bb2f4613c8a68c8e84917c0c3bd8",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_base.py",
             "sha256": "6d6800ea0b742cef5f44e2c40dad89ad3ef20465a7c78c36bcd3947b630f2c75",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_model/__init__.py",
             "sha256": "cb3f9e8145c5f3ddce5952f0845a0644a413f8e2b1a5037ab761ab27e461e0ba",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_model/_agent.py",
             "sha256": "fa5869964d2818b5fcdaec04f9519d721f0103e9b963a95385c1becce3b5969c",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_model/_base.py",
             "sha256": "5f10cd01c81a818474688e72366765befe9cdd806d7a5da40131bef8f0e41354",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_model/_channel.py",
             "sha256": "1b5271716bb129c8dfe74e49558e2fb477b7981a9b62604789aaff453fa22df6",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_model/_credential.py",
             "sha256": "b67b40d9e859182d8476cf7bea3029030ee753beef6d5f989c9a1a24ac795758",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_model/_knowledge_base.py",
             "sha256": "f666d246e875e911693973b2ae27d5181fe57c19c663ee71dc6a3235a34e9054",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_model/_knowledge_document.py",
             "sha256": "56b01e95cea36438b05111e86670cb55e039c2e00737cd6b9d5d02dc609229cc",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_model/_mcp.py",
             "sha256": "a88c48fb7062b1c471670b05cc8a1b9d6af14d4b79e57f9701ed630a0e07d04d",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_model/_schedule.py",
             "sha256": "7ac5386d93c13244046880c6d65ee7fbccbb2e82cce53c3485b63fd1cd475c05",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_model/_session.py",
             "sha256": "bed8fe4abb0dfc6640e96be8d6aaf250b2290b35aeb82b3f8ef459acb2f97f5e",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_model/_skill.py",
             "sha256": "fd3db6c76c860fec9d5dcfb72a884bd35b402e816932d9f186296716f17acabf",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_model/_team.py",
             "sha256": "02ac852e2d5af1039bb0d731ac2aa5e1db65b6ee7a823629eeeff371a55c8d6c",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_model/_user.py",
             "sha256": "4b99e06a6699bbd6fef97ae8af242cdc9fba5e3cf629ff10e92f8be20d6a0b60",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_redis_storage.py",
             "sha256": "20e92b1b1d7f104950598f4b65084afc0be3d79c3c0420387c18cc4c4a459352",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_sql/__init__.py",
             "sha256": "8728c1c30792159431e32b016907d9d5424104eaee181cd375a48e55bb674aa0",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/sql",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_sql/_alembic/alembic.ini",
             "sha256": "053ddc524dd4be3b7ab1cfff6eb0e29d70680a81cd385d8ad3416fab4cedac04",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/sql/alembic",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_sql/_alembic/env.py",
             "sha256": "f47a4e81e9777aa631ec5a0f360d792f162c0f412825ac48c2f4761a52e090c7",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/sql/alembic",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_sql/_alembic/script.py.mako",
             "sha256": "d21f04abd7a689f5af6f8c8ea468dbb6ea9f78b030b496578e65545f986845dc",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/sql/alembic",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_sql/_alembic/versions/0001_initial.py",
             "sha256": "74a0c5d20908f93520976954c728014177f434740220484c4d1279052ad173dc",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/sql/alembic/versions",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_sql/_alembic/versions/0002_mcps_skills.py",
             "sha256": "9fc64ed27299dc2794e51b823fe81b84ffbf66ebc1d0b4aaabf5b02cd469ad3e",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/sql/alembic/versions",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_sql/_alembic/versions/0003_channels.py",
             "sha256": "37938fe72296baa8cd5942492cc940ec407ad63bc218a739c49e21f7ab9fed2e",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/sql/alembic/versions",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_sql/_mappers.py",
             "sha256": "febbd4eb5e40eabbdf0ab9b3f46a13f5ac8cc9334cc3969ee7bff61e82563f94",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/sql",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_sql/_storage.py",
             "sha256": "9e83cd7012a56bb80abe3adc6ea2d2d994e56a1583e067eb252c406f1003aec8",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/sql",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_sql/_tables.py",
             "sha256": "780a9c940a4682089abe9a9853163402383135c3859bbfe893411ddfcb57caa4",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage/sql",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/_utils.py",
             "sha256": "3e8f724b749b9e7fae7826ccbdb68930a847ef655d25fff7e6dec976362c1b10",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/storage",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/storage_redis_knowledge_base_test.py",
+                "tests/storage_redis_test.py",
+                "tests/storage_sql_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/memory-storage.test.ts",
+                "packages/agentscope-service/test/records.test.ts",
+                "packages/agentscope-service/test/redis-storage.test.ts",
+                "packages/agentscope-service/test/sql-storage.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/workspace_manager/__init__.py",
@@ -3588,36 +3989,96 @@
             "sha256": "673c4db6959111c30cefce253c5b43948273ac15f15ba0c4591afc3ae1561104",
             "module": "exception",
             "typescriptTarget": "packages/agentscope/src/exception",
-            "status": "implemented",
-            "pythonTests": ["tests/model_base_test.py"],
-            "typescriptTests": ["packages/agentscope/src/exception/exception.test.ts"]
+            "status": "verified",
+            "pythonTests": [
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_base_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/exception/_base.py",
             "sha256": "8311702c53fbc011f9430fffe85bdd314e26f145da9637696019770bc4e1c841",
             "module": "exception",
             "typescriptTarget": "packages/agentscope/src/exception",
-            "status": "implemented",
-            "pythonTests": ["tests/model_base_test.py"],
-            "typescriptTests": ["packages/agentscope/src/exception/exception.test.ts"]
+            "status": "verified",
+            "pythonTests": [
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_base_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/exception/_model.py",
             "sha256": "33067d34d3073ecb077189e12c3344a0a292a01703ad614ee274100edeaa4f04",
             "module": "exception",
             "typescriptTarget": "packages/agentscope/src/exception",
-            "status": "implemented",
-            "pythonTests": ["tests/model_base_test.py"],
-            "typescriptTests": ["packages/agentscope/src/exception/exception.test.ts"]
+            "status": "verified",
+            "pythonTests": [
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_base_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/exception/_tool.py",
             "sha256": "243762e6e1e95fac19e4c864094ed4312220841f21a63d98396b87f759c781f2",
             "module": "exception",
             "typescriptTarget": "packages/agentscope/src/exception",
-            "status": "implemented",
-            "pythonTests": ["tests/model_base_test.py"],
-            "typescriptTests": ["packages/agentscope/src/exception/exception.test.ts"]
+            "status": "verified",
+            "pythonTests": [
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_base_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/formatter/__init__.py",
@@ -5170,9 +5631,23 @@
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "module": "root",
             "typescriptTarget": "packages/agentscope",
-            "status": "implemented",
-            "pythonTests": [],
-            "typescriptTests": ["scripts/package-smoke.mjs"]
+            "status": "verified",
+            "pythonTests": [
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/rag/__init__.py",
@@ -6646,45 +7121,120 @@
             "sha256": "8bb4b3d9add429c2fffb417b9831c178861aa41a385ddec753b426d829b5d06b",
             "module": "types",
             "typescriptTarget": "packages/agentscope/src/type",
-            "status": "implemented",
-            "pythonTests": ["tests/event_to_message_test.py"],
-            "typescriptTests": ["packages/agentscope/src/type/index.test.ts"]
+            "status": "verified",
+            "pythonTests": [
+                "tests/event_to_message_test.py",
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/types/_hook.py",
             "sha256": "b2dfbeda8055b8bc0d68d9390d05e4600ef1a7c5f81daa936977f69550c03ccd",
             "module": "types",
             "typescriptTarget": "packages/agentscope/src/type",
-            "status": "implemented",
-            "pythonTests": ["tests/event_to_message_test.py"],
-            "typescriptTests": ["packages/agentscope/src/type/index.test.ts"]
+            "status": "verified",
+            "pythonTests": [
+                "tests/event_to_message_test.py",
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/types/_json.py",
             "sha256": "cb6d7fd2a5f7e9900b9d4722e32505456040dddcebcd29644b57a979c47f780e",
             "module": "types",
             "typescriptTarget": "packages/agentscope/src/type",
-            "status": "implemented",
-            "pythonTests": ["tests/event_to_message_test.py"],
-            "typescriptTests": ["packages/agentscope/src/type/index.test.ts"]
+            "status": "verified",
+            "pythonTests": [
+                "tests/event_to_message_test.py",
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/types/_object.py",
             "sha256": "74747ce2626f0457ac6d88f8ea640ef6cb30dfc74fb8aa496826f24a9acb5991",
             "module": "types",
             "typescriptTarget": "packages/agentscope/src/type",
-            "status": "implemented",
-            "pythonTests": ["tests/event_to_message_test.py"],
-            "typescriptTests": ["packages/agentscope/src/type/index.test.ts"]
+            "status": "verified",
+            "pythonTests": [
+                "tests/event_to_message_test.py",
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/types/_reply.py",
             "sha256": "9aba4d633ad58def6bbbb5058e94404aff21d4e7947dea80289bebf81f626c64",
             "module": "types",
             "typescriptTarget": "packages/agentscope/src/type",
-            "status": "implemented",
-            "pythonTests": ["tests/event_to_message_test.py"],
-            "typescriptTests": ["packages/agentscope/src/type/index.test.ts"]
+            "status": "verified",
+            "pythonTests": [
+                "tests/event_to_message_test.py",
+                "tests/id_factory_test.py",
+                "tests/mixin_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_response_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/audio.test.ts",
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/exception/exception.test.ts",
+                "packages/agentscope/src/logger/index.test.ts",
+                "packages/agentscope/src/type/index.test.ts",
+                "packages/agentscope/src/version.test.ts",
+                "scripts/package-smoke.mjs"
+            ]
         },
         {
             "path": "src/agentscope/workspace/__init__.py",
@@ -7373,588 +7923,588 @@
             "sha256": "119f0fa1bc671fc2186a696904ad45d08baf21c92fb76f225289fa9fbaa4f992",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_anthropic/_models/claude-haiku-4-5.yaml",
             "sha256": "fb7a2befd837ddcbd5e0dabe201286cf9f528d9b609972f5395821d43480be96",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_anthropic/_models/claude-opus-4-5.yaml",
             "sha256": "720dcfb14ae6c2991e42b4356ffcad6b9e5875d151c15bb59e0bc4b0ecd9e3c6",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_anthropic/_models/claude-opus-4-6.yaml",
             "sha256": "d1a61d6a0b5bb8fe709bc95faf3b124a3a49b4f410fdf81ebc77f56d0bb584ca",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_anthropic/_models/claude-opus-4-7.yaml",
             "sha256": "c27bf73983803e95148c58f59497e623e424425b0a66a9ed48766c1925ec5719",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_anthropic/_models/claude-opus-4-8.yaml",
             "sha256": "fd17e249d4ac29486a47d7986e7c8ea8ee6ab3239e65375143d1f9496533ee3d",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_anthropic/_models/claude-opus-5.yaml",
             "sha256": "0162332c776869415ecb7b69f147d5fffd4a576421130fd67e1d174bb30825a6",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_anthropic/_models/claude-sonnet-4-5.yaml",
             "sha256": "e674b1d98da7779249a004de90b79bcb64e83bba4cbcd556e91e3da6b6721fe6",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_anthropic/_models/claude-sonnet-4-6.yaml",
             "sha256": "f99243f2f5cb71dd56f3d699e5c9a9dc23e51721c2e85f4bcbdb6a651f6568c7",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_anthropic/_models/claude-sonnet-5.yaml",
             "sha256": "91cc468d538b3afe79c91decd62a11ecc90b5630f5aba005456fd3a2b7186cd2",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_dashscope/_models/deepseek-v4-pro.yaml",
             "sha256": "4c11da3fac6fbc68f5e3bec0c31fc6f348800f4fd2c7d855ada01a96bf0abd3a",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_dashscope/_models/glm-5.2.yaml",
             "sha256": "927384e553169563cf5fcce55356c0a23ff7767a9d9b0be85e3630593d6d84ef",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_dashscope/_models/qwen-flash.yaml",
             "sha256": "45f72790221ba490af9ef21c36ffb851da44524c367db17e3c97be03b2d2cd45",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_dashscope/_models/qwen-long.yaml",
             "sha256": "fbc4afdf1cca4361f67f3a933a31425aa843bb73f17c7d3c8f1586467e01b5c3",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_dashscope/_models/qwen-plus.yaml",
             "sha256": "696729eceb7c8f12e99527c29ef18c44bb21221bd3e07e6b1328a31301af1132",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_dashscope/_models/qwen3.5-flash.yaml",
             "sha256": "82954b2423962805e9cafe4e80a5831c9061cf27d3eb5849ab51d815c243d3aa",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_dashscope/_models/qwen3.5-omni-plus.yaml",
             "sha256": "1fdcd0aeacd805bef1ad88c0a73f82a98fe89e6c05b2f93d25c2dca350bdff25",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_dashscope/_models/qwen3.5-plus.yaml",
             "sha256": "5b5d1e2f4f57d5f9a04419eb17aed33cf9b27cad953234364ece4bb7d4135ef9",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_dashscope/_models/qwen3.6-flash.yaml",
             "sha256": "c009207b576cb2468bda1f4c88ab2558cc4f8270d39830cdfaa1def80fcffc1e",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_dashscope/_models/qwen3.6-max-preview.yaml",
             "sha256": "0ba67a4c7ce3465bd09a9d76efee27e917669aa26de736835cb8f16e339be38b",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_dashscope/_models/qwen3.6-plus.yaml",
             "sha256": "02b1a3ba1bba3ba34d4ddc9ede0cd7793de97dfb5a2d043f20a4aa761f1b7ac9",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_dashscope/_models/qwen3.7-flash.yaml",
             "sha256": "c1b38dd8084d37f2a1baf953693202a96ceb4b01ff36961620ea58a111c9f0f6",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_dashscope/_models/qwen3.7-max.yaml",
             "sha256": "14d1eca35ba772fb5676fd596bcf06e964e49556c387c5868e2ea4aa7a8462f4",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_dashscope/_models/qwen3.7-plus.yaml",
             "sha256": "7f5fe5cb678cd823e4658bec4ff56f6baca37336f856feeded780aea9f751e01",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_dashscope/_models/qwen3.8-max.yaml",
             "sha256": "25ce3e04dd919f4cf07f06c0f34ef0181a838bc61d4ee43f9a9e9890f0e711cf",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_deepseek/_models/deepseek-chat.yaml",
             "sha256": "a62649b74bda0c86818d0b3c9a5ee4841e4ea9a3a37d8e16268cbff417c2d3c5",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_deepseek/_models/deepseek-reasoner.yaml",
             "sha256": "d9ff0083b8d430a279875bd7dd74d4c3e12eadbb56f96545cbd93d124f6810f1",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_deepseek/_models/deepseek-v4-flash.yaml",
             "sha256": "a70a1416ea51921ee73b5f99573ede43be5acfd9ad1e147af2c8c8cebc290b4c",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_deepseek/_models/deepseek-v4-pro.yaml",
             "sha256": "7aa9b770168e89bce78e040655f514f5c6f47839c7be881a5ac9c4674435bc4f",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_gemini/_models/gemini-2.5-flash-lite.yaml",
             "sha256": "c830357ac7ed66aac70006c2a85da9b34af75a645474bf3cb26173ecd8095143",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_gemini/_models/gemini-2.5-flash.yaml",
             "sha256": "212631000c94c4954051b69d64f1ad32c011189e9c9176ddd4234752978f2286",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_gemini/_models/gemini-2.5-pro.yaml",
             "sha256": "2b297040983c5fc01257e7fe7f6168546b1d11533e66f12a61877c087c26ab63",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_gemini/_models/gemini-3-flash-preview.yaml",
             "sha256": "ddfc6d64d55c630d0aa1012a3eb9d26d4c2df10b96db5291b90a099842522ab5",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_gemini/_models/gemini-3.1-flash-lite.yaml",
             "sha256": "ad9705d375af7dec920aad0b7b179fa374f2517ae5ef792fa909dfa35fc42dd8",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_gemini/_models/gemini-3.1-pro-preview.yaml",
             "sha256": "147afb8555f385fd5623c08b2db8caae0fc48383ca9ea7607de688829925f55e",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_gemini/_models/gemini-3.5-flash-lite.yaml",
             "sha256": "11087ea40a2e2f49824962cca26b8d14f6ac48fa87a79b8a301b419bf1081b19",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_gemini/_models/gemini-3.5-flash.yaml",
             "sha256": "c9558a97ee32bfb2d5ed19730837bf12e46a515b7fbab2fd74fcdb632c18fea0",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_gemini/_models/gemini-3.6-flash.yaml",
             "sha256": "4a246962bd4292b17761874b25828c5a79e5741db30c690bda2989ae41dc8a22",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_moonshot/_models/kimi-k2.5.yaml",
             "sha256": "692cd70678928ccffea4230d568cf1a3eacb58c54497a453ef4fcabf16520acb",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_moonshot/_models/kimi-k2.6.yaml",
             "sha256": "aa6841688ef782d41d8e9d28f2714735b4f89e042028a7534d4d6d46f4736906",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_moonshot/_models/kimi-k2.7-code-highspeed.yaml",
             "sha256": "3af4dec0f922e4398f386a98160b52006009b62584fcfc335f8beb6eee821633",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_moonshot/_models/kimi-k2.7-code.yaml",
             "sha256": "29ff41686a4c871e9b2e70217cac97db14312b414cd3062ebe599a670f5e448f",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_moonshot/_models/kimi-k3.yaml",
             "sha256": "e9c6938898f05961320c9a1ee919035c09a18fd8364e366d7f6189613d4e826f",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_moonshot/_models/moonshot-v1-128k.yaml",
             "sha256": "b4ec4ee8125b4fad0f9a3472bd39a5e4f9de20074b61ce91c693c35c2812a58c",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_moonshot/_models/moonshot-v1-32k.yaml",
             "sha256": "f72fbe276149194746525556a578d95129b4cb0976abd1bbb0548c38afebff34",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_moonshot/_models/moonshot-v1-8k.yaml",
             "sha256": "f3e4e30208bd29ffd0498674adf7946537f0454c86c4a9a780b5e4b7dec8c9ea",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_ollama/_models/deepseek-r1-14b.yaml",
             "sha256": "33dba343b3221aa47a7e8e98180898c97f92c0d355699b83a1623dc4649cfd1e",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_ollama/_models/llama4.yaml",
             "sha256": "d0f6c4efab8a27c74a9bbf1a4923b434934221faec727881b49242378648eb44",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_ollama/_models/qwen3-14b.yaml",
             "sha256": "73bc14af098ad643336b3b1bffa1b73458b35741e8bd8658403bb5490ef0df86",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_ollama/_models/qwen3.5-9b.yaml",
             "sha256": "30c62a15f7304c469f2930e47a0a5f7fdb0699565410d4c9f4009335d4655324",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_chat/_models/gpt-4.1-mini.yaml",
             "sha256": "66875db1ae63e257fb378f47d5d539aebeab8e2e16c6ec48a2f4da18f167e1c1",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_chat/_models/gpt-4.1-nano.yaml",
             "sha256": "77e345f9c22e006c09a90f1d3a5075d48dfa2c1915b43aa36099be7944cfbafc",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_chat/_models/gpt-4.1.yaml",
             "sha256": "0435a69e084c47bbc2856f5e2dcd9fe90478cff081b0ef8b45a76d06673c722c",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_chat/_models/gpt-4o-mini.yaml",
             "sha256": "863dbe1f3d6446615390c9ea2564d41a352118b3bb29a6880b8704f83797e5d2",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_chat/_models/gpt-4o.yaml",
             "sha256": "635bb35b0b524a71665ae9901f510209b1fd849826b398ec96322a0c78e73197",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_chat/_models/gpt-5.4.yaml",
             "sha256": "c618fb00a4e1e0d17ae9934a0cea1c92a6e80e9318e8a436bebc5600247dc1c5",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_chat/_models/gpt-5.5.yaml",
             "sha256": "0643a8dc26f4845f5c13bc78501e6367fdf9c78c9cc6f6177143f394fee0bb29",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_chat/_models/gpt-5.6-luna.yaml",
             "sha256": "e8ff4d04be217ac7b6fd5181a8f23f7936b03b83d3fd6054c34c6f1a6a2643d8",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_chat/_models/gpt-5.6-sol.yaml",
             "sha256": "5dea8643d23e33e93b4e0ec05946c35deb94b1456f015c7bc558e60288b37265",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_chat/_models/gpt-5.6-terra.yaml",
             "sha256": "ed69333a7e57ec90bd6828297cbfc38cd5410ca61079b5328671be7b500b853b",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_chat/_models/gpt-audio-mini.yaml",
             "sha256": "a3e7671c83fad589cf936fc377314423ce340593fcc47c8b3736759d1297ec2d",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_chat/_models/o3.yaml",
             "sha256": "85c54a3e888bf966d1b5563db5d1e4b33427538a32913470c1b07fc3c68eb230",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_chat/_models/o4-mini.yaml",
             "sha256": "65cee051abd7e978d36b5c7f471c0b8f84f0abe694797d24ead12525a26a975c",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_response/_models/gpt-4.1-mini.yaml",
             "sha256": "97756003301ed9bc450107356d69d31a3dc1c9382cb8d7eb6b897692f1caa2b8",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_response/_models/gpt-4.1-nano.yaml",
             "sha256": "8cec838785ba60619eddf365873216f48a582e22dc4c75a9974fd4827f23764f",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_response/_models/gpt-4.1.yaml",
             "sha256": "2ba011f92521198e0c8e796d5cdbe9d35e98b305cd0d5235f847621f0a6f25bf",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_response/_models/gpt-4o-mini.yaml",
             "sha256": "d77ffe688b967a6f0d783c5b43c369ed16d16496ac5a67edb5918ded29852faf",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_response/_models/gpt-4o.yaml",
             "sha256": "51cf4dfbb946d0d91caf8d180114013ba322dcf5d8d6f8bcf41da97fc49f27a2",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_response/_models/gpt-5.4.yaml",
             "sha256": "3060e27b46f1060eef7788d21179f3f4b074620ff25adbc8b7f3749bb29f4ee3",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_response/_models/gpt-5.5.yaml",
             "sha256": "5caf5f06645b8b7ca1c227697d20978e9fe76eae475f132f9d6aae1ccab64625",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_response/_models/gpt-5.6-luna.yaml",
             "sha256": "24d06ec18abae806b5ae422864649b1f0f500d8689d2b63577943e8b1d3f53a3",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_response/_models/gpt-5.6-sol.yaml",
             "sha256": "2b0d867510e860e783bca8e38bf2d14e171a2b7f6b68fdd0841ef51245349aa6",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_response/_models/gpt-5.6-terra.yaml",
             "sha256": "b2d3d8edaeb2e7c445b65915a241de49e09d9e732038c9fd556f68a32b1e941f",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_response/_models/o3.yaml",
             "sha256": "dcac98914ed6473dbea116c1bca1171142fa2babe927a9c8986ba7188dcefd62",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_openai_response/_models/o4-mini.yaml",
             "sha256": "8cd9866be3ac797f5fce47ec77f8a0b74311e061acbb7429e77d2038d4a876c9",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_xai/_models/grok-3-fast.yaml",
             "sha256": "395d55938810c53266e05aec3445925a133e324ad3da3dc043b43ad28f42bdd4",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_xai/_models/grok-3-mini.yaml",
             "sha256": "5bfee49f228d9a87295b39b640543d06fc2345cb69a734ae69e5989e4ad9b9ad",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_xai/_models/grok-3.yaml",
             "sha256": "c0b5b9013d61088908e79eef35ef9fa3cdbb8f4837b3d6d6af008fa12be42435",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_xai/_models/grok-4.20-0309-non-reasoning.yaml",
             "sha256": "6208ff44658b929c59f3be3b6dc2151d1d2eda59cf1c10a1db316cc8d9dacd60",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_xai/_models/grok-4.20-0309-reasoning.yaml",
             "sha256": "3ad052ba7573c8613d73ba8eff11892e91b28ce789980eb597f9d40ff27d32f6",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_xai/_models/grok-4.20-multi-agent-0309.yaml",
             "sha256": "311a39f3b957546e4dfdbed3eb48b5acc529c9415d0fbee006d400a3655d2a26",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_xai/_models/grok-4.3.yaml",
             "sha256": "51fea8b5be3bf48e1b72d0e163dbb22359c384e50ed3c5ae4e86c552806129df",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_xai/_models/grok-4.5.yaml",
             "sha256": "d5fa142095c21528cce9fb3d4fc11b4517a87dc11ba76df04098f7b8eea106f5",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/model/_xai/_models/grok-build-0.1.yaml",
             "sha256": "b452cd19cfad8baf436bbc8f604bad99cf16e910c4f39246d4e2518d9fcdae0d",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped"
+            "status": "verified"
         },
         {
             "path": "src/agentscope/tts/_dashscope/_cosyvoice_models/cosyvoice-v3-flash.yaml",

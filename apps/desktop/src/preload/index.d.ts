@@ -8,7 +8,7 @@ import { ElectronAPI } from '@electron-toolkit/preload';
 import type { GetSessionsQuery, GetSessionsResult, Session } from '@shared/types/chat';
 import type { Config } from '@shared/types/config';
 import type { Document } from '@shared/types/document';
-import type { MCPServerConfig, MCPServerState } from '@shared/types/mcp';
+import type { MCPServerCreateConfig, MCPServerState } from '@shared/types/mcp';
 import type {
     Schedule,
     ScheduleWithStatus,
@@ -33,7 +33,7 @@ declare global {
             };
             chat: {
                 getSessions: (query: GetSessionsQuery) => Promise<GetSessionsResult>;
-                createSession: (name?: string) => Promise<Session>;
+                createSession: (agentKey?: string, name?: string) => Promise<Session>;
                 renameSession: (id: string, name: string) => Promise<Session>;
                 pinSession: (id: string, pinned: boolean) => Promise<Session>;
                 deleteSession: (id: string) => Promise<void>;
@@ -91,7 +91,7 @@ declare global {
             };
             mcp: {
                 getAll: () => Promise<MCPServerState[]>;
-                add: (config: Omit<MCPServerConfig, 'id' | 'createdAt'>) => Promise<MCPServerState>;
+                add: (config: MCPServerCreateConfig) => Promise<MCPServerState>;
                 remove: (id: string) => Promise<void>;
                 connect: (id: string) => Promise<MCPServerState>;
                 disconnect: (id: string) => Promise<MCPServerState>;

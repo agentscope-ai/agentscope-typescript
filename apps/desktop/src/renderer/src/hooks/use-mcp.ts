@@ -1,4 +1,4 @@
-import type { MCPServerConfig, MCPServerState } from '@shared/types/mcp';
+import type { MCPServerCreateConfig, MCPServerState } from '@shared/types/mcp';
 import { useState, useEffect, useCallback } from 'react';
 
 /**
@@ -19,7 +19,7 @@ export function useMcp() {
         refresh().finally(() => setLoading(false));
     }, [refresh]);
 
-    const add = useCallback(async (config: Omit<MCPServerConfig, 'id' | 'createdAt'>) => {
+    const add = useCallback(async (config: MCPServerCreateConfig) => {
         const state = await window.api.mcp.add(config);
         setServers(prev => [...prev, state]);
         return state;

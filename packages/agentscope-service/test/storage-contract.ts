@@ -244,6 +244,8 @@ export function runStorageContract(name: string, factory: StorageContractFactory
 
         test('updates sessions in place and indexes schedule and channel origins', async () => {
             await storage.upsertAgent('user-1', agentRecord('user-1', 'agent-1'));
+            const createdAt = '2025-01-01T00:00:00.000Z';
+            const updatedAt = '2025-01-01T00:01:00.000Z';
             const created = await storage.upsertSession({
                 userId: 'user-1',
                 agentId: 'agent-1',
@@ -252,16 +254,24 @@ export function runStorageContract(name: string, factory: StorageContractFactory
                 source: 'schedule',
                 sourceScheduleId: 'schedule-1',
                 sourceChannelId: 'channel-1',
+                createdAt,
+                updatedAt: createdAt,
+            });
+            expect(created).toEqual({
+                ...created,
+                created_at: createdAt,
+                updated_at: createdAt,
             });
             const updated = await storage.upsertSession({
                 userId: 'user-1',
                 agentId: 'agent-1',
                 config: sessionConfig('workspace-2'),
                 sessionId: created.id,
+                updatedAt,
             });
             expect(updated).toEqual({
                 ...created,
-                updated_at: expect.any(String),
+                updated_at: updatedAt,
                 config: { ...created.config, workspace_id: 'workspace-2' },
             });
             expect((await storage.listSessionsBySchedule('user-1', 'schedule-1'))[0].id).toBe(

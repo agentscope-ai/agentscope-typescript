@@ -1,0 +1,45 @@
+---
+title: 'Desktop Service Migration'
+description: 'Persistence mapping and upgrade behavior for the shared Desktop runtime'
+---
+
+## What changed
+
+Desktop now composes `@agentscope-ai/agentscope-service` instead of maintaining independent agent and scheduler implementations. The migration runs after configuration synchronization and before IPC handlers become available.
+
+| Legacy Desktop data                                                | Shared runtime destination                              |
+| ------------------------------------------------------------------ | ------------------------------------------------------- |
+| `chat/index.json` and `chat/<session>/<agent>/context.jsonl`       | Service session, agent state, and message records       |
+| `editor/index.json` and `editor/<document>/<agent>/context.jsonl`  | Hidden document agent sessions and message records      |
+| `mcp.json`                                                         | Service MCP records consumed by unified MCP clients     |
+| `skills/*/SKILL.md`, watched directories, and `skills/states.json` | Service skill records and enabled workspace skill seeds |
+| schedule JSON state                                                | Service scheduler records and execution sessions        |
+
+Document metadata and `content.md` remain local because they belong to the editor UI rather than the Agent Service protocol.
+
+## Upgrade guarantees
+
+- Imports are idempotent: a populated Service record is not duplicated on later starts.
+- Complete message objects are parsed through the common message schema before storage.
+- Stable derived IDs keep document and agent sessions deterministic across restarts.
+- Legacy files are not deleted automatically.
+- Configuration updates resynchronize credentials, agent prompts, model choices, and hidden document agents without restarting the application.
+- Enabling or disabling a skill invalidates only generated workspace skill partitions; user document and workspace files remain intact.
+
+## Validation
+
+From the repository root, run:
+
+```bash
+pnpm --filter @agentscope-ai/agentscope-service build
+pnpm --filter @agentscope-ai/desktop test
+pnpm --filter @agentscope-ai/desktop typecheck
+pnpm --filter @agentscope-ai/desktop build
+node apps/desktop/scripts/check-i18n.js
+```
+
+CI performs the Core, Service, package, Desktop build, and Desktop runtime tests on Windows, Linux, and macOS.
+
+## Recovery
+
+Before upgrading a production profile, back up `~/.agentscope`. To retry an import, close Desktop, restore the backup, remove only the newly created `service.sqlite3`, and start the application again. Do not remove the complete profile directory because it also contains document content, configuration, skills, and workspace files.

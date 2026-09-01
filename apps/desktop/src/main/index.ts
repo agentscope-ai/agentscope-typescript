@@ -3,15 +3,15 @@ import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { app, shell, BrowserWindow, ipcMain, Tray, Menu, nativeImage, dialog } from 'electron';
 
-import { registerConfigHandlers } from './config';
-import { shutdownScheduler } from './scheduler';
+import { getConfig, registerConfigHandlers } from './config';
+import { DesktopServiceRuntime } from './runtime';
 import { registerChatHandlers } from './services/chatService';
 import { registerDocumentHandlers } from './services/documentService';
 import { registerMcpHandlers } from './services/mcpHandlers';
-import { mcpShutdownAll } from './services/mcpService';
 import { registerScheduleHandlers } from './services/scheduleService';
 import { registerSkillHandlers } from './services/skillHandlers';
 import { ensureDirectories } from './storage';
+import { PATHS } from './storage/paths';
 import icon from '../../resources/icon.png?asset';
 
 interface AppWithQuitting extends Electron.App {
@@ -21,6 +21,7 @@ interface AppWithQuitting extends Electron.App {
 (app as AppWithQuitting).isQuitting = false;
 
 let tray: Tray | null = null;
+let serviceRuntime: DesktopServiceRuntime | null = null;
 
 /**
  * Create system tray icon with menu for the application
@@ -140,19 +141,25 @@ app.whenReady().then(async () => {
     });
 
     // Ensure storage directories exist
-    ensureDirectories();
+    await ensureDirectories();
 
-    // Register IPC handlers for each module (except those needing webContents)
-    registerConfigHandlers(ipcMain);
-    registerMcpHandlers(ipcMain);
-    registerSkillHandlers(ipcMain);
+    serviceRuntime = await new DesktopServiceRuntime({ dataDirectory: PATHS.root }).open();
+    await serviceRuntime.syncConfig(getConfig());
+    await serviceRuntime.migrateLegacyChats();
+    await serviceRuntime.migrateLegacyMCPs();
+    await serviceRuntime.migrateLegacySchedules();
+    await serviceRuntime.migrateLegacySkills();
+    await serviceRuntime.migrateLegacyDocuments();
+    registerConfigHandlers(ipcMain, config => serviceRuntime!.syncConfig(config));
+    registerMcpHandlers(ipcMain, serviceRuntime);
+    registerSkillHandlers(ipcMain, serviceRuntime);
 
     const mainWindow = createWindow();
 
     // Register handlers that need webContents
-    registerDocumentHandlers(ipcMain, mainWindow.webContents);
-    registerChatHandlers(ipcMain, mainWindow.webContents);
-    await registerScheduleHandlers(ipcMain, mainWindow.webContents);
+    registerDocumentHandlers(ipcMain, mainWindow.webContents, serviceRuntime);
+    registerChatHandlers(ipcMain, mainWindow.webContents, serviceRuntime);
+    registerScheduleHandlers(ipcMain, mainWindow.webContents, serviceRuntime);
 
     createTray(mainWindow);
 
@@ -168,7 +175,7 @@ app.whenReady().then(async () => {
 
 app.on('before-quit', async () => {
     (app as AppWithQuitting).isQuitting = true;
-    await Promise.allSettled([shutdownScheduler(), mcpShutdownAll()]);
+    await Promise.allSettled([serviceRuntime?.close()]);
 });
 
 // Don't quit when all windows are closed (hidden to tray)

@@ -8,7 +8,7 @@ import { electronAPI } from '@electron-toolkit/preload';
 import type { GetSessionsQuery, GetSessionsResult, Session } from '@shared/types/chat';
 import type { Config } from '@shared/types/config';
 import type { Document } from '@shared/types/document';
-import type { MCPServerConfig, MCPServerState } from '@shared/types/mcp';
+import type { MCPServerCreateConfig, MCPServerState } from '@shared/types/mcp';
 import type {
     Schedule,
     ScheduleWithStatus,
@@ -16,7 +16,12 @@ import type {
     ExecutionStartedEvent,
     ExecutionFinishedEvent,
 } from '@shared/types/schedule';
-import type { SkillConfig, WatchDir } from '@shared/types/skill';
+import type {
+    SkillConfig,
+    SkillImportResult,
+    WatchDir,
+    WatchDirAddResult,
+} from '@shared/types/skill';
 import { contextBridge, ipcRenderer } from 'electron';
 
 // Custom APIs for renderer
@@ -29,8 +34,8 @@ const api = {
     chat: {
         getSessions: (query: GetSessionsQuery): Promise<GetSessionsResult> =>
             ipcRenderer.invoke('chat:getSessions', query),
-        createSession: (name?: string): Promise<Session> =>
-            ipcRenderer.invoke('chat:createSession', name),
+        createSession: (agentKey?: string, name?: string): Promise<Session> =>
+            ipcRenderer.invoke('chat:createSession', agentKey, name),
         renameSession: (id: string, name: string): Promise<Session> =>
             ipcRenderer.invoke('chat:renameSession', id, name),
         pinSession: (id: string, pinned: boolean): Promise<Session> =>
@@ -132,7 +137,7 @@ const api = {
     },
     mcp: {
         getAll: (): Promise<MCPServerState[]> => ipcRenderer.invoke('mcp:getAll'),
-        add: (config: Omit<MCPServerConfig, 'id' | 'createdAt'>): Promise<MCPServerState> =>
+        add: (config: MCPServerCreateConfig): Promise<MCPServerState> =>
             ipcRenderer.invoke('mcp:add', config),
         remove: (id: string): Promise<void> => ipcRenderer.invoke('mcp:remove', id),
         connect: (id: string): Promise<MCPServerState> => ipcRenderer.invoke('mcp:connect', id),
@@ -150,10 +155,10 @@ const api = {
         setActive: (name: string, isActive: boolean): Promise<SkillConfig> =>
             ipcRenderer.invoke('skill:setActive', name, isActive),
         remove: (name: string): Promise<void> => ipcRenderer.invoke('skill:remove', name),
-        import: (srcPath: string): Promise<SkillConfig> =>
+        import: (srcPath: string): Promise<SkillImportResult> =>
             ipcRenderer.invoke('skill:import', srcPath),
         getWatchDirs: (): Promise<WatchDir[]> => ipcRenderer.invoke('skill:getWatchDirs'),
-        addWatchDir: (path: string): Promise<WatchDir> =>
+        addWatchDir: (path: string): Promise<WatchDirAddResult> =>
             ipcRenderer.invoke('skill:addWatchDir', path),
         removeWatchDir: (id: string): Promise<void> =>
             ipcRenderer.invoke('skill:removeWatchDir', id),

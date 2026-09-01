@@ -280,4 +280,30 @@ describe('LocalWorkspaceManager', () => {
         await manager.close('workspace-1');
         expect(created[1].closed).toBe(true);
     });
+
+    test('replaces skill seeds and invalidates cached workspaces', async () => {
+        const created: FakeWorkspace[] = [];
+        const receivedSkillPaths: string[][] = [];
+        const manager = new LocalWorkspaceManager({
+            baseDirectory: '/tmp/agentscope-local-manager',
+            skillPaths: ['initial-skill'],
+            workspaceFactory: options => {
+                const workspace = fakeWorkspace(options.workspaceId!);
+                created.push(workspace);
+                receivedSkillPaths.push(options.skillPaths ?? []);
+                return workspace as unknown as LocalWorkspace;
+            },
+        });
+        await manager.getWorkspace('user-1', 'agent-1', 'session-1', 'workspace-1');
+        await manager.setSkillPaths(['replacement-skill']);
+        await manager.getWorkspace('user-1', 'agent-1', 'session-1', 'workspace-1');
+
+        expect(created).toHaveLength(2);
+        expect(created[0].closed).toBe(true);
+        expect(receivedSkillPaths).toEqual([
+            [expect.stringMatching(/initial-skill$/)],
+            [expect.stringMatching(/replacement-skill$/)],
+        ]);
+        await manager.closeAll();
+    });
 });

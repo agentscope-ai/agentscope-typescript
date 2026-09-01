@@ -45,7 +45,7 @@ export class LocalWorkspaceManager extends WorkspaceManagerBase<LocalWorkspace> 
     readonly baseDirectory: string;
     readonly ttlMs: number;
     private readonly defaultMcps: MCPClient[];
-    private readonly skillPaths: string[];
+    private skillPaths: string[];
     private readonly workspaceFactory: (options: LocalWorkspaceOptions) => LocalWorkspace;
     private readonly cache = new Map<string, CacheEntry>();
     private readonly mutex = new AsyncMutex();
@@ -115,6 +115,22 @@ export class LocalWorkspaceManager extends WorkspaceManagerBase<LocalWorkspace> 
             return values;
         });
         await Promise.allSettled(workspaces.map(workspace => this.safeClose(workspace)));
+    }
+
+    /**
+     * Replace seed skill paths and invalidate cached workspaces.
+     * @param skillPaths
+     */
+    async setSkillPaths(skillPaths: string[]): Promise<void> {
+        const normalized = skillPaths.map(value => path.resolve(value));
+        if (
+            normalized.length === this.skillPaths.length &&
+            normalized.every((value, index) => value === this.skillPaths[index])
+        ) {
+            return;
+        }
+        this.skillPaths = normalized;
+        await this.closeAll();
     }
 
     private popExpired(now: number): LocalWorkspace[] {

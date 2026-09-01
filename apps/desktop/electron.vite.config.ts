@@ -13,7 +13,12 @@ export default defineConfig({
         },
         build: {
             rollupOptions: {
-                external: ['@agentscope-ai/agentscope', /^@agentscope-ai\/agentscope\/.*/],
+                external: [
+                    '@agentscope-ai/agentscope',
+                    /^@agentscope-ai\/agentscope\/.*/,
+                    '@agentscope-ai/agentscope-service',
+                    /^@agentscope-ai\/agentscope-service\/.*/,
+                ],
             },
         },
     },
