@@ -803,36 +803,84 @@
             "sha256": "7dd0564ff946271e3780f337c9b817fb4babfa8888afab105d4dc51f0f6fdb5d",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/app_lifespan_dedicated_test.py",
+                "tests/blob_store_s3_test.py",
+                "tests/index_worker_lease_test.py",
+                "tests/service_enqueue_index_task_test.py",
+                "tests/service_index_task_consumer_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/index-service.test.ts",
+                "packages/agentscope-service/test/knowledge-base-service.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_service/_index_task_consumer.py",
             "sha256": "c1a95bd7eff788718963d9f1583626b1acb91b4f07fd597040b8617c81ad6dab",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/app_lifespan_dedicated_test.py",
+                "tests/blob_store_s3_test.py",
+                "tests/index_worker_lease_test.py",
+                "tests/service_enqueue_index_task_test.py",
+                "tests/service_index_task_consumer_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/index-service.test.ts",
+                "packages/agentscope-service/test/knowledge-base-service.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_service/_index_worker.py",
             "sha256": "032b32a1065e2a5430396f7da76e3258b6d2b0c83ec0d607f6eb26c2bc885cac",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/app_lifespan_dedicated_test.py",
+                "tests/blob_store_s3_test.py",
+                "tests/index_worker_lease_test.py",
+                "tests/service_enqueue_index_task_test.py",
+                "tests/service_index_task_consumer_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/index-service.test.ts",
+                "packages/agentscope-service/test/knowledge-base-service.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_service/_knowledge_base.py",
             "sha256": "f3e54526723279fd31491af5e1dfce301f3e1d338892b67bdd0511df16f2dad8",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/app_lifespan_dedicated_test.py",
+                "tests/blob_store_s3_test.py",
+                "tests/index_worker_lease_test.py",
+                "tests/service_enqueue_index_task_test.py",
+                "tests/service_index_task_consumer_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/index-service.test.ts",
+                "packages/agentscope-service/test/knowledge-base-service.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_service/_mcp_render.py",
@@ -1566,36 +1614,84 @@
             "sha256": "ec46a5aa105f6f0a0ee5559968aded3f97100265f7cd1e2ffa80887d16ccda0b",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/rag/blob-store",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/app_lifespan_dedicated_test.py",
+                "tests/blob_store_s3_test.py",
+                "tests/index_worker_lease_test.py",
+                "tests/service_enqueue_index_task_test.py",
+                "tests/service_index_task_consumer_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/index-service.test.ts",
+                "packages/agentscope-service/test/knowledge-base-service.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/rag/blob_store/_base.py",
             "sha256": "38d9fd8530b75bc132a1a1a4e75d3649680bdcc25144b7c0b6c526993fc88394",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/rag/blob-store",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/app_lifespan_dedicated_test.py",
+                "tests/blob_store_s3_test.py",
+                "tests/index_worker_lease_test.py",
+                "tests/service_enqueue_index_task_test.py",
+                "tests/service_index_task_consumer_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/index-service.test.ts",
+                "packages/agentscope-service/test/knowledge-base-service.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/rag/blob_store/_local.py",
             "sha256": "ed3764ba5c662840227c41ac2fa202826f6b0cbc9192a2749c30a3db61909fe2",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/rag/blob-store",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/app_lifespan_dedicated_test.py",
+                "tests/blob_store_s3_test.py",
+                "tests/index_worker_lease_test.py",
+                "tests/service_enqueue_index_task_test.py",
+                "tests/service_index_task_consumer_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/index-service.test.ts",
+                "packages/agentscope-service/test/knowledge-base-service.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/rag/blob_store/_s3.py",
             "sha256": "ea3d154362303e7965d1a61dc7ac28094f8d2827df126f60f73d8ac7183a3945",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/rag/blob-store",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/app_lifespan_dedicated_test.py",
+                "tests/blob_store_s3_test.py",
+                "tests/index_worker_lease_test.py",
+                "tests/service_enqueue_index_task_test.py",
+                "tests/service_index_task_consumer_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/index-service.test.ts",
+                "packages/agentscope-service/test/knowledge-base-service.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/rag/index_worker/__init__.py",
@@ -1620,45 +1716,105 @@
             "sha256": "f20dedaace90784ac5c71098ea8d969e46ebf2241f63650962267209080950d5",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/rag/knowledge-base-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/app_lifespan_dedicated_test.py",
+                "tests/blob_store_s3_test.py",
+                "tests/index_worker_lease_test.py",
+                "tests/service_enqueue_index_task_test.py",
+                "tests/service_index_task_consumer_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/index-service.test.ts",
+                "packages/agentscope-service/test/knowledge-base-service.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/rag/knowledge_base_manager/_base.py",
             "sha256": "f1e0e95bbb283c8e0e2d77f1cb3f4872125e3711f4c64173df0b91e7abea2c03",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/rag/knowledge-base-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/app_lifespan_dedicated_test.py",
+                "tests/blob_store_s3_test.py",
+                "tests/index_worker_lease_test.py",
+                "tests/service_enqueue_index_task_test.py",
+                "tests/service_index_task_consumer_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/index-service.test.ts",
+                "packages/agentscope-service/test/knowledge-base-service.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/rag/knowledge_base_manager/_collection_per_kb.py",
             "sha256": "5f05b3238864a0be62a8546954840c3ee9b9d5bf11edc58599559ba29f1e99c9",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/rag/knowledge-base-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/app_lifespan_dedicated_test.py",
+                "tests/blob_store_s3_test.py",
+                "tests/index_worker_lease_test.py",
+                "tests/service_enqueue_index_task_test.py",
+                "tests/service_index_task_consumer_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/index-service.test.ts",
+                "packages/agentscope-service/test/knowledge-base-service.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/rag/knowledge_base_manager/_dimension_policy.py",
             "sha256": "ec75348e3f7fac960cd5f8c3b3f0b2dacb22a29cb7053bbfb61cdc5cc8e33d24",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/rag/knowledge-base-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/app_lifespan_dedicated_test.py",
+                "tests/blob_store_s3_test.py",
+                "tests/index_worker_lease_test.py",
+                "tests/service_enqueue_index_task_test.py",
+                "tests/service_index_task_consumer_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/index-service.test.ts",
+                "packages/agentscope-service/test/knowledge-base-service.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/rag/knowledge_base_manager/_errors.py",
             "sha256": "d37d9a514127bf6a803b16abc28b048f8795c0a95cad9e4b82f1304a989768cd",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/rag/knowledge-base-manager",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/app_lifespan_dedicated_test.py",
+                "tests/blob_store_s3_test.py",
+                "tests/index_worker_lease_test.py",
+                "tests/service_enqueue_index_task_test.py",
+                "tests/service_index_task_consumer_test.py",
+                "tests/service_knowledge_base_detail_test.py",
+                "tests/service_knowledge_base_upload_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/index-service.test.ts",
+                "packages/agentscope-service/test/knowledge-base-service.test.ts",
+                "packages/agentscope-service/test/rag-service-foundations.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/storage/__init__.py",

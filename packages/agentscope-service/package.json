@@ -22,6 +22,11 @@
             "import": "./dist/message-bus/index.mjs",
             "require": "./dist/message-bus/index.js"
         },
+        "./rag": {
+            "types": "./dist/rag/index.d.ts",
+            "import": "./dist/rag/index.mjs",
+            "require": "./dist/rag/index.js"
+        },
         "./manager": {
             "types": "./dist/manager/index.d.ts",
             "import": "./dist/manager/index.mjs",
@@ -52,14 +57,18 @@
     "dependencies": {
         "@agentscope-ai/agentscope": "workspace:^0.0.15",
         "cron-parser": "^5.5.0",
+        "mime-types": "^3.0.2",
         "zod": "^4.3.6"
     },
     "optionalDependencies": {
+        "@aws-sdk/client-s3": "^3.1121.0",
+        "@aws-sdk/lib-storage": "^3.1121.0",
         "better-sqlite3": "^12.11.1",
         "redis": "^5.12.1"
     },
     "devDependencies": {
         "@types/jest": "^30.0.0",
+        "@types/mime-types": "^3.0.1",
         "@types/node": "^22.19.15",
         "jest": "^30.2.0",
         "ts-jest": "^29.4.6",

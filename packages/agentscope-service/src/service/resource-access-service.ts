@@ -35,6 +35,8 @@ export interface KnowledgeBaseView extends Omit<KnowledgeBaseRecord['data'], 'co
     chunk_count: number;
     credential_name: string | null;
     status_counts: KnowledgeBaseStatusCounts;
+    /** Owning storage key, intentionally non-enumerable on the wire view. */
+    ownerId: string;
 }
 
 export type ResourceView = AgentView | CredentialView | KnowledgeBaseView;
@@ -234,7 +236,7 @@ export class ResourceAccessService {
             record.user_id,
             knowledgeBaseRecord.data.embedding_model_config.credential_id
         );
-        return {
+        const view = {
             id: knowledgeBaseRecord.id,
             name: knowledgeBaseRecord.data.name,
             description: knowledgeBaseRecord.data.description,
@@ -252,7 +254,12 @@ export class ResourceAccessService {
                     ? credential.data.name
                     : null,
             status_counts: statusCounts,
-        };
+        } as KnowledgeBaseView;
+        Object.defineProperty(view, 'ownerId', {
+            value: knowledgeBaseRecord.user_id,
+            enumerable: false,
+        });
+        return view;
     }
 
     private async listRefs(viewerId: string, kind: ResourceKind): Promise<ResourceRef[]> {

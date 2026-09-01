@@ -83,3 +83,16 @@ export async function abandonInboxConsumer(
     );
     await bus.enqueueWakeup(options.userId, options.sessionId, options.agentId);
 }
+
+/** Enqueue one durable knowledge-document indexing task before signaling workers. */
+export async function enqueueIndexTask(
+    bus: MessageBus,
+    options: { userId: string; knowledgeBaseId: string; documentId: string }
+): Promise<void> {
+    await bus.queuePush(MessageBusKeys.indexTasksQueue(), {
+        user_id: options.userId,
+        knowledge_base_id: options.knowledgeBaseId,
+        document_id: options.documentId,
+    });
+    await bus.publish(MessageBusKeys.indexTasksSignal(), {});
+}

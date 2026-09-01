@@ -72,6 +72,8 @@ const agent = (id: string, userId: string, source: 'user' | 'team' = 'user') => 
     id,
     user_id: userId,
     source,
+    created_at: '2026-01-01T00:00:00.000Z',
+    updated_at: '2026-01-01T00:00:00.000Z',
     data: {
         id: `data-${id}`,
         name: id,
