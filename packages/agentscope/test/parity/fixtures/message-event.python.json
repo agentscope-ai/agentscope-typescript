@@ -1,0 +1,251 @@
+{
+    "python_commit": "de163b34b909edaba3c174190ad7e1a355e7849f",
+    "blocks": [
+        {
+            "type": "text",
+            "text": "hello",
+            "id": "text-id",
+            "created_at": "2026-09-01T12:34:56.123456",
+            "finished_at": null
+        },
+        {
+            "type": "thinking",
+            "thinking": "reason",
+            "id": "thinking-id",
+            "created_at": "2026-09-01T12:34:56.123456",
+            "finished_at": null,
+            "signature": "sig"
+        },
+        {
+            "type": "data",
+            "id": "data-id",
+            "source": {
+                "type": "url",
+                "url": "https://example.com/image.png",
+                "media_type": "image/png"
+            },
+            "name": null,
+            "created_at": "2026-09-01T12:34:56.123456",
+            "finished_at": null
+        },
+        {
+            "type": "hint",
+            "hint": "hint",
+            "id": "hint-id",
+            "source": null,
+            "created_at": "2026-09-01T12:34:56.123456",
+            "finished_at": "2026-09-01T12:34:56.123456"
+        },
+        {
+            "type": "tool_call",
+            "id": "call-id",
+            "name": "read",
+            "input": "{}",
+            "state": "pending",
+            "suggested_rules": [],
+            "created_at": "2026-09-01T12:34:56.123456",
+            "finished_at": null
+        },
+        {
+            "type": "tool_result",
+            "id": "call-id",
+            "name": "read",
+            "output": "ok",
+            "state": "running",
+            "metadata": {},
+            "created_at": "2026-09-01T12:34:56.123456",
+            "finished_at": null
+        }
+    ],
+    "messages": [
+        {
+            "name": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "hello",
+                    "id": "text-id",
+                    "created_at": "2026-09-01T12:34:56.123456",
+                    "finished_at": null
+                },
+                {
+                    "type": "data",
+                    "id": "data-id",
+                    "source": {
+                        "type": "url",
+                        "url": "https://example.com/image.png",
+                        "media_type": "image/png"
+                    },
+                    "name": null,
+                    "created_at": "2026-09-01T12:34:56.123456",
+                    "finished_at": null
+                }
+            ],
+            "role": "user",
+            "id": "user-id",
+            "metadata": {},
+            "created_at": "2026-09-01T12:34:56.123456",
+            "usage": null,
+            "finished_at": "2026-09-01T12:34:56.123456",
+            "finished_reason": null,
+            "structured_output": null,
+            "error": null
+        },
+        {
+            "name": "assistant",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "hello",
+                    "id": "text-id",
+                    "created_at": "2026-09-01T12:34:56.123456",
+                    "finished_at": null
+                },
+                {
+                    "type": "thinking",
+                    "thinking": "reason",
+                    "id": "thinking-id",
+                    "created_at": "2026-09-01T12:34:56.123456",
+                    "finished_at": null,
+                    "signature": "sig"
+                },
+                {
+                    "type": "data",
+                    "id": "data-id",
+                    "source": {
+                        "type": "url",
+                        "url": "https://example.com/image.png",
+                        "media_type": "image/png"
+                    },
+                    "name": null,
+                    "created_at": "2026-09-01T12:34:56.123456",
+                    "finished_at": null
+                },
+                {
+                    "type": "hint",
+                    "hint": "hint",
+                    "id": "hint-id",
+                    "source": null,
+                    "created_at": "2026-09-01T12:34:56.123456",
+                    "finished_at": "2026-09-01T12:34:56.123456"
+                },
+                {
+                    "type": "tool_call",
+                    "id": "call-id",
+                    "name": "read",
+                    "input": "{}",
+                    "state": "pending",
+                    "suggested_rules": [],
+                    "created_at": "2026-09-01T12:34:56.123456",
+                    "finished_at": null
+                },
+                {
+                    "type": "tool_result",
+                    "id": "call-id",
+                    "name": "read",
+                    "output": "ok",
+                    "state": "running",
+                    "metadata": {},
+                    "created_at": "2026-09-01T12:34:56.123456",
+                    "finished_at": null
+                }
+            ],
+            "role": "assistant",
+            "id": "assistant-id",
+            "metadata": {},
+            "created_at": "2026-09-01T12:34:56.123456",
+            "usage": {
+                "input_tokens": 10,
+                "output_tokens": 2,
+                "cache_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+            },
+            "finished_at": null,
+            "finished_reason": null,
+            "structured_output": { "answer": 42 },
+            "error": null
+        }
+    ],
+    "events": [
+        {
+            "id": "event-id",
+            "created_at": "2026-09-01T12:34:56.123456",
+            "metadata": { "source": "python" },
+            "type": "REPLY_START",
+            "session_id": "session-id",
+            "reply_id": "reply-id",
+            "name": "Friday",
+            "role": "assistant"
+        },
+        {
+            "id": "event-id",
+            "created_at": "2026-09-01T12:34:56.123456",
+            "metadata": { "source": "python" },
+            "type": "REPLY_END",
+            "session_id": "session-id",
+            "reply_id": "reply-id",
+            "finished_reason": "completed",
+            "error": null
+        },
+        {
+            "id": "event-id",
+            "created_at": "2026-09-01T12:34:56.123456",
+            "metadata": { "source": "python" },
+            "type": "MODEL_CALL_END",
+            "reply_id": "reply-id",
+            "input_tokens": 10,
+            "output_tokens": 2,
+            "cache_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "finished_reason": "completed"
+        },
+        {
+            "id": "event-id",
+            "created_at": "2026-09-01T12:34:56.123456",
+            "metadata": { "source": "python" },
+            "type": "TOOL_RESULT_DATA_DELTA",
+            "reply_id": "reply-id",
+            "tool_call_id": "call-id",
+            "block_id": "result-data-id",
+            "media_type": "image/png",
+            "data": "eA==",
+            "url": null
+        },
+        {
+            "id": "event-id",
+            "created_at": "2026-09-01T12:34:56.123456",
+            "metadata": { "source": "python" },
+            "type": "TOOL_RESULT_DATA_DELTA",
+            "reply_id": "reply-id",
+            "tool_call_id": "call-id",
+            "block_id": "result-url-id",
+            "media_type": "image/png",
+            "data": null,
+            "url": "https://example.com/image.png"
+        },
+        {
+            "id": "event-id",
+            "created_at": "2026-09-01T12:34:56.123456",
+            "metadata": { "source": "python" },
+            "type": "TOOL_RESULT_END",
+            "reply_id": "reply-id",
+            "tool_call_id": "call-id",
+            "state": "success"
+        },
+        {
+            "id": "event-id",
+            "created_at": "2026-09-01T12:34:56.123456",
+            "metadata": { "source": "python" },
+            "type": "USER_INTERRUPT",
+            "reply_id": "reply-id"
+        },
+        {
+            "id": "event-id",
+            "created_at": "2026-09-01T12:34:56.123456",
+            "metadata": { "source": "python" },
+            "type": "CUSTOM",
+            "name": "state_updated",
+            "value": {}
+        }
+    ]
+}

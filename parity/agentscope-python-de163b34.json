@@ -2091,18 +2091,38 @@
             "sha256": "3fb188eb476458e0a2b5fb8185935d824233d673cd4147a3fe8db12f316545aa",
             "module": "event",
             "typescriptTarget": "packages/agentscope/src/event",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/event_test.py",
+                "tests/event_to_message_test.py",
+                "tests/message_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/event/index.test.ts",
+                "packages/agentscope/src/message/append-event.test.ts",
+                "packages/agentscope/src/message/block.test.ts",
+                "packages/agentscope/src/message/message.test.ts",
+                "packages/agentscope/test/parity/message-event.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/event/_event.py",
             "sha256": "685e8353257db5ec4fdc0db97c513fbb4115143edecc868d6429712479f1c0d6",
             "module": "event",
             "typescriptTarget": "packages/agentscope/src/event",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/event_test.py",
+                "tests/event_to_message_test.py",
+                "tests/message_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/event/index.test.ts",
+                "packages/agentscope/src/message/append-event.test.ts",
+                "packages/agentscope/src/message/block.test.ts",
+                "packages/agentscope/src/message/message.test.ts",
+                "packages/agentscope/test/parity/message-event.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/exception/__init__.py",
@@ -2271,27 +2291,57 @@
             "sha256": "2cd8f567bb80b3c187aa97545f3a6ee21d5c2c1b9842dfc74997288c9005f5b8",
             "module": "message",
             "typescriptTarget": "packages/agentscope/src/message",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/event_test.py",
+                "tests/event_to_message_test.py",
+                "tests/message_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/event/index.test.ts",
+                "packages/agentscope/src/message/append-event.test.ts",
+                "packages/agentscope/src/message/block.test.ts",
+                "packages/agentscope/src/message/message.test.ts",
+                "packages/agentscope/test/parity/message-event.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/message/_base.py",
             "sha256": "7c94d632b975cc61315b46fd8798e683d6ba939c888fb686261947070f803c07",
             "module": "message",
             "typescriptTarget": "packages/agentscope/src/message",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/event_test.py",
+                "tests/event_to_message_test.py",
+                "tests/message_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/event/index.test.ts",
+                "packages/agentscope/src/message/append-event.test.ts",
+                "packages/agentscope/src/message/block.test.ts",
+                "packages/agentscope/src/message/message.test.ts",
+                "packages/agentscope/test/parity/message-event.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/message/_block.py",
             "sha256": "befd7027725275b041e758c2ce6c2250df1eede8b028ad3161d9df0a97b79d3a",
             "module": "message",
             "typescriptTarget": "packages/agentscope/src/message",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/event_test.py",
+                "tests/event_to_message_test.py",
+                "tests/message_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/event/index.test.ts",
+                "packages/agentscope/src/message/append-event.test.ts",
+                "packages/agentscope/src/message/block.test.ts",
+                "packages/agentscope/src/message/message.test.ts",
+                "packages/agentscope/test/parity/message-event.golden.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/middleware/__init__.py",

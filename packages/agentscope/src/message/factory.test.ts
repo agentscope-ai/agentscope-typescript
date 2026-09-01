@@ -21,12 +21,16 @@ describe('message entity factories', () => {
                     type: 'text',
                     text: 'hello',
                     created_at: '2026-09-01T12:34:56.123456',
+                    finished_at: null,
                 },
             ],
             metadata: {},
             created_at: '2026-09-01T12:34:56.123456',
-            finished_at: undefined,
-            usage: undefined,
+            usage: null,
+            finished_at: null,
+            finished_reason: null,
+            structured_output: null,
+            error: null,
         });
     });
 

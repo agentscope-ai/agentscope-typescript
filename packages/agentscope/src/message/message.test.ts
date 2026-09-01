@@ -1,4 +1,12 @@
-import { createMsg, getContentBlocks, getTextContent } from './message';
+import {
+    AssistantMsg,
+    UserMsg,
+    createMsg,
+    getContentBlocks,
+    getTextContent,
+    hasContentBlocks,
+} from './message';
+import { parseMsg } from './schema';
 
 const TS = '2024-01-01T00:00:00.000Z';
 
@@ -86,5 +94,67 @@ describe('Message', () => {
             },
         ]);
         expect(getContentBlocks(msg, 'data')).toStrictEqual([]);
+        expect(getContentBlocks(msg, ['text', 'thinking'])).toHaveLength(3);
+        expect(hasContentBlocks(msg)).toBe(true);
+        expect(hasContentBlocks(msg, ['data', 'thinking'])).toBe(true);
+        expect(hasContentBlocks(msg, 'data')).toBe(false);
+    });
+
+    test('fills the same message defaults and usage fields as Python', () => {
+        expect(
+            AssistantMsg({
+                id: 'message-id',
+                name: 'assistant',
+                content: [],
+                created_at: TS,
+                usage: { input_tokens: 1, output_tokens: 2 },
+            })
+        ).toEqual({
+            id: 'message-id',
+            name: 'assistant',
+            role: 'assistant',
+            content: [],
+            metadata: {},
+            created_at: TS,
+            usage: {
+                input_tokens: 1,
+                output_tokens: 2,
+                cache_input_tokens: 0,
+                cache_creation_input_tokens: 0,
+            },
+            finished_at: null,
+            finished_reason: null,
+            structured_output: null,
+            error: null,
+        });
+
+        const user = UserMsg({ id: 'user-id', name: 'user', content: [], created_at: TS });
+        expect(user.finished_at).toBe(TS);
+    });
+
+    test('validates message wire payloads at runtime', () => {
+        expect(
+            parseMsg({
+                id: 'wire-id',
+                name: 'user',
+                role: 'user',
+                content: [{ type: 'text', text: 'hello', id: 'block-id', created_at: TS }],
+                created_at: TS,
+            })
+        ).toMatchObject({
+            id: 'wire-id',
+            finished_at: null,
+            finished_reason: null,
+            structured_output: null,
+            error: null,
+            usage: null,
+        });
+        expect(() =>
+            parseMsg({
+                name: 'user',
+                role: 'user',
+                content: [{ type: 'thinking', thinking: 'not allowed' }],
+            })
+        ).toThrow('User message can only contain');
     });
 });

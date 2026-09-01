@@ -2,6 +2,12 @@ import type { DataBlock, TextBlock, ThinkingBlock, ToolCallBlock } from '../mess
 import type { JSONSerializableObject } from '../type';
 import type { ChatUsage } from './usage';
 
+/** The terminal reason of a model response. */
+export enum FinishedReason {
+    INTERRUPTED = 'interrupted',
+    COMPLETED = 'completed',
+}
+
 export interface ChatResponse {
     type: 'chat';
     id: string;

@@ -261,8 +261,13 @@ export class Agent {
      */
     protected _saveToContext(blocks: ContentBlock[], usage?: ChatUsage): void {
         const msgUsage: Msg['usage'] = usage
-            ? { input_tokens: usage.inputTokens, output_tokens: usage.outputTokens }
-            : undefined;
+            ? {
+                  input_tokens: usage.inputTokens,
+                  output_tokens: usage.outputTokens,
+                  cache_input_tokens: 0,
+                  cache_creation_input_tokens: 0,
+              }
+            : null;
         const lastMsg = this.context.at(-1);
         if (this.context.length === 0) {
             this.context.push(
@@ -280,6 +285,8 @@ export class Agent {
                     lastMsg.usage = {
                         input_tokens: 0,
                         output_tokens: 0,
+                        cache_input_tokens: 0,
+                        cache_creation_input_tokens: 0,
                     };
                 }
                 lastMsg.usage.input_tokens = lastMsg.usage.input_tokens + msgUsage.input_tokens;
