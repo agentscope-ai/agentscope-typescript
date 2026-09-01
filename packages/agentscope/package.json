@@ -143,6 +143,7 @@
         "typescript": "^5.5.3"
     },
     "dependencies": {
+        "@opentelemetry/api": "^1.9.0",
         "@cfworker/json-schema": "^4.1.1",
         "@modelcontextprotocol/sdk": "^1.27.1",
         "diff": "^9.0.0",

@@ -251,6 +251,9 @@ importers:
             '@modelcontextprotocol/sdk':
                 specifier: ^1.27.1
                 version: 1.27.1(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.3.6)
+            '@opentelemetry/api':
+                specifier: ^1.9.0
+                version: 1.9.1
             diff:
                 specifier: ^9.0.0
                 version: 9.0.0
@@ -2430,6 +2433,13 @@ packages:
             {
                 integrity: sha512-zYOKnvUm8IQ86tNCrpUVBT0lEvoKvyf+9pPS7M4VDB8O1o+msaPMsb/xZx/w5hpcuN1dfehJrkY41ZcdGZpyqg==,
             }
+
+    '@opentelemetry/api@1.9.1':
+        resolution:
+            {
+                integrity: sha512-gLyJlPHPZYdAk1JENA9LeHejZe1Ti77/pTeFm/nMXmQH/HFZlcS/O2XJB+L8fkbrNSqhdtlvjBVjxwUYanNH5Q==,
+            }
+        engines: { node: '>=8.0.0' }
 
     '@pdf-lib/standard-fonts@1.0.0':
         resolution:
@@ -13689,6 +13699,8 @@ snapshots:
             semver: 7.7.4
 
     '@ocavue/utils@1.5.0': {}
+
+    '@opentelemetry/api@1.9.1': {}
 
     '@pdf-lib/standard-fonts@1.0.0':
         dependencies:

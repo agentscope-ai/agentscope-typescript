@@ -1,0 +1,56 @@
+/** OpenTelemetry GenAI and AgentScope extension attribute names. */
+export const SpanAttributes = {
+    GEN_AI_CONVERSATION_ID: 'gen_ai.conversation.id',
+    GEN_AI_OPERATION_NAME: 'gen_ai.operation.name',
+    GEN_AI_PROVIDER_NAME: 'gen_ai.provider.name',
+    GEN_AI_REQUEST_MODEL: 'gen_ai.request.model',
+    GEN_AI_REQUEST_TEMPERATURE: 'gen_ai.request.temperature',
+    GEN_AI_REQUEST_TOP_P: 'gen_ai.request.top_p',
+    GEN_AI_REQUEST_TOP_K: 'gen_ai.request.top_k',
+    GEN_AI_REQUEST_MAX_TOKENS: 'gen_ai.request.max_tokens',
+    GEN_AI_REQUEST_PRESENCE_PENALTY: 'gen_ai.request.presence_penalty',
+    GEN_AI_REQUEST_FREQUENCY_PENALTY: 'gen_ai.request.frequency_penalty',
+    GEN_AI_REQUEST_STOP_SEQUENCES: 'gen_ai.request.stop_sequences',
+    GEN_AI_REQUEST_SEED: 'gen_ai.request.seed',
+    GEN_AI_RESPONSE_ID: 'gen_ai.response.id',
+    GEN_AI_RESPONSE_FINISH_REASONS: 'gen_ai.response.finish_reasons',
+    GEN_AI_USAGE_INPUT_TOKENS: 'gen_ai.usage.input_tokens',
+    GEN_AI_USAGE_OUTPUT_TOKENS: 'gen_ai.usage.output_tokens',
+    GEN_AI_INPUT_MESSAGES: 'gen_ai.input.messages',
+    GEN_AI_OUTPUT_MESSAGES: 'gen_ai.output.messages',
+    GEN_AI_AGENT_NAME: 'gen_ai.agent.name',
+    GEN_AI_AGENT_DESCRIPTION: 'gen_ai.agent.description',
+    GEN_AI_TOOL_CALL_ID: 'gen_ai.tool.call.id',
+    GEN_AI_TOOL_NAME: 'gen_ai.tool.name',
+    GEN_AI_TOOL_DESCRIPTION: 'gen_ai.tool.description',
+    GEN_AI_TOOL_CALL_ARGUMENTS: 'gen_ai.tool.call.arguments',
+    GEN_AI_TOOL_CALL_RESULT: 'gen_ai.tool.call.result',
+    GEN_AI_TOOL_DEFINITIONS: 'gen_ai.tool.definitions',
+    AGENTSCOPE_CACHE_INPUT_TOKENS: 'agentscope.usage.cache_input_tokens',
+    AGENTSCOPE_CACHE_CREATION_INPUT_TOKENS: 'agentscope.usage.cache_creation_input_tokens',
+    AGENTSCOPE_REPLY_ID: 'agentscope.agent.reply_id',
+    AGENTSCOPE_HITL_PENDING_TOOLS: 'agentscope.agent.hitl_pending_tools',
+    AGENTSCOPE_EXTERNAL_EXECUTION_PENDING_TOOLS:
+        'agentscope.agent.external_execution_pending_tools',
+    AGENTSCOPE_INCOMING_EVENT_TYPE: 'agentscope.agent.incoming_event_type',
+    AGENTSCOPE_IS_EXTERNAL_EXECUTION: 'agentscope.agent.is_external_execution',
+} as const;
+
+export const OperationNameValues = {
+    CHAT: 'chat',
+    INVOKE_AGENT: 'invoke_agent',
+    EXECUTE_TOOL: 'execute_tool',
+} as const;
+
+export const ProviderNameValues = {
+    DASHSCOPE: 'dashscope',
+    OLLAMA: 'ollama',
+    DEEPSEEK: 'deepseek',
+    OPENAI: 'openai',
+    ANTHROPIC: 'anthropic',
+    GCP_GEMINI: 'gcp.gemini',
+    MOONSHOT: 'moonshot',
+    AZURE_AI_OPENAI: 'azure.ai.openai',
+    AWS_BEDROCK: 'aws.bedrock',
+    XAI: 'x_ai',
+} as const;

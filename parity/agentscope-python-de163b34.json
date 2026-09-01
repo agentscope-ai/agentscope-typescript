@@ -2999,63 +2999,63 @@
             "sha256": "0ce43a1fd32b3641e64f4c9845dbc7b58fa3a98b4072dd1172f079f7a3beb9a7",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/tracing_test.py"],
+            "typescriptTests": ["packages/agentscope/src/middleware/tracing/tracing.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_tracing/_attributes.py",
             "sha256": "364a3ebb7dc3b356c64998ae9c772099ec282c6de402e69ed697c08585d78079",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/tracing_test.py"],
+            "typescriptTests": ["packages/agentscope/src/middleware/tracing/tracing.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_tracing/_converter.py",
             "sha256": "beed9a56815a02595b1e610d46ee3c20e680f489442efdac5e58c962031f6455",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/tracing_test.py"],
+            "typescriptTests": ["packages/agentscope/src/middleware/tracing/tracing.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_tracing/_extractor.py",
             "sha256": "0dc118769752c5b2298fbe11533d9a752d0f25a77022dfc1d4fa1ccff3f93aa6",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/tracing_test.py"],
+            "typescriptTests": ["packages/agentscope/src/middleware/tracing/tracing.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_tracing/_setup.py",
             "sha256": "e73ba09dde8e81f182a26b81cdd18981a6173355b2803ad9a9332b387e705d9f",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/tracing_test.py"],
+            "typescriptTests": ["packages/agentscope/src/middleware/tracing/tracing.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_tracing/_trace.py",
             "sha256": "7434a4e5d4d7898e36eda3aa70a712e762951c32f765897c1aa42a2ccb7d68ea",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/tracing_test.py"],
+            "typescriptTests": ["packages/agentscope/src/middleware/tracing/tracing.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_tracing/_utils.py",
             "sha256": "9757b9f994784df0153192894600a9860290dc69330e9e9a99ade0b839024a75",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/tracing_test.py"],
+            "typescriptTests": ["packages/agentscope/src/middleware/tracing/tracing.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_tts_middleware.py",
