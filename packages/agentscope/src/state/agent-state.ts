@@ -8,13 +8,7 @@ import {
     createMsg,
     getContentBlocks,
 } from '../message';
-import type {
-    ContentBlock,
-    DataBlock,
-    TextBlock,
-    ToolCallBlock,
-    ToolResultBlock,
-} from '../message';
+import type { ContentBlock, DataBlock, TextBlock, ToolCallBlock } from '../message';
 import type { Msg } from '../message';
 import { createPermissionContext } from '../permission';
 import type { PermissionContext } from '../permission';
@@ -188,16 +182,7 @@ export class AgentState {
      * @param options.name
      * @param options.blocks
      */
-    appendContext(options: {
-        name: string;
-        blocks: Array<
-            | TextBlock
-            | DataBlock
-            | ToolCallBlock
-            | ToolResultBlock
-            | Extract<ContentBlock, { type: 'hint' }>
-        >;
-    }): void {
+    appendContext(options: { name: string; blocks: ContentBlock[] }): void {
         const latest = this.context.at(-1);
         if (
             latest?.role === 'assistant' &&

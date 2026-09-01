@@ -9,6 +9,7 @@ export default defineConfig({
         'logger/index': 'src/logger/index.ts',
         version: 'src/version.ts',
         'message/index': 'src/message/index.ts',
+        'middleware/index': 'src/middleware/index.ts',
         'model/index': 'src/model/index.ts',
         'tool/index': 'src/tool/index.ts',
         'agent/index': 'src/agent/index.ts',

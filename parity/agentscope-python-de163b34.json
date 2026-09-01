@@ -75,45 +75,85 @@
             "sha256": "121b5555e73cf219f801f8fa0229370d90c38050ec63b33d6b75e72e69f754d2",
             "module": "agent",
             "typescriptTarget": "packages/agentscope/src/agent",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agent_basic_test.py",
+                "tests/agent_injection_test.py",
+                "tests/agent_interrupt_test.py",
+                "tests/agent_structured_output_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/agent/core.parity.test.ts",
+                "packages/agentscope/src/agent/hitl-structured.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/agent/_agent.py",
             "sha256": "236307c110ea3bcd2c089475ac0987bca2b596e2be7a36fd0ea22ec274b14521",
             "module": "agent",
             "typescriptTarget": "packages/agentscope/src/agent",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agent_basic_test.py",
+                "tests/agent_injection_test.py",
+                "tests/agent_interrupt_test.py",
+                "tests/agent_structured_output_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/agent/core.parity.test.ts",
+                "packages/agentscope/src/agent/hitl-structured.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/agent/_config.py",
             "sha256": "8bf9274347fc1895090dd5ee27d9ece67ddf5ba365d244bbc59de6b8a5bc4e74",
             "module": "agent",
             "typescriptTarget": "packages/agentscope/src/agent",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agent_basic_test.py",
+                "tests/agent_injection_test.py",
+                "tests/agent_interrupt_test.py",
+                "tests/agent_structured_output_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/agent/core.parity.test.ts",
+                "packages/agentscope/src/agent/hitl-structured.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/agent/_structured_output_tool.py",
             "sha256": "767f12345b2661c874a20e15a6101c4c3e3716624d5fb1e4623c33866d771a99",
             "module": "agent",
             "typescriptTarget": "packages/agentscope/src/agent",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agent_basic_test.py",
+                "tests/agent_injection_test.py",
+                "tests/agent_interrupt_test.py",
+                "tests/agent_structured_output_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/agent/core.parity.test.ts",
+                "packages/agentscope/src/agent/hitl-structured.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/agent/_utils.py",
             "sha256": "df29d1d7e9174f62aefb150a00d4dc3fd94479f3340e9a4ecb352c794b888bc2",
             "module": "agent",
             "typescriptTarget": "packages/agentscope/src/agent",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/agent_basic_test.py",
+                "tests/agent_injection_test.py",
+                "tests/agent_interrupt_test.py",
+                "tests/agent_structured_output_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/agent/core.parity.test.ts",
+                "packages/agentscope/src/agent/hitl-structured.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/__init__.py",
@@ -2794,27 +2834,39 @@
             "sha256": "b9c69aeca8ea7cc49ae105726d5f1feb509ee503cfdf97ab253dfe612ffca8e3",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/middleware_budget_test.py",
+                "tests/middleware_test.py",
+                "tests/tts_middleware_test.py"
+            ],
+            "typescriptTests": ["packages/agentscope/src/middleware/middleware.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_base.py",
             "sha256": "e459260c4e8a460c8f085f2a4f3a136e97019105919736a1f83ebb9b1e5ec993",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/middleware_budget_test.py",
+                "tests/middleware_test.py",
+                "tests/tts_middleware_test.py"
+            ],
+            "typescriptTests": ["packages/agentscope/src/middleware/middleware.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_budget.py",
             "sha256": "3271f55b82af499dc37207eb81c4f4b44d9dc236fedca16b11eb7c54f39f8caf",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/middleware_budget_test.py",
+                "tests/middleware_test.py",
+                "tests/tts_middleware_test.py"
+            ],
+            "typescriptTests": ["packages/agentscope/src/middleware/middleware.parity.test.ts"]
         },
         {
             "path": "src/agentscope/middleware/_longterm_memory/__init__.py",
@@ -3010,9 +3062,13 @@
             "sha256": "4bee3351b06dfecfcade9292a0e8549b8a00e2a2917c0f2ad5cf17438838331c",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/middleware_budget_test.py",
+                "tests/middleware_test.py",
+                "tests/tts_middleware_test.py"
+            ],
+            "typescriptTests": ["packages/agentscope/src/middleware/middleware.parity.test.ts"]
         },
         {
             "path": "src/agentscope/model/__init__.py",

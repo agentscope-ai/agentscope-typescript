@@ -38,6 +38,11 @@
             "import": "./dist/message/index.mjs",
             "require": "./dist/message/index.js"
         },
+        "./middleware": {
+            "types": "./dist/middleware/index.d.ts",
+            "import": "./dist/middleware/index.mjs",
+            "require": "./dist/middleware/index.js"
+        },
         "./model": {
             "types": "./dist/model/index.d.ts",
             "import": "./dist/model/index.mjs",
