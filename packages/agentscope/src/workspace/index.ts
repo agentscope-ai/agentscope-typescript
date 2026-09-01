@@ -92,3 +92,29 @@ export {
     AppleContainerWorkspaceOptions,
     AppleContainerWorkspace,
 } from './apple-container';
+export {
+    E2BApiOptions,
+    E2BClientDriver,
+    E2BCommandOutput,
+    E2BConnectOptions,
+    E2BCreateOptions,
+    E2BListOptions,
+    E2BListResult,
+    E2BRunOptions,
+    E2BSandboxDriver,
+    E2BSandboxInfo,
+    createE2BClient,
+} from './e2b-driver';
+export {
+    DEFAULT_E2B_GATEWAY_PORT,
+    DEFAULT_E2B_TEMPLATE,
+    DEFAULT_E2B_TIMEOUT,
+    E2B_GATEWAY_HOME,
+    E2B_SANDBOX_USER_HOME,
+    E2B_SANDBOX_WORKDIR,
+    E2B_WORKSPACE_ID_METADATA_KEY,
+    E2BBackendOptions,
+    E2BBackend,
+    E2BWorkspaceOptions,
+    E2BWorkspace,
+} from './e2b';

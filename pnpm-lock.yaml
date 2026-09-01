@@ -376,6 +376,9 @@ importers:
             dockerode:
                 specifier: ^4.0.12
                 version: 4.0.12(supports-color@8.1.1)
+            e2b:
+                specifier: ^2.46.1
+                version: 2.46.1
 
 packages:
     7zip-bin@5.2.0:
@@ -704,6 +707,12 @@ packages:
         resolution:
             {
                 integrity: sha512-jigsZK+sMF/cuiB7sERuo9V7N9jx+dhmHHnQyDSVdpZwVutaBu7WvNYqMDLSgFgfB30n452TP3vjDAvFC973mA==,
+            }
+
+    '@bufbuild/protobuf@2.14.0':
+        resolution:
+            {
+                integrity: sha512-C3UGsiCwSprE2NKIIFA3hCDlpXTMCAXRZuEVp88L1GY36Y41+rYL5fryE+nOFhp4p4JPQvdV8PQ4DWgHgeTE+w==,
             }
 
     '@cfworker/json-schema@4.1.1':
@@ -1047,6 +1056,23 @@ packages:
                 integrity: sha512-51OWa1Gi6ODOasPmfJPq6js4pZoomima4XLZZCrkldaH2V5Nb3bVhNXPeT6XV0gubbainSpTw4zi68NqAeCNCg==,
             }
         engines: { node: '>=v18' }
+
+    '@connectrpc/connect-web@2.1.2':
+        resolution:
+            {
+                integrity: sha512-1tfaK85MU+gJjwwmL31d2rzdf0XCYX99chZf63uG89SGBUd4XuZ4ZzhGo2u79TPXOE6nLIZQ2okrpyey42PYdg==,
+            }
+        peerDependencies:
+            '@bufbuild/protobuf': ^2.7.0
+            '@connectrpc/connect': 2.1.2
+
+    '@connectrpc/connect@2.1.2':
+        resolution:
+            {
+                integrity: sha512-MXkBijtcX09R10Eb6sFeIetc6w6746eio6xtfuyVOH7oQAacT1X0GzMIQFux6Qy8cq3W/T5qX5Bei8YbFtmRGA==,
+            }
+        peerDependencies:
+            '@bufbuild/protobuf': ^2.7.0
 
     '@date-fns/tz@1.4.1':
         resolution:
@@ -5261,6 +5287,13 @@ packages:
             }
         engines: { node: '>=10' }
 
+    chalk@5.6.2:
+        resolution:
+            {
+                integrity: sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA==,
+            }
+        engines: { node: ^12.17.0 || ^14.13 || >=16.0.0 }
+
     char-regex@1.0.2:
         resolution:
             {
@@ -5532,6 +5565,12 @@ packages:
                 integrity: sha512-pJDh5/4wrEnXX/VWRZvruAGHkzKdr46z11OlTPN+VrATlWWhSKewNCJ1futCO5C7eJB3nPMFZA1LeYtcFboZ2A==,
             }
         engines: { node: '>=0.10.0' }
+
+    compare-versions@6.1.1:
+        resolution:
+            {
+                integrity: sha512-4hm4VPpIecmlg59CHXnRDnqGplJFrbLG4aFEl5vl6cK1u76ws3LLvX7ikFnTDl5vo39sjWD6AaDPYodJp/NNHg==,
+            }
 
     concat-map@0.0.1:
         resolution:
@@ -6223,6 +6262,12 @@ packages:
             }
         engines: { node: '>= 8.0' }
 
+    dockerfile-ast@0.7.1:
+        resolution:
+            {
+                integrity: sha512-oX/A4I0EhSkGqrFv0YuvPkBUSYp1XiY8O8zAKc8Djglx8ocz+JfOr8gP0ryRMC2myqvDLagmnZaU9ot1vG2ijw==,
+            }
+
     dockerode@4.0.12:
         resolution:
             {
@@ -6271,6 +6316,13 @@ packages:
                 integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==,
             }
         engines: { node: '>= 0.4' }
+
+    e2b@2.46.1:
+        resolution:
+            {
+                integrity: sha512-OqYovS2oFrt4mk737CgfW/RoMadBYK84l5qjKpvbEoOB9KKxaZIXm7YUwOKSRTlijrrwDRX7oZlyPoVXiCpyTw==,
+            }
+        engines: { node: '>=20.18.1 <21 || >=22' }
 
     eastasianwidth@0.2.0:
         resolution:
@@ -7212,6 +7264,13 @@ packages:
             }
         deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
         hasBin: true
+
+    glob@13.0.6:
+        resolution:
+            {
+                integrity: sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw==,
+            }
+        engines: { node: 18 || 20 || >=22 }
 
     glob@7.2.3:
         resolution:
@@ -8721,6 +8780,13 @@ packages:
                 integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==,
             }
 
+    lru-cache@11.5.2:
+        resolution:
+            {
+                integrity: sha512-4pfM1Ff0x50o0tQwb5ucw/RzNyD0/YJME6IVcStalZuMWxdt3sR3huStTtxz4PUmvZfRguvDejasvQ2kifR11g==,
+            }
+        engines: { node: 20 || >=22 }
+
     lru-cache@5.1.1:
         resolution:
             {
@@ -9585,6 +9651,18 @@ packages:
             zod:
                 optional: true
 
+    openapi-fetch@0.14.1:
+        resolution:
+            {
+                integrity: sha512-l7RarRHxlEZYjMLd/PR0slfMVse2/vvIAGm75/F7J6MlQ8/b9uUQmUF2kCPrQhJqMXSxmYWObVgeYXbFYzZR+A==,
+            }
+
+    openapi-typescript-helpers@0.0.15:
+        resolution:
+            {
+                integrity: sha512-opyTPaunsklCBpTK8JGef6mfPhLSnyy5a0IN9vKtx3+4aExf+KxEqYwIy3hqkedXIB97u357uLMJsOnm3GVjsw==,
+            }
+
     optionator@0.9.4:
         resolution:
             {
@@ -9764,6 +9842,13 @@ packages:
             }
         engines: { node: '>=16 || 14 >=14.18' }
 
+    path-scurry@2.0.2:
+        resolution:
+            {
+                integrity: sha512-3O/iVVsJAPsOnpwWIeD+d6z/7PmqApyQePUtCndjatj/9I5LylHvt5qluFaBT3I5h3r1ejfR056c+FCv+NnNXg==,
+            }
+        engines: { node: 18 || 20 || >=22 }
+
     path-to-regexp@8.3.0:
         resolution:
             {
@@ -9847,6 +9932,12 @@ packages:
         resolution:
             {
                 integrity: sha512-/Jm5M4RvtBFVkKWRu2BLUTNP8/M2a+UwuAX+ae4770q1qVGtfjG+WTCupoZixokjmHiry8uI+dlY8KXYV5HVVQ==,
+            }
+
+    platform@1.3.6:
+        resolution:
+            {
+                integrity: sha512-fnWVljUchTro6RiCFvCXBbNhJc2NijN7oIQxbwsyL0buWJPG85v81ehlHI9fXrJsMNgTofEoWIQeClKpgxFLrg==,
             }
 
     plist@3.1.0:
@@ -11253,6 +11344,13 @@ packages:
             }
         engines: { node: '>=18' }
 
+    tar@7.5.22:
+        resolution:
+            {
+                integrity: sha512-MFO/QzvtAOmJbkhOaCTvbGcFN9L9b+JunIsDwaKljSOdcLMea3NJ1k9Usz/rjdfSXTq4dfzfeS7W4p4YOAAHeA==,
+            }
+        engines: { node: '>=18' }
+
     temp-file@3.4.0:
         resolution:
             {
@@ -11647,6 +11745,20 @@ packages:
             {
                 integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==,
             }
+
+    undici@7.29.0:
+        resolution:
+            {
+                integrity: sha512-IDxfleLmmbSskfWSUATiN1nfn2rDuvnMOqb5CWR92iIfojA0Ud+ulOAAEQ57LPr9rWmsreUyf5lwyao+7GNNVw==,
+            }
+        engines: { node: '>=20.18.1' }
+
+    undici@8.10.0:
+        resolution:
+            {
+                integrity: sha512-HvltHd7avK13QIw/oLe4qoOLyoVSoafqJ2jYOrtMRBkbYT31eiBQ8O0ehRKZiEZCMEyLFQNIADpgCWC5fALvYQ==,
+            }
+        engines: { node: '>=22.19.0' }
 
     unified@11.0.5:
         resolution:
@@ -12406,6 +12518,9 @@ snapshots:
 
     '@braintree/sanitize-url@7.1.2': {}
 
+    '@bufbuild/protobuf@2.14.0':
+        optional: true
+
     '@cfworker/json-schema@4.1.1': {}
 
     '@chevrotain/cst-dts-gen@11.1.2':
@@ -12788,6 +12903,17 @@ snapshots:
         dependencies:
             conventional-commits-parser: 6.3.0
             picocolors: 1.1.1
+
+    '@connectrpc/connect-web@2.1.2(@bufbuild/protobuf@2.14.0)(@connectrpc/connect@2.1.2(@bufbuild/protobuf@2.14.0))':
+        dependencies:
+            '@bufbuild/protobuf': 2.14.0
+            '@connectrpc/connect': 2.1.2(@bufbuild/protobuf@2.14.0)
+        optional: true
+
+    '@connectrpc/connect@2.1.2(@bufbuild/protobuf@2.14.0)':
+        dependencies:
+            '@bufbuild/protobuf': 2.14.0
+        optional: true
 
     '@date-fns/tz@1.4.1': {}
 
@@ -15868,6 +15994,9 @@ snapshots:
             ansi-styles: 4.3.0
             supports-color: 7.2.0
 
+    chalk@5.6.2:
+        optional: true
+
     char-regex@1.0.2: {}
 
     character-entities-html4@2.1.0: {}
@@ -15997,6 +16126,9 @@ snapshots:
             dot-prop: 5.3.0
 
     compare-version@0.1.2: {}
+
+    compare-versions@6.1.1:
+        optional: true
 
     concat-map@0.0.1: {}
 
@@ -16412,6 +16544,12 @@ snapshots:
             - supports-color
         optional: true
 
+    dockerfile-ast@0.7.1:
+        dependencies:
+            vscode-languageserver-textdocument: 1.0.12
+            vscode-languageserver-types: 3.17.5
+        optional: true
+
     dockerode@4.0.12(supports-color@8.1.1):
         dependencies:
             '@balena/dockerignore': 1.0.2
@@ -16448,6 +16586,23 @@ snapshots:
             call-bind-apply-helpers: 1.0.2
             es-errors: 1.3.0
             gopd: 1.2.0
+
+    e2b@2.46.1:
+        dependencies:
+            '@bufbuild/protobuf': 2.14.0
+            '@connectrpc/connect': 2.1.2(@bufbuild/protobuf@2.14.0)
+            '@connectrpc/connect-web': 2.1.2(@bufbuild/protobuf@2.14.0)(@connectrpc/connect@2.1.2(@bufbuild/protobuf@2.14.0))
+            chalk: 5.6.2
+            compare-versions: 6.1.1
+            dockerfile-ast: 0.7.1
+            glob: 13.0.6
+            openapi-fetch: 0.14.1
+            platform: 1.3.6
+            tar: 7.5.22
+            undici: 7.29.0
+        optionalDependencies:
+            undici8: undici@8.10.0
+        optional: true
 
     eastasianwidth@0.2.0: {}
 
@@ -17256,6 +17411,13 @@ snapshots:
             minipass: 7.1.3
             package-json-from-dist: 1.0.1
             path-scurry: 1.11.1
+
+    glob@13.0.6:
+        dependencies:
+            minimatch: 10.2.6
+            minipass: 7.1.3
+            path-scurry: 2.0.2
+        optional: true
 
     glob@7.2.3:
         dependencies:
@@ -18304,6 +18466,9 @@ snapshots:
 
     lru-cache@10.4.3: {}
 
+    lru-cache@11.5.2:
+        optional: true
+
     lru-cache@5.1.1:
         dependencies:
             yallist: 3.1.1
@@ -19019,6 +19184,14 @@ snapshots:
             ws: 8.21.3
             zod: 4.3.6
 
+    openapi-fetch@0.14.1:
+        dependencies:
+            openapi-typescript-helpers: 0.0.15
+        optional: true
+
+    openapi-typescript-helpers@0.0.15:
+        optional: true
+
     optionator@0.9.4:
         dependencies:
             deep-is: 0.1.4
@@ -19124,6 +19297,12 @@ snapshots:
             lru-cache: 10.4.3
             minipass: 7.1.3
 
+    path-scurry@2.0.2:
+        dependencies:
+            lru-cache: 11.5.2
+            minipass: 7.1.3
+        optional: true
+
     path-to-regexp@8.3.0: {}
 
     pathe@2.0.3: {}
@@ -19162,6 +19341,9 @@ snapshots:
             confbox: 0.1.8
             mlly: 1.8.1
             pathe: 2.0.3
+
+    platform@1.3.6:
+        optional: true
 
     plist@3.1.0:
         dependencies:
@@ -20229,6 +20411,15 @@ snapshots:
             minizlib: 3.1.0
             yallist: 5.0.0
 
+    tar@7.5.22:
+        dependencies:
+            '@isaacs/fs-minipass': 4.0.1
+            chownr: 3.0.0
+            minipass: 7.1.3
+            minizlib: 3.1.0
+            yallist: 5.0.0
+        optional: true
+
     temp-file@3.4.0:
         dependencies:
             async-exit-hook: 2.0.1
@@ -20484,6 +20675,12 @@ snapshots:
             which-boxed-primitive: 1.1.1
 
     undici-types@6.21.0: {}
+
+    undici@7.29.0:
+        optional: true
+
+    undici@8.10.0:
+        optional: true
 
     unified@11.0.5:
         dependencies:

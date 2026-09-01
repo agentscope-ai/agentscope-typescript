@@ -5650,36 +5650,51 @@
             "sha256": "ec3ca3704baa32e36b3b3578fd91ca0cf80415dec09cb9c17c2d3c7521ac4c99",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_e2b_test.py",
+                "tests/workspace_e2b_test.py",
+                "tests/test_e2e_e2b_mcp.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/e2b-driver.test.ts",
+                "packages/agentscope/src/workspace/e2b.live.test.ts",
+                "packages/agentscope/src/workspace/e2b.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_e2b/_constants.py",
             "sha256": "45a632d4fa46ce25d063acabc074881c53c8b452e8f776dc9a7ed1fe14d4c1d9",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_e2b_test.py"],
+            "typescriptTests": ["packages/agentscope/src/workspace/e2b.parity.test.ts"]
         },
         {
             "path": "src/agentscope/workspace/_e2b/_e2b_backend.py",
             "sha256": "4b24fe7c5f845365d892550d05e179e12e4a7fc76ab43f11c3030bb81d4b363e",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/backend_e2b_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/e2b-driver.test.ts",
+                "packages/agentscope/src/workspace/e2b.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_e2b/_e2b_workspace.py",
             "sha256": "e983d674f5f1d9c231de1211508717af2a64bc0056b818dc3338de77f98f76c7",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_e2b_test.py", "tests/test_e2e_e2b_mcp.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/e2b-driver.test.ts",
+                "packages/agentscope/src/workspace/e2b.live.test.ts",
+                "packages/agentscope/src/workspace/e2b.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_gateway_client.py",
