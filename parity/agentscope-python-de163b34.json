@@ -5362,36 +5362,64 @@
             "sha256": "02e597c826bc6e596c803af50eb2852f0e12b2aba7154a316aa098ff2c0dfc23",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_applecontainer_test.py",
+                "tests/workspace_applecontainer_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/apple-container.live.test.ts",
+                "packages/agentscope/src/workspace/apple-container.parity.test.ts",
+                "packages/agentscope/src/workspace/process-runner.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_applecontainer/_applecontainer_backend.py",
             "sha256": "1b8f2dc1fa633e318908ee58e10ee4635eb10206a2343d82cfa7d06cd625eca2",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_applecontainer_test.py",
+                "tests/workspace_applecontainer_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/apple-container.live.test.ts",
+                "packages/agentscope/src/workspace/apple-container.parity.test.ts",
+                "packages/agentscope/src/workspace/process-runner.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_applecontainer/_applecontainer_workspace.py",
             "sha256": "1b2a2ae494400d9cec2b43b9445d5dcdf094c7dea6bd42ad4d3dee58b6ee243c",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_applecontainer_test.py",
+                "tests/workspace_applecontainer_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/apple-container.live.test.ts",
+                "packages/agentscope/src/workspace/apple-container.parity.test.ts",
+                "packages/agentscope/src/workspace/process-runner.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_applecontainer/_constants.py",
             "sha256": "beeb9c3ce67f0623835cbffc6e7ce31bafb25547170e4781308175b9c76f7472",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_applecontainer_test.py",
+                "tests/workspace_applecontainer_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/apple-container.live.test.ts",
+                "packages/agentscope/src/workspace/apple-container.parity.test.ts",
+                "packages/agentscope/src/workspace/process-runner.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_base.py",

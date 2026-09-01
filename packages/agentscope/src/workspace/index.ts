@@ -74,3 +74,21 @@ export {
     DockerWorkspaceOptions,
     DockerWorkspace,
 } from './docker';
+export {
+    LocalProcessRunner,
+    ProcessRunOptions,
+    ProcessRunResult,
+    ProcessRunner,
+} from './process-runner';
+export {
+    APPLE_CONTAINER_GATEWAY_HOME,
+    APPLE_CONTAINER_WORKDIR,
+    DEFAULT_APPLE_CONTAINER_BASE_IMAGE,
+    DEFAULT_APPLE_CONTAINER_CPUS,
+    DEFAULT_APPLE_CONTAINER_GATEWAY_PORT,
+    DEFAULT_APPLE_CONTAINER_MEMORY,
+    AppleContainerBackendOptions,
+    AppleContainerBackend,
+    AppleContainerWorkspaceOptions,
+    AppleContainerWorkspace,
+} from './apple-container';
