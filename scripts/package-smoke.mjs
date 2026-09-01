@@ -113,7 +113,14 @@ try {
     });
 
     runNpm(['init', '--yes']);
-    runNpm(['install', '--ignore-scripts', '--no-audit', '--no-fund', ...tarballPaths]);
+    runNpm([
+        'install',
+        '--ignore-scripts',
+        '--omit=optional',
+        '--no-audit',
+        '--no-fund',
+        ...tarballPaths,
+    ]);
 
     const specifiersJson = JSON.stringify(packageSpecifiers);
     runNode([
