@@ -2776,216 +2776,768 @@
             "sha256": "e392c58e884f9624e25b81dc716b4ba0b4374ab412e0844241e3063397dfa496",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_anthropic/__init__.py",
             "sha256": "b2c8d6696f76de252ab7a5c29490c452bef36cf535fa92aef8cf67979a5c7a24",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_anthropic/_model.py",
             "sha256": "ff9288432764b499723a5065f22a7d4d228d0ea4c6af7e31f634a7fcd20fcbda",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_base.py",
             "sha256": "6ebd45d3c909884a219a15a4d4b1ecf098d3f2a3e8fcde7f941ff84ef08b79c0",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_dashscope/__init__.py",
             "sha256": "f7b308d623e0f40ad951a62b6200865dee0370bfc41d9c6bcc7f556f5b409f3a",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_dashscope/_model.py",
             "sha256": "c636ff3fcdab806a9cb22b3deea00ff4b1cd28907523ce83499be5ade23aef78",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_deepseek/__init__.py",
             "sha256": "fadfca8584aae8bc4635d40dc66296fa526c4676ae4d675b63fe31ae1186258d",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_deepseek/_model.py",
             "sha256": "0a46f554613aa65446b4c765cef527fadeee7eee275796b5efec95de8deb5f3a",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_gemini/__init__.py",
             "sha256": "6914fd06c9111ae1dc65d38edf7a395e453177177400a5dfb67e0aca050f2420",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_gemini/_model.py",
             "sha256": "116beecf7be3958ad90773e9c6e4faaf02309a5d22741761e3cad23f8185fd8e",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_model_card.py",
             "sha256": "6fd7ab6634bb09ea605d1071a531c3d6f31083129fb722b6ba904302388f6895",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_model_response.py",
             "sha256": "5ce67ec4721590f4f773c209acbb51a0a49734c6aa763f2392b701fd81f5f3a0",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_model_usage.py",
             "sha256": "c7b0c6118d49ff7e7f263ba65c0cb184203d7d7d18e7b1252c1e08d08ad3c224",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_moonshot/__init__.py",
             "sha256": "07e023652adb7d0f32641046928d9f8d859e35e6b341188b79330d6ac4390977",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_moonshot/_model.py",
             "sha256": "f208894809b99b0f87ca42b5694f0820fb73dab3c6aafaa3d750af411623a740",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_ollama/__init__.py",
             "sha256": "4c0a13f93a44b4e775d104529a6eff268deb8717404be086ef7c6fc7673384dc",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_ollama/_model.py",
             "sha256": "c38a9e663154624deef545416078fdfa5bd7adac0e832670b3b7c3724a061fe9",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_openai_chat/__init__.py",
             "sha256": "2b7b47be3e189e4a32c2efe64f7238a9165373b139933167fbe88fd58af68f9a",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_openai_chat/_model.py",
             "sha256": "f2ed338fad1bf343ec6dadc0cd58c0e0b9bafc7a26c96ce7ab4233d90f4ce6f4",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_openai_response/__init__.py",
             "sha256": "ffffc1448679a8d1e27c1db51beacd96682443876cbd47b82d562d6a481acb36",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_openai_response/_model.py",
             "sha256": "3c63f90f7f75036afa6e8af86497a5e6ebb6fdec2160bd28840686578250759d",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_utils.py",
             "sha256": "160228da5d90d861e94214de5acf8263ddacf9cb06b54ba740756b98ea457f3b",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_xai/__init__.py",
             "sha256": "63ccc2556fcee61b7cbd19dba7be88ef11be0aca909f7eec058b80c0f2178bd5",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/model/_xai/_model.py",
             "sha256": "8ec0449a608c5f3baaac832373569fb8adbf1cd1d05a7f4044fcdb23214f3909",
             "module": "model",
             "typescriptTarget": "packages/agentscope/src/model",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/model_anthropic_test.py",
+                "tests/model_dashscope_test.py",
+                "tests/model_deepseek_test.py",
+                "tests/model_gemini_test.py",
+                "tests/model_moonshot_test.py",
+                "tests/model_ollama_test.py",
+                "tests/model_openai_chat_test.py",
+                "tests/model_openai_response_test.py",
+                "tests/model_xai_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/model/anthropic-model.test.ts",
+                "packages/agentscope/src/model/base.parity.test.ts",
+                "packages/agentscope/src/model/card.test.ts",
+                "packages/agentscope/src/model/dashscope-model.test.ts",
+                "packages/agentscope/src/model/deepseek-model.test.ts",
+                "packages/agentscope/src/model/gemini-model.test.ts",
+                "packages/agentscope/src/model/moonshot-model.test.ts",
+                "packages/agentscope/src/model/ollama-model.test.ts",
+                "packages/agentscope/src/model/openai-model.test.ts",
+                "packages/agentscope/src/model/openai-response-model.test.ts",
+                "packages/agentscope/src/model/response.parity.test.ts",
+                "packages/agentscope/src/model/xai-model.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/permission/__init__.py",

@@ -1,371 +1,223 @@
-import { Ollama, ChatResponse as OllamaChatResponse, AbortableAsyncIterator } from 'ollama';
+/* eslint-disable jsdoc/require-jsdoc */
 
-import { ChatModelBase, ChatModelOptions, ChatModelRequestOptions } from './base';
-import { ChatResponse } from './response';
-import type { TextBlock, ThinkingBlock, ToolCallBlock } from '../message/block';
-import type { ToolChoice, ToolSchema } from '../type';
+import { OllamaCredential } from '../credential/providers';
+import { OllamaChatFormatter } from '../formatter';
+import type { FormatterBase } from '../formatter';
+import { TextBlock, ThinkingBlock, ToolCallBlock } from '../message';
+import type { ToolChoice as LegacyToolChoice, ToolSchema } from '../type';
+import { ChatModelBase } from './base';
+import type { ChatModelRequestOptions } from './base';
+import type { FetchLike } from './http-transport';
+import { postJSON, postNDJSON } from './http-transport';
+import { ChatResponse, StreamAccumulator } from './response';
 import { ChatUsage } from './usage';
-import { _generateId, _generateTimestamp } from '../_utils/common';
-import { OllamaChatFormatter } from '../formatter/ollama-chat-formatter';
 
-interface OllamaThinkingConfig {
-    /**
-     * Whether to enable thinking or not.
-     */
-    enableThinking: boolean;
-
-    /**
-     * Thinking level for Ollama models (high, medium, low).
-     * Only applicable when enableThinking is true.
-     */
-    thinkingLevel?: 'high' | 'medium' | 'low';
+export interface OllamaParameters extends Record<string, unknown> {
+    maxTokens?: number | null;
+    thinkingEnable?: boolean;
+    temperature?: number | null;
 }
 
-interface OllamaChatModelOptions extends ChatModelOptions {
-    /**
-     * Additional parameters to pass to the Ollama API (e.g., temperature).
-     */
-    options?: Record<string, unknown>;
+export interface OllamaClient {
+    chat(body: Record<string, unknown>, signal?: AbortSignal): Promise<unknown>;
+}
 
-    /**
-     * Duration to keep the model loaded in memory (e.g., "5m", "1h").
-     */
-    keepAlive?: string;
-
-    /**
-     * Thinking configuration for Ollama models.
-     */
-    thinkingConfig?: OllamaThinkingConfig;
-
-    /**
-     * The host address of the Ollama server.
-     */
+export interface OllamaChatModelOptions {
+    credential?: OllamaCredential;
+    model?: string;
+    parameters?: OllamaParameters;
+    stream?: boolean;
+    maxRetries?: number;
+    retryDelay?: number;
+    contextSize?: number;
+    formatter?: FormatterBase;
+    client?: OllamaClient;
+    fetch?: FetchLike;
+    modelName?: string;
     host?: string;
-
-    /**
-     * Extra keyword arguments to initialize the Ollama client.
-     */
-    clientKwargs?: Record<string, unknown>;
-
-    /**
-     * Extra keyword arguments used in Ollama API generation.
-     */
+    options?: Record<string, unknown>;
+    keepAlive?: string;
+    thinkingConfig?: { enableThinking: boolean; thinkingLevel?: string };
     generateKwargs?: Record<string, unknown>;
+    fallbackModelName?: string;
+    clientKwargs?: Record<string, unknown>;
 }
 
-/**
- * The Ollama chat model class in AgentScope.
- */
+/** Ollama chat model backed by the native HTTP protocol. */
 export class OllamaChatModel extends ChatModelBase {
-    protected client: Ollama;
-    protected options?: Record<string, unknown>;
-    protected keepAlive: string;
-    protected thinkingConfig: OllamaThinkingConfig;
-    protected generateKwargs: Record<string, unknown>;
+    readonly type = 'ollama_chat' as const;
+    readonly ollamaParameters: OllamaParameters;
+    private readonly client: OllamaClient;
+    private readonly legacyOptions: Record<string, unknown>;
+    private readonly generationOptions: Record<string, unknown>;
+    private readonly keepAlive?: string;
 
-    /**
-     * Initializes a new instance of the OllamaChatModel class.
-     * @param root0
-     * @param root0.modelName
-     * @param root0.stream
-     * @param root0.options
-     * @param root0.keepAlive
-     * @param root0.thinkingConfig
-     * @param root0.host
-     * @param root0.maxRetries
-     * @param root0.fallbackModelName
-     * @param root0.clientKwargs
-     * @param root0.generateKwargs
-     * @param root0.formatter
-     */
-    constructor({
-        modelName,
-        stream = true,
-        options,
-        keepAlive = '5m',
-        thinkingConfig,
-        host,
-        maxRetries = 0,
-        fallbackModelName,
-        clientKwargs,
-        generateKwargs,
-        formatter,
-    }: OllamaChatModelOptions) {
-        // If no formatter is provided, create a default OllamaChatFormatter
-        const defaultFormatter = formatter || new OllamaChatFormatter();
-        super({
-            modelName,
-            stream,
-            maxRetries,
-            fallbackModelName,
-            formatter: defaultFormatter,
-        } as ChatModelOptions);
-
-        this.options = options;
-        this.keepAlive = keepAlive;
-        this.thinkingConfig = thinkingConfig || {
-            enableThinking: false,
+    constructor(options: OllamaChatModelOptions = {}) {
+        const credential = options.credential ?? new OllamaCredential({ host: options.host });
+        const model = options.model ?? options.modelName ?? '';
+        const parameters = {
+            ...(options.parameters ?? {}),
+            ...(options.thinkingConfig
+                ? { thinkingEnable: options.thinkingConfig.enableThinking }
+                : {}),
         };
-        this.generateKwargs = generateKwargs || {};
-
-        // Initialize Ollama client
-        this.client = new Ollama({
-            host: host,
-            ...clientKwargs,
+        super({
+            modelName: model,
+            credential,
+            parameters,
+            stream: options.stream ?? true,
+            maxRetries: options.maxRetries ?? 3,
+            retryDelay: options.retryDelay ?? 1,
+            contextSize: options.contextSize ?? 32768,
+            fallbackModelName: options.fallbackModelName,
+            formatter: options.formatter ?? new OllamaChatFormatter(),
         });
+        this.ollamaParameters = parameters;
+        this.legacyOptions = options.options ?? {};
+        this.generationOptions = options.generateKwargs ?? {};
+        this.keepAlive = options.keepAlive;
+        const host = credential.host ?? 'http://localhost:11434';
+        this.client = options.client ?? {
+            chat: async (body, signal) => {
+                const requestOptions = { fetch: options.fetch, signal };
+                return body.stream
+                    ? postNDJSON(`${host.replace(/\/$/, '')}/api/chat`, body, requestOptions)
+                    : postJSON(`${host.replace(/\/$/, '')}/api/chat`, body, requestOptions);
+            },
+        };
     }
 
-    /**
-     * Calls the Ollama API with the given parameters.
-     * @param modelName
-     * @param options
-     * @returns A promise that resolves to either a ChatResponse or an AsyncGenerator of ChatResponses.
-     */
+    protected isRetryableError(error: unknown): boolean {
+        return error instanceof TypeError;
+    }
+
     async _callAPI(
         modelName: string,
-        options: ChatModelRequestOptions<Record<string, unknown>>
+        options: ChatModelRequestOptions<unknown>
     ): Promise<ChatResponse | AsyncGenerator<ChatResponse, ChatResponse>> {
-        const kwargs: Record<string, unknown> = {
+        const startedAt = Date.now();
+        const { messages, tools, normalizedToolChoice, signal, ...callOptions } = options;
+        delete callOptions.toolChoice;
+        delete callOptions.schema;
+        const configured: Record<string, unknown> = { ...this.legacyOptions };
+        if (this.ollamaParameters.maxTokens != null) {
+            configured.num_predict = this.ollamaParameters.maxTokens;
+        }
+        if (this.ollamaParameters.temperature != null) {
+            configured.temperature = this.ollamaParameters.temperature;
+        }
+        const body: Record<string, unknown> = {
             model: modelName,
-            messages: options.messages,
+            messages,
             stream: this.stream,
-            options: this.options,
-            keep_alive: this.keepAlive,
-            ...this.generateKwargs,
+            think: this.ollamaParameters.thinkingEnable ?? false,
+            ...this.generationOptions,
+            ...callOptions,
         };
-
-        if (this.thinkingConfig.enableThinking) {
-            // If thinkingLevel is specified, use it; otherwise use true
-            kwargs.think = this.thinkingConfig.thinkingLevel || true;
-        } else {
-            kwargs.think = false;
-        }
-
-        if (options.tools) {
-            kwargs.tools = this._formatToolSchemas(options.tools);
-        }
-
-        if (options.toolChoice) {
-            console.warn('Ollama does not support tool_choice yet, ignored.');
-        }
-
-        const startTime = Date.now();
-
-        if (this.stream) {
-            const response = (await this.client.chat({
-                ...kwargs,
-                stream: true,
-            } as Parameters<
-                typeof this.client.chat
-            >[0])) as unknown as AbortableAsyncIterator<OllamaChatResponse>;
-            return this._parseOllamaStreamResponse(response, startTime);
-        }
-
-        const response = (await this.client.chat({
-            ...kwargs,
-            stream: false,
-        } as Parameters<typeof this.client.chat>[0])) as unknown as OllamaChatResponse;
-        return this._parseOllamaResponse(response, startTime);
+        if (Object.keys(configured).length > 0) body.options = configured;
+        if (this.keepAlive) body.keep_alive = this.keepAlive;
+        const selectedTools = filterTools(tools, normalizedToolChoice?.tools);
+        if (selectedTools?.length) body.tools = selectedTools;
+        const raw = await this.client.chat(body, signal as AbortSignal | undefined);
+        return this.stream
+            ? this.parseStream(raw as AsyncIterable<Record<string, unknown>>, startedAt)
+            : parseCompletion(raw, startedAt);
     }
 
-    /**
-     * Parse Ollama streaming response.
-     * @param stream
-     * @param startTime
-     * @returns An async generator that yields delta ChatResponse objects and returns the complete ChatResponse.
-     */
-    async *_parseOllamaStreamResponse(
-        stream: AbortableAsyncIterator<OllamaChatResponse>,
-        startTime: number
-    ): AsyncGenerator<ChatResponse, ChatResponse> {
-        let accText = '';
-        let accThinking = '';
-        const toolCalls: Map<string, ToolCallBlock> = new Map();
-        let lastUsage: ChatUsage | null = null;
-
-        for await (const chunk of stream) {
-            const msg = chunk.message;
-
-            // Delta data for this chunk
-            let deltaText = '';
-            let deltaThinking = '';
-            const deltaToolCalls: Map<string, ToolCallBlock> = new Map();
-
-            // Accumulate text and thinking
-            if (msg.thinking) {
-                deltaThinking = msg.thinking;
-                accThinking += msg.thinking;
-            }
-            if (msg.content) {
-                deltaText = msg.content;
-                accText += msg.content;
-            }
-
-            // Handle tool calls
-            if (msg.tool_calls && Array.isArray(msg.tool_calls)) {
-                for (let idx = 0; idx < msg.tool_calls.length; idx++) {
-                    const toolCall = msg.tool_calls[idx];
-                    const func = toolCall.function;
-                    const toolId = `${idx}_${func.name}`;
-
-                    const toolCallBlock = {
-                        type: 'tool_call' as const,
-                        id: toolId,
-                        name: func.name,
-                        input: JSON.stringify(func.arguments),
-                        state: 'pending' as const,
-                        created_at: _generateTimestamp(),
-                    };
-
-                    toolCalls.set(toolId, toolCallBlock);
-                    deltaToolCalls.set(toolId, toolCallBlock);
-                }
-            }
-
-            // Calculate usage
-            const currentTime = (Date.now() - startTime) / 1000;
-            lastUsage = new ChatUsage({
-                inputTokens: chunk.prompt_eval_count || 0,
-                outputTokens: chunk.eval_count || 0,
-                time: currentTime,
-            });
-
-            // Yield delta response
-            const deltaBlocks = this._buildContentBlocks(deltaText, deltaThinking, deltaToolCalls);
-            yield new ChatResponse({
-                id: _generateId(),
-                createdAt: _generateTimestamp(),
-                content: deltaBlocks,
-                usage: lastUsage,
-                isLast: false,
-            });
-        }
-
-        // Return complete response
-        const blocks = this._buildContentBlocks(accText, accThinking, toolCalls);
-        return new ChatResponse({
-            id: _generateId(),
-            createdAt: _generateTimestamp(),
-            content: blocks,
-            usage: lastUsage,
-            isLast: true,
-        });
-    }
-
-    /**
-     * Parse Ollama non-streaming response.
-     * @param response
-     * @param startTime
-     * @returns A ChatResponse object containing the content blocks and usage.
-     */
-    _parseOllamaResponse(response: OllamaChatResponse, startTime: number): ChatResponse {
-        const blocks: Array<TextBlock | ThinkingBlock | ToolCallBlock> = [];
-
-        if (response.message.thinking) {
-            blocks.push({
-                id: _generateId(),
-                type: 'thinking',
-                thinking: response.message.thinking,
-                created_at: _generateTimestamp(),
-            });
-        }
-
-        if (response.message.content) {
-            blocks.push({
-                id: _generateId(),
-                type: 'text',
-                text: response.message.content,
-                created_at: _generateTimestamp(),
-            });
-        }
-
-        // Handle tool calls
-        if (response.message.tool_calls && Array.isArray(response.message.tool_calls)) {
-            for (let idx = 0; idx < response.message.tool_calls.length; idx++) {
-                const toolCall = response.message.tool_calls[idx];
-                blocks.push({
-                    type: 'tool_call',
-                    id: `${idx}_${toolCall.function.name}`,
-                    name: toolCall.function.name,
-                    input: JSON.stringify(toolCall.function.arguments),
-                    state: 'pending',
-                    created_at: _generateTimestamp(),
-                });
-            }
-        }
-
-        const usage =
-            response.prompt_eval_count !== undefined && response.eval_count !== undefined
-                ? new ChatUsage({
-                      inputTokens: response.prompt_eval_count || 0,
-                      outputTokens: response.eval_count || 0,
-                      time: (Date.now() - startTime) / 1000,
-                  })
-                : null;
-
-        return new ChatResponse({
-            id: _generateId(),
-            createdAt: _generateTimestamp(),
-            content: blocks,
-            usage,
-            isLast: true,
-        });
-    }
-
-    /**
-     * Build content blocks from accumulated data.
-     * @param text
-     * @param thinking
-     * @param toolCalls
-     * @returns An array of content blocks.
-     */
-    _buildContentBlocks(
-        text: string,
-        thinking: string,
-        toolCalls: Map<string, ToolCallBlock>
-    ): Array<TextBlock | ThinkingBlock | ToolCallBlock> {
-        const blocks: Array<TextBlock | ThinkingBlock | ToolCallBlock> = [];
-
-        if (thinking) {
-            blocks.push({
-                id: _generateId(),
-                type: 'thinking',
-                thinking,
-                created_at: _generateTimestamp(),
-            });
-        }
-
-        if (text) {
-            blocks.push({
-                id: _generateId(),
-                type: 'text',
-                text,
-                created_at: _generateTimestamp(),
-            });
-        }
-
-        toolCalls.forEach(toolCall => {
-            blocks.push(toolCall);
-        });
-
-        return blocks;
-    }
-
-    /**
-     * Format tool choice parameter (not supported by Ollama).
-     * @param _toolChoice
-     * @returns undefined as Ollama does not support tool choice.
-     */
-    _formatToolChoice(_toolChoice?: ToolChoice): unknown {
+    _formatToolChoice(_toolChoice?: LegacyToolChoice): undefined {
         return undefined;
     }
 
-    /**
-     * Format tool schemas for Ollama API (no special formatting needed).
-     * @param tools
-     * @returns The same array of tool schemas, or an empty array if undefined.
-     */
-    _formatToolSchemas(tools: ToolSchema[] | undefined): ToolSchema[] {
-        return tools || [];
+    _formatToolSchemas(tools?: ToolSchema[]): ToolSchema[] {
+        return tools ?? [];
     }
+
+    private async *parseStream(
+        chunks: AsyncIterable<Record<string, unknown>>,
+        startedAt: number
+    ): AsyncGenerator<ChatResponse, ChatResponse> {
+        const responseId = crypto.randomUUID();
+        const textId = crypto.randomUUID();
+        const thinkingId = crypto.randomUUID();
+        const accumulator = new StreamAccumulator();
+        for await (const chunk of chunks) {
+            const message = asRecord(chunk.message);
+            const delta = new ChatResponse({ id: responseId, content: [], isLast: false });
+            const thinking = stringValue(message.thinking);
+            if (thinking) delta.appendThinking(thinking, thinkingId);
+            const text = stringValue(message.content);
+            if (text) delta.appendText(text, textId);
+            asArray(message.tool_calls).forEach((value, index) => {
+                const fn = asRecord(asRecord(value).function);
+                const name = stringValue(fn.name);
+                delta.appendToolCall(`${index}_${name}`, name, JSON.stringify(fn.arguments ?? {}));
+            });
+            delta.usage = new ChatUsage({
+                inputTokens: Number(chunk.prompt_eval_count ?? 0),
+                outputTokens: Number(chunk.eval_count ?? 0),
+                time: (Date.now() - startedAt) / 1000,
+            });
+            accumulator.appendChatResponse(delta);
+            accumulator.id = responseId;
+            yield delta;
+        }
+        return accumulator.build();
+    }
+}
+
+function parseCompletion(value: unknown, startedAt: number): ChatResponse {
+    const response = asRecord(value);
+    const message = asRecord(response.message);
+    const content = [] as ChatResponse['content'];
+    const thinking = stringValue(message.thinking);
+    if (thinking) content.push(ThinkingBlock({ thinking }));
+    const text = stringValue(message.content);
+    if (text) content.push(TextBlock({ text }));
+    asArray(message.tool_calls).forEach((value, index) => {
+        const fn = asRecord(asRecord(value).function);
+        const name = stringValue(fn.name);
+        content.push(
+            ToolCallBlock({
+                id: `${index}_${name}`,
+                name,
+                input: JSON.stringify(fn.arguments ?? {}),
+            })
+        );
+    });
+    const hasUsage = response.prompt_eval_count != null && response.eval_count != null;
+    return new ChatResponse({
+        id: stringValue(response.id) || crypto.randomUUID(),
+        content,
+        isLast: true,
+        usage: hasUsage
+            ? new ChatUsage({
+                  inputTokens: Number(response.prompt_eval_count),
+                  outputTokens: Number(response.eval_count),
+                  time: (Date.now() - startedAt) / 1000,
+              })
+            : null,
+    });
+}
+
+function filterTools(
+    tools: ToolSchema[] | undefined,
+    names: string[] | null | undefined
+): ToolSchema[] | undefined {
+    if (!names?.length) return tools;
+    const allowed = new Set(names);
+    return tools?.filter(tool => allowed.has(tool.function.name));
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+    return typeof value === 'object' && value !== null && !Array.isArray(value)
+        ? (value as Record<string, unknown>)
+        : {};
+}
+
+function asArray(value: unknown): unknown[] {
+    return Array.isArray(value) ? value : [];
+}
+
+function stringValue(value: unknown): string {
+    return typeof value === 'string' ? value : '';
 }

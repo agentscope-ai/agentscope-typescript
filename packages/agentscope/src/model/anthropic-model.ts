@@ -1,6 +1,6 @@
 /* eslint-disable jsdoc/require-jsdoc */
 
-import { AnthropicCredential } from '../credential';
+import { AnthropicCredential } from '../credential/providers';
 import { AnthropicChatFormatter } from '../formatter';
 import type { FormatterBase } from '../formatter';
 import { TextBlock, ThinkingBlock, ToolCallBlock } from '../message';

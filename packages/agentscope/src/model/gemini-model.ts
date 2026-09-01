@@ -1,6 +1,6 @@
 /* eslint-disable jsdoc/require-jsdoc */
 
-import { GeminiCredential } from '../credential';
+import { GeminiCredential } from '../credential/providers';
 import { GeminiChatFormatter } from '../formatter';
 import type { FormatterBase } from '../formatter';
 import { TextBlock, ThinkingBlock, ToolCallBlock } from '../message';

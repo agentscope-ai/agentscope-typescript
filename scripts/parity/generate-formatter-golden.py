@@ -6,8 +6,14 @@ import asyncio
 import json
 import re
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any
+
+PINNED_PYTHON_SOURCE = (
+    Path(__file__).resolve().parents[3] / "agentscope-python" / "src"
+)
+sys.path.insert(0, str(PINNED_PYTHON_SOURCE))
 
 from agentscope.formatter import (
     AnthropicChatFormatter,
@@ -191,6 +197,7 @@ def main() -> None:
         check=True,
         capture_output=True,
         text=True,
+        cwd=PINNED_PYTHON_SOURCE.parent,
     ).stdout.strip()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(

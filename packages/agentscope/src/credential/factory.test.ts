@@ -5,7 +5,13 @@ import path from 'path';
 
 import { CredentialBase, CredentialOptions, credentialJSON } from './base';
 import { CredentialFactory } from './factory';
-import { DashScopeCredential, OllamaCredential, OpenAICredential } from './providers';
+import {
+    DashScopeCredential,
+    GeminiCredential,
+    OllamaCredential,
+    OpenAICredential,
+} from './providers';
+import { GeminiChatModel } from '../model/gemini-model';
 
 describe('CredentialFactory', () => {
     test('matches every Python credential JSON schema', () => {
@@ -52,6 +58,11 @@ describe('CredentialFactory', () => {
             host: null,
         });
         expect(ollama.listTTSModels()).toEqual([]);
+    });
+
+    test('resolves the Python-compatible chat model class lazily', async () => {
+        const credential = new GeminiCredential({ apiKey: 'secret' });
+        expect(await credential.getChatModelClass()).toBe(GeminiChatModel);
     });
 
     test('validates discriminators and required API keys', () => {

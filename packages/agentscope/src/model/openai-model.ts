@@ -1,342 +1,191 @@
-import { OpenAI } from 'openai';
+/* eslint-disable jsdoc/require-jsdoc */
+
+import { OpenAICredential } from '../credential/providers';
+import { OpenAIChatFormatter } from '../formatter';
+import type { FormatterBase } from '../formatter';
+import { ToolChoice } from '../tool/types';
+import type { ToolChoice as LegacyToolChoice, ToolSchema } from '../type';
+import { ChatModelBase } from './base';
+import type { ChatModelRequestOptions } from './base';
+import { flattenJSONSchema } from './gemini-model';
+import type { FetchLike } from './http-transport';
 import {
-    ChatCompletionMessageParam,
-    ChatCompletionToolChoiceOption,
-} from 'openai/resources/chat/completions';
-
-import { _generateId, _generateTimestamp } from '../_utils/common';
-import { OpenAIChatFormatter } from '../formatter/openai-chat-formatter';
-import type { DataBlock, TextBlock, ThinkingBlock, ToolCallBlock } from '../message/block';
-import type { ToolChoice, ToolSchema } from '../type';
-import { ChatModelBase, ChatModelOptions, ChatModelRequestOptions } from './base';
+    createOpenAICompatibleHTTPClient,
+    formatOpenAITools,
+    nestedNumber,
+    OpenAICompatibleClient,
+    parseOpenAICompletion,
+    parseOpenAIStream,
+} from './openai-compatible';
 import { ChatResponse } from './response';
-import { ChatUsage } from './usage';
 
-interface OpenAIChatModelOptions extends ChatModelOptions {
-    apiKey: string;
-    presetGenParams?: Record<string, unknown>;
-    baseURL?: string;
+export interface OpenAIParameters extends Record<string, unknown> {
+    maxTokens?: number | null;
+    thinkingEnable?: boolean;
+    reasoningEffort?: 'none' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh' | null;
+    temperature?: number | null;
+    topP?: number | null;
+    parallelToolCalls?: boolean;
+    voice?: string | null;
 }
 
-/**
- * The OpenAI API chat model.
- */
+export interface OpenAIChatModelOptions {
+    credential?: OpenAICredential;
+    model?: string;
+    parameters?: OpenAIParameters;
+    stream?: boolean;
+    maxRetries?: number;
+    retryDelay?: number;
+    contextSize?: number;
+    formatter?: FormatterBase;
+    client?: OpenAICompatibleClient;
+    fetch?: FetchLike;
+    extraBody?: Record<string, unknown> | null;
+    modelName?: string;
+    apiKey?: string;
+    presetGenParams?: Record<string, unknown>;
+    baseURL?: string;
+    fallbackModelName?: string;
+}
+
+/** OpenAI Chat Completions model with Python-compatible behavior. */
 export class OpenAIChatModel extends ChatModelBase {
-    protected client: OpenAI;
-    protected presetGenParams: Record<string, unknown> | undefined;
+    readonly type = 'openai_chat' as const;
+    readonly openAIParameters: OpenAIParameters;
+    private readonly client: OpenAICompatibleClient;
+    private readonly extraBody: Record<string, unknown> | null;
+    private readonly legacyParameters: Record<string, unknown>;
 
-    /**
-     * Initializes a new instance of the OpenAIChatModel class.
-     * @param options
-     * @param options.modelName
-     * @param options.apiKey
-     * @param options.stream
-     * @param options.maxRetries
-     * @param options.fallbackModelName
-     * @param options.presetGenParams
-     * @param options.baseURL
-     * @param options.formatter
-     */
-    constructor({
-        modelName,
-        apiKey,
-        stream = true,
-        maxRetries = 3,
-        fallbackModelName,
-        presetGenParams,
-        baseURL,
-        formatter,
-    }: OpenAIChatModelOptions) {
-        // If no formatter is provided, create a default OpenAIChatFormatter
-        const defaultFormatter = formatter || new OpenAIChatFormatter();
+    constructor(options: OpenAIChatModelOptions) {
+        const credential =
+            options.credential ??
+            new OpenAICredential({
+                apiKey: required(options.apiKey, 'apiKey'),
+                baseUrl: options.baseURL,
+            });
+        const model = options.model ?? required(options.modelName, 'model');
+        const parameters = options.parameters ?? {};
         super({
-            modelName,
-            stream,
-            maxRetries,
-            fallbackModelName,
-            formatter: defaultFormatter,
-        } as ChatModelOptions);
-
-        this.client = new OpenAI({
-            apiKey: apiKey,
-            baseURL,
+            modelName: model,
+            credential,
+            parameters,
+            stream: options.stream ?? true,
+            maxRetries: options.maxRetries ?? 3,
+            retryDelay: options.retryDelay ?? 1,
+            contextSize: options.contextSize ?? 128000,
+            fallbackModelName: options.fallbackModelName,
+            formatter: options.formatter ?? new OpenAIChatFormatter(),
         });
-        this.presetGenParams = presetGenParams;
+        this.openAIParameters = parameters;
+        this.extraBody = options.extraBody ?? null;
+        this.legacyParameters = options.presetGenParams ?? {};
+        this.client =
+            options.client ??
+            createOpenAICompatibleHTTPClient({
+                apiKey: credential.apiKey,
+                baseUrl: credential.baseUrl ?? 'https://api.openai.com/v1',
+                headers: credential.organization
+                    ? { 'openai-organization': credential.organization }
+                    : undefined,
+                fetch: options.fetch,
+            });
     }
 
-    /**
-     * Calls the OpenAI API with the given parameters.
-     *
-     * @param modelName - The name of the model to use.
-     * @param options - The chat model options.
-     * @returns A promise that resolves to either a ChatResponse or an AsyncGenerator of ChatResponses.
-     */
+    protected isRetryableError(error: unknown): boolean {
+        return (
+            error instanceof TypeError ||
+            (error instanceof Error &&
+                ['RateLimitError', 'HTTP500Error', 'HTTP502Error', 'HTTP503Error'].includes(
+                    error.name
+                ))
+        );
+    }
+
+    protected isStructuredOutputFallbackError(error: unknown): boolean {
+        return (
+            super.isStructuredOutputFallbackError(error) ||
+            (error instanceof Error && error.name === 'HTTP400Error')
+        );
+    }
+
     async _callAPI(
         modelName: string,
-        options: ChatModelRequestOptions<ChatCompletionMessageParam>
+        options: ChatModelRequestOptions<unknown>
     ): Promise<ChatResponse | AsyncGenerator<ChatResponse, ChatResponse>> {
-        const startTime = Date.now();
-
-        if (this.stream) {
-            // Handle streaming response
-            const stream = await this.client.chat.completions.create({
-                model: modelName,
-                messages: options.messages,
-                tools: this._formatToolSchemas(options.tools),
-                tool_choice: this._formatToolChoice(options.toolChoice),
-                stream: true,
-                ...(this.presetGenParams ?? {}),
-            });
-
-            return this._parseOpenAIStreamedResponse(stream, startTime);
-        }
-
-        // Handle non-streaming response
-        const response = await this.client.chat.completions.create({
+        const startedAt = Date.now();
+        const { messages, tools, normalizedToolChoice, signal, ...callOptions } = options;
+        delete callOptions.toolChoice;
+        delete callOptions.schema;
+        const parameters = this.openAIParameters;
+        const body: Record<string, unknown> = {
             model: modelName,
-            messages: options.messages,
-            tools: options.tools,
-            tool_choice: this._formatToolChoice(options.toolChoice),
-            stream: false,
-            ...(this.presetGenParams ?? {}),
-        });
-
-        const choice = response.choices[0];
-        const blocks: (TextBlock | ToolCallBlock | ThinkingBlock | DataBlock)[] = [];
-
-        // handling text block
-        if (choice.message.content) {
-            blocks.push({
-                id: _generateId(),
-                type: 'text',
-                text: choice.message.content,
-                created_at: _generateTimestamp(),
-            });
+            messages,
+            stream: this.stream,
+        };
+        if (parameters.maxTokens != null) body.max_completion_tokens = parameters.maxTokens;
+        if (parameters.temperature != null) body.temperature = parameters.temperature;
+        if (parameters.topP != null) body.top_p = parameters.topP;
+        if (parameters.thinkingEnable && parameters.reasoningEffort) {
+            body.reasoning_effort = parameters.reasoningEffort;
         }
-
-        // handling tool calls
-        if (choice.message.tool_calls && Array.isArray(choice.message.tool_calls)) {
-            choice.message.tool_calls.forEach(toolCall => {
-                if (toolCall.type === 'function') {
-                    blocks.push({
-                        type: 'tool_call',
-                        id: toolCall.id,
-                        name: toolCall.function.name,
-                        input: toolCall.function.arguments,
-                        state: 'pending',
-                        created_at: _generateTimestamp(),
-                    });
-                }
-            });
+        if (parameters.voice) {
+            body.audio = { voice: parameters.voice, format: 'pcm16' };
+            body.modalities = ['text', 'audio'];
         }
+        if (this.extraBody) body.extra_body = structuredClone(this.extraBody);
+        Object.assign(body, this.legacyParameters, callOptions);
 
-        // handling usage
-        const usage = response.usage
-            ? new ChatUsage({
-                  inputTokens: response.usage.prompt_tokens,
-                  outputTokens: response.usage.completion_tokens,
-                  time: (Date.now() - startTime) / 1000,
-              })
-            : null;
+        const [formattedTools, formattedChoice] = formatOpenAITools(
+            tools,
+            normalizedToolChoice ?? null,
+            flattenToolSchemas
+        );
+        if (formattedTools) {
+            body.tools = formattedTools;
+            if (parameters.parallelToolCalls === false) body.parallel_tool_calls = false;
+        }
+        if (formattedChoice) body.tool_choice = formattedChoice;
+        if (this.stream) body.stream_options = { include_usage: true };
 
-        return new ChatResponse({
-            id: response.id,
-            createdAt: new Date(response.created * 1000).toISOString(),
-            content: blocks,
-            usage,
-            isLast: true,
-        });
+        const raw = await this.client.create(body, signal as AbortSignal | undefined);
+        const parserOptions = {
+            cacheTokens: (usage: Record<string, unknown>) =>
+                nestedNumber(usage, 'prompt_tokens_details', 'cached_tokens'),
+            includeAudio: true,
+            audioFormat: String(
+                (body.audio as Record<string, unknown> | undefined)?.format ?? 'wav'
+            ),
+        };
+        return this.stream
+            ? parseOpenAIStream(
+                  raw as AsyncIterable<Record<string, unknown>>,
+                  startedAt,
+                  parserOptions
+              )
+            : parseOpenAICompletion(raw, startedAt, parserOptions);
     }
 
-    /**
-     * Formats the tool choice for the API request.
-     *
-     * TODO: supports grouped tool choices.
-     *
-     * @param toolChoice - The tool choice option.
-     * @returns The formatted tool choice.
-     */
-    _formatToolChoice(toolChoice?: ToolChoice): ChatCompletionToolChoiceOption {
-        if (toolChoice) {
-            // Directly return predefined options
-            if (toolChoice === 'none' || toolChoice === 'auto' || toolChoice === 'required') {
-                return toolChoice;
-            }
-            return {
-                type: 'function',
-                function: {
-                    name: toolChoice,
-                },
-            };
-        }
-        return 'auto';
+    _formatToolChoice(toolChoice: LegacyToolChoice): unknown {
+        return formatOpenAITools(undefined, new ToolChoice({ mode: toolChoice }))[1];
     }
 
-    /**
-     * Parses a streamed response from OpenAI API.
-     * An async generator that yields delta ChatResponse objects as they are received.
-     *
-     * @param stream - The OpenAI stream object.
-     * @param startTime - The start time of the request for usage calculation.
-     * @returns An async generator yielding delta ChatResponse objects, and returns the complete ChatResponse.
-     */
-    async *_parseOpenAIStreamedResponse(
-        stream: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
-        startTime: number
-    ): AsyncGenerator<ChatResponse, ChatResponse> {
-        let accText = '';
-        // Store accumulated input strings for each tool call
-        const accToolInputs: Map<string, string> = new Map();
-        // Store tool call metadata (id, name)
-        const toolCallMeta: Map<string, { id: string; name: string }> = new Map();
-        let lastUsage: ChatUsage | null = null;
-        let responseId = '';
-        let createdTimestamp = 0;
-
-        for await (const chunk of stream) {
-            if (!responseId && chunk.id) {
-                responseId = chunk.id;
-            }
-            if (!createdTimestamp && chunk.created) {
-                createdTimestamp = chunk.created;
-            }
-
-            if (chunk.choices && chunk.choices.length > 0) {
-                const choice = chunk.choices[0];
-
-                // Delta data for this chunk
-                let deltaText = '';
-                const deltaToolCalls: Map<string, ToolCallBlock> = new Map();
-
-                if (choice.delta?.content) {
-                    deltaText = choice.delta.content;
-                    accText += deltaText;
-                }
-
-                if (choice.delta?.tool_calls) {
-                    choice.delta.tool_calls.forEach(toolCall => {
-                        const index = toolCall.index.toString();
-
-                        // Initialize metadata if not exists
-                        if (!toolCallMeta.has(index)) {
-                            toolCallMeta.set(index, { id: '', name: '' });
-                        }
-                        if (!accToolInputs.has(index)) {
-                            accToolInputs.set(index, '');
-                        }
-
-                        // Update the tool call id
-                        if (toolCall.id) {
-                            toolCallMeta.get(index)!.id = toolCall.id;
-                        }
-                        // Update the tool call name
-                        if (toolCall.function?.name) {
-                            toolCallMeta.get(index)!.name = toolCall.function.name;
-                        }
-                        // Update the tool call input
-                        if (toolCall.function?.arguments) {
-                            const deltaArgs = toolCall.function.arguments;
-                            accToolInputs.set(index, accToolInputs.get(index)! + deltaArgs);
-
-                            // Create delta tool call with incremental input
-                            const meta = toolCallMeta.get(index)!;
-                            deltaToolCalls.set(index, {
-                                type: 'tool_call',
-                                id: meta.id,
-                                name: meta.name,
-                                input: deltaArgs,
-                                state: 'pending',
-                                created_at: _generateTimestamp(),
-                            });
-                        }
-                    });
-                }
-
-                // Create a delta ChatResponse object
-                const deltaBlocks = this._accDataToBlocks(deltaText, deltaToolCalls);
-
-                yield new ChatResponse({
-                    id: responseId || _generateId(),
-                    createdAt: createdTimestamp
-                        ? new Date(createdTimestamp * 1000).toISOString()
-                        : _generateTimestamp(),
-                    content: deltaBlocks,
-                    usage: lastUsage,
-                    isLast: false,
-                });
-            }
-
-            // Handle usage information (typically in the last chunk)
-            if (chunk.usage) {
-                lastUsage = new ChatUsage({
-                    inputTokens: chunk.usage.prompt_tokens || 0,
-                    outputTokens: chunk.usage.completion_tokens || 0,
-                    time: (Date.now() - startTime) / 1000,
-                });
-            }
-        }
-
-        // Build final tool calls with complete JSON strings
-        const finalToolCalls: Map<string, ToolCallBlock> = new Map();
-        toolCallMeta.forEach((meta, index) => {
-            finalToolCalls.set(index, {
-                type: 'tool_call',
-                id: meta.id,
-                name: meta.name,
-                input: accToolInputs.get(index) || '{}',
-                state: 'pending',
-                created_at: _generateTimestamp(),
-            });
-        });
-
-        const blocks = this._accDataToBlocks(accText, finalToolCalls);
-        return new ChatResponse({
-            id: responseId || _generateId(),
-            createdAt: createdTimestamp
-                ? new Date(createdTimestamp * 1000).toISOString()
-                : _generateTimestamp(),
-            content: blocks,
-            usage: lastUsage,
-            isLast: true,
-        });
+    _formatToolSchemas(tools: ToolSchema[]): ToolSchema[] {
+        return flattenToolSchemas(tools);
     }
+}
 
-    /**
-     * Convert data into blocks
-     *
-     * @param text - The text response from the llm API
-     * @param toolCalls - The tool calls
-     * @returns An array of blocks
-     */
-    _accDataToBlocks(
-        text: string,
-        toolCalls: Map<string, ToolCallBlock>
-    ): (TextBlock | ToolCallBlock)[] {
-        const blocks: (TextBlock | ToolCallBlock)[] = [];
-        if (text) {
-            blocks.push({
-                id: _generateId(),
-                type: 'text',
-                text: text,
-                created_at: _generateTimestamp(),
-            });
-        }
-        // Push the tool calls into the blocks
-        if (toolCalls.size > 0) {
-            toolCalls.forEach(value => {
-                blocks.push(value);
-            });
-        }
+function flattenToolSchemas(tools: ToolSchema[]): ToolSchema[] {
+    return tools.map(tool => {
+        const parameters = tool.function.parameters;
+        if (!parameters) return tool;
+        const flattened = flattenJSONSchema(parameters) as typeof parameters;
+        return flattened === parameters
+            ? tool
+            : { ...tool, function: { ...tool.function, parameters: flattened } };
+    });
+}
 
-        return blocks;
-    }
-
-    /**
-     * Format the tool schemas to the expected API format.
-     * @param tools
-     * @returns The formatted tool schemas.
-     */
-    _formatToolSchemas(tools: ToolSchema[] | undefined): ToolSchema[] {
-        return tools || [];
-    }
+function required(value: string | undefined, name: string): string {
+    if (!value) throw new Error(`${name} is required.`);
+    return value;
 }

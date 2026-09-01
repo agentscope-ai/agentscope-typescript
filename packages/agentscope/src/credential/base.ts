@@ -1,6 +1,7 @@
 /* eslint-disable jsdoc/require-jsdoc */
 
 import { _generateId } from '../_utils/common';
+import type { ChatModelBase } from '../model/base';
 import type { AnyModelCard, EmbeddingModelCard, ModelCard, TTSModelCard } from '../model/card';
 import { listModelCards } from '../model/card-registry';
 
@@ -10,6 +11,9 @@ export interface CredentialOptions {
 }
 
 export type CredentialSchema = Record<string, unknown>;
+export type ChatModelClass = abstract new (...args: never[]) => ChatModelBase;
+
+let chatModelResolver: ((provider: string) => Promise<ChatModelClass>) | null = null;
 
 /** Shared credential identity and model-card discovery behavior. */
 export abstract class CredentialBase {
@@ -29,6 +33,11 @@ export abstract class CredentialBase {
         return listModelCards({ kind: 'chat', provider: this.chatProvider }) as ModelCard[];
     }
 
+    getChatModelClass(): Promise<ChatModelClass> {
+        if (!chatModelResolver) throw new Error('Chat model registry is not initialized.');
+        return chatModelResolver(this.chatProvider);
+    }
+
     listTTSModels(): TTSModelCard[] {
         if (this.ttsProvider === null) return [];
         return listModelCards({ kind: 'tts', provider: this.ttsProvider }) as TTSModelCard[];
@@ -43,6 +52,12 @@ export abstract class CredentialBase {
     }
 
     abstract toJSON(): Record<string, unknown>;
+}
+
+export function registerChatModelResolver(
+    resolver: (provider: string) => Promise<ChatModelClass>
+): void {
+    chatModelResolver = resolver;
 }
 
 export interface CredentialClass<T extends CredentialBase = CredentialBase> {

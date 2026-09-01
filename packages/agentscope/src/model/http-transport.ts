@@ -43,6 +43,45 @@ export async function postSSE(
     return parseSSE(response.body);
 }
 
+export async function postNDJSON(
+    url: string,
+    body: Record<string, unknown>,
+    options: JSONRequestOptions = {}
+): Promise<AsyncGenerator<Record<string, unknown>>> {
+    const response = await (options.fetch ?? fetch)(url, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', ...options.headers },
+        body: JSON.stringify(body),
+        signal: options.signal,
+    });
+    if (!response.ok) throw await responseError(response);
+    if (!response.body) throw new Error('Streaming response body is empty.');
+    return parseNDJSON(response.body);
+}
+
+export async function* parseNDJSON(
+    stream: ReadableStream<Uint8Array>
+): AsyncGenerator<Record<string, unknown>> {
+    const reader = stream.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    try {
+        while (true) {
+            const result = await reader.read();
+            buffer += decoder.decode(result.value, { stream: !result.done });
+            const lines = buffer.split(/\r?\n/);
+            buffer = lines.pop() ?? '';
+            for (const line of lines) {
+                if (line.trim()) yield parseJSONObject(line);
+            }
+            if (result.done) break;
+        }
+        if (buffer.trim()) yield parseJSONObject(buffer);
+    } finally {
+        reader.releaseLock();
+    }
+}
+
 export async function* parseSSE(
     stream: ReadableStream<Uint8Array>
 ): AsyncGenerator<Record<string, unknown>> {
@@ -82,6 +121,14 @@ function parseFrame(frame: string): Record<string, unknown> | null {
         throw new Error('SSE data must contain a JSON object.');
     }
     return value as Record<string, unknown>;
+}
+
+function parseJSONObject(value: string): Record<string, unknown> {
+    const parsed = JSON.parse(value) as unknown;
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+        throw new Error('Streaming data must contain a JSON object.');
+    }
+    return parsed as Record<string, unknown>;
 }
 
 async function responseError(response: Response): Promise<Error> {

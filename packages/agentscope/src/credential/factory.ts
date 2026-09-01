@@ -1,6 +1,11 @@
 /* eslint-disable jsdoc/require-jsdoc */
 
-import type { CredentialBase, CredentialClass, CredentialSchema } from './base';
+import {
+    registerChatModelResolver,
+    type CredentialBase,
+    type CredentialClass,
+    type CredentialSchema,
+} from './base';
 import {
     AnthropicCredential,
     DashScopeCredential,
@@ -47,3 +52,17 @@ export class CredentialFactory {
         return this.classes.map(item => item.schema);
     }
 }
+
+registerChatModelResolver(async provider => {
+    if (provider === 'anthropic')
+        return (await import('../model/anthropic-model')).AnthropicChatModel;
+    if (provider === 'dashscope')
+        return (await import('../model/dashscope-model')).DashScopeChatModel;
+    if (provider === 'deepseek') return (await import('../model/deepseek-model')).DeepSeekChatModel;
+    if (provider === 'gemini') return (await import('../model/gemini-model')).GeminiChatModel;
+    if (provider === 'moonshot') return (await import('../model/moonshot-model')).MoonshotChatModel;
+    if (provider === 'ollama') return (await import('../model/ollama-model')).OllamaChatModel;
+    if (provider === 'openai_chat') return (await import('../model/openai-model')).OpenAIChatModel;
+    if (provider === 'xai') return (await import('../model/xai-model')).XAIChatModel;
+    throw new Error(`No chat model class is registered for '${provider}'.`);
+});

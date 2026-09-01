@@ -214,7 +214,7 @@
             {
                 "role": "tool",
                 "tool_call_id": "call-1",
-                "content": "Found\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [Dbfsff927JsARVy9mTSBn8].</system-reminder>",
+                "content": "Found\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [image-1].</system-reminder>",
                 "name": "search"
             },
             {
@@ -227,7 +227,7 @@
                     },
                     {
                         "type": "text",
-                        "text": "- Dbfsff927JsARVy9mTSBn8 (image file): "
+                        "text": "- image-1 (image file): "
                     },
                     {
                         "type": "image_url",
@@ -398,7 +398,7 @@
                             "id": "call-1",
                             "name": "search",
                             "response": {
-                                "output": "Found\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [SXsLbrmkAGf4huJENmxrip].</system-reminder>"
+                                "output": "Found\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [image-1].</system-reminder>"
                             }
                         }
                     }
@@ -411,7 +411,7 @@
                         "text": "<system-reminder>The multimodal data and their identifiers are listed as follows:"
                     },
                     {
-                        "text": "- SXsLbrmkAGf4huJENmxrip (image file): "
+                        "text": "- image-1 (image file): "
                     },
                     {
                         "inline_data": {
@@ -493,7 +493,7 @@
             {
                 "role": "tool",
                 "tool_call_id": "call-1",
-                "content": "Found\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [aGDgz7X7AQUFigicDptioy].</system-reminder>",
+                "content": "Found\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [image-1].</system-reminder>",
                 "name": "search"
             },
             {
@@ -506,7 +506,7 @@
                     },
                     {
                         "type": "text",
-                        "text": "- aGDgz7X7AQUFigicDptioy (image file): "
+                        "text": "- image-1 (image file): "
                     },
                     {
                         "type": "image_url",
@@ -566,11 +566,11 @@
             {
                 "role": "tool",
                 "tool_name": "search",
-                "content": "Found\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [UrwgvNHAE4qSiAN8eMsRqx].</system-reminder>"
+                "content": "Found\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [image-1].</system-reminder>"
             },
             {
                 "role": "user",
-                "content": "<system-reminder>The multimodal data and their identifiers are listed as follows:\n- UrwgvNHAE4qSiAN8eMsRqx (image file): \n</system-reminder>",
+                "content": "<system-reminder>The multimodal data and their identifiers are listed as follows:\n- image-1 (image file): \n</system-reminder>",
                 "images": ["aW1hZ2U="]
             }
         ],
@@ -630,7 +630,7 @@
             {
                 "role": "tool",
                 "tool_call_id": "call-1",
-                "content": "Found\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [AycH8PiUnZLnTnBP5utLGQ].</system-reminder>",
+                "content": "Found\n<system-reminder>A(n) image file is returned and will be presented to you with the identifier [image-1].</system-reminder>",
                 "name": "search"
             },
             {
@@ -642,7 +642,7 @@
                     },
                     {
                         "type": "text",
-                        "text": "- AycH8PiUnZLnTnBP5utLGQ (image file): "
+                        "text": "- image-1 (image file): "
                     },
                     {
                         "type": "image_url",
@@ -794,5 +794,5 @@
             }
         ]
     },
-    "python_commit": "0e972c43dcfdc100c28e8de9ba2e10374d4ac9c7"
+    "python_commit": "de163b34b909edaba3c174190ad7e1a355e7849f"
 }

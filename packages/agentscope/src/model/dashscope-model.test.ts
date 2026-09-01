@@ -18,11 +18,11 @@ describe('DashScopeChatModel', () => {
         // Chunk 4: Second part of arguments
         // Chunk 5: Usage info
         const mockStreamChunks = [
-            'data:{"output":{"choices":[{"message":{"reasoning_content":"Mock thinking: Analyzing"}}]}}\n\n',
-            'data:{"output":{"choices":[{"message":{"reasoning_content":" the weather query for Beijing"}}]}}\n\n',
-            'data:{"output":{"choices":[{"message":{"tool_calls":[{"index":0,"id":"call-123","function":{"name":"get_current_weather","arguments":"{\\"location\\""}}]}}]}}\n\n',
-            'data:{"output":{"choices":[{"message":{"tool_calls":[{"index":0,"function":{"arguments":":\\"Beijing\\"}"}}]}}]}}\n\n',
-            'data:{"output":{"choices":[{"message":{}}]},"usage":{"input_tokens":100,"output_tokens":50}}\n\n',
+            'data:{"id":"response-1","choices":[{"delta":{"reasoning_content":"Mock thinking: Analyzing"}}]}\n\n',
+            'data:{"id":"response-1","choices":[{"delta":{"reasoning_content":" the weather query for Beijing"}}]}\n\n',
+            'data:{"id":"response-1","choices":[{"delta":{"tool_calls":[{"index":0,"id":"call-123","function":{"name":"get_current_weather","arguments":"{\\"location\\""}}]}}]}\n\n',
+            'data:{"id":"response-1","choices":[{"delta":{"tool_calls":[{"index":0,"function":{"arguments":":\\"Beijing\\"}"}}]}}]}\n\n',
+            'data:{"id":"response-1","choices":[],"usage":{"prompt_tokens":100,"completion_tokens":50}}\n\n',
         ];
 
         const mockReadableStream = new ReadableStream({
@@ -169,29 +169,27 @@ describe('DashScopeChatModel', () => {
     test('Test non-streaming generation', async () => {
         // Mock non-streaming response
         const mockResponse = {
-            output: {
-                choices: [
-                    {
-                        message: {
-                            reasoning_content:
-                                'Mock thinking: Analyzing the weather query for Beijing',
-                            tool_calls: [
-                                {
-                                    index: 0,
-                                    id: 'call-123',
-                                    function: {
-                                        name: 'get_current_weather',
-                                        arguments: '{"location":"Beijing"}',
-                                    },
+            id: 'response-1',
+            choices: [
+                {
+                    message: {
+                        reasoning_content: 'Mock thinking: Analyzing the weather query for Beijing',
+                        tool_calls: [
+                            {
+                                index: 0,
+                                id: 'call-123',
+                                function: {
+                                    name: 'get_current_weather',
+                                    arguments: '{"location":"Beijing"}',
                                 },
-                            ],
-                        },
+                            },
+                        ],
                     },
-                ],
-            },
+                },
+            ],
             usage: {
-                input_tokens: 100,
-                output_tokens: 50,
+                prompt_tokens: 100,
+                completion_tokens: 50,
             },
         };
 
