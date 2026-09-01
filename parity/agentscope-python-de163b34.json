@@ -5398,9 +5398,12 @@
             "sha256": "b7434df487001c5f0f1b8ab76a8e5ffd4f6841e38c5ceeeae84e08a954de7e06",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/workspace_local_test.py",
+                "tests/workspace_skill_archive_test.py"
+            ],
+            "typescriptTests": ["packages/agentscope/src/workspace/local.parity.test.ts"]
         },
         {
             "path": "src/agentscope/workspace/_bubblewrap/__init__.py",
@@ -5632,9 +5635,12 @@
             "sha256": "880d1afd5ae159ee155d462f15bdb79e044678d2a69da9f123e9a43f74479a8c",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/workspace_local_test.py",
+                "tests/workspace_skill_archive_test.py"
+            ],
+            "typescriptTests": ["packages/agentscope/src/workspace/local.parity.test.ts"]
         },
         {
             "path": "src/agentscope/workspace/_mcp_gateway/__init__.py",
@@ -5668,9 +5674,9 @@
             "sha256": "cb79a0a1a3bbaa56ab4538408cb8ba04faef026313eb4fd05508fee684c5042a",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_local_test.py"],
+            "typescriptTests": ["packages/agentscope/src/workspace/local.parity.test.ts"]
         },
         {
             "path": "src/agentscope/workspace/_opensandbox/__init__.py",
@@ -5722,9 +5728,9 @@
             "sha256": "ca8841035e0765f6597d0751cbbe00b14bf9913915bd36a36365657b9190e97b",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_local_test.py"],
+            "typescriptTests": ["packages/agentscope/src/workspace/local.parity.test.ts"]
         }
     ],
     "contractDataFiles": [

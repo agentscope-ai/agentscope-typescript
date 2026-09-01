@@ -257,6 +257,9 @@ importers:
             diff:
                 specifier: ^9.0.0
                 version: 9.0.0
+            extract-zip:
+                specifier: ^2.0.1
+                version: 2.0.1(supports-color@8.1.1)
             gray-matter:
                 specifier: ^4.0.3
                 version: 4.0.3
@@ -284,6 +287,9 @@ importers:
             string-format:
                 specifier: ^2.0.0
                 version: 2.0.0
+            tar:
+                specifier: ^7.5.10
+                version: 7.5.10
             uuid:
                 specifier: ^11.1.0
                 version: 11.1.0

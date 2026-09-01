@@ -23,6 +23,7 @@ export default defineConfig({
         'credential/index': 'src/credential/index.ts',
         'embedding/index': 'src/embedding/index.ts',
         'tts/index': 'src/tts/index.ts',
+        'workspace/index': 'src/workspace/index.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,
