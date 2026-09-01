@@ -1,4 +1,4 @@
-import { JSONSerializableObject } from '../type';
+import type { JSONSerializableObject } from '../type';
 
 /**
  * The usage structure for chat models.

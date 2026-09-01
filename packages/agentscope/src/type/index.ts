@@ -1,4 +1,4 @@
-import { ToolResponse } from '../tool';
+import type { ToolResponse } from '../tool/response';
 
 export type JSONSerializableObject =
     | string

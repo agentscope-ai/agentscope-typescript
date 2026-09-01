@@ -4,7 +4,9 @@ import { extname } from 'path';
 import { fileURLToPath } from 'url';
 
 import { FormatterBase } from './base';
-import { DataBlock, Msg, TextBlock, getContentBlocks } from '../message';
+import type { DataBlock, TextBlock } from '../message/block';
+import { getContentBlocks } from '../message/message';
+import type { Msg } from '../message/message';
 
 interface OpenAIFormatterOptions {
     /**

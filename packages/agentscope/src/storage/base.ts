@@ -1,4 +1,4 @@
-import { Msg } from '../message';
+import type { Msg } from '../message/message';
 
 /**
  * The complete agent state including both conversation context and metadata.

@@ -1,6 +1,6 @@
 import { jsonrepair } from 'jsonrepair';
 
-import { JSONSerializableObject } from '../type';
+import type { JSONSerializableObject } from '../type';
 
 /**
  * Decode a base64 string to a Uint8Array.

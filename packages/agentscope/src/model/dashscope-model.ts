@@ -1,10 +1,10 @@
 import { ChatModelBase, ChatModelOptions, ChatModelRequestOptions } from './base';
 import { ChatResponse } from './response';
-import { DataBlock, TextBlock, ThinkingBlock, ToolCallBlock } from '../message';
-import { ToolChoice, ToolSchema } from '../type';
+import type { DataBlock, TextBlock, ThinkingBlock, ToolCallBlock } from '../message/block';
+import type { ToolChoice, ToolSchema } from '../type';
 import { ChatUsage } from './usage';
 import { _parseStreamedResponse } from '../_utils';
-import { DashScopeChatFormatter } from '../formatter';
+import { DashScopeChatFormatter } from '../formatter/dashscope-chat-formatter';
 
 interface _DashScopeStreamChunk {
     output?: {

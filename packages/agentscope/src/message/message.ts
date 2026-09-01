@@ -1,4 +1,4 @@
-import { JSONSerializableObject } from '../type';
+import type { JSONSerializableObject } from '../type';
 import {
     ContentBlock,
     TextBlock,
@@ -11,7 +11,8 @@ import {
     URLSource,
 } from './block';
 import { base64ToBytes, bytesToBase64 } from '../_utils/common';
-import { AgentEvent, EventType, ReplyFinishedReason, ErrorInfo } from '../event';
+import { EventType, ReplyFinishedReason } from '../event';
+import type { AgentEvent, ErrorInfo } from '../event';
 
 /** A chat message exchanged between agents or between an agent and a model. */
 export interface Msg {

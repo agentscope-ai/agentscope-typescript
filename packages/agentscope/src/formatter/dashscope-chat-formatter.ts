@@ -1,6 +1,7 @@
 import { FormatterBase } from './base';
-import { Msg, TextBlock, getContentBlocks } from '../message';
-import { DataBlock } from '../message';
+import type { DataBlock, TextBlock } from '../message/block';
+import { getContentBlocks } from '../message/message';
+import type { Msg } from '../message/message';
 
 interface DashScopeFormatterOptions {
     /**

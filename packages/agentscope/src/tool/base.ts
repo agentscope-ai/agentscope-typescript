@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-import { ToolResponse } from './response';
-import { ToolInputSchema } from '../type';
+import type { ToolInputSchema } from '../type';
+import type { ToolResponse } from './response';
 
 export interface Tool {
     name: string;

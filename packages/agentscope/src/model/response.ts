@@ -1,6 +1,6 @@
-import { DataBlock, TextBlock, ThinkingBlock, ToolCallBlock } from '../message';
-import { JSONSerializableObject } from '../type';
-import { ChatUsage } from './usage';
+import type { DataBlock, TextBlock, ThinkingBlock, ToolCallBlock } from '../message/block';
+import type { JSONSerializableObject } from '../type';
+import type { ChatUsage } from './usage';
 
 export interface ChatResponse {
     type: 'chat';

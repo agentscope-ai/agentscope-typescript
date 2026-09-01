@@ -9,6 +9,32 @@ on:
             - main
 
 jobs:
+    parity-manifest:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout TypeScript repository
+              uses: actions/checkout@v4
+
+            - name: Checkout pinned Python baseline
+              uses: actions/checkout@v4
+              with:
+                  repository: agentscope-ai/agentscope
+                  ref: de163b34b909edaba3c174190ad7e1a355e7849f
+                  path: python-baseline
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20.x
+
+            - name: Test parity tooling
+              run: node --test scripts/parity/*.test.mjs
+
+            - name: Verify parity manifest against Python
+              run: >-
+                  node scripts/parity/check-manifest.mjs
+                  --python-root python-baseline
+
     lint:
         runs-on: ubuntu-latest
         steps:
@@ -77,17 +103,7 @@ jobs:
               run: pnpm run build:agentscope
 
             - name: Test package installation
-              shell: bash
-              run: |
-                  cd packages/agentscope
-                  npm pack
-                  TARBALL=$(ls agentscope-ai-agentscope-*.tgz)
-                  mkdir -p ../../test-install
-                  cd ../../test-install
-                  npm init -y
-                  npm install "../packages/agentscope/$TARBALL"
-                  node -e "const { Agent } = require('@agentscope-ai/agentscope/agent'); console.log('CJS import successful:', typeof Agent === 'function');"
-                  node --input-type=module -e "import { Agent } from '@agentscope-ai/agentscope/agent'; console.log('ESM import successful:', typeof Agent === 'function');"
+              run: pnpm run test:package
 
             - name: Build Desktop app
               run: pnpm run build:desktop

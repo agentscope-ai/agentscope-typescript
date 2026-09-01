@@ -1,9 +1,12 @@
 import * as readline from 'readline';
 
 import { Agent } from './agent';
-import { createMsg } from '../message';
-import { DashScopeChatModel } from '../model';
-import { Bash, Glob, Grep, Toolkit } from '../tool';
+import { createMsg } from '../message/message';
+import { DashScopeChatModel } from '../model/dashscope-model';
+import { Bash } from '../tool/bash';
+import { Glob } from '../tool/glob';
+import { Grep } from '../tool/grep';
+import { Toolkit } from '../tool/toolkit';
 
 // Enable debug logging
 process.env.DEBUG = '*';

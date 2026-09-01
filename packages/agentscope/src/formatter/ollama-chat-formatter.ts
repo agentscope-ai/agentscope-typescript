@@ -1,5 +1,6 @@
 import { FormatterBase } from './base';
-import { Msg, getContentBlocks, getTextContent } from '../message';
+import { getContentBlocks, getTextContent } from '../message/message';
+import type { Msg } from '../message/message';
 
 /**
  * Format AgentScope message objects into Ollama Chat message format.

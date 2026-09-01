@@ -1,9 +1,10 @@
 import { z } from 'zod';
 
-import { ChatResponse, StructuredResponse } from './response';
-import { FormatterBase } from '../formatter';
-import { getTextContent, Msg } from '../message';
-import { ToolChoice, ToolInputSchema, ToolSchema } from '../type';
+import type { FormatterBase } from '../formatter/base';
+import { getTextContent } from '../message/message';
+import type { Msg } from '../message/message';
+import type { ToolChoice, ToolInputSchema, ToolSchema } from '../type';
+import type { ChatResponse, StructuredResponse } from './response';
 
 export interface ChatModelOptions {
     modelName: string;

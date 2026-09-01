@@ -1,5 +1,6 @@
 import { FormatterBase } from './base';
-import { Msg, getContentBlocks } from '../message';
+import { getContentBlocks } from '../message/message';
+import type { Msg } from '../message/message';
 
 interface DeepSeekFormatterOptions {
     /**

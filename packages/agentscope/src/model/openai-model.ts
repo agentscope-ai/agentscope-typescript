@@ -4,12 +4,12 @@ import {
     ChatCompletionToolChoiceOption,
 } from 'openai/resources/chat/completions';
 
-import { DataBlock, TextBlock, ThinkingBlock, ToolCallBlock } from '../message';
-import { ToolChoice, ToolSchema } from '../type';
+import { OpenAIChatFormatter } from '../formatter/openai-chat-formatter';
+import type { DataBlock, TextBlock, ThinkingBlock, ToolCallBlock } from '../message/block';
+import type { ToolChoice, ToolSchema } from '../type';
 import { ChatModelBase, ChatModelOptions, ChatModelRequestOptions } from './base';
 import { ChatResponse } from './response';
 import { ChatUsage } from './usage';
-import { OpenAIChatFormatter } from '../formatter';
 
 interface OpenAIChatModelOptions extends ChatModelOptions {
     apiKey: string;

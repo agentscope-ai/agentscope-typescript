@@ -1,5 +1,5 @@
-import { DataBlock, TextBlock, ToolCallBlock, ToolResultBlock } from '../message';
-import { PermissionRule } from '../permission';
+import type { DataBlock, TextBlock, ToolCallBlock, ToolResultBlock } from '../message/block';
+import type { PermissionRule } from '../permission';
 
 export enum EventType {
     REPLY_START = 'REPLY_START',

@@ -2,10 +2,10 @@ import { Ollama, ChatResponse as OllamaChatResponse, AbortableAsyncIterator } fr
 
 import { ChatModelBase, ChatModelOptions, ChatModelRequestOptions } from './base';
 import { ChatResponse } from './response';
-import { TextBlock, ThinkingBlock, ToolCallBlock } from '../message';
-import { ToolChoice, ToolSchema } from '../type';
+import type { TextBlock, ThinkingBlock, ToolCallBlock } from '../message/block';
+import type { ToolChoice, ToolSchema } from '../type';
 import { ChatUsage } from './usage';
-import { OllamaChatFormatter } from '../formatter';
+import { OllamaChatFormatter } from '../formatter/ollama-chat-formatter';
 
 interface OllamaThinkingConfig {
     /**

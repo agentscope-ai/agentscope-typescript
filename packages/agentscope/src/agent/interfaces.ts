@@ -1,8 +1,9 @@
 import { z } from 'zod';
 
-import { ExternalExecutionResultEvent, UserConfirmResultEvent } from '../event';
-import { Msg, ToolCallBlock } from '../message';
-import { ToolChoice } from '../type';
+import type { ExternalExecutionResultEvent, UserConfirmResultEvent } from '../event';
+import type { ToolCallBlock } from '../message/block';
+import type { Msg } from '../message/message';
+import type { ToolChoice } from '../type';
 
 export interface ReplyOptions {
     msgs?: Msg | Msg[];

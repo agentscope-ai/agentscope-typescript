@@ -1,4 +1,6 @@
-import { Msg, TextBlock, DataBlock, createMsg } from '../message';
+import type { DataBlock, TextBlock } from '../message/block';
+import { createMsg } from '../message/message';
+import type { Msg } from '../message/message';
 
 /**
  * Base class for message formatters.
