@@ -492,5 +492,200 @@ export function runStorageContract(name: string, factory: StorageContractFactory
             expect(await storage.deleteKnowledgeBase('user-1', knowledgeBase.id)).toBe(true);
             expect(await storage.listKnowledgeDocuments('user-1', knowledgeBase.id)).toEqual([]);
         });
+
+        test('preserves creation timestamps across record updates', async () => {
+            const agent = agentRecord('user-1', 'agent-1');
+            await storage.upsertAgent('user-1', agent);
+            const before = await storage.getAgent('user-1', agent.id);
+            agent.data.name = 'updated';
+            await storage.upsertAgent('user-1', agent);
+            const after = await storage.getAgent('user-1', agent.id);
+            expect(after).toEqual({
+                ...before,
+                updated_at: expect.any(String),
+                data: { ...before!.data, name: 'updated' },
+            });
+            expect(after!.created_at).toBe(before!.created_at);
+            expect(await storage.getAgent('user-1', 'missing')).toBeNull();
+        });
+
+        test('round-trips session defaults and isolates agent session indexes', async () => {
+            const first = await storage.upsertSession({
+                userId: 'user-1',
+                agentId: 'agent-1',
+                config: sessionConfig(),
+                sessionId: 'session-1',
+            });
+            await storage.upsertSession({
+                userId: 'user-2',
+                agentId: 'agent-1',
+                config: sessionConfig(),
+                sessionId: 'session-2',
+            });
+            expect(first).toEqual(
+                expect.objectContaining({
+                    id: 'session-1',
+                    source: 'user',
+                    team_id: null,
+                    source_schedule_id: null,
+                    source_channel_id: null,
+                })
+            );
+            expect((await storage.listSessions('user-1', 'agent-1')).map(item => item.id)).toEqual([
+                'session-1',
+            ]);
+            expect(await storage.listSessionsBySchedule('user-1', 'missing')).toEqual([]);
+            expect(await storage.listSessionsByChannel('user-1', 'missing')).toEqual([]);
+        });
+
+        test('cascades direct agent deletion through sessions and schedules', async () => {
+            await storage.upsertAgent('user-1', agentRecord('user-1', 'agent-1'));
+            await storage.upsertSession({
+                userId: 'user-1',
+                agentId: 'agent-1',
+                config: sessionConfig(),
+                sessionId: 'session-1',
+            });
+            await storage.upsertSchedule(
+                'user-1',
+                scheduleRecord('user-1', 'agent-1', 'schedule-1')
+            );
+            expect(await storage.deleteAgent('user-1', 'agent-1')).toBe(true);
+            expect(await storage.getAgent('user-1', 'agent-1')).toBeNull();
+            expect(await storage.getSession('user-1', 'agent-1', 'session-1')).toBeNull();
+            expect(await storage.getSchedule('user-1', 'schedule-1')).toBeNull();
+            expect(await storage.deleteAgent('user-1', 'agent-1')).toBe(false);
+        });
+
+        test('keeps message sessions isolated and accepts maximum-width ids', async () => {
+            const id = 'm'.repeat(255);
+            const message = UserMsg({ id, name: 'user', content: 'wide identifier' });
+            expect(await storage.listMessages('user-1', 'empty')).toEqual({
+                messages: [],
+                hasMore: false,
+            });
+            await storage.upsertMessage('user-1', 'session-1', message);
+            expect(await storage.getMessage('user-1', 'session-2', id)).toBeNull();
+            expect(await storage.getMessage('user-2', 'session-1', id)).toBeNull();
+            expect(await storage.getMessage('user-1', 'session-1', id)).toEqual(message);
+            expect(await storage.listMessages('user-1', 'session-1', { limit: 0 })).toEqual({
+                messages: [],
+                hasMore: true,
+            });
+        });
+
+        test('frees MCP and skill names after deletion and keeps libraries independent', async () => {
+            await storage.upsertMCP('user-1', mcpRecord('user-1', 'mcp-1', 'shared'));
+            await storage.upsertSkill(
+                'user-1',
+                SkillRecordSchema.parse({
+                    id: 'skill-1',
+                    user_id: 'user-1',
+                    name: 'shared',
+                })
+            );
+            expect(await storage.deleteMCP('user-1', 'mcp-1')).toBe(true);
+            expect(await storage.deleteSkill('user-1', 'skill-1')).toBe(true);
+            expect(await storage.getMCPByName('user-1', 'shared')).toBeNull();
+            expect(await storage.getSkillByName('user-1', 'shared')).toBeNull();
+            await storage.upsertMCP('user-1', mcpRecord('user-1', 'mcp-2', 'shared'));
+            await storage.upsertSkill(
+                'user-1',
+                SkillRecordSchema.parse({
+                    id: 'skill-2',
+                    user_id: 'user-1',
+                    name: 'shared',
+                })
+            );
+            expect(await storage.deleteMCP('user-1', 'missing')).toBe(false);
+            expect(await storage.deleteSkill('user-1', 'missing')).toBe(false);
+        });
+
+        test('lists schedules and channels globally without losing owner isolation', async () => {
+            await storage.upsertSchedule(
+                'user-1',
+                scheduleRecord('user-1', 'agent-1', 'schedule-1')
+            );
+            await storage.upsertSchedule(
+                'user-2',
+                scheduleRecord('user-2', 'agent-2', 'schedule-2')
+            );
+            await storage.upsertChannel(channelRecord('channel-1', 'user-1'), 'bot-1');
+            await storage.upsertChannel(channelRecord('channel-2', 'user-2'), 'bot-2');
+            expect((await storage.listSchedules('user-1')).map(item => item.id)).toEqual([
+                'schedule-1',
+            ]);
+            expect(new Set((await storage.listAllSchedules()).map(item => item.id))).toEqual(
+                new Set(['schedule-1', 'schedule-2'])
+            );
+            expect((await storage.listChannels('user-1')).map(item => item.id)).toEqual([
+                'channel-1',
+            ]);
+            expect(new Set((await storage.listAllChannels()).map(item => item.id))).toEqual(
+                new Set(['channel-1', 'channel-2'])
+            );
+        });
+
+        test('rejects mismatched knowledge owners and preserves creation on overwrite', async () => {
+            const knowledgeBase = knowledgeBaseRecord('user-1', 'kb-1');
+            await storage.upsertKnowledgeBase('user-1', knowledgeBase);
+            const before = await storage.getKnowledgeBase('user-1', knowledgeBase.id);
+            knowledgeBase.data.name = 'updated';
+            await storage.upsertKnowledgeBase('user-1', knowledgeBase);
+            const after = await storage.getKnowledgeBase('user-1', knowledgeBase.id);
+            expect(after!.created_at).toBe(before!.created_at);
+            expect(after!.data.name).toBe('updated');
+            await expect(
+                storage.upsertKnowledgeBase('user-2', knowledgeBase)
+            ).rejects.toBeInstanceOf(StorageConflictError);
+            await expect(
+                storage.upsertKnowledgeDocument(
+                    'user-1',
+                    knowledgeDocumentRecord('user-1', 'missing', 'document-1')
+                )
+            ).rejects.toBeInstanceOf(StorageConflictError);
+        });
+
+        test('dissolves a team with its leader while preserving direct worker session semantics', async () => {
+            await storage.upsertAgent('user-1', agentRecord('user-1', 'leader'));
+            await storage.upsertAgent('user-1', agentRecord('user-1', 'worker', 'team'));
+            const leader = await storage.upsertSession({
+                userId: 'user-1',
+                agentId: 'leader',
+                config: sessionConfig(),
+                sessionId: 'leader-session',
+            });
+            const worker = await storage.upsertSession({
+                userId: 'user-1',
+                agentId: 'worker',
+                config: sessionConfig(),
+                sessionId: 'worker-session',
+            });
+            const team = TeamRecordSchema.parse({
+                id: 'team-1',
+                user_id: 'user-1',
+                session_id: leader.id,
+                leader_agent_id: 'leader',
+                data: {
+                    name: 'team',
+                    members: [
+                        {
+                            owner_id: 'user-1',
+                            agent_id: 'worker',
+                            session_id: worker.id,
+                            role: 'created',
+                        },
+                    ],
+                },
+            });
+            await storage.upsertTeam('user-1', team);
+            await storage.setSessionTeamId('user-1', leader.id, team.id);
+            await storage.setSessionTeamId('user-1', worker.id, team.id);
+            expect(await storage.deleteSession('user-1', 'worker', worker.id)).toBe(true);
+            expect(await storage.getTeam('user-1', team.id)).not.toBeNull();
+            expect(await storage.deleteSession('user-1', 'leader', leader.id)).toBe(true);
+            expect(await storage.getTeam('user-1', team.id)).toBeNull();
+            expect(await storage.getAgent('user-1', 'worker')).toBeNull();
+        });
     });
 }
