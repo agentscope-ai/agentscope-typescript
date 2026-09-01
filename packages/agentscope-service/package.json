@@ -28,6 +28,9 @@
         "@agentscope-ai/agentscope": "workspace:^0.0.15",
         "zod": "^4.3.6"
     },
+    "optionalDependencies": {
+        "redis": "^5.12.1"
+    },
     "devDependencies": {
         "@types/jest": "^30.0.0",
         "@types/node": "^22.19.15",
