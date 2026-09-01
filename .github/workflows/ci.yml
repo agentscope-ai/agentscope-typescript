@@ -99,6 +99,18 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   cache: 'pnpm'
 
+            - name: Install ripgrep on Linux
+              if: runner.os == 'Linux'
+              run: sudo apt-get update && sudo apt-get install --yes ripgrep
+
+            - name: Install ripgrep on macOS
+              if: runner.os == 'macOS'
+              run: brew install ripgrep
+
+            - name: Install ripgrep on Windows
+              if: runner.os == 'Windows'
+              run: choco install ripgrep --yes --no-progress
+
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
