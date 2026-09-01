@@ -2837,10 +2837,15 @@
             "status": "verified",
             "pythonTests": [
                 "tests/middleware_budget_test.py",
+                "tests/middleware_rag_test.py",
                 "tests/middleware_test.py",
                 "tests/tts_middleware_test.py"
             ],
-            "typescriptTests": ["packages/agentscope/src/middleware/middleware.parity.test.ts"]
+            "typescriptTests": [
+                "packages/agentscope/src/middleware/middleware.parity.test.ts",
+                "packages/agentscope/src/middleware/rag.parity.test.ts",
+                "packages/agentscope/src/rag/knowledge.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/middleware/_base.py",
@@ -2990,9 +2995,12 @@
             "sha256": "1dcb6ab05686f92811a6057b42456d3343549b2229529f4e5fb8086c80151d58",
             "module": "middleware",
             "typescriptTarget": "packages/agentscope/src/middleware",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/middleware_rag_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/middleware/rag.parity.test.ts",
+                "packages/agentscope/src/rag/knowledge.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/middleware/_tracing/__init__.py",
