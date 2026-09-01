@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc, jsdoc/require-returns */
 
 import { _generateId } from '@agentscope-ai/agentscope/utils';
 
@@ -32,9 +32,21 @@ export class BackgroundTaskManager {
         work: AbortableWork<unknown>,
         options: RegisterBackgroundTaskOptions
     ): Promise<string> {
+        const task = new ManagedTask(work, 'background-task:pending');
+        return this.registerManagedTask(task, options);
+    }
+
+    /**
+     * Adopt an already-running task after a foreground timeout.
+     * @param task
+     * @param options
+     */
+    async registerManagedTask(
+        task: ManagedTask<unknown>,
+        options: RegisterBackgroundTaskOptions
+    ): Promise<string> {
         const taskId = _generateId();
         const toolName = options.toolName ?? '';
-        const task = new ManagedTask(work, `background-task:${taskId}`);
         const backgroundTask: BackgroundTask = {
             id: taskId,
             task,

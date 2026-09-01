@@ -32,6 +32,11 @@
             "import": "./dist/manager/index.mjs",
             "require": "./dist/manager/index.js"
         },
+        "./middleware": {
+            "types": "./dist/middleware/index.d.ts",
+            "import": "./dist/middleware/index.mjs",
+            "require": "./dist/middleware/index.js"
+        },
         "./service": {
             "types": "./dist/service/index.d.ts",
             "import": "./dist/service/index.mjs",
@@ -41,6 +46,11 @@
             "types": "./dist/storage/index.d.ts",
             "import": "./dist/storage/index.mjs",
             "require": "./dist/storage/index.js"
+        },
+        "./tool": {
+            "types": "./dist/tool/index.d.ts",
+            "import": "./dist/tool/index.mjs",
+            "require": "./dist/tool/index.js"
         },
         "./workspace-manager": {
             "types": "./dist/workspace-manager/index.d.ts",
@@ -56,6 +66,7 @@
     },
     "dependencies": {
         "@agentscope-ai/agentscope": "workspace:^0.0.15",
+        "@cfworker/json-schema": "^4.1.1",
         "cron-parser": "^5.5.0",
         "mime-types": "^3.0.2",
         "zod": "^4.3.6"

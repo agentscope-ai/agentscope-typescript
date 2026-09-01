@@ -248,6 +248,9 @@ importers:
             '@agentscope-ai/agentscope':
                 specifier: workspace:^0.0.15
                 version: link:../agentscope
+            '@cfworker/json-schema':
+                specifier: ^4.1.1
+                version: 4.1.1
             cron-parser:
                 specifier: ^5.5.0
                 version: 5.5.0
