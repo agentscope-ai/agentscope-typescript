@@ -11,5 +11,5 @@ export default defineConfig({
     clean: true,
     outDir: 'dist',
     sourcemap: true,
-    external: ['redis'],
+    external: ['better-sqlite3', 'redis'],
 });

@@ -29,6 +29,7 @@
         "zod": "^4.3.6"
     },
     "optionalDependencies": {
+        "better-sqlite3": "^12.11.1",
         "redis": "^5.12.1"
     },
     "devDependencies": {
