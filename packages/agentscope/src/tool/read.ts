@@ -4,6 +4,7 @@ import * as path from 'path';
 import { z } from 'zod';
 
 import { createToolResponse, ToolResponse } from './response';
+import { _generateId, _generateTimestamp } from '../_utils/common';
 
 /**
  * Tool for reading files from the local filesystem.
@@ -87,8 +88,8 @@ Usage:
                 return createToolResponse({
                     content: [
                         {
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: 'text',
                             text: rawContent,
                         },
@@ -118,8 +119,8 @@ Usage:
             return createToolResponse({
                 content: [
                     {
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                         type: 'text',
                         text: formatted,
                     },

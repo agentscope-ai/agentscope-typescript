@@ -10,7 +10,7 @@ import {
     Base64Source,
     URLSource,
 } from './block';
-import { base64ToBytes, bytesToBase64 } from '../_utils/common';
+import { _generateId, _generateTimestamp, base64ToBytes, bytesToBase64 } from '../_utils/common';
 import { EventType, ReplyFinishedReason } from '../event';
 import type { AgentEvent, ErrorInfo } from '../event';
 
@@ -104,8 +104,8 @@ export function createMsg({
     content,
     role,
     metadata = {},
-    id = crypto.randomUUID(),
-    created_at = new Date().toISOString(),
+    id = _generateId(),
+    created_at = _generateTimestamp(),
     finished_at,
     usage,
 }: Omit<Msg, 'id' | 'created_at' | 'metadata' | 'content'> &
@@ -116,10 +116,10 @@ export function createMsg({
         typeof content === 'string'
             ? [
                   {
-                      id: crypto.randomUUID(),
+                      id: _generateId(),
                       type: 'text',
                       text: content,
-                      created_at: new Date().toISOString(),
+                      created_at: _generateTimestamp(),
                   } as TextBlock,
               ]
             : content;
@@ -142,8 +142,8 @@ export function UserMsg({
     name,
     content,
     metadata = {},
-    id = crypto.randomUUID(),
-    created_at = new Date().toISOString(),
+    id = _generateId(),
+    created_at = _generateTimestamp(),
     finished_at,
 }: {
     name: string;
@@ -179,8 +179,8 @@ export function AssistantMsg({
     name,
     content,
     metadata = {},
-    id = crypto.randomUUID(),
-    created_at = new Date().toISOString(),
+    id = _generateId(),
+    created_at = _generateTimestamp(),
     usage,
 }: {
     name: string;
@@ -208,8 +208,8 @@ export function SystemMsg({
     name,
     content,
     metadata = {},
-    id = crypto.randomUUID(),
-    created_at = new Date().toISOString(),
+    id = _generateId(),
+    created_at = _generateTimestamp(),
     finished_at,
 }: {
     name: string;
@@ -469,7 +469,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                     trb.output = [
                         {
                             type: 'text',
-                            id: crypto.randomUUID(),
+                            id: _generateId(),
                             text: trb.output,
                             created_at: event.created_at,
                         },
@@ -479,7 +479,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                 if (!last || last.type !== 'text') {
                     trb.output.push({
                         type: 'text',
-                        id: crypto.randomUUID(),
+                        id: _generateId(),
                         text: event.delta,
                         created_at: event.created_at,
                     });
@@ -500,7 +500,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                     trb.output = [
                         {
                             type: 'text',
-                            id: crypto.randomUUID(),
+                            id: _generateId(),
                             text: trb.output,
                             created_at: event.created_at,
                         },
@@ -512,7 +512,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                         : { type: 'url', url: event.url!, media_type: event.media_type };
                 trb.output.push({
                     type: 'data',
-                    id: event.block_id ?? crypto.randomUUID(),
+                    id: event.block_id ?? _generateId(),
                     source,
                     created_at: event.created_at,
                 });

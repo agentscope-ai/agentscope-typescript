@@ -6,6 +6,7 @@ import {
     sourceModule,
     testArea,
     typescriptTarget,
+    updateParityEntry,
     validateManifest,
 } from './manifest-lib.mjs';
 
@@ -22,6 +23,10 @@ test('maps core and service source paths', () => {
     assert.equal(typescriptTarget('src/agentscope/_logging.py'), 'packages/agentscope/src/logger');
     assert.equal(sourceModule('src/agentscope/py.typed'), 'root');
     assert.equal(typescriptTarget('src/agentscope/py.typed'), 'packages/agentscope');
+    assert.equal(
+        typescriptTarget('src/agentscope/types/_reply.py'),
+        'packages/agentscope/src/type'
+    );
     assert.equal(
         typescriptTarget('src/agentscope/workspace/_docker/Dockerfile.template'),
         'packages/agentscope/src/workspace'
@@ -96,4 +101,28 @@ test('rejects duplicate paths and unsupported statuses', () => {
         'sourceFiles contains duplicate path same.py.',
         'Invalid parity status skipped for same.py.',
     ]);
+});
+
+test('advances parity entries and merges test references', () => {
+    const entry = {
+        path: 'src/agentscope/types/_json.py',
+        status: 'mapped',
+        pythonTests: [],
+        typescriptTests: ['existing.test.ts'],
+    };
+
+    updateParityEntry(
+        entry,
+        'implemented',
+        ['tests/types_test.py'],
+        ['types.test.ts', 'existing.test.ts']
+    );
+
+    assert.deepEqual(entry, {
+        path: 'src/agentscope/types/_json.py',
+        status: 'implemented',
+        pythonTests: ['tests/types_test.py'],
+        typescriptTests: ['existing.test.ts', 'types.test.ts'],
+    });
+    assert.throws(() => updateParityEntry(entry, 'mapped'), /Cannot move/);
 });

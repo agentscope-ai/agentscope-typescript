@@ -2,6 +2,12 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig({
     entry: {
+        index: 'src/index.ts',
+        'type/index': 'src/type/index.ts',
+        'exception/index': 'src/exception/index.ts',
+        'utils/index': 'src/_utils/index.ts',
+        'logger/index': 'src/logger/index.ts',
+        version: 'src/version.ts',
         'message/index': 'src/message/index.ts',
         'model/index': 'src/model/index.ts',
         'tool/index': 'src/tool/index.ts',

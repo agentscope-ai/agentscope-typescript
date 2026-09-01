@@ -5,7 +5,7 @@ import { Validator } from '@cfworker/json-schema';
 import matter from 'gray-matter';
 import { z } from 'zod';
 
-import { _jsonLoadsWithRepair } from '../_utils';
+import { _generateId, _generateTimestamp, _jsonLoadsWithRepair } from '../_utils';
 import { HTTPMCPClient } from '../mcp/http';
 import { StdioMCPClient } from '../mcp/stdio';
 import type { ToolCallBlock } from '../message/block';
@@ -152,8 +152,8 @@ Usage:
             const notFoundRes = createToolResponse({
                 content: [
                     {
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                         type: 'text',
                         text: `FunctionNotFoundError: Cannot find the function named ${toolCall.name}`,
                     },
@@ -182,8 +182,8 @@ Usage:
             const parseErrorRes = createToolResponse({
                 content: [
                     {
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                         type: 'text',
                         text: `InvalidArgumentError: ${String(error)}`,
                     },
@@ -212,8 +212,8 @@ Usage:
                 const textRes = createToolResponse({
                     content: [
                         {
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: 'text',
                             text: res,
                         },
@@ -241,8 +241,8 @@ Usage:
                         const itemRes = createToolResponse({
                             content: [
                                 {
-                                    id: crypto.randomUUID(),
-                                    created_at: new Date().toISOString(),
+                                    id: _generateId(),
+                                    created_at: _generateTimestamp(),
                                     type: 'text',
                                     text: currentValue,
                                 },
@@ -254,8 +254,8 @@ Usage:
 
                         // Accumulate the text content into finalRes
                         accContent.push({
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: 'text',
                             text: currentValue,
                         });
@@ -287,8 +287,8 @@ Usage:
                         const itemRes = createToolResponse({
                             content: [
                                 {
-                                    id: crypto.randomUUID(),
-                                    created_at: new Date().toISOString(),
+                                    id: _generateId(),
+                                    created_at: _generateTimestamp(),
                                     type: 'text',
                                     text: currentValue,
                                 },
@@ -299,8 +299,8 @@ Usage:
                         yield itemRes;
                         // Accumulate the text content into finalRes
                         accContent.push({
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: 'text',
                             text: currentValue,
                         });
@@ -320,8 +320,8 @@ Usage:
                 const invalidRes = createToolResponse({
                     content: [
                         {
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: 'text',
                             text: String(res),
                         },
@@ -335,8 +335,8 @@ Usage:
             const errorRes = createToolResponse({
                 content: [
                     {
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                         type: 'text',
                         text: `ToolExecutionError: ${String(error)}`,
                     },
@@ -351,8 +351,8 @@ Usage:
             return createToolResponse({
                 content: [
                     {
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                         type: 'text',
                         text: `Tool ${toolCall.name} executed successfully.`,
                     },
@@ -371,8 +371,8 @@ Usage:
             } else {
                 if (textBuffer) {
                     cleanedContent.push({
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                         type: 'text',
                         text: textBuffer,
                     });
@@ -384,8 +384,8 @@ Usage:
         // The remaining text in the buffer, if any, should also be pushed to the cleanedContent
         if (textBuffer) {
             cleanedContent.push({
-                id: crypto.randomUUID(),
-                created_at: new Date().toISOString(),
+                id: _generateId(),
+                created_at: _generateTimestamp(),
                 type: 'text',
                 text: textBuffer,
             });
@@ -549,8 +549,8 @@ ${skillsXml}
                     return createToolResponse({
                         content: [
                             {
-                                id: crypto.randomUUID(),
-                                created_at: new Date().toISOString(),
+                                id: _generateId(),
+                                created_at: _generateTimestamp(),
                                 type: 'text',
                                 text: fileContent,
                             },
@@ -571,8 +571,8 @@ ${skillsXml}
                 return createToolResponse({
                     content: [
                         {
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: 'text',
                             text: fileContent,
                         },
@@ -585,8 +585,8 @@ ${skillsXml}
         return createToolResponse({
             content: [
                 {
-                    id: crypto.randomUUID(),
-                    created_at: new Date().toISOString(),
+                    id: _generateId(),
+                    created_at: _generateTimestamp(),
                     type: 'text',
                     text: `SkillNotFoundError: Cannot find the skill named ${name}, current available skills are ${Object.keys(this._skillCache).join(', ')}`,
                 },

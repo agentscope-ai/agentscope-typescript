@@ -267,8 +267,8 @@ importers:
                 specifier: ^2.0.0
                 version: 2.0.0
             uuid:
-                specifier: ^13.0.0
-                version: 13.0.0
+                specifier: ^11.1.0
+                version: 11.1.0
             zod:
                 specifier: ^4.3.6
                 version: 4.3.6
@@ -11396,13 +11396,6 @@ packages:
             }
         hasBin: true
 
-    uuid@13.0.0:
-        resolution:
-            {
-                integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==,
-            }
-        hasBin: true
-
     v8-to-istanbul@9.3.0:
         resolution:
             {
@@ -19931,8 +19924,6 @@ snapshots:
     util-deprecate@1.0.2: {}
 
     uuid@11.1.0: {}
-
-    uuid@13.0.0: {}
 
     v8-to-istanbul@9.3.0:
         dependencies:

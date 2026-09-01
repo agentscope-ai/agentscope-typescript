@@ -1,6 +1,7 @@
 import * as readline from 'readline';
 
 import { Agent } from './agent';
+import { _generateId, _generateTimestamp } from '../_utils/common';
 import { createMsg } from '../message/message';
 import { DashScopeChatModel } from '../model/dashscope-model';
 import { Bash } from '../tool/bash';
@@ -62,10 +63,10 @@ async function main() {
                 name: 'user',
                 content: [
                     {
-                        id: crypto.randomUUID(),
+                        id: _generateId(),
                         type: 'text',
                         text: userInput,
-                        created_at: new Date().toISOString(),
+                        created_at: _generateTimestamp(),
                     },
                 ],
                 role: 'user',

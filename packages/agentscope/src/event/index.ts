@@ -1,5 +1,10 @@
 import type { DataBlock, TextBlock, ToolCallBlock, ToolResultBlock } from '../message/block';
 import type { PermissionRule } from '../permission';
+import { ReplyFinishedReason } from '../type';
+import type { ErrorInfo } from '../type';
+
+export { ErrorType, ReplyFinishedReason } from '../type';
+export type { ErrorInfo } from '../type';
 
 export enum EventType {
     REPLY_START = 'REPLY_START',
@@ -54,47 +59,6 @@ export interface ReplyStartEvent extends EventBase {
     reply_id: string;
     name: string;
     role: 'user' | 'assistant' | 'system';
-}
-
-/** The reason a reply finished. */
-export enum ReplyFinishedReason {
-    COMPLETED = 'completed',
-    INTERRUPTED = 'interrupted',
-    EXCEED_MAX_ITERS = 'exceed_max_iters',
-    ERROR = 'error',
-}
-
-/**
- * Classification of a fatal error that terminated a reply.
- *
- * Not model-specific: the status-derived members apply to any upstream
- * service reached during a reply (chat model, embedding, TTS, MCP).
- */
-export enum ErrorType {
-    /** 401 — credential missing or wrong. */
-    AUTHENTICATION = 'authentication',
-    /** 403 — authenticated but not allowed. */
-    PERMISSION = 'permission',
-    /** 429 — rate/quota exceeded. */
-    RATE_LIMIT = 'rate_limit',
-    /** 400 / 422 — malformed request. */
-    INVALID_REQUEST = 'invalid_request',
-    /** 5xx — an upstream service failed. */
-    UPSTREAM = 'upstream',
-    /** Network error / timeout — no HTTP status available. */
-    CONNECTION = 'connection',
-    /** Framework bug or otherwise unexpected exception. */
-    INTERNAL = 'internal',
-    /** Fallback when no better classification is possible. */
-    UNKNOWN = 'unknown',
-}
-
-/** Structured, UI-facing description of a fatal reply error. */
-export interface ErrorInfo {
-    /** Stable classification key; the frontend localizes off it. */
-    type: ErrorType;
-    /** Short, sanitized, human-readable description. */
-    message: string;
 }
 
 export interface ReplyEndEvent extends EventBase {

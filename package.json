@@ -10,6 +10,7 @@
         "dev:desktop": "cd apps/desktop && pnpm dev",
         "parity:check": "node scripts/parity/check-manifest.mjs",
         "parity:generate": "node scripts/parity/generate-manifest.mjs",
+        "parity:update": "node scripts/parity/update-status.mjs",
         "test:agentscope": "pnpm --filter @agentscope-ai/agentscope test",
         "test:package": "node scripts/package-smoke.mjs",
         "test:parity": "node --test scripts/parity/*.test.mjs",

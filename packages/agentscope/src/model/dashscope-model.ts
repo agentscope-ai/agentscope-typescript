@@ -1,9 +1,9 @@
+import { _generateId, _generateTimestamp, _parseStreamedResponse } from '../_utils';
 import { ChatModelBase, ChatModelOptions, ChatModelRequestOptions } from './base';
 import { ChatResponse } from './response';
 import type { DataBlock, TextBlock, ThinkingBlock, ToolCallBlock } from '../message/block';
 import type { ToolChoice, ToolSchema } from '../type';
 import { ChatUsage } from './usage';
-import { _parseStreamedResponse } from '../_utils';
 import { DashScopeChatFormatter } from '../formatter/dashscope-chat-formatter';
 
 interface _DashScopeStreamChunk {
@@ -209,16 +209,16 @@ export class DashScopeChatModel extends ChatModelBase {
             blocks.push({
                 type: 'thinking',
                 thinking: choice.message.reasoning_content,
-                id: crypto.randomUUID(),
-                created_at: new Date().toISOString(),
+                id: _generateId(),
+                created_at: _generateTimestamp(),
             });
         }
         if (choice.message.content) {
             blocks.push({
                 type: 'text',
                 text: choice.message.content,
-                id: crypto.randomUUID(),
-                created_at: new Date().toISOString(),
+                id: _generateId(),
+                created_at: _generateTimestamp(),
             });
         }
         if (choice.message.tool_calls && Array.isArray(choice.message.tool_calls)) {
@@ -238,7 +238,7 @@ export class DashScopeChatModel extends ChatModelBase {
                         name: String(toolCall.function.name),
                         input: inputString,
                         state: 'pending',
-                        created_at: new Date().toISOString(),
+                        created_at: _generateTimestamp(),
                     });
                 }
             });
@@ -255,8 +255,8 @@ export class DashScopeChatModel extends ChatModelBase {
 
         return {
             type: 'chat',
-            id: crypto.randomUUID(),
-            createdAt: new Date().toISOString(),
+            id: _generateId(),
+            createdAt: _generateTimestamp(),
             content: blocks,
             usage,
         } as ChatResponse;
@@ -363,7 +363,7 @@ export class DashScopeChatModel extends ChatModelBase {
                                 name: meta.name,
                                 input: deltaArgs,
                                 state: 'pending',
-                                created_at: new Date().toISOString(),
+                                created_at: _generateTimestamp(),
                             });
                         }
                     });
@@ -382,8 +382,8 @@ export class DashScopeChatModel extends ChatModelBase {
 
                 yield {
                     type: 'chat',
-                    id: crypto.randomUUID(),
-                    createdAt: new Date().toISOString(),
+                    id: _generateId(),
+                    createdAt: _generateTimestamp(),
                     content: deltaBlocks,
                     usage: lastUsage,
                 } as ChatResponse;
@@ -398,15 +398,15 @@ export class DashScopeChatModel extends ChatModelBase {
                 name: meta.name,
                 input: accToolInputs.get(index) || '{}',
                 state: 'pending',
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             });
         });
 
         const blocks = this._dataToBlocks(accText, accThinking, finalToolCalls);
         return {
             type: 'chat',
-            id: crypto.randomUUID(),
-            createdAt: new Date().toISOString(),
+            id: _generateId(),
+            createdAt: _generateTimestamp(),
             content: blocks,
             usage: lastUsage,
         } as ChatResponse;
@@ -430,16 +430,16 @@ export class DashScopeChatModel extends ChatModelBase {
             blocks.push({
                 type: 'thinking',
                 thinking: thinking,
-                id: crypto.randomUUID(),
-                created_at: new Date().toISOString(),
+                id: _generateId(),
+                created_at: _generateTimestamp(),
             });
         }
         if (text) {
             blocks.push({
                 type: 'text',
                 text: text,
-                id: crypto.randomUUID(),
-                created_at: new Date().toISOString(),
+                id: _generateId(),
+                created_at: _generateTimestamp(),
             });
         }
         // Push the tool calls into the blocks

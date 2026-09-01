@@ -1,3 +1,4 @@
+import { _generateId, _generateTimestamp } from '../_utils/common';
 import type { DataBlock, TextBlock } from '../message/block';
 import { createMsg } from '../message/message';
 import type { Msg } from '../message/message';
@@ -83,17 +84,17 @@ export abstract class FormatterBase {
         promotedData.forEach(({ id, block }) => {
             const type = block.source.media_type.split('/')[0];
             promotedBlocks.push({
-                id: crypto.randomUUID(),
+                id: _generateId(),
                 type: 'text',
                 text: `<${type}_data id='${id}'>`,
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             });
             promotedBlocks.push(block);
             promotedBlocks.push({
-                id: crypto.randomUUID(),
+                id: _generateId(),
                 type: 'text',
                 text: `</${type}_data>\n`,
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             });
         });
 
@@ -106,10 +107,10 @@ export abstract class FormatterBase {
                 promotedBlocks[0].text = `${prefix}${promotedBlocks[0].text}`;
             } else {
                 promotedBlocks.unshift({
-                    id: crypto.randomUUID(),
+                    id: _generateId(),
                     type: 'text',
                     text: `${prefix}`,
-                    created_at: new Date().toISOString(),
+                    created_at: _generateTimestamp(),
                 });
             }
 
@@ -117,17 +118,17 @@ export abstract class FormatterBase {
             const lastBlock = promotedBlocks[promotedBlocks.length - 1];
             if (lastBlock.type === 'text') {
                 promotedBlocks[promotedBlocks.length - 1] = {
-                    id: crypto.randomUUID(),
+                    id: _generateId(),
                     type: 'text',
                     text: `${lastBlock.text}</system-info>`,
-                    created_at: new Date().toISOString(),
+                    created_at: _generateTimestamp(),
                 };
             } else {
                 promotedBlocks.push({
-                    id: crypto.randomUUID(),
+                    id: _generateId(),
                     type: 'text',
                     text: `</system-info>`,
-                    created_at: new Date().toISOString(),
+                    created_at: _generateTimestamp(),
                 });
             }
         }

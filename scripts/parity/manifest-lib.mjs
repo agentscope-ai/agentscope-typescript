@@ -1,32 +1,32 @@
 import { createHash } from 'node:crypto';
-import { readFile, readdir } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 export const ALLOWED_STATUSES = new Set(['mapped', 'contracted', 'implemented', 'verified']);
+const STATUS_ORDER = [...ALLOWED_STATUSES];
 
 const CORE_ROOT = 'packages/agentscope/src';
 const SERVICE_ROOT = 'packages/agentscope-service/src';
 
 /**
- * Return all files below a directory in stable path order.
+ * List tracked files below a repository path in stable order.
  *
- * @param {string} directory Directory to traverse.
- * @returns {Promise<string[]>} Absolute file paths.
+ * @param {string} repositoryRoot Git repository root.
+ * @param {string} repositoryPath Repository-relative path.
+ * @returns {string[]} Absolute tracked file paths.
  */
-export async function walkFiles(directory) {
-    const entries = await readdir(directory, { withFileTypes: true });
-    const files = [];
-
-    for (const entry of entries.sort((left, right) => left.name.localeCompare(right.name))) {
-        const entryPath = path.join(directory, entry.name);
-        if (entry.isDirectory()) {
-            files.push(...(await walkFiles(entryPath)));
-        } else if (entry.isFile()) {
-            files.push(entryPath);
-        }
-    }
-
-    return files;
+export function listTrackedFiles(repositoryRoot, repositoryPath) {
+    const output = execFileSync(
+        'git',
+        ['-C', repositoryRoot, 'ls-files', '-z', '--', repositoryPath],
+        { encoding: 'utf8' }
+    );
+    return output
+        .split('\0')
+        .filter(Boolean)
+        .sort((left, right) => left.localeCompare(right))
+        .map(filePath => path.join(repositoryRoot, filePath));
 }
 
 /**
@@ -114,6 +114,10 @@ export function typescriptTarget(sourcePath) {
 
     if (firstPart === '_version.py') {
         return `${CORE_ROOT}/version.ts`;
+    }
+
+    if (firstPart === 'types') {
+        return `${CORE_ROOT}/type`;
     }
 
     if (!relativePath.includes('/')) {
@@ -241,4 +245,33 @@ export function validateManifest(value) {
     }
 
     return errors;
+}
+
+/**
+ * Advance one manifest entry and merge its test references.
+ *
+ * @param {object} entry Manifest source entry.
+ * @param {string} status New parity status.
+ * @param {string[]} pythonTests Python test paths.
+ * @param {string[]} typescriptTests TypeScript test paths.
+ */
+export function updateParityEntry(entry, status, pythonTests = [], typescriptTests = []) {
+    if (!ALLOWED_STATUSES.has(status)) {
+        throw new Error(`Unsupported parity status ${status}.`);
+    }
+    const currentIndex = STATUS_ORDER.indexOf(entry.status);
+    const nextIndex = STATUS_ORDER.indexOf(status);
+    if (currentIndex === -1 || nextIndex < currentIndex) {
+        throw new Error(`Cannot move ${entry.path} from ${entry.status} to ${status}.`);
+    }
+
+    entry.status = status;
+    if ('pythonTests' in entry) {
+        entry.pythonTests = [...new Set([...(entry.pythonTests ?? []), ...pythonTests])].sort();
+    }
+    if ('typescriptTests' in entry) {
+        entry.typescriptTests = [
+            ...new Set([...(entry.typescriptTests ?? []), ...typescriptTests]),
+        ].sort();
+    }
 }

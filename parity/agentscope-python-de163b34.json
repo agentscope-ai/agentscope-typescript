@@ -8,45 +8,49 @@
             "sha256": "35f7f2cc6424dac7606dc1a247bc6fb7bcf1b8b2a208fccd9d3d5046980e7a54",
             "module": "root",
             "typescriptTarget": "packages/agentscope/src/index.ts",
-            "status": "mapped",
+            "status": "implemented",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": ["scripts/package-smoke.mjs"]
         },
         {
             "path": "src/agentscope/_logging.py",
             "sha256": "5f37144dbecc7d166473e077375215fa3a476991b4c858ab6727ee19aec7380e",
             "module": "root",
             "typescriptTarget": "packages/agentscope/src/logger",
-            "status": "mapped",
+            "status": "implemented",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": ["packages/agentscope/src/logger/index.test.ts"]
         },
         {
             "path": "src/agentscope/_utils/__init__.py",
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "module": "_utils",
             "typescriptTarget": "packages/agentscope/src/utils",
-            "status": "mapped",
+            "status": "implemented",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": ["packages/agentscope/src/_utils/audio.test.ts"]
         },
         {
             "path": "src/agentscope/_utils/_audio.py",
             "sha256": "d98783891c95aa12e277ffcc9e18bcce5a662c9b4ab13bc515d4541a41816402",
             "module": "_utils",
             "typescriptTarget": "packages/agentscope/src/utils",
-            "status": "mapped",
+            "status": "implemented",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": ["packages/agentscope/src/_utils/audio.test.ts"]
         },
         {
             "path": "src/agentscope/_utils/_common.py",
             "sha256": "5184d0bbded4525fdc8ca97456072ecfeb8a1b4b7e3aa961e22ee651f5e9fd80",
             "module": "_utils",
             "typescriptTarget": "packages/agentscope/src/utils",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "implemented",
+            "pythonTests": ["tests/id_factory_test.py", "tests/model_gemini_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/_utils/common.test.ts",
+                "packages/agentscope/src/_utils/path.test.ts",
+                "packages/agentscope/src/message/factory.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/_utils/_mixin.py",
@@ -62,9 +66,9 @@
             "sha256": "42db2c9b32c8aef9cd562ac06752e9dcd260493c5f5df637de10bcd0a84bda92",
             "module": "root",
             "typescriptTarget": "packages/agentscope/src/version.ts",
-            "status": "mapped",
+            "status": "implemented",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": ["packages/agentscope/src/version.test.ts"]
         },
         {
             "path": "src/agentscope/agent/__init__.py",
@@ -2105,36 +2109,36 @@
             "sha256": "673c4db6959111c30cefce253c5b43948273ac15f15ba0c4591afc3ae1561104",
             "module": "exception",
             "typescriptTarget": "packages/agentscope/src/exception",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "implemented",
+            "pythonTests": ["tests/model_base_test.py"],
+            "typescriptTests": ["packages/agentscope/src/exception/exception.test.ts"]
         },
         {
             "path": "src/agentscope/exception/_base.py",
             "sha256": "8311702c53fbc011f9430fffe85bdd314e26f145da9637696019770bc4e1c841",
             "module": "exception",
             "typescriptTarget": "packages/agentscope/src/exception",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "implemented",
+            "pythonTests": ["tests/model_base_test.py"],
+            "typescriptTests": ["packages/agentscope/src/exception/exception.test.ts"]
         },
         {
             "path": "src/agentscope/exception/_model.py",
             "sha256": "33067d34d3073ecb077189e12c3344a0a292a01703ad614ee274100edeaa4f04",
             "module": "exception",
             "typescriptTarget": "packages/agentscope/src/exception",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "implemented",
+            "pythonTests": ["tests/model_base_test.py"],
+            "typescriptTests": ["packages/agentscope/src/exception/exception.test.ts"]
         },
         {
             "path": "src/agentscope/exception/_tool.py",
             "sha256": "243762e6e1e95fac19e4c864094ed4312220841f21a63d98396b87f759c781f2",
             "module": "exception",
             "typescriptTarget": "packages/agentscope/src/exception",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "implemented",
+            "pythonTests": ["tests/model_base_test.py"],
+            "typescriptTests": ["packages/agentscope/src/exception/exception.test.ts"]
         },
         {
             "path": "src/agentscope/formatter/__init__.py",
@@ -2816,9 +2820,9 @@
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "module": "root",
             "typescriptTarget": "packages/agentscope",
-            "status": "mapped",
+            "status": "implemented",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": ["scripts/package-smoke.mjs"]
         },
         {
             "path": "src/agentscope/rag/__init__.py",
@@ -3445,46 +3449,46 @@
             "path": "src/agentscope/types/__init__.py",
             "sha256": "8bb4b3d9add429c2fffb417b9831c178861aa41a385ddec753b426d829b5d06b",
             "module": "types",
-            "typescriptTarget": "packages/agentscope/src/types",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope/src/type",
+            "status": "implemented",
+            "pythonTests": ["tests/event_to_message_test.py"],
+            "typescriptTests": ["packages/agentscope/src/type/index.test.ts"]
         },
         {
             "path": "src/agentscope/types/_hook.py",
             "sha256": "b2dfbeda8055b8bc0d68d9390d05e4600ef1a7c5f81daa936977f69550c03ccd",
             "module": "types",
-            "typescriptTarget": "packages/agentscope/src/types",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope/src/type",
+            "status": "implemented",
+            "pythonTests": ["tests/event_to_message_test.py"],
+            "typescriptTests": ["packages/agentscope/src/type/index.test.ts"]
         },
         {
             "path": "src/agentscope/types/_json.py",
             "sha256": "cb6d7fd2a5f7e9900b9d4722e32505456040dddcebcd29644b57a979c47f780e",
             "module": "types",
-            "typescriptTarget": "packages/agentscope/src/types",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope/src/type",
+            "status": "implemented",
+            "pythonTests": ["tests/event_to_message_test.py"],
+            "typescriptTests": ["packages/agentscope/src/type/index.test.ts"]
         },
         {
             "path": "src/agentscope/types/_object.py",
             "sha256": "74747ce2626f0457ac6d88f8ea640ef6cb30dfc74fb8aa496826f24a9acb5991",
             "module": "types",
-            "typescriptTarget": "packages/agentscope/src/types",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope/src/type",
+            "status": "implemented",
+            "pythonTests": ["tests/event_to_message_test.py"],
+            "typescriptTests": ["packages/agentscope/src/type/index.test.ts"]
         },
         {
             "path": "src/agentscope/types/_reply.py",
             "sha256": "9aba4d633ad58def6bbbb5058e94404aff21d4e7947dea80289bebf81f626c64",
             "module": "types",
-            "typescriptTarget": "packages/agentscope/src/types",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTarget": "packages/agentscope/src/type",
+            "status": "implemented",
+            "pythonTests": ["tests/event_to_message_test.py"],
+            "typescriptTests": ["packages/agentscope/src/type/index.test.ts"]
         },
         {
             "path": "src/agentscope/workspace/__init__.py",

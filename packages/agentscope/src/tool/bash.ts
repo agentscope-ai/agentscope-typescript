@@ -4,6 +4,7 @@ import { promisify } from 'util';
 import { z } from 'zod';
 
 import { createToolResponse, ToolResponse } from './response';
+import { _generateId, _generateTimestamp } from '../_utils/common';
 
 const execAsync = promisify(exec);
 
@@ -116,8 +117,8 @@ While the Bash tool can do similar things, it's better to use the built-in tools
                     return createToolResponse({
                         content: [
                             {
-                                id: crypto.randomUUID(),
-                                created_at: new Date().toISOString(),
+                                id: _generateId(),
+                                created_at: _generateTimestamp(),
                                 type: 'text',
                                 text:
                                     normalizedOutput.substring(0, maxOutputLength) +
@@ -131,8 +132,8 @@ While the Bash tool can do similar things, it's better to use the built-in tools
                 return createToolResponse({
                     content: [
                         {
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: 'text',
                             text: normalizedOutput,
                         },
@@ -153,8 +154,8 @@ While the Bash tool can do similar things, it's better to use the built-in tools
                 return createToolResponse({
                     content: [
                         {
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: 'text',
                             text: result,
                         },

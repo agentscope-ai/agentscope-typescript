@@ -3,6 +3,36 @@
     "version": "0.0.15",
     "description": "",
     "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.js"
+        },
+        "./type": {
+            "types": "./dist/type/index.d.ts",
+            "import": "./dist/type/index.mjs",
+            "require": "./dist/type/index.js"
+        },
+        "./exception": {
+            "types": "./dist/exception/index.d.ts",
+            "import": "./dist/exception/index.mjs",
+            "require": "./dist/exception/index.js"
+        },
+        "./utils": {
+            "types": "./dist/utils/index.d.ts",
+            "import": "./dist/utils/index.mjs",
+            "require": "./dist/utils/index.js"
+        },
+        "./logger": {
+            "types": "./dist/logger/index.d.ts",
+            "import": "./dist/logger/index.mjs",
+            "require": "./dist/logger/index.js"
+        },
+        "./version": {
+            "types": "./dist/version.d.ts",
+            "import": "./dist/version.mjs",
+            "require": "./dist/version.js"
+        },
         "./message": {
             "types": "./dist/message/index.d.ts",
             "import": "./dist/message/index.mjs",
@@ -95,7 +125,7 @@
         "ollama": "^0.6.3",
         "openai": "^6.16.0",
         "string-format": "^2.0.0",
-        "uuid": "^13.0.0",
+        "uuid": "^11.1.0",
         "zod": "^4.3.6",
         "zod-to-json-schema": "^3.25.1"
     }

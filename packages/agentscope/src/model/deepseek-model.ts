@@ -1,9 +1,9 @@
+import { _generateId, _generateTimestamp, _parseStreamedResponse } from '../_utils';
 import { ChatModelBase, ChatModelOptions, ChatModelRequestOptions } from './base';
 import { ChatResponse } from './response';
 import type { DataBlock, TextBlock, ThinkingBlock, ToolCallBlock } from '../message/block';
 import type { ToolChoice, ToolSchema } from '../type';
 import { ChatUsage } from './usage';
-import { _parseStreamedResponse } from '../_utils';
 import { DeepSeekChatFormatter } from '../formatter/deepseek-chat-formatter';
 
 interface _DeepSeekStreamChunk {
@@ -167,18 +167,18 @@ export class DeepSeekChatModel extends ChatModelBase {
 
         if (choice.message.reasoning_content) {
             blocks.push({
-                id: crypto.randomUUID(),
+                id: _generateId(),
                 type: 'thinking',
                 thinking: choice.message.reasoning_content,
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             });
         }
         if (choice.message.content) {
             blocks.push({
-                id: crypto.randomUUID(),
+                id: _generateId(),
                 type: 'text',
                 text: choice.message.content,
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             });
         }
         if (choice.message.tool_calls && Array.isArray(choice.message.tool_calls)) {
@@ -198,7 +198,7 @@ export class DeepSeekChatModel extends ChatModelBase {
                         name: String(toolCall.function.name),
                         input: inputString,
                         state: 'pending',
-                        created_at: new Date().toISOString(),
+                        created_at: _generateTimestamp(),
                     });
                 }
             });
@@ -215,8 +215,8 @@ export class DeepSeekChatModel extends ChatModelBase {
 
         return {
             type: 'chat',
-            id: crypto.randomUUID(),
-            createdAt: new Date().toISOString(),
+            id: _generateId(),
+            createdAt: _generateTimestamp(),
             content: blocks,
             usage,
         } as ChatResponse;
@@ -323,7 +323,7 @@ export class DeepSeekChatModel extends ChatModelBase {
                                 name: meta.name,
                                 input: deltaArgs,
                                 state: 'pending',
-                                created_at: new Date().toISOString(),
+                                created_at: _generateTimestamp(),
                             });
                         }
                     });
@@ -342,8 +342,8 @@ export class DeepSeekChatModel extends ChatModelBase {
 
                 yield {
                     type: 'chat',
-                    id: crypto.randomUUID(),
-                    createdAt: new Date().toISOString(),
+                    id: _generateId(),
+                    createdAt: _generateTimestamp(),
                     content: deltaBlocks,
                     usage: lastUsage,
                 } as ChatResponse;
@@ -358,15 +358,15 @@ export class DeepSeekChatModel extends ChatModelBase {
                 name: meta.name,
                 input: accToolInputs.get(index) || '{}',
                 state: 'pending',
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             });
         });
 
         const blocks = this._accDataToBlocks(accText, accThinking, finalToolCalls);
         return {
             type: 'chat',
-            id: crypto.randomUUID(),
-            createdAt: new Date().toISOString(),
+            id: _generateId(),
+            createdAt: _generateTimestamp(),
             content: blocks,
             usage: lastUsage,
         } as ChatResponse;
@@ -388,18 +388,18 @@ export class DeepSeekChatModel extends ChatModelBase {
         const blocks: (TextBlock | ThinkingBlock | ToolCallBlock)[] = [];
         if (thinking) {
             blocks.push({
-                id: crypto.randomUUID(),
+                id: _generateId(),
                 type: 'thinking',
                 thinking: thinking,
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             });
         }
         if (text) {
             blocks.push({
-                id: crypto.randomUUID(),
+                id: _generateId(),
                 type: 'text',
                 text: text,
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             });
         }
         // Push the tool calls into the blocks

@@ -2,6 +2,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { CallToolRequest, CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
 import z from 'zod';
 
+import { _generateId, _generateTimestamp } from '../_utils/common';
 import type { Tool } from '../tool/base';
 import { createToolResponse } from '../tool/response';
 import type { ToolResponse } from '../tool/response';
@@ -86,15 +87,15 @@ export class MCPTool implements Tool {
                     content.push({
                         type: 'text',
                         text: item.text,
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                     });
                 } else if (item.type === 'image' || item.type === 'audio') {
                     content.push({
-                        id: crypto.randomUUID(),
+                        id: _generateId(),
                         type: 'data',
                         source: { type: 'base64', media_type: item.mimeType, data: item.data },
-                        created_at: new Date().toISOString(),
+                        created_at: _generateTimestamp(),
                     });
                 } else {
                     console.warn(
@@ -107,10 +108,10 @@ export class MCPTool implements Tool {
             return createToolResponse({
                 content: [
                     {
-                        id: crypto.randomUUID(),
+                        id: _generateId(),
                         type: 'text',
                         text: `Error calling tool '${this.name}': ${error}`,
-                        created_at: new Date().toISOString(),
+                        created_at: _generateTimestamp(),
                     },
                 ],
                 state: 'error',

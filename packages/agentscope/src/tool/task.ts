@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { createToolResponse, ToolResponse } from './response';
+import { _generateId, _generateTimestamp } from '../_utils/common';
 import type { Task } from '../state';
 
 export type { Task, TaskContext } from '../state';
@@ -90,7 +91,7 @@ All tasks are created with state 'pending'.`,
                 owner: null,
                 blocks: [],
                 blocked_by: [],
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             };
 
             taskStore.set(id, task);
@@ -98,8 +99,8 @@ All tasks are created with state 'pending'.`,
             return createToolResponse({
                 content: [
                     {
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                         type: 'text',
                         text: `Task ${id} created successfully: ${subject}`,
                     },
@@ -222,8 +223,8 @@ export function TaskUpdate() {
                     return createToolResponse({
                         content: [
                             {
-                                id: crypto.randomUUID(),
-                                created_at: new Date().toISOString(),
+                                id: _generateId(),
+                                created_at: _generateTimestamp(),
                                 type: 'text',
                                 text: `Task ${taskId} deleted successfully`,
                             },
@@ -237,8 +238,8 @@ export function TaskUpdate() {
             return createToolResponse({
                 content: [
                     {
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                         type: 'text',
                         text: `Task ${taskId} updated successfully`,
                     },
@@ -295,8 +296,8 @@ export function TaskGet() {
             return createToolResponse({
                 content: [
                     {
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                         type: 'text',
                         text,
                     },
@@ -334,8 +335,8 @@ export function TaskList() {
                 return createToolResponse({
                     content: [
                         {
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: 'text',
                             text: 'No tasks available.',
                         },
@@ -358,8 +359,8 @@ export function TaskList() {
             return createToolResponse({
                 content: [
                     {
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                         type: 'text',
                         text: lines.join('\n'),
                     },

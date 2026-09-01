@@ -4,6 +4,7 @@ import {
     ChatCompletionToolChoiceOption,
 } from 'openai/resources/chat/completions';
 
+import { _generateId, _generateTimestamp } from '../_utils/common';
 import { OpenAIChatFormatter } from '../formatter/openai-chat-formatter';
 import type { DataBlock, TextBlock, ThinkingBlock, ToolCallBlock } from '../message/block';
 import type { ToolChoice, ToolSchema } from '../type';
@@ -106,10 +107,10 @@ export class OpenAIChatModel extends ChatModelBase {
         // handling text block
         if (choice.message.content) {
             blocks.push({
-                id: crypto.randomUUID(),
+                id: _generateId(),
                 type: 'text',
                 text: choice.message.content,
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             });
         }
 
@@ -123,7 +124,7 @@ export class OpenAIChatModel extends ChatModelBase {
                         name: toolCall.function.name,
                         input: toolCall.function.arguments,
                         state: 'pending',
-                        created_at: new Date().toISOString(),
+                        created_at: _generateTimestamp(),
                     });
                 }
             });
@@ -246,7 +247,7 @@ export class OpenAIChatModel extends ChatModelBase {
                                 name: meta.name,
                                 input: deltaArgs,
                                 state: 'pending',
-                                created_at: new Date().toISOString(),
+                                created_at: _generateTimestamp(),
                             });
                         }
                     });
@@ -257,10 +258,10 @@ export class OpenAIChatModel extends ChatModelBase {
 
                 yield {
                     type: 'chat',
-                    id: responseId || crypto.randomUUID(),
+                    id: responseId || _generateId(),
                     createdAt: createdTimestamp
                         ? new Date(createdTimestamp * 1000).toISOString()
-                        : new Date().toISOString(),
+                        : _generateTimestamp(),
                     content: deltaBlocks,
                     usage: lastUsage,
                 } as ChatResponse;
@@ -286,17 +287,17 @@ export class OpenAIChatModel extends ChatModelBase {
                 name: meta.name,
                 input: accToolInputs.get(index) || '{}',
                 state: 'pending',
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             });
         });
 
         const blocks = this._accDataToBlocks(accText, finalToolCalls);
         return {
             type: 'chat',
-            id: responseId || crypto.randomUUID(),
+            id: responseId || _generateId(),
             createdAt: createdTimestamp
                 ? new Date(createdTimestamp * 1000).toISOString()
-                : new Date().toISOString(),
+                : _generateTimestamp(),
             content: blocks,
             usage: lastUsage,
         } as ChatResponse;
@@ -316,10 +317,10 @@ export class OpenAIChatModel extends ChatModelBase {
         const blocks: (TextBlock | ToolCallBlock)[] = [];
         if (text) {
             blocks.push({
-                id: crypto.randomUUID(),
+                id: _generateId(),
                 type: 'text',
                 text: text,
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             });
         }
         // Push the tool calls into the blocks

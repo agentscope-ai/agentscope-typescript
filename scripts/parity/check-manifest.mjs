@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { describeFiles, hashFileSet, validateManifest, walkFiles } from './manifest-lib.mjs';
+import { describeFiles, hashFileSet, listTrackedFiles, validateManifest } from './manifest-lib.mjs';
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, '../..');
@@ -35,7 +35,7 @@ async function verifyPythonCheckout(manifest, pythonRoot) {
         errors.push(`Python checkout is ${commit}, expected ${manifest.pythonCommit}.`);
     }
 
-    const allSourcePaths = await walkFiles(path.join(pythonRoot, 'src/agentscope'));
+    const allSourcePaths = listTrackedFiles(pythonRoot, 'src/agentscope');
     const collections = [
         {
             name: 'sourceFiles',
@@ -47,7 +47,7 @@ async function verifyPythonCheckout(manifest, pythonRoot) {
         },
         {
             name: 'testFiles',
-            paths: await walkFiles(path.join(pythonRoot, 'tests')),
+            paths: listTrackedFiles(pythonRoot, 'tests'),
         },
     ];
 

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { ActingOptions, ObserveOptions, ReasoningOptions, ReplyOptions } from './interfaces';
+import { _generateId, _generateTimestamp } from '../_utils/common';
 import { EventType, ReplyFinishedReason } from '../event';
 import type {
     AgentEvent,
@@ -403,23 +404,23 @@ export class Agent {
                         // If user rejected, add a rejection result and handle the pending tool calls
                         const rejectionRes = `<system-info>**Note** the user rejected the execution of tool "${result.tool_call.name}"!</system-info>`;
                         yield {
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: EventType.TOOL_RESULT_START,
                             reply_id: this.replyId,
                             tool_call_id: result.tool_call.id,
                         } as ToolResultStartEvent;
                         yield {
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: EventType.TOOL_RESULT_TEXT_DELTA,
                             reply_id: this.replyId,
                             tool_call_id: result.tool_call.id,
                             delta: rejectionRes,
                         } as ToolResultTextDeltaEvent;
                         yield {
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: EventType.TOOL_RESULT_END,
                             reply_id: this.replyId,
                             tool_call_id: result.tool_call.id,
@@ -432,14 +433,14 @@ export class Agent {
                                 name: result.tool_call.name,
                                 output: [
                                     {
-                                        id: crypto.randomUUID(),
+                                        id: _generateId(),
                                         type: 'text',
                                         text: `<system-info>**Note** the user rejected the execution of tool "${result.tool_call.name}"!</system-info>`,
-                                        created_at: new Date().toISOString(),
+                                        created_at: _generateTimestamp(),
                                     },
                                 ],
                                 state: 'interrupted',
-                                created_at: new Date().toISOString(),
+                                created_at: _generateTimestamp(),
                             },
                         ]);
                     }
@@ -464,14 +465,14 @@ export class Agent {
         } else {
             // The normal reply flow starts without any external event
             this.curIter = 0;
-            this.replyId = crypto.randomUUID();
+            this.replyId = _generateId();
             this.confirmedToolCallIds = [];
 
             // Yield the run started event
             yield {
-                id: crypto.randomUUID(),
+                id: _generateId(),
                 type: EventType.REPLY_START,
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
                 session_id: '',
                 reply_id: this.replyId,
                 name: this.name,
@@ -510,8 +511,8 @@ export class Agent {
             // yield the user-confirm or external-execution event if there is any awaiting tool calls
             if (awaitingType) {
                 yield {
-                    id: crypto.randomUUID(),
-                    created_at: new Date().toISOString(),
+                    id: _generateId(),
+                    created_at: _generateTimestamp(),
                     type: awaitingType,
                     reply_id: this.replyId,
                     tool_calls: awaitingToolCalls,
@@ -521,13 +522,13 @@ export class Agent {
                     name: this.name,
                     content: [
                         {
-                            id: crypto.randomUUID(),
+                            id: _generateId(),
                             type: 'text',
                             text:
                                 awaitingType === EventType.REQUIRE_USER_CONFIRM
                                     ? 'Waiting for user confirmation ...'
                                     : 'Waiting for external execution ...',
-                            created_at: new Date().toISOString(),
+                            created_at: _generateTimestamp(),
                         },
                     ],
                     role: 'assistant',
@@ -549,9 +550,9 @@ export class Agent {
 
         // Yield the run finished event
         yield {
-            id: crypto.randomUUID(),
+            id: _generateId(),
             type: EventType.REPLY_END,
-            created_at: new Date().toISOString(),
+            created_at: _generateTimestamp(),
             session_id: '',
             reply_id: this.replyId,
             finished_reason: ReplyFinishedReason.COMPLETED,
@@ -579,8 +580,8 @@ export class Agent {
     ): AsyncGenerator<AgentEvent, ChatResponse> {
         const tools = this.toolkit.getJSONSchemas();
         yield {
-            id: crypto.randomUUID(),
-            created_at: new Date().toISOString(),
+            id: _generateId(),
+            created_at: _generateTimestamp(),
             type: EventType.MODEL_CALL_START,
             reply_id: this.replyId,
             model_name: this.model.modelName,
@@ -593,8 +594,8 @@ export class Agent {
                         {
                             type: 'text',
                             text: this.sysPrompt,
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                         },
                     ],
                     role: 'system',
@@ -607,8 +608,8 @@ export class Agent {
                                   {
                                       type: 'text',
                                       text: this.curSummary,
-                                      id: crypto.randomUUID(),
-                                      created_at: new Date().toISOString(),
+                                      id: _generateId(),
+                                      created_at: _generateTimestamp(),
                                   },
                               ],
                               role: 'user',
@@ -654,8 +655,8 @@ export class Agent {
         // Send end events for text message, thinking message and tool calls
         if (blockIds.textBlockId) {
             yield {
-                id: crypto.randomUUID(),
-                created_at: new Date().toISOString(),
+                id: _generateId(),
+                created_at: _generateTimestamp(),
                 type: EventType.TEXT_BLOCK_END,
                 reply_id: this.replyId,
                 block_id: blockIds.textBlockId,
@@ -663,8 +664,8 @@ export class Agent {
         }
         if (blockIds.thinkingBlockId) {
             yield {
-                id: crypto.randomUUID(),
-                created_at: new Date().toISOString(),
+                id: _generateId(),
+                created_at: _generateTimestamp(),
                 type: EventType.THINKING_BLOCK_END,
                 reply_id: this.replyId,
                 block_id: blockIds.thinkingBlockId,
@@ -673,8 +674,8 @@ export class Agent {
         if (blockIds.toolCallIds.length > 0) {
             for (const tool_call_id of blockIds.toolCallIds) {
                 yield {
-                    id: crypto.randomUUID(),
-                    created_at: new Date().toISOString(),
+                    id: _generateId(),
+                    created_at: _generateTimestamp(),
                     type: EventType.TOOL_CALL_END,
                     reply_id: this.replyId,
                     tool_call_id,
@@ -683,8 +684,8 @@ export class Agent {
         }
 
         yield {
-            id: crypto.randomUUID(),
-            created_at: new Date().toISOString(),
+            id: _generateId(),
+            created_at: _generateTimestamp(),
             type: EventType.MODEL_CALL_END,
             reply_id: this.replyId,
             input_tokens: completedResponse.usage?.inputTokens || 0,
@@ -706,8 +707,8 @@ export class Agent {
 
         yield {
             type: EventType.TOOL_RESULT_START,
-            id: crypto.randomUUID(),
-            created_at: new Date().toISOString(),
+            id: _generateId(),
+            created_at: _generateTimestamp(),
             reply_id: this.replyId,
             tool_call_id: options.toolCall.id,
             tool_call_name: options.toolCall.name,
@@ -722,7 +723,7 @@ export class Agent {
                     name: options.toolCall.name,
                     output: value.content,
                     state: value.state,
-                    created_at: new Date().toISOString(),
+                    created_at: _generateTimestamp(),
                 } as ToolResultBlock;
             }
             yield* this.convertToolResponseToEvent(options.toolCall, value);
@@ -774,18 +775,18 @@ export class Agent {
                 case 'text':
                     if (responseId.textBlockId === null) {
                         // A new uuid
-                        responseId.textBlockId = crypto.randomUUID();
+                        responseId.textBlockId = _generateId();
                         yield {
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: EventType.TEXT_BLOCK_START,
                             reply_id: this.replyId,
                             block_id: responseId.textBlockId,
                         } as TextBlockStartEvent;
                     }
                     yield {
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                         type: EventType.TEXT_BLOCK_DELTA,
                         reply_id: this.replyId,
                         block_id: responseId.textBlockId,
@@ -795,18 +796,18 @@ export class Agent {
 
                 case 'thinking':
                     if (responseId.thinkingBlockId === null) {
-                        responseId.thinkingBlockId = crypto.randomUUID();
+                        responseId.thinkingBlockId = _generateId();
                         yield {
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: EventType.THINKING_BLOCK_START,
                             reply_id: this.replyId,
                             block_id: responseId.thinkingBlockId,
                         } as ThinkingBlockStartEvent;
                     }
                     yield {
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                         type: EventType.THINKING_BLOCK_DELTA,
                         reply_id: this.replyId,
                         block_id: responseId.thinkingBlockId,
@@ -818,17 +819,17 @@ export class Agent {
                     if (!responseId.toolCallIds.includes(block.id)) {
                         responseId.toolCallIds.push(block.id);
                         yield {
-                            id: crypto.randomUUID(),
+                            id: _generateId(),
                             type: EventType.TOOL_CALL_START,
-                            created_at: new Date().toISOString(),
+                            created_at: _generateTimestamp(),
                             reply_id: this.replyId,
                             tool_call_id: block.id,
                             tool_call_name: block.name,
                         } as ToolCallStartEvent;
                     }
                     yield {
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                         type: EventType.TOOL_CALL_DELTA,
                         delta: block.input,
                         reply_id: this.replyId,
@@ -851,8 +852,8 @@ export class Agent {
             switch (block.type) {
                 case 'text':
                     yield {
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                         type: EventType.TOOL_RESULT_TEXT_DELTA,
                         reply_id: this.replyId,
                         tool_call_id: toolCall.id,
@@ -863,8 +864,8 @@ export class Agent {
                 case 'data':
                     if (block.source.type === 'base64') {
                         yield {
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: EventType.TOOL_RESULT_DATA_DELTA,
                             reply_id: this.replyId,
                             tool_call_id: toolCall.id,
@@ -873,8 +874,8 @@ export class Agent {
                         } as ToolResultDataDeltaEvent;
                     } else if (block.source.type === 'url') {
                         yield {
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                             type: EventType.TOOL_RESULT_DATA_DELTA,
                             reply_id: this.replyId,
                             tool_call_id: toolCall.id,
@@ -886,8 +887,8 @@ export class Agent {
             }
         }
         yield {
-            id: crypto.randomUUID(),
-            created_at: new Date().toISOString(),
+            id: _generateId(),
+            created_at: _generateTimestamp(),
             type: EventType.TOOL_RESULT_END,
             reply_id: this.replyId,
             tool_call_id: toolCall.id,
@@ -1000,8 +1001,8 @@ export class Agent {
                     {
                         type: 'text',
                         text: this.sysPrompt,
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
+                        id: _generateId(),
+                        created_at: _generateTimestamp(),
                     },
                 ],
                 role: 'system',
@@ -1012,11 +1013,11 @@ export class Agent {
                 name: 'user',
                 content: [
                     {
-                        id: crypto.randomUUID(),
+                        id: _generateId(),
                         type: 'text',
                         text:
                             this.compressionConfig.compressionPrompt || DEFAULT_COMPRESSION_PROMPT,
-                        created_at: new Date().toISOString(),
+                        created_at: _generateTimestamp(),
                     },
                 ],
                 role: 'user',
@@ -1042,8 +1043,8 @@ export class Agent {
                         {
                             type: 'text',
                             text: this.sysPrompt,
-                            id: crypto.randomUUID(),
-                            created_at: new Date().toISOString(),
+                            id: _generateId(),
+                            created_at: _generateTimestamp(),
                         },
                     ],
                     role: 'system',
@@ -1054,12 +1055,12 @@ export class Agent {
                     name: 'user',
                     content: [
                         {
-                            id: crypto.randomUUID(),
+                            id: _generateId(),
                             type: 'text',
                             text:
                                 this.compressionConfig.compressionPrompt ||
                                 DEFAULT_COMPRESSION_PROMPT,
-                            created_at: new Date().toISOString(),
+                            created_at: _generateTimestamp(),
                         },
                     ],
                     role: 'user',

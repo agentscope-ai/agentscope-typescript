@@ -5,6 +5,7 @@ import { ChatResponse } from './response';
 import type { TextBlock, ThinkingBlock, ToolCallBlock } from '../message/block';
 import type { ToolChoice, ToolSchema } from '../type';
 import { ChatUsage } from './usage';
+import { _generateId, _generateTimestamp } from '../_utils/common';
 import { OllamaChatFormatter } from '../formatter/ollama-chat-formatter';
 
 interface OllamaThinkingConfig {
@@ -213,7 +214,7 @@ export class OllamaChatModel extends ChatModelBase {
                         name: func.name,
                         input: JSON.stringify(func.arguments),
                         state: 'pending' as const,
-                        created_at: new Date().toISOString(),
+                        created_at: _generateTimestamp(),
                     };
 
                     toolCalls.set(toolId, toolCallBlock);
@@ -234,8 +235,8 @@ export class OllamaChatModel extends ChatModelBase {
             const deltaBlocks = this._buildContentBlocks(deltaText, deltaThinking, deltaToolCalls);
             yield {
                 type: 'chat',
-                id: crypto.randomUUID(),
-                createdAt: new Date().toISOString(),
+                id: _generateId(),
+                createdAt: _generateTimestamp(),
                 content: deltaBlocks,
                 usage: lastUsage,
             } as ChatResponse;
@@ -245,8 +246,8 @@ export class OllamaChatModel extends ChatModelBase {
         const blocks = this._buildContentBlocks(accText, accThinking, toolCalls);
         return {
             type: 'chat',
-            id: crypto.randomUUID(),
-            createdAt: new Date().toISOString(),
+            id: _generateId(),
+            createdAt: _generateTimestamp(),
             content: blocks,
             usage: lastUsage,
         } as ChatResponse;
@@ -263,19 +264,19 @@ export class OllamaChatModel extends ChatModelBase {
 
         if (response.message.thinking) {
             blocks.push({
-                id: crypto.randomUUID(),
+                id: _generateId(),
                 type: 'thinking',
                 thinking: response.message.thinking,
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             });
         }
 
         if (response.message.content) {
             blocks.push({
-                id: crypto.randomUUID(),
+                id: _generateId(),
                 type: 'text',
                 text: response.message.content,
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             });
         }
 
@@ -289,7 +290,7 @@ export class OllamaChatModel extends ChatModelBase {
                     name: toolCall.function.name,
                     input: JSON.stringify(toolCall.function.arguments),
                     state: 'pending',
-                    created_at: new Date().toISOString(),
+                    created_at: _generateTimestamp(),
                 });
             }
         }
@@ -306,8 +307,8 @@ export class OllamaChatModel extends ChatModelBase {
 
         return {
             type: 'chat',
-            id: crypto.randomUUID(),
-            createdAt: new Date().toISOString(),
+            id: _generateId(),
+            createdAt: _generateTimestamp(),
             content: blocks,
             usage,
         } as ChatResponse;
@@ -329,19 +330,19 @@ export class OllamaChatModel extends ChatModelBase {
 
         if (thinking) {
             blocks.push({
-                id: crypto.randomUUID(),
+                id: _generateId(),
                 type: 'thinking',
                 thinking,
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             });
         }
 
         if (text) {
             blocks.push({
-                id: crypto.randomUUID(),
+                id: _generateId(),
                 type: 'text',
                 text,
-                created_at: new Date().toISOString(),
+                created_at: _generateTimestamp(),
             });
         }
 

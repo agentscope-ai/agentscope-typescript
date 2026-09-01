@@ -1,3 +1,4 @@
+import { _generateId, _generateTimestamp } from '../_utils/common';
 import type { DataBlock, TextBlock } from '../message/block';
 import type { JSONSerializableObject } from '../type';
 
@@ -31,8 +32,8 @@ export interface ToolResponse {
 export function createToolResponse({
     content,
     state,
-    id = crypto.randomUUID(),
-    createdAt = new Date().toISOString(),
+    id = _generateId(),
+    createdAt = _generateTimestamp(),
     metadata = {},
     stream = false,
     isLast = true,

@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -8,11 +8,11 @@ import { format, resolveConfig } from 'prettier';
 import {
     describeFiles,
     hashFileSet,
+    listTrackedFiles,
     sourceModule,
     testArea,
     typescriptTarget,
     validateManifest,
-    walkFiles,
 } from './manifest-lib.mjs';
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -37,14 +37,39 @@ const outputPath = path.resolve(
     readOption('--output', path.join(repositoryRoot, 'parity/agentscope-python-de163b34.json'))
 );
 
+let previousManifest;
+try {
+    previousManifest = JSON.parse(await readFile(outputPath, 'utf8'));
+} catch (error) {
+    if (error?.code !== 'ENOENT') throw error;
+}
+
+/**
+ * Return prior progress when a baseline file has not changed.
+ *
+ * @param {string} collection Manifest collection name.
+ * @param {string} filePath Repository-relative file path.
+ * @param {string} sha256 Current file digest.
+ * @returns {object} Fields that are safe to preserve.
+ */
+function previousProgress(collection, filePath, sha256) {
+    const entry = previousManifest?.[collection]?.find(candidate => candidate.path === filePath);
+    if (!entry || entry.sha256 !== sha256) return {};
+    return {
+        status: entry.status,
+        ...(entry.pythonTests ? { pythonTests: entry.pythonTests } : {}),
+        ...(entry.typescriptTests ? { typescriptTests: entry.typescriptTests } : {}),
+    };
+}
+
 const pythonCommit = execFileSync('git', ['-C', pythonRoot, 'rev-parse', 'HEAD'], {
     encoding: 'utf8',
 }).trim();
 
-const allSourcePaths = await walkFiles(path.join(pythonRoot, 'src/agentscope'));
+const allSourcePaths = listTrackedFiles(pythonRoot, 'src/agentscope');
 const contractDataPaths = allSourcePaths.filter(filePath => filePath.endsWith('.yaml'));
 const sourcePaths = allSourcePaths.filter(filePath => !filePath.endsWith('.yaml'));
-const testPaths = await walkFiles(path.join(pythonRoot, 'tests'));
+const testPaths = listTrackedFiles(pythonRoot, 'tests');
 
 const sourceFiles = await describeFiles(pythonRoot, sourcePaths);
 const contractDataFiles = await describeFiles(pythonRoot, contractDataPaths);
@@ -62,6 +87,7 @@ const manifest = {
         status: 'mapped',
         pythonTests: [],
         typescriptTests: [],
+        ...previousProgress('sourceFiles', sourcePath, sha256),
     })),
     contractDataFiles: contractDataFiles.map(({ path: sourcePath, sha256 }) => ({
         path: sourcePath,
@@ -69,6 +95,7 @@ const manifest = {
         module: sourceModule(sourcePath),
         typescriptTarget: typescriptTarget(sourcePath),
         status: 'mapped',
+        ...previousProgress('contractDataFiles', sourcePath, sha256),
     })),
     testFiles: testFiles.map(({ path: testPath, sha256 }) => ({
         path: testPath,
