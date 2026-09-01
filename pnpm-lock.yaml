@@ -373,6 +373,9 @@ importers:
                 specifier: ^5.5.3
                 version: 5.9.3
         optionalDependencies:
+            '@alibaba-group/opensandbox':
+                specifier: ^0.1.11
+                version: 0.1.11
             '@daytona/sdk':
                 specifier: ^0.207.0
                 version: 0.207.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
@@ -392,6 +395,13 @@ packages:
             {
                 integrity: sha512-ukTPVhqG4jNzMro2qA9HSCSSVJN3aN7tlb+hfqYCt3ER0yWroeA2VR38MNrOHLQ/cVj+DaIMad0kFCtWWowh/A==,
             }
+
+    '@alibaba-group/opensandbox@0.1.11':
+        resolution:
+            {
+                integrity: sha512-xDJzs+5yYAPrje+z3GKUmXezpVq3kO/NyP8BM9JwzCbfuSr5vQyHJI3/Pu4FBGdb/xQnxMcWFlsKqC4/80OeiQ==,
+            }
+        engines: { node: '>=20' }
 
     '@antfu/install-pkg@1.1.0':
         resolution:
@@ -13289,6 +13299,12 @@ packages:
 
 snapshots:
     7zip-bin@5.2.0: {}
+
+    '@alibaba-group/opensandbox@0.1.11':
+        dependencies:
+            openapi-fetch: 0.14.1
+            undici: 7.29.0
+        optional: true
 
     '@antfu/install-pkg@1.1.0':
         dependencies:

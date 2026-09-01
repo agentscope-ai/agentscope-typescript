@@ -5353,9 +5353,28 @@
             "sha256": "0e7ee74fc9e416e791be6ae5b8f0347021f0f10f3ab0e86980be36de83404615",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/workspace_local_test.py",
+                "tests/workspace_bubblewrap_test.py",
+                "tests/workspace_docker_test.py",
+                "tests/workspace_e2b_test.py",
+                "tests/workspace_daytona_test.py",
+                "tests/workspace_k8s_test.py",
+                "tests/workspace_opensandbox_test.py",
+                "tests/workspace_applecontainer_test.py"
+            ],
+            "typescriptTests": [
+                "scripts/package-smoke.mjs",
+                "packages/agentscope/src/workspace/local.parity.test.ts",
+                "packages/agentscope/src/workspace/bubblewrap.parity.test.ts",
+                "packages/agentscope/src/workspace/docker.parity.test.ts",
+                "packages/agentscope/src/workspace/e2b.parity.test.ts",
+                "packages/agentscope/src/workspace/daytona.parity.test.ts",
+                "packages/agentscope/src/workspace/k8s.parity.test.ts",
+                "packages/agentscope/src/workspace/opensandbox.parity.test.ts",
+                "packages/agentscope/src/workspace/apple-container.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_applecontainer/__init__.py",
@@ -5861,36 +5880,51 @@
             "sha256": "fd24918d6404b54e7c946aca3553f22f12afa46db4d6d796829b4b0e3b4bcca2",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_opensandbox_test.py",
+                "tests/workspace_opensandbox_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/opensandbox-driver.test.ts",
+                "packages/agentscope/src/workspace/opensandbox.live.test.ts",
+                "packages/agentscope/src/workspace/opensandbox.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_opensandbox/_constants.py",
             "sha256": "057437edc969c1573b906836e2fd5530384c57ed308d948c094c4e91e34ec5fe",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_opensandbox_test.py"],
+            "typescriptTests": ["packages/agentscope/src/workspace/opensandbox.parity.test.ts"]
         },
         {
             "path": "src/agentscope/workspace/_opensandbox/_opensandbox_backend.py",
             "sha256": "233b7806054bd92363241ac80d8144061776ad2cca63143b41ff922d81e171d0",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/backend_opensandbox_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/opensandbox-driver.test.ts",
+                "packages/agentscope/src/workspace/opensandbox.live.test.ts",
+                "packages/agentscope/src/workspace/opensandbox.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_opensandbox/_opensandbox_workspace.py",
             "sha256": "14f1afa56daf534f958d1fd7964c4aa268e55ec98e2027ebfa69e06768ed0d1f",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/workspace_opensandbox_test.py"],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/opensandbox-driver.test.ts",
+                "packages/agentscope/src/workspace/opensandbox.live.test.ts",
+                "packages/agentscope/src/workspace/opensandbox.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_sandboxed_base.py",

@@ -169,6 +169,7 @@
         "zod-to-json-schema": "^3.25.1"
     },
     "optionalDependencies": {
+        "@alibaba-group/opensandbox": "^0.1.11",
         "@daytona/sdk": "^0.207.0",
         "@kubernetes/client-node": "^2.0.0",
         "dockerode": "^4.0.12",

@@ -162,3 +162,30 @@ export {
     K8sWorkspace,
     k8sSafeName,
 } from './k8s';
+export {
+    OpenSandboxClientDriver,
+    OpenSandboxConnectionOptions,
+    OpenSandboxCreateOptions,
+    OpenSandboxExecution,
+    OpenSandboxInfo,
+    OpenSandboxListOptions,
+    OpenSandboxProtocol,
+    OpenSandboxRunOptions,
+    OpenSandboxSandboxDriver,
+    OpenSandboxWriteEntry,
+    createOpenSandboxClient,
+} from './opensandbox-driver';
+export {
+    DEFAULT_OPENSANDBOX_GATEWAY_PORT,
+    DEFAULT_OPENSANDBOX_IMAGE,
+    DEFAULT_OPENSANDBOX_REQUEST_TIMEOUT,
+    DEFAULT_OPENSANDBOX_TIMEOUT,
+    OPENSANDBOX_BOOTSTRAP_COMMAND_TIMEOUT,
+    OPENSANDBOX_GATEWAY_HOME,
+    OPENSANDBOX_WORKDIR,
+    OPENSANDBOX_WORKSPACE_ID_METADATA_KEY,
+    OpenSandboxBackendOptions,
+    OpenSandboxBackend,
+    OpenSandboxWorkspaceOptions,
+    OpenSandboxWorkspace,
+} from './opensandbox';
