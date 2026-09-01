@@ -742,9 +742,9 @@
             "sha256": "e39616a84c3d4db7989273bb3901398a80c8df273ecdf9ec6208b27c93c4d253",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/resource_access_policy_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/resource-access-service.test.ts"]
         },
         {
             "path": "src/agentscope/app/_service/_channel.py",
@@ -769,27 +769,34 @@
             "sha256": "04eb009aa232f9870e413385aaacc057f9350a6e06815811ed51f5bb82c620b2",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/service_git_status_parse_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/workspace_skill_archive_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/service-foundations.test.ts",
+                "packages/agentscope-service/test/workspace-service.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_service/_embedding.py",
             "sha256": "a047a19fdbf8dc7d549a8f77c3bfdd62193a1b21116af5658475d749e1de3e64",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": ["packages/agentscope-service/test/model-service.test.ts"]
         },
         {
             "path": "src/agentscope/app/_service/_errors.py",
             "sha256": "d8f63894715ddc016111cf8fbf1d6d167ceef8a03554e816061aae8c1d06e781",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/service_classify_error_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/service-foundations.test.ts"]
         },
         {
             "path": "src/agentscope/app/_service/_index_sweeper.py",
@@ -841,45 +848,45 @@
             "sha256": "29fb3783c3d8ee7e261f1fe9c17e504056fc4d838e56f2ff5702627c935bcaec",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": ["packages/agentscope-service/test/model-service.test.ts"]
         },
         {
             "path": "src/agentscope/app/_service/_projectors/__init__.py",
             "sha256": "03a3e86db70ea2e307565b7296c7e61172ca1b10547896deeb06ba39f9417d10",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service/-projectors",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/service_subagent_hitl_projector_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/service-foundations.test.ts"]
         },
         {
             "path": "src/agentscope/app/_service/_projectors/_subagent_hitl.py",
             "sha256": "b0db146fb396c1479043d2c26334f91c269a5bf186e18decff2e5244537b80f6",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service/-projectors",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/service_subagent_hitl_projector_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/service-foundations.test.ts"]
         },
         {
             "path": "src/agentscope/app/_service/_session_projection.py",
             "sha256": "d5ff9458dae38a7a82529b4881186090a8271482a24e82443ff67ce8a2c83d40",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/service_subagent_hitl_projector_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/service-foundations.test.ts"]
         },
         {
             "path": "src/agentscope/app/_service/_session.py",
             "sha256": "59b0f0f7304f67b3fed3eb6f277f852d3cc57ce5f6498089ec4f4ef30fa800b8",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": ["tests/service_team_tools_test.py"],
+            "typescriptTests": ["packages/agentscope-service/test/service-foundations.test.ts"]
         },
         {
             "path": "src/agentscope/app/_service/_toolkit.py",
@@ -895,18 +902,25 @@
             "sha256": "ef96120346da5f261d73cd9a22d5075e473b74d858a12c275a5ba92d9f020b64",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service",
-            "status": "mapped",
+            "status": "verified",
             "pythonTests": [],
-            "typescriptTests": []
+            "typescriptTests": ["packages/agentscope-service/test/model-service.test.ts"]
         },
         {
             "path": "src/agentscope/app/_service/_workspace.py",
             "sha256": "d352a32649ec7adcf6f1b5072d5468b409ff6502b9dcc476ed474d0ed8fe7a5d",
             "module": "app",
             "typescriptTarget": "packages/agentscope-service/src/-service",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/service_git_status_parse_test.py",
+                "tests/service_workspace_files_test.py",
+                "tests/workspace_skill_archive_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope-service/test/service-foundations.test.ts",
+                "packages/agentscope-service/test/workspace-service.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/app/_tool/__init__.py",

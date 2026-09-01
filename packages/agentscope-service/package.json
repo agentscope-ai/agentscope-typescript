@@ -27,6 +27,11 @@
             "import": "./dist/manager/index.mjs",
             "require": "./dist/manager/index.js"
         },
+        "./service": {
+            "types": "./dist/service/index.d.ts",
+            "import": "./dist/service/index.mjs",
+            "require": "./dist/service/index.js"
+        },
         "./storage": {
             "types": "./dist/storage/index.d.ts",
             "import": "./dist/storage/index.mjs",

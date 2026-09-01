@@ -12,6 +12,7 @@ import { ToolBase, ToolChunk } from '@agentscope-ai/agentscope/tool';
 import { z } from 'zod';
 
 import type { MessageBus } from '../message-bus';
+import { SessionService } from '../service/session-service';
 import {
     ScheduleRecordSchema,
     type ChatModelConfig,
@@ -225,12 +226,10 @@ export class ScheduleDelete extends ScheduleToolBase {
             );
         }
         this.scheduler.removeScheduleJob(scheduleId);
-        for (const session of await this.storage.listSessionsBySchedule(this.userId, scheduleId)) {
-            await this.messageBus.sessionPublishCancel(session.id);
-            await this.storage.deleteSession(this.userId, session.agent_id, session.id);
-            await this.messageBus.sessionPurge(session.id);
-        }
-        const deleted = await this.storage.deleteSchedule(this.userId, scheduleId);
+        const deleted = await new SessionService(this.storage, this.messageBus).deleteSchedule(
+            this.userId,
+            scheduleId
+        );
         if (!deleted) {
             return result(
                 `ScheduleNotFoundError: Schedule with id ${pythonRepr(scheduleId)} ` +

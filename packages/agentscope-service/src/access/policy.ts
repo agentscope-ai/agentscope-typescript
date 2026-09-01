@@ -13,7 +13,7 @@ export interface ResourceRef {
     kind: ResourceKind;
     ownerId: string;
     resourceId: string;
-    permission: ResourcePermission;
+    permission?: ResourcePermission;
 }
 
 /** Extension point for application-defined resource sharing. */
