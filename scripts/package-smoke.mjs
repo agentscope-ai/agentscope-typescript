@@ -24,6 +24,7 @@ function runNpm(arguments_) {
     return execFileSync(npmExecutable, arguments_, {
         cwd: temporaryRoot,
         encoding: 'utf8',
+        shell: process.platform === 'win32',
         stdio: ['ignore', 'pipe', 'inherit'],
     });
 }
