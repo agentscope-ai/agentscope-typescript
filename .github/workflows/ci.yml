@@ -104,12 +104,16 @@ jobs:
 
             - name: Build agentscope package
               run: pnpm run build:agentscope
+              env:
+                  NODE_OPTIONS: --max-old-space-size=8192
 
             - name: Type-check AgentScope service
               run: pnpm --filter @agentscope-ai/agentscope-service typecheck
 
             - name: Build AgentScope service package
               run: pnpm run build:service
+              env:
+                  NODE_OPTIONS: --max-old-space-size=8192
 
             - name: Test package installation
               run: pnpm run test:package
