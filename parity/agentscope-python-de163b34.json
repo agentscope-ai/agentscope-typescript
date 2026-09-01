@@ -5410,36 +5410,64 @@
             "sha256": "6ba2fc737404df3edfe3fc832dcfa22a0609e8aafd16f30feddf6b584990ecb8",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_bubblewrap_test.py",
+                "tests/workspace_bubblewrap_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/bubblewrap.parity.test.ts",
+                "packages/agentscope/src/workspace/gateway.parity.test.ts",
+                "packages/agentscope/src/workspace/sandboxed.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_bubblewrap/_bubblewrap_backend.py",
             "sha256": "4b48d691b4025c9185e0fe94039d243eb36c825c9c8dd61b4f4636492ffef8a5",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_bubblewrap_test.py",
+                "tests/workspace_bubblewrap_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/bubblewrap.parity.test.ts",
+                "packages/agentscope/src/workspace/gateway.parity.test.ts",
+                "packages/agentscope/src/workspace/sandboxed.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_bubblewrap/_bubblewrap_workspace.py",
             "sha256": "69d828654bd0b34fef057e4b3d4c8565595f91e7989ea73fdcd2309c7315498e",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_bubblewrap_test.py",
+                "tests/workspace_bubblewrap_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/bubblewrap.parity.test.ts",
+                "packages/agentscope/src/workspace/gateway.parity.test.ts",
+                "packages/agentscope/src/workspace/sandboxed.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_bubblewrap/_constants.py",
             "sha256": "069450b643db135c54bd49afc3e14390019965cbb5f421b5e46d057acb3dac1e",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_bubblewrap_test.py",
+                "tests/workspace_bubblewrap_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/bubblewrap.parity.test.ts",
+                "packages/agentscope/src/workspace/gateway.parity.test.ts",
+                "packages/agentscope/src/workspace/sandboxed.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_daytona/__init__.py",
@@ -5581,18 +5609,32 @@
             "sha256": "9c7a07b5150c6f0a326036056361d7dafedd7b65a655db7b2ce535d3e26adab1",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_bubblewrap_test.py",
+                "tests/workspace_bubblewrap_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/bubblewrap.parity.test.ts",
+                "packages/agentscope/src/workspace/gateway.parity.test.ts",
+                "packages/agentscope/src/workspace/sandboxed.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_gateway_shim.py",
             "sha256": "cc02c8de7bea82dcd7da2142598ab9ce28bdd79b81b3cde1d239b64ea9ccbb67",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_bubblewrap_test.py",
+                "tests/workspace_bubblewrap_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/bubblewrap.parity.test.ts",
+                "packages/agentscope/src/workspace/gateway.parity.test.ts",
+                "packages/agentscope/src/workspace/sandboxed.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_k8s/__init__.py",
@@ -5647,27 +5689,48 @@
             "sha256": "bae17fffd55ec08705183ac9bf33ea794206e0f0edc917789500b2ca695b6d84",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_bubblewrap_test.py",
+                "tests/workspace_bubblewrap_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/bubblewrap.parity.test.ts",
+                "packages/agentscope/src/workspace/gateway.parity.test.ts",
+                "packages/agentscope/src/workspace/sandboxed.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_mcp_gateway/__main__.py",
             "sha256": "5741be64b6f7e2fc2d8969a4ae320915734fdc5adeacd9985bc884e8cf06075a",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_bubblewrap_test.py",
+                "tests/workspace_bubblewrap_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/bubblewrap.parity.test.ts",
+                "packages/agentscope/src/workspace/gateway.parity.test.ts",
+                "packages/agentscope/src/workspace/sandboxed.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_mcp_gateway/_mcp_gateway_app.py",
             "sha256": "6cd8de777c069f2559ab56df693fe78b9ba44439d59b76e80b291ac949eacb09",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_bubblewrap_test.py",
+                "tests/workspace_bubblewrap_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/bubblewrap.parity.test.ts",
+                "packages/agentscope/src/workspace/gateway.parity.test.ts",
+                "packages/agentscope/src/workspace/sandboxed.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_offload_protocol.py",
@@ -5719,9 +5782,16 @@
             "sha256": "1dc9efecbdbf3026d764fa1adee848eb1673174e453ca5a198c374c6894bbe9d",
             "module": "workspace",
             "typescriptTarget": "packages/agentscope/src/workspace",
-            "status": "mapped",
-            "pythonTests": [],
-            "typescriptTests": []
+            "status": "verified",
+            "pythonTests": [
+                "tests/backend_bubblewrap_test.py",
+                "tests/workspace_bubblewrap_test.py"
+            ],
+            "typescriptTests": [
+                "packages/agentscope/src/workspace/bubblewrap.parity.test.ts",
+                "packages/agentscope/src/workspace/gateway.parity.test.ts",
+                "packages/agentscope/src/workspace/sandboxed.parity.test.ts"
+            ]
         },
         {
             "path": "src/agentscope/workspace/_utils.py",

@@ -71,7 +71,7 @@ export interface WorkspaceBaseOptions {
     maxLiveStatefulMcps?: number;
 }
 
-interface MCPWire {
+export interface MCPClientWire {
     name: string;
     is_stateful: boolean;
     mcp_config: Record<string, unknown>;
@@ -324,11 +324,11 @@ export abstract class WorkspaceBase implements Offloader {
 
     protected async saveMcpFile(): Promise<void> {
         if (!this.isPersistent || !this.backend) return;
-        const mcps: Record<string, Record<string, MCPWire[]>> = {};
+        const mcps: Record<string, Record<string, MCPClientWire[]>> = {};
         for (const [key, clients] of this.mcpSpecs) {
             const [agentId, sessionId] = JSON.parse(key) as [string, string];
             mcps[agentId] ??= {};
-            mcps[agentId][sessionId] = clients.map(mcpToWire);
+            mcps[agentId][sessionId] = clients.map(serializeMcpClient);
         }
         try {
             await this.backend.writeFile(
@@ -348,13 +348,17 @@ export abstract class WorkspaceBase implements Offloader {
         try {
             const data = JSON.parse(
                 (await this.backend.readFile(this.mcpFile)).toString('utf8')
-            ) as MCPWire[] | { mcps?: Record<string, Record<string, MCPWire[]>> };
+            ) as
+                | MCPClientWire[]
+                | {
+                      mcps?: Record<string, Record<string, MCPClientWire[]>>;
+                  };
             if (Array.isArray(data)) {
                 this.mcpSpecs.set(
                     this.scopeKey(),
                     data.flatMap(value => {
                         try {
-                            return [mcpFromWire(value)];
+                            return [deserializeMcpClient(value)];
                         } catch (error) {
                             logger.warning('Skipping invalid MCP entry: %s', String(error));
                             return [];
@@ -369,7 +373,7 @@ export abstract class WorkspaceBase implements Offloader {
                         this.scopeKey(agentId, sessionId),
                         clients.flatMap(value => {
                             try {
-                                return [mcpFromWire(value)];
+                                return [deserializeMcpClient(value)];
                             } catch (error) {
                                 logger.warning('Skipping invalid MCP entry: %s', String(error));
                                 return [];
@@ -611,10 +615,10 @@ export abstract class WorkspaceBase implements Offloader {
 }
 
 export function cloneMcpClient(client: MCPClient): MCPClient {
-    return mcpFromWire(mcpToWire(client));
+    return deserializeMcpClient(serializeMcpClient(client));
 }
 
-function mcpToWire(client: MCPClient): MCPWire {
+export function serializeMcpClient(client: MCPClient): MCPClientWire {
     const config = client.mcpConfig;
     return {
         name: client.name,
@@ -641,7 +645,7 @@ function mcpToWire(client: MCPClient): MCPWire {
     };
 }
 
-function mcpFromWire(value: MCPWire): MCPClient {
+export function deserializeMcpClient(value: MCPClientWire): MCPClient {
     const raw = value.mcp_config;
     if (raw.type !== 'stdio_mcp' && raw.type !== 'http_mcp') {
         throw new Error(`Unsupported MCP config type: ${String(raw.type)}`);

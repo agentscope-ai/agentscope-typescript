@@ -10,5 +10,41 @@ export {
     formatWorkspaceInstructions,
 } from './utils';
 export { SkillArchiveFormat, extractLocalArchive, findSkillRoot } from './archive';
-export { Offloader, WorkspaceBaseOptions, WorkspaceBase, cloneMcpClient } from './base';
+export {
+    MCPClientWire,
+    Offloader,
+    WorkspaceBaseOptions,
+    WorkspaceBase,
+    cloneMcpClient,
+    deserializeMcpClient,
+    serializeMcpClient,
+} from './base';
 export { LocalWorkspaceOptions, LocalWorkspace } from './local';
+export {
+    BODY_INLINE_LIMIT,
+    GATEWAY_SHIM_SCRIPT,
+    GatewayClientOptions,
+    GatewayRequestOptions,
+    GatewayClient,
+    GatewayMCPClient,
+    GatewayMCPTool,
+    SANDBOX_TMP_DIR,
+} from './gateway';
+export { GATEWAY_PYTHON_SCRIPT } from './gateway-script';
+export {
+    DEFAULT_GATEWAY_LOG,
+    DEFAULT_GATEWAY_SCRIPT,
+    DEFAULT_GATEWAY_VENV,
+    SandboxedWorkspaceBase,
+} from './sandboxed';
+export {
+    BUBBLEWRAP_CACHE_DIR,
+    BUBBLEWRAP_GATEWAY_HOME,
+    BUBBLEWRAP_TMPDIR,
+    BUBBLEWRAP_WORKDIR,
+    BubblewrapBackendOptions,
+    BubblewrapBackend,
+    BubblewrapWorkspaceOptions,
+    BubblewrapWorkspace,
+    terminateProcessTree,
+} from './bubblewrap';

@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc, jsdoc/require-returns */
 
 import type { RequestOptions } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import type { Tool as MCPToolDefinition } from '@modelcontextprotocol/sdk/types.js';
@@ -6,6 +6,8 @@ import type { Tool as MCPToolDefinition } from '@modelcontextprotocol/sdk/types.
 import type { MCPTool } from './base';
 import { HTTPMCPClient } from './http';
 import { StdioMCPClient } from './stdio';
+import type { ToolBase } from '../tool/base';
+import type { ToolChunk } from '../tool/response';
 
 /** Configuration for an MCP server started over standard IO. */
 export class StdioMCPConfig {
@@ -78,6 +80,12 @@ export interface MCPClientOptions {
 
 type TransportClient = HTTPMCPClient | StdioMCPClient;
 
+/** Common tool surface shared by direct and gateway-backed MCP clients. */
+export interface MCPClientTool extends ToolBase {
+    readonly originalName: string;
+    call(input: Record<string, unknown>): Promise<ToolChunk>;
+}
+
 /** Python-compatible unified MCP client with stateful and stateless modes. */
 export class MCPClient {
     readonly name: string;
@@ -86,9 +94,9 @@ export class MCPClient {
     readonly enableTools: string[] | null;
     readonly disableTools: string[] | null;
     readonly executionTimeout: number | null;
-    private client: TransportClient;
-    private connected = false;
-    private cachedTools: MCPTool[] | null = null;
+    protected client: TransportClient;
+    protected connected = false;
+    protected cachedTools: MCPTool[] | null = null;
 
     /**
      * Validate the public configuration and create its transport adapter.
@@ -167,7 +175,7 @@ export class MCPClient {
     }
 
     /** List wrapped tools after applying the configured allow/deny filters. */
-    async listTools(): Promise<MCPTool[]> {
+    async listTools(): Promise<MCPClientTool[]> {
         const tools = await this.listAllTools();
         return tools.filter(tool => this.isToolEnabled(tool.originalName));
     }
@@ -183,7 +191,7 @@ export class MCPClient {
      * Resolve a tool by its original MCP name or model-facing prefixed name.
      * @param name
      */
-    async getTool(name: string): Promise<MCPTool> {
+    async getTool(name: string): Promise<MCPClientTool> {
         this.validateConnection();
         const tools = this.cachedTools ?? (await this.listAllTools());
         const tool = tools.find(item => item.originalName === name || item.name === name);
@@ -196,29 +204,29 @@ export class MCPClient {
      * @param root0
      * @param root0.name
      */
-    async getCallableFunction({ name }: { name: string }): Promise<MCPTool> {
+    async getCallableFunction({ name }: { name: string }): Promise<MCPClientTool> {
         return this.getTool(name);
     }
 
-    private async listAllTools(): Promise<MCPTool[]> {
+    protected async listAllTools(): Promise<MCPTool[]> {
         this.validateConnection();
         const tools = await this.client.listTools();
         this.cachedTools = tools;
         return tools;
     }
 
-    private isToolEnabled(name: string): boolean {
+    protected isToolEnabled(name: string): boolean {
         if (this.enableTools && !this.enableTools.includes(name)) return false;
         return !this.disableTools?.includes(name);
     }
 
-    private validateConnection(): void {
+    protected validateConnection(): void {
         if (this.isStateful && !this.connected) {
             throw new Error(`MCP '${this.name}' is not connected. Call connect() first.`);
         }
     }
 
-    private createTransportClient(): TransportClient {
+    protected createTransportClient(): TransportClient {
         const requestOptions: RequestOptions | undefined =
             this.executionTimeout == null ? undefined : { timeout: this.executionTimeout * 1000 };
         if (this.mcpConfig.type === 'stdio_mcp') {
