@@ -1,6 +1,5 @@
 /* eslint-disable jsdoc/require-jsdoc */
 
-import { createTwoFilesPatch } from 'diff';
 import { z } from 'zod';
 
 import { TextBlock } from '../message';
@@ -12,6 +11,7 @@ import { LocalBackend } from './backend';
 import { ToolBase } from './base';
 import type { ToolMiddlewareBase } from './base';
 import { ToolChunk } from './response';
+import { createPythonUnifiedDiff, fnmatchPath } from './utils';
 
 export interface WriteToolOptions {
     backend?: BackendBase;
@@ -85,7 +85,7 @@ Usage:
         toolInput: Record<string, unknown>
     ): Promise<boolean> {
         const filePath = typeof toolInput.file_path === 'string' ? toolInput.file_path : '';
-        return filePath !== '' && globMatches(filePath, ruleContent);
+        return filePath !== '' && fnmatchPath(filePath, ruleContent);
     }
 
     override async generateSuggestions(
@@ -133,17 +133,12 @@ Usage:
         }
         await this.backend.writeFile(filePath, Buffer.from(parsed.content, 'utf8'));
         const oldName = fileExisted ? `a/${filePath}` : '/dev/null';
-        const diff = createTwoFilesPatch(
+        const diff = createPythonUnifiedDiff(
             oldName,
             `b/${filePath}`,
             previousContent,
-            parsed.content,
-            '',
-            '',
-            {
-                context: 3,
-            }
-        ).replace(/^===================================================================\n/, '');
+            parsed.content
+        );
         return new ToolChunk({
             content: [
                 TextBlock({
@@ -167,10 +162,4 @@ export function Write(options: WriteToolOptions = {}): WriteTool {
 
 function errorChunk(message: string): ToolChunk {
     return new ToolChunk({ content: [TextBlock({ text: message })], state: 'error' });
-}
-
-function globMatches(value: string, pattern: string): boolean {
-    const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, '\\$&');
-    const regex = escaped.replace(/\*\*/g, '\0').replace(/\*/g, '[^/\\\\]*').replace(/\0/g, '.*');
-    return new RegExp(`^${regex}$`).test(value);
 }

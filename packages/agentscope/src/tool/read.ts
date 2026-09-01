@@ -12,6 +12,7 @@ import { LocalBackend, normalizeNewlines } from './backend';
 import { ToolBase } from './base';
 import type { ToolMiddlewareBase } from './base';
 import { ToolChunk } from './response';
+import { fnmatchPath } from './utils';
 
 const IMAGE_EXTENSIONS: Record<string, string> = {
     '.png': 'image/png',
@@ -90,7 +91,7 @@ Usage:
         toolInput: Record<string, unknown>
     ): Promise<boolean> {
         const filePath = typeof toolInput.file_path === 'string' ? toolInput.file_path : '';
-        return filePath !== '' && globMatches(filePath, ruleContent);
+        return filePath !== '' && fnmatchPath(filePath, ruleContent);
     }
 
     override async generateSuggestions(
@@ -308,10 +309,4 @@ function errorChunk(message: string): ToolChunk {
 
 function errorMessage(error: unknown): string {
     return error instanceof Error ? error.message : String(error);
-}
-
-function globMatches(value: string, pattern: string): boolean {
-    const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, '\\$&');
-    const regex = escaped.replace(/\*\*/g, '\0').replace(/\*/g, '[^/\\\\]*').replace(/\0/g, '.*');
-    return new RegExp(`^${regex}$`).test(value);
 }

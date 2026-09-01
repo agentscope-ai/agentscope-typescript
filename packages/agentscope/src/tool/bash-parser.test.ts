@@ -59,6 +59,10 @@ describe('BashCommandParser', () => {
             'err',
             'all',
         ]);
+        expect(parser.extractFilePaths('cp C:\\work\\source C:\\work\\target')).toEqual([
+            ['cp', 'C:\\work\\source'],
+            ['cp', 'C:\\work\\target'],
+        ]);
     });
 
     test('detects dynamic syntax and dangerous commands', () => {

@@ -407,7 +407,7 @@ function lexShell(command: string): ShellToken[] {
             escaped = false;
             continue;
         }
-        if (character === '\\' && quote !== "'") {
+        if (character === '\\' && quote !== "'" && !/^[A-Za-z]:/.test(value)) {
             escaped = true;
             continue;
         }

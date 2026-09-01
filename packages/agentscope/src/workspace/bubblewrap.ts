@@ -293,8 +293,9 @@ export class BubblewrapBackend extends BackendBase {
 
     private async resolveExistingHostPath(filePath: string): Promise<string> {
         const mapped = this.mapSandboxPath(filePath);
+        const resolvedRoot = await fs.realpath(mapped.root);
         const resolved = await fs.realpath(mapped.hostPath);
-        assertInside(mapped.root, resolved, filePath);
+        assertInside(resolvedRoot, resolved, filePath);
         return resolved;
     }
 
@@ -306,11 +307,12 @@ export class BubblewrapBackend extends BackendBase {
             if (parent === ancestor) break;
             ancestor = parent;
         }
+        const resolvedRoot = await fs.realpath(mapped.root);
         const resolvedAncestor = await fs.realpath(ancestor);
-        assertInside(mapped.root, resolvedAncestor, filePath);
+        assertInside(resolvedRoot, resolvedAncestor, filePath);
         await fs.mkdir(path.dirname(mapped.hostPath), { recursive: true });
         const resolvedParent = await fs.realpath(path.dirname(mapped.hostPath));
-        assertInside(mapped.root, resolvedParent, filePath);
+        assertInside(resolvedRoot, resolvedParent, filePath);
         if (isSymbolicLink(mapped.hostPath))
             throw new Error(`Refusing symbolic-link write: ${filePath}`);
         return path.join(resolvedParent, path.basename(mapped.hostPath));

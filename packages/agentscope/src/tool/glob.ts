@@ -11,6 +11,7 @@ import { LocalBackend } from './backend';
 import { ToolBase } from './base';
 import type { ToolMiddlewareBase } from './base';
 import { ToolChunk } from './response';
+import { fnmatchPath } from './utils';
 
 export interface GlobToolOptions {
     backend?: BackendBase;
@@ -50,8 +51,8 @@ Supports glob patterns like "**/*.js" or "src/**/*.ts" and returns matching file
         const searchPath = typeof toolInput.path === 'string' ? toolInput.path : '';
         const pattern = typeof toolInput.pattern === 'string' ? toolInput.pattern : '';
         return (
-            (searchPath !== '' && minimatch(searchPath, ruleContent, { dot: true })) ||
-            (pattern !== '' && minimatch(pattern, ruleContent, { dot: true }))
+            (searchPath !== '' && fnmatchPath(searchPath, ruleContent)) ||
+            (pattern !== '' && fnmatchPath(pattern, ruleContent))
         );
     }
 

@@ -1,6 +1,5 @@
 /* eslint-disable jsdoc/require-jsdoc */
 
-import { minimatch } from 'minimatch';
 import { z } from 'zod';
 
 import { TextBlock } from '../message';
@@ -11,6 +10,7 @@ import { LocalBackend } from './backend';
 import { ToolBase } from './base';
 import type { ToolMiddlewareBase } from './base';
 import { ToolChunk } from './response';
+import { fnmatchPath } from './utils';
 
 const VCS_DIRECTORIES = ['.git', '.svn', '.hg', '.bzr', '.jj', '.sl'];
 const DEFAULT_HEAD_LIMIT = 250;
@@ -68,7 +68,7 @@ export class GrepTool extends ToolBase {
     ): Promise<boolean> {
         const searchPath =
             typeof toolInput.path === 'string' ? toolInput.path : await this.backend.getCwd();
-        return minimatch(searchPath, ruleContent, { dot: true });
+        return fnmatchPath(searchPath, ruleContent);
     }
 
     override async generateSuggestions(

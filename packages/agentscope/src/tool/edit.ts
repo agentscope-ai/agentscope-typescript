@@ -1,6 +1,5 @@
 /* eslint-disable jsdoc/require-jsdoc */
 
-import { createTwoFilesPatch } from 'diff';
 import { z } from 'zod';
 
 import { TextBlock } from '../message';
@@ -12,6 +11,7 @@ import { LocalBackend, normalizeNewlines } from './backend';
 import { ToolBase } from './base';
 import type { ToolMiddlewareBase } from './base';
 import { ToolChunk } from './response';
+import { createPythonUnifiedDiff, fnmatchPath } from './utils';
 
 export interface EditToolOptions {
     backend?: BackendBase;
@@ -86,7 +86,7 @@ Usage:
         toolInput: Record<string, unknown>
     ): Promise<boolean> {
         const filePath = typeof toolInput.file_path === 'string' ? toolInput.file_path : '';
-        return filePath !== '' && globMatches(filePath, ruleContent);
+        return filePath !== '' && fnmatchPath(filePath, ruleContent);
     }
 
     override async generateSuggestions(
@@ -164,15 +164,7 @@ Usage:
         const replacementMessage = parsed.replace_all
             ? `all ${occurrences} occurrences`
             : '1 occurrence';
-        const diff = createTwoFilesPatch(
-            `a/${filePath}`,
-            `b/${filePath}`,
-            content,
-            updated,
-            '',
-            '',
-            { context: 3 }
-        ).replace(/^===================================================================\n/, '');
+        const diff = createPythonUnifiedDiff(`a/${filePath}`, `b/${filePath}`, content, updated);
         return new ToolChunk({
             content: [
                 TextBlock({
@@ -203,10 +195,4 @@ function errorChunk(message: string): ToolChunk {
 
 function errorMessage(error: unknown): string {
     return error instanceof Error ? error.message : String(error);
-}
-
-function globMatches(value: string, pattern: string): boolean {
-    const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, '\\$&');
-    const regex = escaped.replace(/\*\*/g, '\0').replace(/\*/g, '[^/\\\\]*').replace(/\0/g, '.*');
-    return new RegExp(`^${regex}$`).test(value);
 }
