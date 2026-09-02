@@ -9,6 +9,32 @@ on:
             - main
 
 jobs:
+    parity-manifest:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout TypeScript repository
+              uses: actions/checkout@v4
+
+            - name: Checkout pinned Python baseline
+              uses: actions/checkout@v4
+              with:
+                  repository: agentscope-ai/agentscope
+                  ref: de163b34b909edaba3c174190ad7e1a355e7849f
+                  path: python-baseline
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20.x
+
+            - name: Test parity tooling
+              run: node --test scripts/parity/*.test.mjs
+
+            - name: Verify parity manifest against Python
+              run: >-
+                  node scripts/parity/check-manifest.mjs
+                  --python-root python-baseline
+
     lint:
         runs-on: ubuntu-latest
         steps:
