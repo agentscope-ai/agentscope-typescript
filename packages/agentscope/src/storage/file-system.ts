@@ -3,8 +3,8 @@ import path from 'path';
 
 import * as mime from 'mime-types';
 
-import { Msg } from '../message';
 import { AgentState, StorageBase } from './base';
+import type { Msg } from '../message/message';
 
 /**
  * Local file system storage implementation.

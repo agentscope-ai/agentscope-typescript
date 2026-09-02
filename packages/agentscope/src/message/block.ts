@@ -1,4 +1,4 @@
-import { PermissionRule } from '../permission';
+import type { PermissionRule } from '../permission';
 
 export interface TextBlock {
     type: 'text';

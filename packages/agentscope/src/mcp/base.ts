@@ -2,9 +2,10 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { CallToolRequest, CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
 import z from 'zod';
 
-import { Tool, ToolResponse } from '../tool';
+import type { Tool } from '../tool/base';
 import { createToolResponse } from '../tool/response';
-import { ToolInputSchema } from '../type';
+import type { ToolResponse } from '../tool/response';
+import type { ToolInputSchema } from '../type';
 
 /**
  * Type definition for getting a client instance

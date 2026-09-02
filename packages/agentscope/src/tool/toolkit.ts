@@ -5,12 +5,13 @@ import { Validator } from '@cfworker/json-schema';
 import matter from 'gray-matter';
 import { z } from 'zod';
 
-import { createToolResponse, isToolResponse, ToolResponse } from './response';
-import { HTTPMCPClient, StdioMCPClient } from '../mcp';
-import { ToolCallBlock } from '../message';
-import { ToolInputSchema, ToolSchema } from '../type';
-import { Tool } from './base';
 import { _jsonLoadsWithRepair } from '../_utils';
+import { HTTPMCPClient } from '../mcp/http';
+import { StdioMCPClient } from '../mcp/stdio';
+import type { ToolCallBlock } from '../message/block';
+import type { ToolInputSchema, ToolSchema } from '../type';
+import type { Tool } from './base';
+import { createToolResponse, isToolResponse, ToolResponse } from './response';
 
 interface RegisteredTool extends Tool {
     type: 'function' | 'mcp';

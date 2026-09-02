@@ -9,6 +9,7 @@
         "dev:agentscope": "pnpm --filter @agentscope-ai/agentscope dev",
         "dev:desktop": "cd apps/desktop && pnpm dev",
         "test:agentscope": "pnpm --filter @agentscope-ai/agentscope test",
+        "test:package": "node scripts/package-smoke.mjs",
         "clean:agentscope": "pnpm --filter @agentscope-ai/agentscope clean",
         "format": "prettier --write . && eslint . --ext .ts,.tsx --fix",
         "prepare": "husky"

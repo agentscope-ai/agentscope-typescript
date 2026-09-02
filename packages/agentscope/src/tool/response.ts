@@ -1,5 +1,5 @@
-import { DataBlock, TextBlock } from '../message';
-import { JSONSerializableObject } from '../type';
+import type { DataBlock, TextBlock } from '../message/block';
+import type { JSONSerializableObject } from '../type';
 
 /**
  * The tool response structure.

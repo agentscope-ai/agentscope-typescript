@@ -77,17 +77,7 @@ jobs:
               run: pnpm run build:agentscope
 
             - name: Test package installation
-              shell: bash
-              run: |
-                  cd packages/agentscope
-                  npm pack
-                  TARBALL=$(ls agentscope-ai-agentscope-*.tgz)
-                  mkdir -p ../../test-install
-                  cd ../../test-install
-                  npm init -y
-                  npm install "../packages/agentscope/$TARBALL"
-                  node -e "const { Agent } = require('@agentscope-ai/agentscope/agent'); console.log('CJS import successful:', typeof Agent === 'function');"
-                  node --input-type=module -e "import { Agent } from '@agentscope-ai/agentscope/agent'; console.log('ESM import successful:', typeof Agent === 'function');"
+              run: pnpm run test:package
 
             - name: Build Desktop app
               run: pnpm run build:desktop

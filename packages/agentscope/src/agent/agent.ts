@@ -1,23 +1,12 @@
 import { z } from 'zod';
 
-import {
-    ContentBlock,
-    createMsg,
-    getContentBlocks,
-    Msg,
-    ToolCallBlock,
-    ToolResultBlock,
-} from '../message';
-import { ChatModelBase, ChatResponse, ChatUsage } from '../model';
-import { Toolkit, ToolResponse } from '../tool';
 import { ActingOptions, ObserveOptions, ReasoningOptions, ReplyOptions } from './interfaces';
-import {
+import { EventType, ReplyFinishedReason } from '../event';
+import type {
     AgentEvent,
-    EventType,
     ModelCallEndEvent,
     ModelCallStartEvent,
     ReplyEndEvent,
-    ReplyFinishedReason,
     ReplyStartEvent,
     TextBlockDeltaEvent,
     TextBlockEndEvent,
@@ -33,7 +22,15 @@ import {
     ToolResultStartEvent,
     ToolResultTextDeltaEvent,
 } from '../event';
-import { StorageBase } from '../storage';
+import type { ContentBlock, ToolCallBlock, ToolResultBlock } from '../message/block';
+import { createMsg, getContentBlocks } from '../message/message';
+import type { Msg } from '../message/message';
+import type { ChatModelBase } from '../model/base';
+import type { ChatResponse } from '../model/response';
+import type { ChatUsage } from '../model/usage';
+import type { StorageBase } from '../storage/base';
+import type { ToolResponse } from '../tool/response';
+import { Toolkit } from '../tool/toolkit';
 
 const DEFAULT_COMPRESSION_PROMPT =
     '<system-hint>You have been working on the task described above but have not yet completed it. ' +
