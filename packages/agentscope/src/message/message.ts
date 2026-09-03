@@ -1,4 +1,4 @@
-import { JSONSerializableObject } from '../type';
+import type { JSONSerializableObject } from '../type';
 import {
     ContentBlock,
     TextBlock,
@@ -9,9 +9,11 @@ import {
     HintBlock,
     Base64Source,
     URLSource,
+    ContentBlockType,
 } from './block';
-import { base64ToBytes, bytesToBase64 } from '../_utils/common';
-import { AgentEvent, EventType, ReplyFinishedReason, ErrorInfo } from '../event';
+import { _generateId, _generateTimestamp, base64ToBytes, bytesToBase64 } from '../_utils/common';
+import { EventType, ReplyFinishedReason } from '../event';
+import type { AgentEvent, ErrorInfo } from '../event';
 
 /** A chat message exchanged between agents or between an agent and a model. */
 export interface Msg {
@@ -28,21 +30,45 @@ export interface Msg {
     /** ISO-8601 creation timestamp. */
     created_at: string;
     /** ISO-8601 finished timestamp. */
-    finished_at?: string | null;
+    finished_at: string | null;
     /**
      * Terminal reason of this reply (error / interrupted / exceed_max_iters).
      * Undefined/null until a REPLY_END event is applied.
      */
-    finished_reason?: ReplyFinishedReason | null;
+    finished_reason: ReplyFinishedReason | null;
+    /** Structured response payload, when requested and successfully generated. */
+    structured_output: Record<string, JSONSerializableObject> | null;
     /**
      * Structured error info, populated only when
      * `finished_reason === ReplyFinishedReason.ERROR`.
      */
-    error?: ErrorInfo | null;
+    error: ErrorInfo | null;
     /** Usage information for the message, such as token counts. */
-    usage?: {
-        input_tokens: number;
-        output_tokens: number;
+    usage: Usage | null;
+}
+
+/** Token usage stored on a message. */
+export interface Usage {
+    input_tokens: number;
+    output_tokens: number;
+    cache_input_tokens: number;
+    cache_creation_input_tokens: number;
+}
+
+type UsageInput = Pick<Usage, 'input_tokens' | 'output_tokens'> & Partial<Usage>;
+
+/**
+ * Normalize optional cache-token counters in usage input.
+ * @param usage
+ * @returns Normalized usage, or `null` when absent.
+ */
+function normalizeUsage(usage: UsageInput | null | undefined): Usage | null {
+    if (usage == null) return null;
+    return {
+        input_tokens: usage.input_tokens,
+        output_tokens: usage.output_tokens,
+        cache_input_tokens: usage.cache_input_tokens ?? 0,
+        cache_creation_input_tokens: usage.cache_creation_input_tokens ?? 0,
     };
 }
 
@@ -96,6 +122,9 @@ function assertContentBlocksForRole(role: Msg['role'], content: ContentBlock[]):
  * @param root0.created_at
  * @param root0.finished_at
  * @param root0.usage
+ * @param root0.finished_reason
+ * @param root0.structured_output
+ * @param root0.error
  * @returns A Msg object with the specified properties, and defaults for any omitted fields.
  */
 export function createMsg({
@@ -103,27 +132,42 @@ export function createMsg({
     content,
     role,
     metadata = {},
-    id = crypto.randomUUID(),
-    created_at = new Date().toISOString(),
-    finished_at,
+    id = _generateId(),
+    created_at = _generateTimestamp(),
+    finished_at = null,
+    finished_reason = null,
+    structured_output = null,
+    error = null,
     usage,
-}: Omit<Msg, 'id' | 'created_at' | 'metadata' | 'content'> &
-    Partial<Pick<Msg, 'id' | 'created_at' | 'metadata'>> & {
-        content: string | ContentBlock[];
-    }): Msg {
+}: {
+    name: string;
+    content: string | ContentBlock[];
+    role: Msg['role'];
+    metadata?: Msg['metadata'];
+    id?: string;
+    created_at?: string;
+    usage?: UsageInput | null;
+    finished_at?: string | null;
+    finished_reason?: ReplyFinishedReason | null;
+    structured_output?: Msg['structured_output'];
+    error?: ErrorInfo | null;
+}): Msg {
     const contentBlocks: ContentBlock[] =
-        typeof content === 'string'
-            ? [
-                  {
-                      id: crypto.randomUUID(),
-                      type: 'text',
-                      text: content,
-                      created_at: new Date().toISOString(),
-                  } as TextBlock,
-              ]
-            : content;
+        typeof content === 'string' ? [TextBlock({ text: content })] : content;
     assertContentBlocksForRole(role, contentBlocks);
-    return { id, name, role, content: contentBlocks, metadata, created_at, finished_at, usage };
+    return {
+        id,
+        name,
+        role,
+        content: contentBlocks,
+        metadata,
+        created_at,
+        usage: normalizeUsage(usage),
+        finished_at,
+        finished_reason,
+        structured_output,
+        error,
+    };
 }
 
 /**
@@ -135,31 +179,36 @@ export function createMsg({
  * @param root0.id
  * @param root0.created_at
  * @param root0.finished_at
+ * @param root0.finished_reason
  * @returns A Msg object with role 'user'.
  */
 export function UserMsg({
     name,
     content,
-    metadata = {},
-    id = crypto.randomUUID(),
-    created_at = new Date().toISOString(),
+    metadata,
+    id,
+    created_at,
     finished_at,
+    finished_reason,
 }: {
     name: string;
     content: string | ContentBlock[];
-    metadata?: Record<string, JSONSerializableObject>;
-    id?: string;
-    created_at?: string;
+    metadata?: Record<string, JSONSerializableObject> | null;
+    id?: string | null;
+    created_at?: string | null;
     finished_at?: string | null;
+    finished_reason?: ReplyFinishedReason | null;
 }): Msg {
+    const actualCreatedAt = created_at || _generateTimestamp();
     return createMsg({
         name,
         content,
         role: 'user',
-        metadata,
-        id,
-        created_at,
-        finished_at: finished_at ?? created_at,
+        metadata: metadata ?? {},
+        id: id || _generateId(),
+        created_at: actualCreatedAt,
+        finished_at: finished_at ?? actualCreatedAt,
+        finished_reason,
     });
 }
 
@@ -172,24 +221,44 @@ export function UserMsg({
  * @param root0.id
  * @param root0.created_at
  * @param root0.usage
+ * @param root0.finished_at
+ * @param root0.finished_reason
+ * @param root0.structured_output
  * @returns A Msg object with role 'assistant'.
  */
 export function AssistantMsg({
     name,
     content,
-    metadata = {},
-    id = crypto.randomUUID(),
-    created_at = new Date().toISOString(),
+    metadata,
+    id,
+    created_at,
     usage,
+    finished_at,
+    finished_reason,
+    structured_output,
 }: {
     name: string;
     content: string | ContentBlock[];
-    metadata?: Record<string, JSONSerializableObject>;
-    id?: string;
-    created_at?: string;
-    usage?: Msg['usage'];
+    metadata?: Record<string, JSONSerializableObject> | null;
+    id?: string | null;
+    created_at?: string | null;
+    usage?: UsageInput | null;
+    finished_at?: string | null;
+    finished_reason?: ReplyFinishedReason | null;
+    structured_output?: Msg['structured_output'];
 }): Msg {
-    return createMsg({ name, content, role: 'assistant', metadata, id, created_at, usage });
+    return createMsg({
+        name,
+        content,
+        role: 'assistant',
+        metadata: metadata ?? {},
+        id: id || _generateId(),
+        created_at: created_at || _generateTimestamp(),
+        usage,
+        finished_at,
+        finished_reason,
+        structured_output,
+    });
 }
 
 /**
@@ -201,31 +270,36 @@ export function AssistantMsg({
  * @param root0.id
  * @param root0.created_at
  * @param root0.finished_at
+ * @param root0.finished_reason
  * @returns A Msg object with role 'system'.
  */
 export function SystemMsg({
     name,
     content,
-    metadata = {},
-    id = crypto.randomUUID(),
-    created_at = new Date().toISOString(),
+    metadata,
+    id,
+    created_at,
     finished_at,
+    finished_reason,
 }: {
     name: string;
     content: string | ContentBlock[];
-    metadata?: Record<string, JSONSerializableObject>;
-    id?: string;
-    created_at?: string;
+    metadata?: Record<string, JSONSerializableObject> | null;
+    id?: string | null;
+    created_at?: string | null;
     finished_at?: string | null;
+    finished_reason?: ReplyFinishedReason | null;
 }): Msg {
+    const actualCreatedAt = created_at || _generateTimestamp();
     return createMsg({
         name,
         content,
         role: 'system',
-        metadata,
-        id,
-        created_at,
-        finished_at: finished_at ?? created_at,
+        metadata: metadata ?? {},
+        id: id || _generateId(),
+        created_at: actualCreatedAt,
+        finished_at: finished_at ?? actualCreatedAt,
+        finished_reason,
     });
 }
 
@@ -246,6 +320,21 @@ export function getTextContent(msg: Msg, separator: string = '\n'): string | nul
 }
 
 /**
+ * Check whether a message contains any block of the requested type.
+ * @param msg
+ * @param blockType
+ * @returns Whether a matching block exists.
+ */
+export function hasContentBlocks(
+    msg: Msg,
+    blockType?: ContentBlockType | ContentBlockType[] | null
+): boolean {
+    if (blockType == null) return msg.content.length > 0;
+    const blockTypes = Array.isArray(blockType) ? blockType : [blockType];
+    return msg.content.some(block => blockTypes.includes(block.type));
+}
+
+/**
  * Return all content blocks from a message, regardless of type.
  *
  * When `content` is a plain string it is wrapped in a single {@link TextBlock}.
@@ -260,12 +349,14 @@ export function getContentBlocks(msg: Msg, blockType: 'hint'): HintBlock[];
 export function getContentBlocks(msg: Msg, blockType: 'data'): DataBlock[];
 export function getContentBlocks(msg: Msg, blockType: 'tool_call'): ToolCallBlock[];
 export function getContentBlocks(msg: Msg, blockType: 'tool_result'): ToolResultBlock[];
+export function getContentBlocks(msg: Msg, blockType: ContentBlockType[]): ContentBlock[];
 export function getContentBlocks(
     msg: Msg,
-    blockType?: 'text' | 'thinking' | 'hint' | 'data' | 'tool_call' | 'tool_result'
+    blockType?: ContentBlockType | ContentBlockType[] | null
 ): ContentBlock[] {
-    if (!blockType) return msg.content;
-    return msg.content.filter(block => block.type === blockType);
+    if (blockType == null) return msg.content;
+    const blockTypes = Array.isArray(blockType) ? blockType : [blockType];
+    return msg.content.filter(block => blockTypes.includes(block.type));
 }
 
 /**
@@ -305,12 +396,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             break;
 
         case EventType.TEXT_BLOCK_START:
-            msg.content.push({
-                type: 'text',
-                id: event.block_id,
-                text: '',
-                created_at: event.created_at,
-            });
+            msg.content.push(TextBlock({ id: event.block_id, text: '' }));
             break;
 
         case EventType.TEXT_BLOCK_DELTA: {
@@ -334,12 +420,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
         }
 
         case EventType.THINKING_BLOCK_START:
-            msg.content.push({
-                type: 'thinking',
-                id: event.block_id,
-                thinking: '',
-                created_at: event.created_at,
-            });
+            msg.content.push(ThinkingBlock({ id: event.block_id, thinking: '' }));
             break;
 
         case EventType.THINKING_BLOCK_DELTA: {
@@ -365,25 +446,23 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
         case EventType.HINT_BLOCK: {
             // Hint blocks are not streamed — the full content arrives in
             // a single event and is appended as a complete HintBlock.
-            const hintBlock: HintBlock = {
-                type: 'hint',
+            const hintBlock = HintBlock({
                 id: event.block_id,
                 hint: event.hint,
                 source: event.source ?? null,
-                created_at: event.created_at,
-                finished_at: event.created_at,
-            };
+            });
+            hintBlock.finished_at = hintBlock.created_at;
             msg.content.push(hintBlock);
             break;
         }
 
         case EventType.DATA_BLOCK_START:
-            msg.content.push({
-                type: 'data',
-                id: event.block_id,
-                source: { type: 'base64', data: '', media_type: event.media_type },
-                created_at: event.created_at,
-            });
+            msg.content.push(
+                DataBlock({
+                    id: event.block_id,
+                    source: Base64Source({ data: '', media_type: event.media_type }),
+                })
+            );
             break;
 
         case EventType.DATA_BLOCK_DELTA: {
@@ -417,14 +496,13 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
         }
 
         case EventType.TOOL_CALL_START:
-            msg.content.push({
-                type: 'tool_call',
-                id: event.tool_call_id,
-                name: event.tool_call_name,
-                input: '',
-                state: 'pending',
-                created_at: event.created_at,
-            });
+            msg.content.push(
+                ToolCallBlock({
+                    id: event.tool_call_id,
+                    name: event.tool_call_name,
+                    input: '',
+                })
+            );
             break;
 
         case EventType.TOOL_CALL_DELTA: {
@@ -448,14 +526,13 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
         }
 
         case EventType.TOOL_RESULT_START:
-            msg.content.push({
-                type: 'tool_result',
-                id: event.tool_call_id,
-                name: event.tool_call_name,
-                output: [],
-                state: 'running',
-                created_at: event.created_at,
-            });
+            msg.content.push(
+                ToolResultBlock({
+                    id: event.tool_call_id,
+                    name: event.tool_call_name,
+                    output: [],
+                })
+            );
             break;
 
         case EventType.TOOL_RESULT_TEXT_DELTA: {
@@ -465,23 +542,11 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             } else {
                 const trb = block as ToolResultBlock;
                 if (typeof trb.output === 'string') {
-                    trb.output = [
-                        {
-                            type: 'text',
-                            id: crypto.randomUUID(),
-                            text: trb.output,
-                            created_at: event.created_at,
-                        },
-                    ];
+                    trb.output = [TextBlock({ text: trb.output })];
                 }
                 const last = trb.output[trb.output.length - 1];
                 if (!last || last.type !== 'text') {
-                    trb.output.push({
-                        type: 'text',
-                        id: crypto.randomUUID(),
-                        text: event.delta,
-                        created_at: event.created_at,
-                    });
+                    trb.output.push(TextBlock({ text: event.delta }));
                 } else {
                     (last as TextBlock).text += event.delta;
                 }
@@ -496,25 +561,13 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             } else {
                 const trb = block as ToolResultBlock;
                 if (typeof trb.output === 'string') {
-                    trb.output = [
-                        {
-                            type: 'text',
-                            id: crypto.randomUUID(),
-                            text: trb.output,
-                            created_at: event.created_at,
-                        },
-                    ];
+                    trb.output = [TextBlock({ text: trb.output })];
                 }
                 const source: Base64Source | URLSource =
                     event.data != null
-                        ? { type: 'base64', data: event.data, media_type: event.media_type }
-                        : { type: 'url', url: event.url!, media_type: event.media_type };
-                trb.output.push({
-                    type: 'data',
-                    id: event.block_id ?? crypto.randomUUID(),
-                    source,
-                    created_at: event.created_at,
-                });
+                        ? Base64Source({ data: event.data, media_type: event.media_type })
+                        : URLSource({ url: event.url!, media_type: event.media_type });
+                trb.output.push(DataBlock({ id: event.block_id ?? _generateId(), source }));
             }
             break;
         }
@@ -525,7 +578,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                 console.warn(`ToolResultBlock "${event.tool_call_id}" not found, skipping.`);
             } else {
                 (block as ToolResultBlock).state = event.state;
-                (block as ToolResultBlock).metadata = event.metadata;
+                (block as ToolResultBlock).metadata = event.metadata ?? {};
                 (block as ToolResultBlock).finished_at = event.created_at;
             }
             // The paired ToolCallBlock's lifecycle ends with its
@@ -542,10 +595,14 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             if (msg.usage) {
                 msg.usage.input_tokens += event.input_tokens;
                 msg.usage.output_tokens += event.output_tokens;
+                msg.usage.cache_input_tokens += event.cache_input_tokens ?? 0;
+                msg.usage.cache_creation_input_tokens += event.cache_creation_input_tokens ?? 0;
             } else {
                 msg.usage = {
                     input_tokens: event.input_tokens,
                     output_tokens: event.output_tokens,
+                    cache_input_tokens: event.cache_input_tokens ?? 0,
+                    cache_creation_input_tokens: event.cache_creation_input_tokens ?? 0,
                 };
             }
             break;

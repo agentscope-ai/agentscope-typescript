@@ -147,6 +147,11 @@ describe('Human-in-the-loop', () => {
                 name: 'Friday',
                 role: 'assistant',
                 created_at: expect.any(String),
+                usage: null,
+                finished_at: null,
+                finished_reason: null,
+                structured_output: null,
+                error: null,
             },
         ]);
 
@@ -408,7 +413,11 @@ describe('Human-in-the-loop', () => {
                 name: 'Friday',
                 role: 'assistant',
                 created_at: expect.any(String),
-                finished_at: undefined,
+                usage: null,
+                finished_at: null,
+                finished_reason: null,
+                structured_output: null,
+                error: null,
             },
         ]);
 
