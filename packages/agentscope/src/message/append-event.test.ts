@@ -46,7 +46,12 @@ function ts(n: number): string {
  * @param finishedAt
  * @returns A text block object.
  */
-function tb(blockId: string, text: string, createdAt: string, finishedAt?: string): TextBlock {
+function tb(
+    blockId: string,
+    text: string,
+    createdAt: string,
+    finishedAt: string | null = null
+): TextBlock {
     return { type: 'text', id: blockId, text, created_at: createdAt, finished_at: finishedAt };
 }
 
@@ -62,7 +67,7 @@ function thb(
     blockId: string,
     thinking: string,
     createdAt: string,
-    finishedAt?: string
+    finishedAt: string | null = null
 ): ThinkingBlock {
     return {
         type: 'thinking',
@@ -87,12 +92,13 @@ function dbB64(
     data: string,
     mediaType: string,
     createdAt: string,
-    finishedAt?: string
+    finishedAt: string | null = null
 ): DataBlock {
     return {
         type: 'data',
         id: blockId,
         source: { type: 'base64', data, media_type: mediaType },
+        name: null,
         created_at: createdAt,
         finished_at: finishedAt,
     };
@@ -112,12 +118,13 @@ function dbUrl(
     url: string,
     mediaType: string,
     createdAt: string,
-    finishedAt?: string
+    finishedAt: string | null = null
 ): DataBlock {
     return {
         type: 'data',
         id: blockId,
         source: { type: 'url', url, media_type: mediaType },
+        name: null,
         created_at: createdAt,
         finished_at: finishedAt,
     };
@@ -140,8 +147,8 @@ function tcb(
     inp: string,
     state: ToolCallBlock['state'],
     createdAt: string,
-    finishedAt?: string,
-    suggestedRules?: PermissionRule[]
+    finishedAt: string | null = null,
+    suggestedRules: PermissionRule[] = []
 ): ToolCallBlock {
     const block: ToolCallBlock = {
         type: 'tool_call',
@@ -152,7 +159,7 @@ function tcb(
         created_at: createdAt,
         finished_at: finishedAt,
     };
-    if (suggestedRules !== undefined) block.suggested_rules = suggestedRules;
+    block.suggested_rules = suggestedRules;
     return block;
 }
 
@@ -172,7 +179,7 @@ function trb(
     output: ToolResultBlock['output'],
     state: ToolResultBlock['state'],
     createdAt: string,
-    finishedAt?: string
+    finishedAt: string | null = null
 ): ToolResultBlock {
     return {
         type: 'tool_result',
@@ -180,6 +187,7 @@ function trb(
         name,
         output,
         state,
+        metadata: {},
         created_at: createdAt,
         finished_at: finishedAt,
     };
@@ -190,6 +198,7 @@ describe('appendEvent', () => {
     let createdAt: string;
 
     beforeEach(() => {
+        jest.useFakeTimers().setSystemTime(new Date(ts(0)));
         msg = createMsg({
             id: REPLY_ID,
             name: 'TestAgent',
@@ -197,6 +206,10 @@ describe('appendEvent', () => {
             content: [],
         });
         createdAt = msg.created_at;
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
     });
 
     /**
@@ -513,6 +526,7 @@ describe('appendEvent', () => {
                             id: expect.any(String),
                             text: 'Found:',
                             created_at: ts(20),
+                            finished_at: null,
                         },
                     ],
                     'running',
@@ -541,6 +555,7 @@ describe('appendEvent', () => {
                             id: expect.any(String),
                             text: 'Found: 3 items',
                             created_at: ts(20),
+                            finished_at: null,
                         },
                     ],
                     'running',
@@ -575,6 +590,7 @@ describe('appendEvent', () => {
                             id: expect.any(String),
                             text: 'Found: 3 items',
                             created_at: ts(20),
+                            finished_at: null,
                         },
                     ],
                     'success',
@@ -596,6 +612,7 @@ describe('appendEvent', () => {
                         id: expect.any(String),
                         text: 'Found: 3 items',
                         created_at: ts(20),
+                        finished_at: null,
                     },
                 ],
                 'success',
@@ -707,7 +724,9 @@ describe('appendEvent', () => {
             name: 'run_code',
             output: 'output: hello',
             state: 'success',
+            metadata: {},
             created_at: EXT_RES_CREATED,
+            finished_at: null,
         };
         events.push({
             id: '30',
@@ -866,6 +885,7 @@ describe('appendEvent', () => {
         // Apply all events and check ground truths
         expect(events.length).toBe(groundTruths.length);
         for (let i = 0; i < events.length; i++) {
+            jest.setSystemTime(new Date(events[i].created_at));
             appendEvent(msg, events[i]);
             expect(msgDump(msg)).toEqual(groundTruths[i]);
         }
@@ -884,12 +904,49 @@ describe('appendEvent', () => {
         expect(msgDump(msg)).toEqual(original);
     });
 
+    test('MODEL_CALL_END initializes and accumulates all Python usage fields', () => {
+        appendEvent(msg, {
+            id: 'model-1',
+            created_at: ts(1),
+            type: EventType.MODEL_CALL_END,
+            reply_id: REPLY_ID,
+            input_tokens: 100,
+            output_tokens: 20,
+            cache_input_tokens: 60,
+            cache_creation_input_tokens: 10,
+        });
+        expect(msg.usage).toEqual({
+            input_tokens: 100,
+            output_tokens: 20,
+            cache_input_tokens: 60,
+            cache_creation_input_tokens: 10,
+        });
+
+        appendEvent(msg, {
+            id: 'model-2',
+            created_at: ts(2),
+            type: EventType.MODEL_CALL_END,
+            reply_id: REPLY_ID,
+            input_tokens: 25,
+            output_tokens: 5,
+            cache_input_tokens: 12,
+            cache_creation_input_tokens: 2,
+        });
+        expect(msg.usage).toEqual({
+            input_tokens: 125,
+            output_tokens: 25,
+            cache_input_tokens: 72,
+            cache_creation_input_tokens: 12,
+        });
+    });
+
     test('HINT_BLOCK one-shot event appends a complete HintBlock', () => {
         const HINT_ID_1 = 'h_001';
         const HINT_ID_2 = 'h_002';
 
         // String hint with source — created_at and finished_at both come
         // from the one-shot event's timestamp.
+        jest.setSystemTime(new Date(ts(1)));
         appendEvent(msg, {
             id: 'e1',
             created_at: ts(1),
@@ -920,6 +977,7 @@ describe('appendEvent', () => {
                 created_at: ts(2),
             },
         ];
+        jest.setSystemTime(new Date(ts(2)));
         appendEvent(msg, {
             id: 'e2',
             created_at: ts(2),
