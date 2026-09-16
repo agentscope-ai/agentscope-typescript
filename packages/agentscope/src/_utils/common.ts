@@ -3,6 +3,22 @@ import { jsonrepair } from 'jsonrepair';
 import { JSONSerializableObject } from '../type';
 
 /**
+ * Generate a Python-compatible entity identifier.
+ * @returns A UUID hex string.
+ */
+export function _generateId(): string {
+    return crypto.randomUUID().replaceAll('-', '');
+}
+
+/**
+ * Generate an ISO-8601 entity timestamp.
+ * @returns The current timestamp.
+ */
+export function _generateTimestamp(): string {
+    return new Date().toISOString();
+}
+
+/**
  * Decode a base64 string to a Uint8Array.
  * Works in both Node.js and browser environments.
  * @param b64

@@ -6,7 +6,9 @@ export {
     SystemMsg,
     getTextContent,
     getContentBlocks,
+    hasContentBlocks,
     appendEvent,
+    Usage,
 } from './message';
 export {
     TextBlock,
@@ -17,8 +19,26 @@ export {
     ToolResultBlock,
     ToolResultState,
     ContentBlock,
+    ContentBlockType,
+    ContentBlockTypes,
     Base64Source,
     URLSource,
     DataBlock,
 } from './block';
 export { GenerateReason } from './enums';
+export {
+    TextBlockSchema,
+    ThinkingBlockSchema,
+    Base64SourceSchema,
+    URLSourceSchema,
+    DataSourceSchema,
+    DataBlockSchema,
+    HintBlockSchema,
+    ToolCallBlockSchema,
+    ToolResultBlockSchema,
+    ContentBlockSchema,
+    UsageSchema,
+    MsgSchema,
+    parseContentBlock,
+    parseMsg,
+} from './schema';

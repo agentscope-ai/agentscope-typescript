@@ -21,18 +21,15 @@ export function applyAgentEvent(
                 if (existingMsg) {
                     // Already exists, mark as not finished
                     return prev.map(m =>
-                        m.id === event.reply_id ? { ...m, finished_at: undefined } : m
+                        m.id === event.reply_id ? { ...m, finished_at: null } : m
                     );
                 }
-                const newMsg: Msg = {
-                    ...createMsg({
-                        id: event.reply_id,
-                        role: event.role,
-                        name: event.name,
-                        content: [],
-                    }),
-                    finished_at: undefined,
-                };
+                const newMsg = createMsg({
+                    id: event.reply_id,
+                    role: event.role,
+                    name: event.name,
+                    content: [],
+                });
                 return [...prev, newMsg];
             });
             break;
@@ -58,17 +55,9 @@ export function applyAgentEvent(
             setMessages(prev =>
                 prev.map(m => {
                     if (m.id !== event.reply_id) return m;
-                    const currentUsage = m.usage || {
-                        input_tokens: 0,
-                        output_tokens: 0,
-                    };
-                    return {
-                        ...m,
-                        usage: {
-                            input_tokens: currentUsage.input_tokens + event.input_tokens,
-                            output_tokens: currentUsage.output_tokens + event.output_tokens,
-                        },
-                    };
+                    const cloned: Msg = { ...m, content: m.content.map(b => ({ ...b })) };
+                    appendEvent(cloned, event);
+                    return cloned;
                 })
             );
             break;
