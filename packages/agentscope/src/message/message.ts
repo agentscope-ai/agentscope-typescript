@@ -396,7 +396,9 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             break;
 
         case EventType.TEXT_BLOCK_START:
-            msg.content.push(TextBlock({ id: event.block_id, text: '' }));
+            msg.content.push(
+                TextBlock({ id: event.block_id, text: '', created_at: event.created_at })
+            );
             break;
 
         case EventType.TEXT_BLOCK_DELTA: {
@@ -420,7 +422,9 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
         }
 
         case EventType.THINKING_BLOCK_START:
-            msg.content.push(ThinkingBlock({ id: event.block_id, thinking: '' }));
+            msg.content.push(
+                ThinkingBlock({ id: event.block_id, thinking: '', created_at: event.created_at })
+            );
             break;
 
         case EventType.THINKING_BLOCK_DELTA: {
@@ -450,8 +454,9 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                 id: event.block_id,
                 hint: event.hint,
                 source: event.source ?? null,
+                created_at: event.created_at,
+                finished_at: event.created_at,
             });
-            hintBlock.finished_at = hintBlock.created_at;
             msg.content.push(hintBlock);
             break;
         }
@@ -461,6 +466,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                 DataBlock({
                     id: event.block_id,
                     source: Base64Source({ data: '', media_type: event.media_type }),
+                    created_at: event.created_at,
                 })
             );
             break;
@@ -501,6 +507,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                     id: event.tool_call_id,
                     name: event.tool_call_name,
                     input: '',
+                    created_at: event.created_at,
                 })
             );
             break;
@@ -531,6 +538,7 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
                     id: event.tool_call_id,
                     name: event.tool_call_name,
                     output: [],
+                    created_at: event.created_at,
                 })
             );
             break;
@@ -542,11 +550,11 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             } else {
                 const trb = block as ToolResultBlock;
                 if (typeof trb.output === 'string') {
-                    trb.output = [TextBlock({ text: trb.output })];
+                    trb.output = [TextBlock({ text: trb.output, created_at: event.created_at })];
                 }
                 const last = trb.output[trb.output.length - 1];
                 if (!last || last.type !== 'text') {
-                    trb.output.push(TextBlock({ text: event.delta }));
+                    trb.output.push(TextBlock({ text: event.delta, created_at: event.created_at }));
                 } else {
                     (last as TextBlock).text += event.delta;
                 }
@@ -561,13 +569,19 @@ export function appendEvent(msg: Msg, event: AgentEvent): Msg {
             } else {
                 const trb = block as ToolResultBlock;
                 if (typeof trb.output === 'string') {
-                    trb.output = [TextBlock({ text: trb.output })];
+                    trb.output = [TextBlock({ text: trb.output, created_at: event.created_at })];
                 }
                 const source: Base64Source | URLSource =
                     event.data != null
                         ? Base64Source({ data: event.data, media_type: event.media_type })
                         : URLSource({ url: event.url!, media_type: event.media_type });
-                trb.output.push(DataBlock({ id: event.block_id ?? _generateId(), source }));
+                trb.output.push(
+                    DataBlock({
+                        id: event.block_id ?? _generateId(),
+                        source,
+                        created_at: event.created_at,
+                    })
+                );
             }
             break;
         }

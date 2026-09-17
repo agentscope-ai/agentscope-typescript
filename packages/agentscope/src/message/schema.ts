@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { PermissionBehavior } from '../permission';
 import { ErrorType, ReplyFinishedReason } from '../type';
 import {
     Base64Source,
@@ -22,6 +23,13 @@ const entityFields = {
 };
 
 const jsonRecordSchema = z.record(z.string(), z.json());
+
+const permissionRuleSchema = z.object({
+    tool_name: z.string(),
+    rule_content: z.string().nullable(),
+    behavior: z.nativeEnum(PermissionBehavior),
+    source: z.string(),
+});
 
 /** Runtime schema for Python-compatible text blocks. */
 export const TextBlockSchema = z
@@ -95,11 +103,11 @@ export const ToolCallBlockSchema = z
         name: z.string(),
         input: z.string(),
         state: z.enum(['pending', 'asking', 'allowed', 'submitted', 'finished']).optional(),
-        suggested_rules: z.array(z.unknown()).optional(),
+        suggested_rules: z.array(permissionRuleSchema).optional(),
         created_at: z.string().optional(),
         finished_at: z.string().nullable().optional(),
     })
-    .transform(value => ToolCallBlock(value as Parameters<typeof ToolCallBlock>[0]));
+    .transform(value => ToolCallBlock(value));
 
 /** Runtime schema for tool-result blocks. */
 export const ToolResultBlockSchema = z
