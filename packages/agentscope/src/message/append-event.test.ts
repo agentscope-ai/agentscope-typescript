@@ -885,7 +885,6 @@ describe('appendEvent', () => {
         // Apply all events and check ground truths
         expect(events.length).toBe(groundTruths.length);
         for (let i = 0; i < events.length; i++) {
-            jest.setSystemTime(new Date(events[i].created_at));
             appendEvent(msg, events[i]);
             expect(msgDump(msg)).toEqual(groundTruths[i]);
         }
@@ -946,7 +945,6 @@ describe('appendEvent', () => {
 
         // String hint with source — created_at and finished_at both come
         // from the one-shot event's timestamp.
-        jest.setSystemTime(new Date(ts(1)));
         appendEvent(msg, {
             id: 'e1',
             created_at: ts(1),
@@ -977,7 +975,6 @@ describe('appendEvent', () => {
                 created_at: ts(2),
             },
         ];
-        jest.setSystemTime(new Date(ts(2)));
         appendEvent(msg, {
             id: 'e2',
             created_at: ts(2),

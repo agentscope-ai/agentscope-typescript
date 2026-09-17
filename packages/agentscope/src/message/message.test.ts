@@ -1,6 +1,6 @@
 import { ErrorType } from '../type';
 import { createMsg, getContentBlocks, getTextContent, hasContentBlocks } from './message';
-import { parseMsg } from './schema';
+import { parseContentBlock, parseMsg } from './schema';
 
 const TS = '2024-01-01T00:00:00.000Z';
 
@@ -135,5 +135,31 @@ describe('Message', () => {
             structured_output: null,
             error: { type: ErrorType.UNKNOWN, message: 'failed' },
         });
+    });
+
+    test('validate permission rules in serialized tool calls', () => {
+        const toolCall = {
+            type: 'tool_call',
+            id: 'call-1',
+            name: 'Bash',
+            input: '{}',
+            suggested_rules: [
+                {
+                    tool_name: 'Bash',
+                    rule_content: null,
+                    behavior: 'ask',
+                    source: 'userSettings',
+                },
+            ],
+        };
+
+        expect(parseContentBlock(toolCall)).toMatchObject(toolCall);
+        expect(() =>
+            parseContentBlock({
+                ...toolCall,
+                suggested_rules: [{ ...toolCall.suggested_rules[0], behavior: 'invalid' }],
+            })
+        ).toThrow();
+        expect(() => parseContentBlock({ ...toolCall, suggested_rules: [42] })).toThrow();
     });
 });

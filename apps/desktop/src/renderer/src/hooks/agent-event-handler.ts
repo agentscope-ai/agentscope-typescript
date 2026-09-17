@@ -55,7 +55,11 @@ export function applyAgentEvent(
             setMessages(prev =>
                 prev.map(m => {
                     if (m.id !== event.reply_id) return m;
-                    const cloned: Msg = { ...m, content: m.content.map(b => ({ ...b })) };
+                    const cloned: Msg = {
+                        ...m,
+                        content: m.content.map(b => ({ ...b })),
+                        usage: m.usage ? { ...m.usage } : null,
+                    };
                     appendEvent(cloned, event);
                     return cloned;
                 })
