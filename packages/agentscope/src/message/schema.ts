@@ -27,6 +27,7 @@ const jsonRecordSchema = z.record(z.string(), z.json());
 export const TextBlockSchema = z
     .object({
         type: z.literal('text'),
+        thought_signature: z.string().optional(),
         text: z.string(),
         ...entityFields,
     })
@@ -66,6 +67,7 @@ export const DataSourceSchema = z.union([Base64SourceSchema, URLSourceSchema]);
 export const DataBlockSchema = z
     .object({
         type: z.literal('data'),
+        thought_signature: z.string().optional(),
         source: DataSourceSchema,
         name: z.string().nullable().optional(),
         ...entityFields,
@@ -91,6 +93,7 @@ export const HintBlockSchema = z
 export const ToolCallBlockSchema = z
     .object({
         type: z.literal('tool_call'),
+        thought_signature: z.string().optional(),
         id: z.string(),
         name: z.string(),
         input: z.string(),
