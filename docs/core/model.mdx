@@ -17,6 +17,9 @@ AgentScope provides a unified interface for multiple language model providers:
     <Card title="DashScope" icon="aliyun">
         Qwen models from Alibaba Cloud
     </Card>
+    <Card title="Gemini" icon="google">
+        Native Gemini Developer API with function calling
+    </Card>
     <Card title="Ollama" icon="server">
         Local models via Ollama
     </Card>
@@ -115,6 +118,63 @@ const model = new DashScopeChatModel({
     },
 });
 ```
+
+### Gemini
+
+```typescript
+import { GeminiChatModel } from '@agentscope-ai/agentscope/model';
+import { createMsg, TextBlock } from '@agentscope-ai/agentscope/message';
+
+const model = new GeminiChatModel({
+    modelName: 'gemini-3.8-flash',
+    apiKey: process.env.GEMINI_API_KEY!,
+    stream: false,
+    presetGenParams: {
+        temperature: 0.7,
+        maxOutputTokens: 1024,
+    },
+});
+
+const response = await model.call({
+    messages: [
+        createMsg({
+            name: 'user',
+            role: 'user',
+            content: [TextBlock({ text: 'Explain how a rainbow forms.' })],
+        }),
+    ],
+});
+```
+
+This adapter uses the Gemini Developer API's native `generateContent` and
+`streamGenerateContent` endpoints. `baseURL` can override the API root (including
+its version); Vertex AI authentication is not supported. No Google SDK dependency
+is required. A `GeminiChatFormatter` is provided automatically and can also be
+imported from `@agentscope-ai/agentscope/formatter`.
+
+Pass native camelCase generation settings in `presetGenParams`, or override them
+per call using `generationConfig`. Per-call `safetySettings` and `signal`
+(`AbortSignal`) are also supported. The adapter uses the first response candidate.
+
+Function calling supports `auto`, `none`, `required`, and a specific function name.
+Tool schemas use Gemini's `parametersJsonSchema` field. Parallel function calls are
+returned as separate pending tool-call blocks; their results are grouped into one
+user turn on the following request. `callStructured` uses the base class's named
+function-calling mechanism. Function arguments are received as complete objects;
+experimental partial function-argument streaming is not supported.
+
+With `stream: true` (the default), `call()` returns an async generator. Each yield
+contains incremental content; the generator's return value contains the complete
+response and the final token usage, including thought tokens. The `Agent` consumes
+both automatically. When using the generator directly, read it with `.next()` if
+you need the return value; a `for await` loop only exposes the deltas.
+
+The formatter accepts inline base64 data and Gemini-compatible file URIs.
+HTTP image URLs are not downloaded automatically: use the Gemini Files API or
+supply base64 data. Signed response parts retain an optional `thought_signature`
+field through message schema parsing. Keep these blocks intact in saved history;
+dropping their signatures can cause Gemini to reject subsequent tool turns.
+Unsigned thought summaries are omitted from replay.
 
 ### Ollama
 

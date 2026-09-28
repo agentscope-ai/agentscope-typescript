@@ -2,6 +2,8 @@ import { _generateId, _generateTimestamp } from '../_utils/common';
 import type { PermissionRule } from '../permission';
 
 export interface TextBlock {
+    /** Opaque Gemini part signature, retained for conversation replay. */
+    thought_signature?: string;
     type: 'text';
     text: string;
     id: string;
@@ -51,6 +53,8 @@ export interface HintBlock {
 export type ToolCallState = 'pending' | 'asking' | 'allowed' | 'submitted' | 'finished';
 
 export interface ToolCallBlock {
+    /** Opaque Gemini part signature, retained for conversation replay. */
+    thought_signature?: string;
     type: 'tool_call';
     name: string;
     id: string;
@@ -91,6 +95,8 @@ export interface URLSource {
 }
 
 export interface DataBlock {
+    /** Opaque Gemini part signature, retained for conversation replay. */
+    thought_signature?: string;
     type: 'data';
     source: Base64Source | URLSource;
     id: string;
@@ -113,6 +119,9 @@ export function TextBlock(
         Partial<Pick<TextBlock, 'id' | 'created_at' | 'finished_at'>>
 ): TextBlock {
     return {
+        ...(input.thought_signature !== undefined
+            ? { thought_signature: input.thought_signature }
+            : {}),
         type: 'text',
         text: input.text,
         id: input.id ?? _generateId(),
@@ -176,6 +185,9 @@ export function DataBlock(
         Partial<Pick<DataBlock, 'id' | 'name' | 'created_at' | 'finished_at'>>
 ): DataBlock {
     return {
+        ...(input.thought_signature !== undefined
+            ? { thought_signature: input.thought_signature }
+            : {}),
         type: 'data',
         id: input.id ?? _generateId(),
         source: input.source,
@@ -218,6 +230,9 @@ export function ToolCallBlock(
         Partial<Pick<ToolCallBlock, 'state' | 'suggested_rules' | 'created_at' | 'finished_at'>>
 ): ToolCallBlock {
     return {
+        ...(input.thought_signature !== undefined
+            ? { thought_signature: input.thought_signature }
+            : {}),
         type: 'tool_call',
         id: input.id,
         name: input.name,
