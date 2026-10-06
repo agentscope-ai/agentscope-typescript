@@ -40,3 +40,6 @@ docs/node_modules
 docs/.next
 docs/.cache
 docs/api-reference/generated
+
+# Local smoke test scripts (contain API keys, not for CI)
+packages/agentscope/src/test/
