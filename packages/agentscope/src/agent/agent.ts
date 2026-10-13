@@ -963,9 +963,9 @@ export class Agent {
                     }
                     if (unPairedToolResultIds.size === 0) break;
                 }
-                // All contents in this message should be reserved if i
+                // Keep this message and every subsequent message uncompressed.
                 if (i <= 0) {
-                    reservedContext.push(msg);
+                    reservedContext.push(...this.context.slice(index));
                     break;
                 }
 

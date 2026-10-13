@@ -1,6 +1,6 @@
 import { Agent } from './agent';
 import { AgentEvent, EventType, UserConfirmResultEvent } from '../event';
-import { ContentBlock, Msg } from '../message';
+import { ContentBlock, createMsg, Msg } from '../message';
 import { ChatModelBase, ChatResponse } from '../model';
 import { ChatModelRequestOptions } from '../model/base';
 import { Bash, Edit, Glob, Grep, Read, Toolkit, Write } from '../tool';
@@ -53,6 +53,58 @@ class MockChatModel extends ChatModelBase {
         throw new Error('Method not implemented.');
     }
 }
+
+describe('Memory compression', () => {
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
+    test.each([1, 2])(
+        'retains the recent suffix (boundary block count: %i)',
+        async boundaryBlocks => {
+            const model = new MockChatModel();
+            model.mockContent = createMsg({
+                name: 'Friday',
+                role: 'assistant',
+                content: 'The latest request is still available.',
+            }).content;
+            jest.spyOn(model, 'countTokens').mockResolvedValue(100);
+            const summarize = jest.spyOn(model, 'callStructured').mockResolvedValue({
+                type: 'structured',
+                id: 'summary',
+                createdAt: '2024-01-01T00:00:00.000Z',
+                content: { summary: 'Earlier conversation.' },
+            });
+            const call = jest.spyOn(model, 'call');
+            const agent = new Agent({
+                name: 'Friday',
+                sysPrompt: 'You are a helpful assistant.',
+                model,
+                compressionConfig: { enabled: true, triggerThreshold: 1, keepRecent: 3 },
+            });
+            const context = [1, 1, boundaryBlocks, 1, 1].map((blockCount, index) =>
+                createMsg({
+                    id: `message-${index}`,
+                    name: index % 2 === 0 ? 'user' : 'Friday',
+                    role: index % 2 === 0 ? 'user' : 'assistant',
+                    content: Array.from({ length: blockCount }, (_, blockIndex) => ({
+                        type: 'text' as const,
+                        id: `block-${index}-${blockIndex}`,
+                        created_at: '2024-01-01T00:00:00.000Z',
+                        text: `Message ${index}, block ${blockIndex}`,
+                    })),
+                })
+            );
+
+            await agent.reply({ msgs: context });
+
+            expect(summarize).toHaveBeenCalledTimes(1);
+            expect(summarize.mock.calls[0][0].messages.slice(1, -1)).toEqual(context.slice(0, 2));
+            expect(call.mock.calls[0][0].messages.slice(2)).toEqual(context.slice(2));
+            expect(agent.context.slice(0, 3)).toEqual(context.slice(2));
+        }
+    );
+});
 
 describe('Human-in-the-loop', () => {
     test('user confirm', async () => {
