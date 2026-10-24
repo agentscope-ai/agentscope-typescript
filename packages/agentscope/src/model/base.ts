@@ -183,7 +183,7 @@ export abstract class ChatModelBase {
             type: 'function',
             function: {
                 name: 'GenerateStructuredResponse',
-                description: 'Generate required structured response by this toll.',
+                description: 'Generate required structured response by this tool.',
                 parameters: options.schema.toJSONSchema({
                     target: 'openapi-3.0',
                 }) as ToolInputSchema,

@@ -36,7 +36,7 @@ export function ModelSettings({ modelConfigs, onChange, onCreate, onDelete }: Mo
             throw new Error(`${t('setting.modelConfigKeyExists')}`);
         }
         onCreate(modelKey, modelConfig);
-        toast.success(t('setting.createModelConfigSuccess'), { position: 'top-center' });
+        toast.success(t('setting.modelConfigCreateSuccess'), { position: 'top-center' });
     };
 
     const groupedModels: {
