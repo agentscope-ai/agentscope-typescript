@@ -4,7 +4,7 @@ import { ContentBlock, Msg } from '../message';
 import { ChatModelBase, ChatResponse } from '../model';
 import { ChatModelRequestOptions } from '../model/base';
 import { Bash, Edit, Glob, Grep, Read, Toolkit, Write } from '../tool';
-import { ToolChoice, ToolSchema } from '../type';
+import { ReplyFinishedReason, ToolChoice, ToolSchema } from '../type';
 
 /**
  * A mock chat model for testing purposes.
@@ -1141,5 +1141,79 @@ describe('Human-in-the-loop', () => {
                 },
             ],
         ]);
+    });
+});
+
+describe('Max iterations', () => {
+    test('emits EXCEED_MAX_ITERS and reports it in REPLY_END', async () => {
+        // A model that always proposes a new tool call, so the reply loop can
+        // never produce a text answer and must exhaust `maxIters`.
+        const alwaysCallTool = {
+            name: 'AlwaysCallTool',
+            description: 'A tool the model keeps calling',
+            inputSchema: {
+                type: 'object' as const,
+                properties: { data: { type: 'string' as const } },
+            },
+            call: async (input: { data: string }) => `called: ${input.data}`,
+        };
+
+        const toolkit = new Toolkit({ tools: [alwaysCallTool] });
+        const model = new MockChatModel();
+        // Each model call must return a fresh tool call id, otherwise the
+        // pending-tool-call detection treats the repeated id as already resolved.
+        let callCount = 0;
+        const originalCallAPI = model._callAPI.bind(model);
+        model._callAPI = async (
+            modelName: string,
+            options: ChatModelRequestOptions<unknown>
+        ): Promise<ChatResponse> => {
+            const res = await originalCallAPI(modelName, options);
+            const toolCall = res.content.find(c => c.type === 'tool_call');
+            if (toolCall && toolCall.type === 'tool_call') {
+                toolCall.id = `loop-${callCount++}`;
+            }
+            return res;
+        };
+        model.mockContent = [
+            {
+                type: 'tool_call',
+                id: 'loop-0',
+                name: 'AlwaysCallTool',
+                input: `{"data": "x"}`,
+                state: 'pending',
+                created_at: '2024-01-01T00:00:00.000Z',
+            },
+        ];
+
+        const agent = new Agent({
+            name: 'Friday',
+            sysPrompt: 'You are a helpful assistant named Friday.',
+            model: model,
+            toolkit,
+            maxIters: 2,
+        });
+
+        const events: AgentEvent[] = [];
+        for await (const event of agent.replyStream({})) {
+            events.push(event);
+        }
+
+        // Sanity: the loop ran to the limit.
+        expect(agent.curIter).toBe(2);
+
+        const exceedEvents = events.filter(e => e.type === EventType.EXCEED_MAX_ITERS);
+        expect(exceedEvents.length).toBe(1);
+        expect(exceedEvents[0]).toMatchObject({
+            type: EventType.EXCEED_MAX_ITERS,
+            reply_id: agent.replyId,
+            name: 'Friday',
+        });
+
+        const endEvent = events.find(e => e.type === EventType.REPLY_END);
+        expect(endEvent).toMatchObject({
+            type: EventType.REPLY_END,
+            finished_reason: ReplyFinishedReason.EXCEED_MAX_ITERS,
+        });
     });
 });
