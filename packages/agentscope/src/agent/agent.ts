@@ -16,6 +16,7 @@ import {
     EventType,
     ModelCallEndEvent,
     ModelCallStartEvent,
+    ExceedMaxItersEvent,
     ReplyEndEvent,
     ReplyFinishedReason,
     ReplyStartEvent,
@@ -550,6 +551,22 @@ export class Agent {
             this.curIter += 1;
         }
 
+        // The reply ran out of iterations without producing a text answer. Surface
+        // this as an explicit event so the caller can decide whether to let the
+        // agent continue (e.g. by raising `maxIters`) or treat it as finished.
+        const exceedMaxIters =
+            this.curIter >= this.maxIters && this.context.at(-1)?.content.at(-1)?.type !== 'text';
+
+        if (exceedMaxIters) {
+            yield {
+                id: crypto.randomUUID(),
+                created_at: new Date().toISOString(),
+                type: EventType.EXCEED_MAX_ITERS,
+                reply_id: this.replyId,
+                name: this.name,
+            } as ExceedMaxItersEvent;
+        }
+
         // If exceed max iterations without text output
         if (this.context.at(-1)?.content.at(-1)?.type !== 'text') {
             // Generate a final response
@@ -564,7 +581,9 @@ export class Agent {
             created_at: new Date().toISOString(),
             session_id: '',
             reply_id: this.replyId,
-            finished_reason: ReplyFinishedReason.COMPLETED,
+            finished_reason: exceedMaxIters
+                ? ReplyFinishedReason.EXCEED_MAX_ITERS
+                : ReplyFinishedReason.COMPLETED,
         } as ReplyEndEvent;
 
         return createMsg({
